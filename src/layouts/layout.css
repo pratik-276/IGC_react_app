@@ -1,0 +1,34 @@
+* {
+    font-family: 'Inter';
+}
+
+/* header */
+
+.header {
+    box-shadow: 0 4px 4px 0 rgb(37 39 57 / 20%);
+}
+
+.profile_icon {
+    display: flex;
+    align-items: center;
+}
+
+.profile_name h3 {
+    font-size: 16px;
+    line-height: 20px;
+    font-weight: 600;
+    color: #040A39;
+    margin-bottom: 0;
+}
+
+.profile_name p {
+    font-size: 14px;
+    line-height: 20px;
+    font-weight: 400;
+    color: #858AAB;
+    margin-bottom: 0;
+}
+
+.pageWrapper {
+    padding-top: 76px;
+}
