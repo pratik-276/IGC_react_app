@@ -6,6 +6,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 2,
@@ -14,6 +15,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 3,
@@ -22,6 +24,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 4,
@@ -30,6 +33,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 5,
@@ -38,6 +42,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 6,
@@ -46,6 +51,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 7,
@@ -54,6 +60,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 8,
@@ -62,6 +69,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 9,
@@ -70,6 +78,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 10,
@@ -78,6 +87,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 11,
@@ -86,6 +96,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 12,
@@ -94,6 +105,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 13,
@@ -102,6 +114,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 14,
@@ -110,6 +123,7 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
   },
   {
     id: 15,
@@ -118,5 +132,49 @@ export const data = [
     gameName: "Cricket 24",
     Timeline: "23-05-2024 to 30-05-2024",
     Credits: 32,
+    createdData: "27-04-2024",
+  },
+];
+
+export const gameData = [
+  {
+    id: 1,
+    game: "Cricket 24",
+    provider: "Game Provider",
+  },
+  {
+    id: 2,
+    game: "Aviator",
+    provider: "Game Provider",
+  },
+  {
+    id: 3,
+    game: "BasketBall Ruler",
+    provider: "Game Provider",
+  },
+  {
+    id: 4,
+    game: "Poker League",
+    provider: "Game Provider",
+  },
+  {
+    id: 5,
+    game: "Cricket 24",
+    provider: "Game Provider",
+  },
+  {
+    id: 6,
+    game: "Aviator",
+    provider: "Game Provider",
+  },
+  {
+    id: 7,
+    game: "BasketBall Ruler",
+    provider: "Game Provider",
+  },
+  {
+    id: 8,
+    game: "Poker League",
+    provider: "Game Provider",
   },
 ];

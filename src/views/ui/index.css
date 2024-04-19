@@ -42,6 +42,41 @@
     margin: 0;
 }
 
+.compass-data span {
+    color: #8A92A6;
+    font-size: 14px;
+    font-weight: 400;
+}
+
+.compass-data .compass-data-border {
+    border: 1px solid #CCCEE5;
+    margin-top: 8px;
+}
+
+.compass-data .compass-right-icon {
+    gap: 20px;
+    display: flex;
+}
+
+.compass-data .calibrate-dropdown {
+    display: flex;
+    gap: 20px;
+}
+
+.compass-data .compass-search {
+    padding: 10px;
+    background-color: #EBECF4;
+    font-size: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #000 !important;
+    cursor: pointer;
+    border-radius: 4px;
+    width: 45px;
+    height: 45px;
+}
+
 .offcanvas-header {
     padding: 1rem 1rem !important;
     border-bottom: 1px solid #dee2e6 !important;
@@ -89,6 +124,10 @@
 
 .table-heading-name th {
     font-weight: 600;
+}
+
+.compass-data-table td {
+    border: none;
 }
 
 .compass-sidebar-back {
@@ -158,6 +197,17 @@
 
 .select-casino-game-body {
     padding: 30px !important;
+}
+
+.select-casino-game-body .casino-select-listing {}
+
+.calibrate-casino-data-display {
+    padding: 0 10px;
+    border: 1px solid #cccee5;
+    display: flex;
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
 }
 
 .calibrate-title {
@@ -270,6 +320,13 @@
     text-decoration: none;
 }
 
+.game-data-bar span {
+    color: #8A92A6;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 22px;
+}
+
 .casino-checkbox {
     width: 18px;
     height: 18px;
@@ -323,4 +380,8 @@
     background: transparent;
     color: #392F6C;
     font-size: 14px;
+}
+
+.Dropdown-control{
+    
 }
