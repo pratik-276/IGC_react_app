@@ -1,9 +1,9 @@
-import { Button, Nav, NavItem } from "reactstrap";
-import { Link, Outlet, useLocation } from "react-router-dom";
-import { FaLocationArrow } from "react-icons/fa6";
-import { IoMdCompass, IoMdHome } from "react-icons/io";
 import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
+import { Link, useLocation } from "react-router-dom";
+import { Button, Nav, NavItem } from "reactstrap";
+import { FaLocationArrow } from "react-icons/fa6";
+import { IoMdCompass, IoMdHome } from "react-icons/io";
 
 const navigation = [
   {
