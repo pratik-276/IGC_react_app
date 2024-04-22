@@ -41,7 +41,7 @@ const Sidebar = () => {
             <i className="bi bi-x"></i>
           </Button>
         </div>
-        <div className="p-3 mt-2">
+        <div className="p-3">
           <Nav vertical className="sidebarNav">
             {navigation.map((navi, index) => (
               <NavItem key={index} className="sidenav-bg mb-2">

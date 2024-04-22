@@ -1,9 +1,9 @@
 import React from "react";
+import { Link } from "react-router-dom";
 import "./Auth.css";
 import { FaEye } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { IoIosArrowForward } from "react-icons/io";
-import { Link } from "react-router-dom";
 
 const Login = () => {
   return (
@@ -47,7 +47,7 @@ const Login = () => {
                           </div>
                         </div>
                         <p className="text-end m-0 pt-2 mb-4">
-                          <Link to="/forgot-password">Forgot Password?</Link>
+                          <Link to="/forget-password">Forgot Password?</Link>
                         </p>
                         <div className="auth_login_btn">
                           <button className="login_btn">

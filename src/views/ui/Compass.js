@@ -1,21 +1,29 @@
 import React, { useState } from "react";
-import "./index.css";
-import { FaChartLine, FaPlus } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import "./index.css";
+import Dropdown from "react-dropdown";
+import "react-dropdown/style.css";
+import { Pagination } from "react-bootstrap";
 import { data, gameData } from "./dummydata";
+import { FaChartLine, FaPlus } from "react-icons/fa6";
 import { CiCirclePlus, CiPause1 } from "react-icons/ci";
 import { IoIosSearch, IoMdSearch } from "react-icons/io";
 import { AiOutlinePlus } from "react-icons/ai";
-import "react-dropdown/style.css";
-import Dropdown from "react-dropdown";
-import { Pagination } from "react-bootstrap";
 import { FiMinusCircle } from "react-icons/fi";
+import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+
+const options = ["Pause", "inProgress", "Not Available"];
+const options1 = ["one", "two", "three"];
+const options2 = ["one", "two", "three"];
+const options3 = [5, 10, 15, 20];
+const options4 = ["5", "10", "15", "20"];
 
 const Compass = () => {
   const [selectedOption, setSelectedOption] = useState(null);
   const [searchQuery, setSearchQuery] = useState("");
+
   const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage] = useState(5);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   // Pagination function
   const paginate = (array, currentPage, itemsPerPage) => {
@@ -31,12 +39,9 @@ const Compass = () => {
     setCurrentPage(pageNumber);
   };
 
-  const options = ["Pause", "inProgress", "Not Available"];
-  const options1 = ["one", "two", "three"];
-  const options2 = ["one", "two", "three"];
-  const options3 = ["one", "two", "three"];
-
-  const defaultOption3 = options3[0];
+  const handleItemsPerPageChange = (option) => {
+    setItemsPerPage(parseInt(option.value));
+  };
 
   const filteredData = data.filter((data) => {
     return data?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase());
@@ -48,6 +53,7 @@ const Compass = () => {
 
   return (
     <>
+      {/* CALIBRATE COMPASS FIRST PAGE */}
       <div className="compass h-100">
         {data?.length == 0 ? (
           <>
@@ -136,7 +142,7 @@ const Compass = () => {
                   <tbody className="table-body-items">
                     {paginatedItems?.map((datas) => {
                       return (
-                        <tr key={datas.name}>
+                        <tr key={datas.name} className="table-body-items-table">
                           <td scope="row" style={{ width: "5%" }}>
                             <input
                               type="checkbox"
@@ -145,13 +151,16 @@ const Compass = () => {
                             />
                           </td>
                           <td scope="row" style={{ width: "13%" }}>
-                            <p className="m-0">{datas.createdData}</p>
+                            <span className="m-0">{datas.createdData}</span>
                           </td>
-                          <td scope="row" style={{ width: "20%" }}>
+                          <td
+                            scope="row"
+                            style={{ width: "20%", fontSize: "14px" }}
+                          >
                             <p className="m-0">{datas.name}</p>
                             <Link to="/">{datas.link}</Link>
                           </td>
-                          <td style={{ width: "20%" }}>
+                          <td style={{ width: "20%", fontSize: "14px" }}>
                             <p className="m-0">{datas.gameName}</p>
                             <Link to="/">{datas.link}</Link>
                           </td>
@@ -173,54 +182,88 @@ const Compass = () => {
                 </table>
               </div>
 
-              <div className="d-flex justify-content-between">
-                <div>
-                  <span>
-                    Showing {(currentPage - 1) * itemsPerPage + 1} -
-                    {Math?.min(currentPage * itemsPerPage, data?.length)} out of
-                    &nbsp;
-                    {data?.length}
-                  </span>
-                </div>
-                <div>
-                  {totalPages > 1 && (
-                    <div className="d-flex justify-content-center mt-4 orderlist_pagination">
-                      <Pagination className="custom-pagination">
-                        <Pagination.Prev
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                          disabled={currentPage === 1}
-                        />
-                        {[...Array(totalPages).keys()].map((page) => (
-                          <Pagination.Item
-                            key={page}
-                            active={page + 1 === currentPage}
-                            onClick={() => handlePageChange(page + 1)}
-                            className="custom-pagination-item"
+              <div>
+                <div className="d-flex justify-content-between align-items-center">
+                  <div>
+                    <span>
+                      Showing {(currentPage - 1) * itemsPerPage + 1} -
+                      {Math.min(currentPage * itemsPerPage, data.length)} out
+                      of&nbsp;
+                      {data.length}
+                    </span>
+                  </div>
+                  <div>
+                    {totalPages > 1 && (
+                      <div className="d-flex justify-content-center orderlist_pagination">
+                        <Pagination className="custom-pagination">
+                          <Pagination.Prev
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                            disabled={currentPage === 1}
                           >
-                            {page + 1}
-                          </Pagination.Item>
-                        ))}
-                        <Pagination.Next
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages)
-                            )
-                          }
-                          disabled={currentPage === totalPages}
-                        />
-                      </Pagination>
-                    </div>
-                  )}
-                </div>
-                <div className="d-flex align-items-center">
-                  <span>items per Page: </span>
-                  <Dropdown
-                    options={options3}
-                    value={defaultOption3}
-                    placeholder="Select an option"
-                  />
+                            <MdKeyboardArrowLeft className="me-2" /> Prev
+                          </Pagination.Prev>
+                          {[...Array(totalPages).keys()].map((page) => {
+                            if (
+                              page === 0 ||
+                              page === totalPages - 1 ||
+                              (page >= currentPage - 1 &&
+                                page <= currentPage + 1)
+                            ) {
+                              return (
+                                <Pagination.Item
+                                  key={page}
+                                  active={page + 1 === currentPage}
+                                  onClick={() => handlePageChange(page + 1)}
+                                  className="custom-pagination-item"
+                                >
+                                  {page + 1}
+                                </Pagination.Item>
+                              );
+                            } else if (
+                              (page === 1 && currentPage > 4) ||
+                              (page === totalPages - 2 &&
+                                currentPage < totalPages - 3)
+                            ) {
+                              return (
+                                <Pagination.Item
+                                  key={page}
+                                  disabled
+                                  className="custom-pagination-item"
+                                >
+                                  ...
+                                </Pagination.Item>
+                              );
+                            }
+                            return null;
+                          })}
+                          <Pagination.Next
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                Math.min(prev + 1, totalPages)
+                              )
+                            }
+                            disabled={currentPage === totalPages}
+                          >
+                            Next
+                            <MdKeyboardArrowRight className="ms-2" />
+                          </Pagination.Next>
+                        </Pagination>
+                      </div>
+                    )}
+                  </div>
+                  <div className="d-flex align-items-center pagination_per_select">
+                    <span className="me-1">Items per Page: </span>
+                    <Dropdown
+                      options={options4.map((option) => ({
+                        value: option,
+                        label: option,
+                      }))}
+                      onChange={handleItemsPerPageChange}
+                      value={itemsPerPage.toString()}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -228,6 +271,7 @@ const Compass = () => {
         )}
       </div>
 
+      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME */}
       <div
         class="offcanvas offcanvas-end compass-sidebar"
         tabindex="-1"
@@ -270,7 +314,7 @@ const Compass = () => {
               <div className="calibrate-icon">
                 <CiCirclePlus />
               </div>
-              <p>Start calibrating by adding Casino.</p>
+              <p>Start calibrating by adding Casino</p>
             </div>
           </div>
           <div
@@ -296,7 +340,7 @@ const Compass = () => {
                 <CiCirclePlus />
               </div>
               <div>
-                <p>Start calibrating by adding Casino.</p>
+                <p>Start calibrating by adding Game</p>
               </div>
             </div>
           </div>
@@ -346,7 +390,7 @@ const Compass = () => {
         </div>
       </div>
 
-      {/* For Choose CASINO */}
+      {/* FOR CHOOSE CASINO  */}
       <div
         class="offcanvas offcanvas-end casino-sidebar"
         tabindex="-1"
@@ -436,7 +480,7 @@ const Compass = () => {
         </div>
       </div>
 
-      {/* For Choose Select Game */}
+      {/* FOR CHOOSE GAME  */}
       <div
         class="offcanvas offcanvas-end casino-sidebar"
         tabindex="-1"
@@ -528,7 +572,7 @@ const Compass = () => {
         </div>
       </div>
 
-      {/* For Request a new casino */}
+      {/* FOR REQUEST A NEW CASINO OFFCANVAS*/}
       <div
         class="offcanvas offcanvas-end casino-sidebar"
         tabindex="-1"

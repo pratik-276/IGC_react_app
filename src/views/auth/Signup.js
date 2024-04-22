@@ -1,8 +1,8 @@
 import React from "react";
-import { FcGoogle } from "react-icons/fc";
-import { IoIosArrowForward } from "react-icons/io";
 import { Link } from "react-router-dom";
 import "./Auth.css";
+import { FcGoogle } from "react-icons/fc";
+import { IoIosArrowForward } from "react-icons/io";
 
 const Signup = () => {
   return (

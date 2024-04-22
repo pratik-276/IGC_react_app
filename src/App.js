@@ -1,22 +1,13 @@
-// import { useRoutes } from "react-router-dom";
-// import Themeroutes from "./routes/Router";
-// import "../node_modules/bootstrap/dist/js/bootstrap.bundle"
-
-// const App = () => {
-//   const routing = useRoutes(Themeroutes);
-
-//   return <div className="dark">{routing}</div>;
-// };
-
-// export default App;
-
-import React from "react";
+import React, { lazy } from "react";
 import { Route, Routes } from "react-router-dom";
-import Layout from "./views/Layout";
-import Home from "./views/Home";
-import GameTracking from "./views/ui/GameTracking";
-import Compass from "./views/ui/Compass";
-import "../node_modules/bootstrap/dist/js/bootstrap.bundle"
+import "../node_modules/bootstrap/dist/js/bootstrap.bundle";
+const Layout = lazy(() => import("./views/Layout"));
+const Home = lazy(() => import("./views/Home"));
+const GameTracking = lazy(() => import("./views/ui/GameTracking"));
+const Compass = lazy(() => import("./views/ui/Compass"));
+const Login = lazy(() => import("./views/auth/Login.js"));
+const Signup = lazy(() => import("./views/auth/Signup.js"));
+const ForgotPass = lazy(() => import("./views/auth/ForgotPass.js"));
 
 const App = () => {
   return (
@@ -27,6 +18,9 @@ const App = () => {
           <Route path="/game-tracking" element={<GameTracking />} />
           <Route path="/calibrate-compass" element={<Compass />} />
         </Route>
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<Signup />} />
+        <Route path="/forget-password" element={<ForgotPass />} />
       </Routes>
     </>
   );
