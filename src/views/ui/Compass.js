@@ -11,16 +11,23 @@ import { IoIosSearch, IoMdSearch } from "react-icons/io";
 import { AiOutlinePlus } from "react-icons/ai";
 import { FiMinusCircle } from "react-icons/fi";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
+import { FaCalendarAlt } from "react-icons/fa";
 
 const options = ["Pause", "inProgress", "Not Available"];
 const options1 = ["one", "two", "three"];
 const options2 = ["one", "two", "three"];
 const options3 = [5, 10, 15, 20];
 const options4 = ["5", "10", "15", "20"];
+const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
 const Compass = () => {
   const [selectedOption, setSelectedOption] = useState(null);
+  const [trackTime, setTrackTime] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -49,6 +56,29 @@ const Compass = () => {
 
   const handleSelectOption = (option) => {
     setSelectedOption(option);
+  };
+
+  const SelectTime = (option) => {
+    setTrackTime(option);
+    // console.log(option?.label, "option");
+    setStartDate(null);
+    setEndDate(null)
+  };
+
+  const handleStartDateChange = (date) => {
+    setStartDate(date);
+    console.log("start date", date);
+    if (endDate && date > endDate) {
+      setEndDate(null);
+    }
+  };
+
+  const handleEndDateChange = (date) => {
+    setEndDate(date);
+    console.log("end date", date);
+    if (!startDate || date >= startDate) {
+      setEndDate(date);
+    }
   };
 
   return (
@@ -81,6 +111,16 @@ const Compass = () => {
                   <h3>Calibrate Compass</h3>
                   <span>Track, add, delete all your games and operators</span>
                 </div>
+                {/* <div className="col-md-4">
+                  <button
+                    className="btn game_add_btn"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRight"
+                    aria-controls="offcanvasRight"
+                  >
+                    Demo Model <FaPlus className="ms-2" />
+                  </button>
+                </div> */}
                 <div className="col-md-6 text-end">
                   <button
                     className="btn game_add_btn"
@@ -108,7 +148,7 @@ const Compass = () => {
                     <FaChartLine />
                   </div>
                   <div className="compass-search">
-                    <i class="bi bi-trash3"></i>
+                    <i className="bi bi-trash3"></i>
                   </div>
                   <div className="compass-search">
                     <CiPause1 />
@@ -119,7 +159,7 @@ const Compass = () => {
                 </div>
               </div>
               <div className="compass-data-table pt-3">
-                <table class="table table-bordered">
+                <table className="table table-bordered">
                   <thead className="table-heading-name">
                     <tr>
                       <th scope="col">
@@ -271,27 +311,240 @@ const Compass = () => {
         )}
       </div>
 
+      {/* CALIBRATE COMPASS DEMO SCREEN OFFCANVAS HERE */}
+      <div
+        className="offcanvas offcanvas-end w-75 bg-white"
+        tabIndex="-1"
+        id="offcanvasRight"
+        aria-labelledby="offcanvasRightLabel"
+      >
+        <div className="offcanvas-header Tracking-game-model">
+          <h5 id="offcanvasRightLabel">Configure</h5>
+          <button
+            type="button"
+            className="btn-close text-reset"
+            data-bs-dismiss="offcanvas"
+            aria-label="Close"
+          ></button>
+        </div>
+        <div className="offcanvas-body Tracking-game-model-content">
+          <div className="col-md-12">
+            <h6>Tracking list will contain:</h6>
+            <span>
+              All the combination below are formed according to your selection
+              of games and casino. You can remove combination that you don’t
+              want to track.
+            </span>
+          </div>
+          <div className="compass-data-table track_game_table pt-3">
+            <table className="table table-bordered m-0">
+              <thead className="table-heading-name">
+                <tr>
+                  <th scope="col" style={{ width: "40%" }}>
+                    Operator Name
+                  </th>
+                  <th scope="col" style={{ width: "20%" }}>
+                    Game Name{" "}
+                  </th>
+                  <th scope="col" style={{ width: "40%" }} className="text-end">
+                    ACTION
+                  </th>
+                </tr>
+              </thead>
+            </table>
+            <div className="table-scroll-container">
+              <table className="table table-bordered m-0">
+                <tbody className="table-body-items">
+                  {data?.map((datas) => {
+                    return (
+                      <tr key={datas.name} className="table-body-items-table">
+                        <td
+                          scope="row"
+                          style={{ width: "40%", fontSize: "14px" }}
+                        >
+                          <p className="m-0">{datas.name}</p>
+                          <Link to="/">{datas.link}</Link>
+                        </td>
+                        <td style={{ width: "20%", fontSize: "14px" }}>
+                          <p className="m-0">{datas.gameName}</p>
+                          <Link to="/">{datas.link}</Link>
+                        </td>
+                        <td className="text-end">
+                          <span className="badge rounded-pill me-5">
+                            Combination already exists
+                          </span>
+                          <FiMinusCircle
+                            style={{ fontSize: "25px", color: "#607290" }}
+                          />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div className="tracking-game-time">
+            <div>
+              <div className="row">
+                <div className="col-md-6">
+                  <div className="tracking_gaming_date">
+                    <div className="row">
+                      <div className="col-md-6">
+                        <div className="form-group tracking_time_dropdown credit-field">
+                          <label className="">Select Tracking Time</label>
+                          <Dropdown
+                            options={TrackingTime}
+                            placeholder="Select tracking Time"
+                            onChange={(option) => SelectTime(option)}
+                            value={trackTime}
+                            className="w-100"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="tracking_csm_date">
+                    {trackTime?.label === "custom" && (
+                      <>
+                        <div className="row">
+                          <div className="col-md-6">
+                            <div className="form-group credit-field">
+                              <label>Tracking starts on</label>
+                              <div className="tracking-game-credit">
+                                <DatePicker
+                                  selected={startDate}
+                                  showIcon
+                                  onChange={(date) =>
+                                    handleStartDateChange(date)
+                                  }
+                                  className="w-100"
+                                  dateFormat="dd/MM/yyyy"
+                                  dropdownMode="select"
+                                  toggleCalendarOnIconClick
+                                  placeholderText="Select date"
+                                  closeOnScroll={false}
+                                  selectsStart
+                                  startDate={startDate}
+                                  icon={
+                                    <FaCalendarAlt
+                                      style={{ color: "#ADB5BD" }}
+                                    />
+                                  }
+                                  // endDate={endDate}
+                                />
+                              </div>
+                            </div>
+                          </div>
+                          <div className="col-md-6">
+                            <div className="form-group credit-field">
+                              <label>Tracking ends on</label>
+                              <div className="tracking-game-credit">
+                                <DatePicker
+                                  selected={endDate}
+                                  dateFormat="dd/MM/yyyy"
+                                  toggleCalendarOnIconClick
+                                  dropdownMode="select"
+                                  placeholderText="Select date"
+                                  showIcon
+                                  onChange={(date) => handleEndDateChange(date)}
+                                  className="w-100"
+                                  closeOnScroll={false}
+                                  selectsEnd
+                                  startDate={startDate}
+                                  endDate={endDate}
+                                  minDate={startDate}
+                                  disabled={!startDate}
+                                  icon={
+                                    <FaCalendarAlt
+                                      style={{ color: "#ADB5BD" }}
+                                    />
+                                  }
+                                />
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+                  </div>
+                </div>
+                <div className="col-md-6">
+                  <div className="row">
+                    <div className="col-md-6">
+                      <div className="form-group credit-field">
+                        <label>Expected credits usage</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={356}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-6">
+                      <div className="form-group credit-field">
+                        <label>Credit Balance</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={356}
+                          disabled
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div className="offcanvas-footer">
+          <div
+            id="offcanvasRightCalibrate"
+            className="sidebar-model-heading text-end"
+          >
+            <button
+              className="compass-sidebar-back"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            >
+              Back
+            </button>
+            <button
+              className="compass-sidebar-next"
+              data-bs-toggle="offcanvas"
+              data-bs-target="#offcanvasRight"
+              aria-controls="offcanvasRight"
+            >
+              Save
+            </button>
+          </div>
+        </div>
+      </div>
+
       {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME */}
       <div
-        class="offcanvas offcanvas-end compass-sidebar"
-        tabindex="-1"
+        className="offcanvas offcanvas-end compass-sidebar"
+        tabIndex="-1"
         id="offcanvasCalibrate"
         aria-labelledby="offcanvasRightCalibrate"
         data-bs-backdrop="static"
       >
-        <div class="offcanvas-header">
+        <div className="offcanvas-header">
           <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
             Calibrate
           </h5>
           <button
             type="button"
-            class="btn-close text-reset"
+            className="btn-close text-reset"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
             onClick={() => setSelectedOption("")}
           ></button>
         </div>
-        <div class="offcanvas-body select-casino-game-body">
+        <div className="offcanvas-body select-casino-game-body">
           <div
             className={`calibrate-title ${
               selectedOption === "Casino 1" ? "selected" : ""
@@ -346,7 +599,7 @@ const Compass = () => {
           </div>
         </div>
 
-        <div class="offcanvas-footer">
+        <div className="offcanvas-footer">
           <div
             id="offcanvasRightCalibrate"
             className="sidebar-model-heading text-end"
@@ -392,23 +645,23 @@ const Compass = () => {
 
       {/* FOR CHOOSE CASINO  */}
       <div
-        class="offcanvas offcanvas-end casino-sidebar"
-        tabindex="-1"
+        className="offcanvas offcanvas-end casino-sidebar"
+        tabIndex="-1"
         id="casinoSelected"
         aria-labelledby="offcanvasRightLabelCasino"
       >
-        <div class="offcanvas-header">
+        <div className="offcanvas-header">
           <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
             Choose Casino
           </h5>
           <button
             type="button"
-            class="btn-close text-reset"
+            className="btn-close text-reset"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
           ></button>
         </div>
-        <div class="offcanvas-body p-0 bg-white">
+        <div className="offcanvas-body p-0 bg-white">
           <div className="">
             <div className="search-bar position-relative">
               <div className="serching">
@@ -461,7 +714,7 @@ const Compass = () => {
             <span></span>
           </div>
         </div>
-        <div class="offcanvas-footer">
+        <div className="offcanvas-footer">
           <div
             id="offcanvasRightCalibrate"
             className="sidebar-model-heading text-end"
@@ -482,24 +735,24 @@ const Compass = () => {
 
       {/* FOR CHOOSE GAME  */}
       <div
-        class="offcanvas offcanvas-end casino-sidebar"
-        tabindex="-1"
+        className="offcanvas offcanvas-end casino-sidebar"
+        tabIndex="-1"
         id="offcanvasRight"
         aria-labelledby="offcanvasRightLabel"
       >
-        <div class="offcanvas-header">
+        <div className="offcanvas-header">
           <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
             Select Game
           </h5>
           <button
             type="button"
-            class="btn-close text-reset"
+            className="btn-close text-reset"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
           ></button>
         </div>
 
-        <div class="offcanvas-body p-0 bg-white">
+        <div className="offcanvas-body p-0 bg-white">
           <div className="">
             <div className="search-bar position-relative">
               <div className="serching">
@@ -553,7 +806,7 @@ const Compass = () => {
           </div>
         </div>
 
-        <div class="offcanvas-footer">
+        <div className="offcanvas-footer">
           <div
             id="offcanvasRightCalibrate"
             className="sidebar-model-heading text-end"
@@ -574,24 +827,24 @@ const Compass = () => {
 
       {/* FOR REQUEST A NEW CASINO OFFCANVAS*/}
       <div
-        class="offcanvas offcanvas-end casino-sidebar"
-        tabindex="-1"
+        className="offcanvas offcanvas-end casino-sidebar"
+        tabIndex="-1"
         id="offcanvasRequestCasino"
         aria-labelledby="offcanvasRightLabel"
       >
-        <div class="offcanvas-header">
+        <div className="offcanvas-header">
           <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
             Choose Casino
           </h5>
           <button
             type="button"
-            class="btn-close text-reset"
+            className="btn-close text-reset"
             data-bs-dismiss="offcanvas"
             aria-label="Close"
           ></button>
         </div>
 
-        <div class="offcanvas-body bg-white p-4">
+        <div className="offcanvas-body bg-white p-4">
           <div className="row">
             <div className="col-md-8">
               <div className="casino-input-field">
@@ -629,7 +882,7 @@ const Compass = () => {
             </div>
           </div>
         </div>
-        <div class="offcanvas-footer">
+        <div className="offcanvas-footer">
           <div
             id="offcanvasRightCalibrate"
             className="sidebar-model-heading text-end"
