@@ -62,7 +62,7 @@ const Compass = () => {
     setTrackTime(option);
     // console.log(option?.label, "option");
     setStartDate(null);
-    setEndDate(null)
+    setEndDate(null);
   };
 
   const handleStartDateChange = (date) => {

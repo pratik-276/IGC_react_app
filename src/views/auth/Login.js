@@ -1,11 +1,32 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { FaEye } from "react-icons/fa6";
 import { FcGoogle } from "react-icons/fc";
 import { IoIosArrowForward } from "react-icons/io";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "./config";
 
 const Login = () => {
+  const navigate = useNavigate();
+  const [value, setValue] = useState("");
+
+  const handleClick = () => {
+    signInWithPopup(auth, provider)
+      .then((data) => {
+        setValue(data.user.email);
+        localStorage.setItem("email", data.user.email);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error signing in with Google:", error);
+        navigate("/login");
+      });
+  };
+
+  useEffect(() => {
+    setValue(localStorage.getItem("email"));
+  }, []);
   return (
     <>
       <div className="auth_main">
@@ -21,7 +42,10 @@ const Login = () => {
                       <p>Your partner in gaming insights!</p>
                     </div>
                     <div className="login_detail_inr">
-                      <button className="btn google_login">
+                      <button
+                        className="btn google_login"
+                        onClick={handleClick}
+                      >
                         <FcGoogle className="me-2 google_icon" />
                         Sign in with Google
                       </button>

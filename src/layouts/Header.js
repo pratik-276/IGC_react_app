@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, Outlet } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 import {
   Navbar,
   Collapse,
@@ -17,6 +17,8 @@ import logo from "../assets/images/logos/AEG-Logo.png";
 import "./layout.css";
 
 const Header = () => {
+  const navigate = useNavigate();
+  const email = localStorage.getItem("email");
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
@@ -28,6 +30,14 @@ const Header = () => {
 
   const showMobilemenu = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
+  };
+
+  const handleLogin = () => {
+    navigate("/login");
+  };
+
+  const logOut = () => {
+    localStorage.removeItem("email");
   };
 
   return (
@@ -72,31 +82,43 @@ const Header = () => {
 
         <Collapse navbar isOpen={isOpen}>
           <Nav className="me-auto" navbar></Nav>
-          <Dropdown isOpen={dropdownOpen} toggle={toggle}>
-            <DropdownToggle color="transparent">
-              <div className="profile_icon">
-                <div className="profile_name text-end">
-                  <h3>Shantanu Khoraskar</h3>
-                  <p>subrajit@igamingcompass.com</p>
-                </div>
-                <img
-                  src={user1}
-                  alt="profile"
-                  className="rounded-circle ms-2"
-                  width="40"
-                />
-              </div>
-            </DropdownToggle>
-            <DropdownMenu>
-              {/* <DropdownItem header>Info</DropdownItem>
+          {email ? (
+            <>
+              <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+                <DropdownToggle color="transparent">
+                  <div className="profile_icon">
+                    <div className="profile_name text-end">
+                      <h3>Shantanu Khoraskar</h3>
+                      <p>subrajit@igamingcompass.com</p>
+                    </div>
+                    <img
+                      src={user1}
+                      alt="profile"
+                      className="rounded-circle ms-2"
+                      width="40"
+                    />
+                  </div>
+                </DropdownToggle>
+                <DropdownMenu>
+                  {/* <DropdownItem header>Info</DropdownItem>
               <DropdownItem>My Account</DropdownItem>
               <DropdownItem>Edit Profile</DropdownItem>
               <DropdownItem divider />
               <DropdownItem>My Balance</DropdownItem>
               <DropdownItem>Inbox</DropdownItem> */}
-              <DropdownItem>Logout</DropdownItem>
-            </DropdownMenu>
-          </Dropdown>
+                  <DropdownItem onClick={logOut}>Logout</DropdownItem>
+                </DropdownMenu>
+              </Dropdown>
+            </>
+          ) : (
+            <>
+              <div>
+                <button className="compass-sidebar-next" onClick={handleLogin}>
+                  Login
+                </button>
+              </div>
+            </>
+          )}
         </Collapse>
       </Navbar>
     </>
