@@ -82,10 +82,10 @@ const Compass = () => {
   };
 
   return (
-    <>
+    <>  
       {/* CALIBRATE COMPASS FIRST PAGE */}
       <div className="compass h-100">
-        {data?.length == 0 ? (
+        {paginatedItems?.length == 0 ? (
           <>
             <div className="row h-100 align-items-center justify-content-center">
               <div className="col-md-5">
@@ -312,7 +312,7 @@ const Compass = () => {
       </div>
 
       {/* CALIBRATE COMPASS DEMO SCREEN OFFCANVAS HERE */}
-      <div
+      {/* <div
         className="offcanvas offcanvas-end w-75 bg-white"
         tabIndex="-1"
         id="offcanvasRight"
@@ -522,7 +522,7 @@ const Compass = () => {
             </button>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME */}
       <div
