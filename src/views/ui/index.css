@@ -31,7 +31,7 @@
 }
 
 .compass-sidebar {
-    width: 60% !important;
+    width: 70% !important;
 }
 
 .compass-data h3 {
@@ -646,4 +646,14 @@ input[type="checkbox"] {
 .track_game_table th,
 .track_game_table td {
     padding: 10px 20px;
+}
+
+.offcanvas-backdrop.show {
+    background-color: rgb(0 0 0) !important;
+}
+
+
+.casino-sidebar .new_casino_add .form-control:focus {
+    outline: none;
+    box-shadow: none;
 }

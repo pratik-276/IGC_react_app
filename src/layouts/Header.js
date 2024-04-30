@@ -1,5 +1,5 @@
-import React from "react";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import React, { useLayoutEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Navbar,
   Collapse,
@@ -38,7 +38,10 @@ const Header = () => {
 
   const logOut = () => {
     localStorage.removeItem("email");
+    localStorage.removeItem("password");
   };
+
+  useLayoutEffect(() => {}, [email]);
 
   return (
     <>
@@ -89,7 +92,7 @@ const Header = () => {
                   <div className="profile_icon">
                     <div className="profile_name text-end">
                       <h3>Shantanu Khoraskar</h3>
-                      <p>subrajit@igamingcompass.com</p>
+                      <p>{email ? email : ""}</p>
                     </div>
                     <img
                       src={user1}

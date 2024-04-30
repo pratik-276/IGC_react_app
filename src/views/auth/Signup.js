@@ -4,6 +4,8 @@ import "./Auth.css";
 import { FcGoogle } from "react-icons/fc";
 import { IoIosArrowForward } from "react-icons/io";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
+import { signInWithPopup } from "firebase/auth";
+import { auth, provider } from "./config";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -116,6 +118,20 @@ const Signup = () => {
     setConfirmPasswordType("password");
   };
 
+  // Sign in With Google Function Here
+  const handleClick = () => {
+    signInWithPopup(auth, provider)
+      .then((data) => {
+        setEmail(data?.user?.email);
+        localStorage.setItem("email", data?.user?.email);
+        navigate("/");
+      })
+      .catch((error) => {
+        console.error("Error signing in with Google:", error);
+        navigate("/login");
+      });
+  };
+
   return (
     <>
       <div className="auth_main">
@@ -135,7 +151,7 @@ const Signup = () => {
                       {passShow === false && (
                         <>
                           <form onSubmit={handleSubmit}>
-                            <div className="form-group position-relative ">
+                            <div className="form-group position-relative">
                               <label>Email</label>
                               <input
                                 type="email"
@@ -147,7 +163,7 @@ const Signup = () => {
                                 onChange={handleEmailChange}
                               />
                               {!isValidEmail && (
-                                <div className="invalid-feedback position-absolute m-0">
+                                <div className="invalid-feedback m-0">
                                   {errorMessage}
                                 </div>
                               )}
@@ -170,7 +186,9 @@ const Signup = () => {
                                 <input
                                   type={passwordType}
                                   name="password"
-                                  className="form-control"
+                                  className={`form-control ${
+                                    errors.password ? "is-invalid" : ""
+                                  }`}
                                   placeholder="Enter Password"
                                   value={input.password}
                                   onChange={handlePasswordChange}
@@ -201,7 +219,9 @@ const Signup = () => {
                                 <input
                                   type={confirmpasswordType}
                                   name="confirmPassword"
-                                  className="form-control"
+                                  className={`form-control ${
+                                    errors.confirmPassword ? "is-invalid" : ""
+                                  }`}
                                   placeholder="Confirm Password"
                                   value={input.confirmPassword}
                                   onChange={handlePasswordChange}
@@ -238,7 +258,10 @@ const Signup = () => {
                       <h4 className="pb-2">
                         <span>Or Sign in with</span>
                       </h4>
-                      <button className="btn google_login">
+                      <button
+                        className="btn google_login"
+                        onClick={handleClick}
+                      >
                         <FcGoogle className="me-2 google_icon" />
                         Sign in with Google
                       </button>

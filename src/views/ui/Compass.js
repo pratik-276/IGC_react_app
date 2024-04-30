@@ -82,7 +82,7 @@ const Compass = () => {
   };
 
   return (
-    <>  
+    <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
       <div className="compass h-100">
         {paginatedItems?.length == 0 ? (
@@ -847,7 +847,7 @@ const Compass = () => {
         <div className="offcanvas-body bg-white p-4">
           <div className="row">
             <div className="col-md-8">
-              <div className="casino-input-field">
+              <div className="casino-input-field new_casino_add">
                 <div className="form-group">
                   <label htmlFor="">Enter Casino Name</label>
                   <input
@@ -874,7 +874,7 @@ const Compass = () => {
               {/* <span>Enter Url for a preview</span> */}
               <div>
                 <img
-                  src="https://s3-alpha-sig.figma.com/img/66b8/d95a/fc1a137a2cf4ad184c535dfc86e74b37?Expires=1714348800&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4&Signature=J-9rv-H17~h~wD5JUkbUIRpcg2AaBERK38fDTtxLbhaLFC~sdXACDJ-ZuXol-Jv7Y68KRFmTiHhmum2Dllfi9XCMXmuXZWmL-gS-RyxqIiAEs6KLnvqMcJq4RbxHJ4O5TASp8Wb8q-9sTiYig387LJtzuHLrvt16~Zdk2MFeh6oixg-WAP1QaFAM~B7UIQRIspaClZ54yegdWgRGjPLYZt9g~WB6EQbHdIxCaib-kAqRkACGXWfJXfhdIZcdUWNeLOA9Gt0oXa6HZwsQOXOH4fp-E8YMSyylkKNumODMahgby~Pbe-UEqhucn77u7WzaqGWPiw2TRm4cAxik36aCZA__"
+                  src="https://play-lh.googleusercontent.com/FNVQyeiRF2_1PtLj6vXRjvr4-IGwdaShsTvjSFS_v8TmdHdllJ5lUAHlweR5B44dNQ=w526-h296-rw"
                   alt=""
                   className="w-100 bordered mt-3"
                 />

@@ -396,3 +396,9 @@
 .is-invalid {
     border-color: #f62d51 !important;
 }
+
+.auth_right .form-control.is-invalid{
+  background-image: none;
+}
+
+

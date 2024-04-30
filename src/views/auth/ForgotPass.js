@@ -100,7 +100,7 @@ const ForgotPass = () => {
     }
   };
 
-  const handleVerifyPassWord = (e) => {
+  const handleVerifyPassword = (e) => {
     e.preventDefault();
     if (validatePassword()) {
       navigate("/signup");
@@ -267,12 +267,14 @@ const ForgotPass = () => {
                           </h5>
                         </div>
                         <div className="login_detail_inr p-0 reset_pass_details">
-                          <form onSubmit={handleVerifyPassWord}>
+                          <form onSubmit={handleVerifyPassword}>
                             <div className="form-group mb-3 position-relative">
                               <div className="position-relative">
                                 <input
                                   type={passwordType}
-                                  className="form-control"
+                                  className={`form-control ${
+                                    errors.password && "is-invalid"
+                                  }`}
                                   name="password"
                                   placeholder="Enter Password"
                                   value={input.password}
@@ -304,7 +306,9 @@ const ForgotPass = () => {
                                 <input
                                   type={confirmpasswordType}
                                   name="confirmPassword"
-                                  className="form-control"
+                                  className={`form-control ${
+                                    errors.password && "is-invalid"
+                                  }`}
                                   placeholder="Confirm Password"
                                   value={input.confirmPassword}
                                   onChange={handlePasswordChange}
