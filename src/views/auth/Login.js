@@ -6,6 +6,8 @@ import { FcGoogle } from "react-icons/fc";
 import { IoIosArrowForward } from "react-icons/io";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "./config";
+import UserLogin from "../../services/Login";
+import axios from "axios";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -77,15 +79,26 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const data = {
+      user_email: input?.email,
+      password: input?.password,
+    };
     if (validation()) {
-      console.log(input);
-      localStorage.setItem("email", input.email);
-      localStorage.setItem("password", input.password);
-      navigate("/");
-      setInput({
-        email: "",
-        password: "",
-      });
+      axios
+        .post("http://13.127.147.33:8000/login", data)
+        .then((res) => console.log(res))
+        .catch((err) => console.log(err));
+      // console.log(input);
+      // localStorage.setItem("email", input.email);
+      // localStorage.setItem("password", input.password);
+      // UserLogin.login({ user_email: input?.email, password: input?.password })
+      //   .then((res) => console.log(res))
+      //   .catch((err) => console.log(err));
+      // navigate("/");
+      // setInput({
+      //   email: "",
+      //   password: "",
+      // });
     }
   };
 
