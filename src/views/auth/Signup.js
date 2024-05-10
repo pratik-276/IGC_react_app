@@ -6,6 +6,11 @@ import { IoIosArrowForward } from "react-icons/io";
 import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "./config";
+import UserLogin from "../../services/Login";
+import Cookies from "universal-cookie";
+import toast from "react-hot-toast";
+
+const cookies = new Cookies();
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -97,6 +102,20 @@ const Signup = () => {
     e.preventDefault();
     if (validatePassword()) {
       navigate("/login");
+      UserLogin.SignUp({ user_email: email, password: input?.password })
+        .then((res) => {
+          if (res?.success === true) {
+            localStorage.setItem("user_id", res?.data?.user_id);
+            cookies.set("access_token", res?.data?.access, { path: "/" });
+            cookies.set("refresh_token", res?.data?.refresh, { path: "/" });
+            toast.success(res?.message);
+            navigate("/");
+          } else {
+            setErrorMessage(res?.message);
+            toast.error(res?.message);
+          }
+        })
+        .catch((err) => console.log(err));
     }
   };
 

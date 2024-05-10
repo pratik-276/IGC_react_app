@@ -15,15 +15,25 @@ import Compass from "./views/ui/Compass";
 import Login from "./views/auth/Login";
 import Signup from "./views/auth/Signup";
 import ForgotPass from "./views/auth/ForgotPass";
+import { Toaster } from "react-hot-toast";
+import ProtectedRoute from "./utils/ProtectedRoute";
 
 const App = () => {
   return (
     <>
+      <Toaster toastOptions={{ duration: 3000 }} />
       <Routes>
         <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
           <Route path="/game-tracking" element={<GameTracking />} />
-          <Route path="/calibrate-compass" element={<Compass />} />
+          <Route
+            path="calibrate-compass"
+            element={
+              <ProtectedRoute>
+                <Compass />
+              </ProtectedRoute>
+            }
+          />
         </Route>
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<Signup />} />

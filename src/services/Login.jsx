@@ -9,8 +9,18 @@ const login = async (data) => {
     return d;
 };
 
+const SignUp = async (data) => {
+    let d = await Call({
+        path: "signup",
+        method: "post",
+        data,
+    });
+    return d;
+};
+
 const exportObject = {
-    login
+    login,
+    SignUp
 };
 
 export default exportObject;

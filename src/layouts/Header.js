@@ -15,10 +15,13 @@ import { ReactComponent as LogoWhite } from "../assets/images/logos/adminprowhit
 import user1 from "../assets/images/users/user4.jpg";
 import logo from "../assets/images/logos/AEG-Logo.png";
 import "./layout.css";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const Header = () => {
   const navigate = useNavigate();
-  const email = localStorage.getItem("email");
+  const user_id = localStorage.getItem("user_id");
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
 
@@ -37,11 +40,12 @@ const Header = () => {
   };
 
   const logOut = () => {
-    localStorage.removeItem("email");
-    localStorage.removeItem("password");
+    localStorage.removeItem("user_id");
+    cookies.remove("access_token");
+    cookies.remove("refresh_token");
   };
 
-  useLayoutEffect(() => {}, [email]);
+  useLayoutEffect(() => {}, [user_id]);
 
   return (
     <>
@@ -85,14 +89,13 @@ const Header = () => {
 
         <Collapse navbar isOpen={isOpen}>
           <Nav className="me-auto" navbar></Nav>
-          {email ? (
+          {user_id ? (
             <>
               <Dropdown isOpen={dropdownOpen} toggle={toggle}>
                 <DropdownToggle color="transparent">
                   <div className="profile_icon">
                     <div className="profile_name text-end">
                       <h3>Shantanu Khoraskar</h3>
-                      <p>{email ? email : ""}</p>
                     </div>
                     <img
                       src={user1}

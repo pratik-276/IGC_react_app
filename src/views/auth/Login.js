@@ -7,7 +7,10 @@ import { IoIosArrowForward } from "react-icons/io";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "./config";
 import UserLogin from "../../services/Login";
-import axios from "axios";
+import toast from "react-hot-toast";
+import Cookies from "universal-cookie";
+
+const cookies = new Cookies();
 
 const Login = () => {
   const navigate = useNavigate();
@@ -19,6 +22,8 @@ const Login = () => {
     email: "",
     password: "",
   });
+
+  const [errorMessage, setErrorMessage] = useState("");
 
   const togglePassword = (e) => {
     e.preventDefault();
@@ -79,26 +84,22 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const data = {
-      user_email: input?.email,
-      password: input?.password,
-    };
     if (validation()) {
-      axios
-        .post("http://13.127.147.33:8000/login", data)
-        .then((res) => console.log(res))
+      UserLogin.login({ user_email: input?.email, password: input?.password })
+        .then((res) => {
+          if (res?.success === true) {
+            localStorage.setItem("user_id", res?.data?.user_id);
+            cookies.set("access_token", res?.data?.access, { path: "/" });
+            cookies.set("refresh_token", res?.data?.refresh, { path: "/" });
+            toast.success("Login Successfully");
+            navigate("/");
+          } else {
+            setErrorMessage(res?.message);
+            toast.error(res?.message)
+            console.log("res", res.message)
+          }
+        })
         .catch((err) => console.log(err));
-      // console.log(input);
-      // localStorage.setItem("email", input.email);
-      // localStorage.setItem("password", input.password);
-      // UserLogin.login({ user_email: input?.email, password: input?.password })
-      //   .then((res) => console.log(res))
-      //   .catch((err) => console.log(err));
-      // navigate("/");
-      // setInput({
-      //   email: "",
-      //   password: "",
-      // });
     }
   };
 

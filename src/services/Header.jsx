@@ -1,16 +1,20 @@
+import Cookies from "universal-cookie";
+
 export default function authHeader(headerType) {
-    const token = localStorage.getItem("accessToken");
-    if (token) {
+    var cookie = new Cookies()
+    const access_token = cookie.get('access')
+
+    if (access_token) {
         // for Node.js Express back-end
         if (headerType === "") {
             return {
-                Authorization: "Bearer " + token,
+                Authorization: "Bearer " + access_token,
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "X-Requested-With",
             };
         } else if (headerType === "multipart") {
             return {
-                Authorization: "Bearer " + token,
+                Authorization: "Bearer " + access_token,
                 "Access-Control-Allow-Origin": "*",
                 "Access-Control-Allow-Headers": "X-Requested-With",
                 "Content-type": "multipart/form-data",

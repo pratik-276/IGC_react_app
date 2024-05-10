@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import "./index.css";
 import Dropdown from "react-dropdown";
@@ -14,6 +14,9 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
+import CompassData from "../../services/CompassApi";
+import { Button, Drawer } from "antd";
+import { CloseOutlined } from "@ant-design/icons";
 
 const options = ["Pause", "inProgress", "Not Available"];
 const options1 = ["one", "two", "three"];
@@ -23,11 +26,34 @@ const options4 = ["5", "10", "15", "20"];
 const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
 const Compass = () => {
+  const user_id = localStorage.getItem("user_id");
+  const [compassRead, setCompassRead] = useState([]);
   const [selectedOption, setSelectedOption] = useState(null);
   const [trackTime, setTrackTime] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+
+  const [open, setOpen] = useState(false);
+  const [childrenDrawer, setChildrenDrawer] = useState(false);
+
+  const showDrawer = () => {
+    setOpen(true);
+  };
+
+  const onClose = () => {
+    setOpen(false);
+    setSelectedOption("");
+  };
+
+  const showChildrenDrawer = () => {
+    setChildrenDrawer(true);
+    setSelectedOption("");
+  };
+
+  const onChildrenDrawerClose = () => {
+    setChildrenDrawer(false);
+  };
 
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(5);
@@ -81,6 +107,21 @@ const Compass = () => {
     }
   };
 
+  const getCompassReadData = () => {
+    const payload = { user_id: user_id };
+
+    CompassData.compass_read(payload)
+      .then((res) => {
+        if (res?.success === true) {
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useEffect(() => {
+    getCompassReadData();
+  }, [user_id]);
+
   return (
     <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
@@ -91,14 +132,9 @@ const Compass = () => {
               <div className="col-md-5">
                 <div className="compass-text text-center">
                   <p>Currently there are no games or Casino configured</p>
-                  <button
-                    className="btn game_add_btn"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasCalibrate"
-                    aria-controls="offcanvasCalibrate"
-                  >
+                  <Button className="btn game_add_btn" onClick={showDrawer}>
                     Calibrate Casino or Game <FaPlus className="ms-2" />
-                  </button>
+                  </Button>
                 </div>
               </div>
             </div>
@@ -122,12 +158,7 @@ const Compass = () => {
                   </button>
                 </div> */}
                 <div className="col-md-6 text-end">
-                  <button
-                    className="btn game_add_btn"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasCalibrate"
-                    aria-controls="offcanvasCalibrate"
-                  >
+                  <button className="btn game_add_btn" onClick={showDrawer}>
                     Calibrate Casino or Game <FaPlus className="ms-2" />
                   </button>
                 </div>
@@ -312,7 +343,7 @@ const Compass = () => {
       </div>
 
       {/* CALIBRATE COMPASS DEMO SCREEN OFFCANVAS HERE */}
-      {/* <div
+      <div
         className="offcanvas offcanvas-end w-75 bg-white"
         tabIndex="-1"
         id="offcanvasRight"
@@ -522,9 +553,267 @@ const Compass = () => {
             </button>
           </div>
         </div>
-      </div> */}
+      </div>
 
-      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME */}
+      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN ANTD */}
+      <Drawer
+        title="Calibrate"
+        width={childrenDrawer ? "100%" : "70%"}
+        closable={true}
+        onClose={onClose}
+        maskClosable={false}
+        open={open}
+        closeIcon={<CloseOutlined className="custom-close-icon" />}
+        footer={
+          <div style={{ textAlign: "right" }}>
+            <button
+              onClick={onClose}
+              style={{ marginRight: 8 }}
+              className="compass-sidebar-back"
+            >
+              Back
+            </button>
+            {selectedOption == "Casino 1" ? (
+              <button
+                className={`compass-sidebar-next ${
+                  !selectedOption ? "btn-disabled" : ""
+                }`}
+                disabled={!selectedOption}
+                onClick={showChildrenDrawer}
+              >
+                Next
+              </button>
+            ) : (
+              <button
+                className={`compass-sidebar-next ${
+                  !selectedOption ? "btn-disabled" : ""
+                }`}
+                disabled={!selectedOption}
+                onClick={showChildrenDrawer}
+              >
+                Next
+              </button>
+            )}
+          </div>
+        }
+        className={childrenDrawer ? "show_children_drawer" : ""}
+      >
+        <div
+          className={`calibrate-title ${
+            selectedOption === "Casino 1" ? "selected" : ""
+          }`}
+          onClick={() => handleSelectOption("Casino 1")}
+        >
+          <span>Select Casino</span>
+          <div className="casino-select-listing mt-4">
+            {data?.map((data, index) => (
+              <div className="calibrate-casino-data-display" key={data.id}>
+                <FiMinusCircle style={{ fontSize: "22px" }} />
+                <div className="casino-data-bar">
+                  <label htmlFor={data.id}>{data.name}</label>
+                  <Link>{data.link}</Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="calibrate-content mt-4">
+            <div className="calibrate-icon">
+              <CiCirclePlus />
+            </div>
+            <p>Start calibrating by adding Casino</p>
+          </div>
+        </div>
+        <div
+          className={`calibrate-title mt-4 ${
+            selectedOption === "Casino 2" ? "selected" : ""
+          }`}
+          onClick={() => handleSelectOption("Casino 2")}
+        >
+          <span>Select Game</span>
+          <div className="casino-select-listing mt-4">
+            {data?.map((data, index) => (
+              <div className="calibrate-casino-data-display" key={data.id}>
+                <FiMinusCircle style={{ fontSize: "22px" }} />
+                <div className="casino-data-bar">
+                  <label htmlFor={data.id}>{data.name}</label>
+                  <Link>{data.link}</Link>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="calibrate-content mt-4">
+            <div className="calibrate-icon">
+              <CiCirclePlus />
+            </div>
+            <div>
+              <p>Start calibrating by adding Game</p>
+            </div>
+          </div>
+        </div>
+        {/* For Select Casino in antd drawer */}
+        {/* {selectedOption === "Casino 1" && ( */}
+        <Drawer
+          title="Choose Casino"
+          width="50%"
+          closable={true}
+          maskClosable={false}
+          onClose={onChildrenDrawerClose}
+          open={childrenDrawer}
+          closeIcon={<CloseOutlined className="custom-close-icon" />}
+          footer={
+            <div style={{ textAlign: "right" }}>
+              <button
+                onClick={onChildrenDrawerClose}
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
+              >
+                Back
+              </button>
+              <button
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
+              >
+                Save
+              </button>
+            </div>
+          }
+        >
+          <div className="">
+            <div className="search-bar position-relative">
+              <div className="serching">
+                <input
+                  type="text"
+                  placeholder="search game here"
+                  className="search-casino-input"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                />
+                <div className="casino-search-icon">
+                  <IoIosSearch style={{ fontSize: "20px" }} />
+                </div>
+              </div>
+              {filteredData.length === 0 ? (
+                <div className="casedata-no-data-search">
+                  <div className="no-search-result">
+                    <span>No Search result found</span>
+                  </div>
+                  <div
+                    className="request-demo"
+                    data-bs-toggle="offcanvas"
+                    data-bs-target="#offcanvasRequestCasino"
+                    aria-controls="offcanvasRequestCasino"
+                  >
+                    <AiOutlinePlus className="me-2" />
+                    <span>Request New Casino</span>
+                  </div>
+                </div>
+              ) : (
+                <div>
+                  {filteredData.map((data, index) => (
+                    <div className="casino-data-display" key={data.id}>
+                      <input
+                        type="checkbox"
+                        className="casino-checkbox"
+                        id={data.id}
+                      />
+                      <div className="casino-data-bar">
+                        <label htmlFor={data.id}>{data.name}</label>
+                        <Link>{data.link}</Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+          </div>
+          <div className="line">
+            <span></span>
+          </div>
+        </Drawer>
+        {/* )} */}
+        {/* {selectedOption === "Casino 2" && (
+          <Drawer
+            title="Choose Casino"
+            width="50%"
+            closable={true}
+            maskClosable={false}
+            onClose={onChildrenDrawerClose}
+            open={childrenDrawer}
+            closeIcon={<CloseOutlined className="custom-close-icon" />}
+            footer={
+              <div style={{ textAlign: "right" }}>
+                <button
+                  onClick={onChildrenDrawerClose}
+                  style={{ marginRight: 8 }}
+                  className="compass-sidebar-back"
+                >
+                  Back
+                </button>
+                <button
+                  style={{ marginRight: 8 }}
+                  className="compass-sidebar-back"
+                >
+                  Save
+                </button>
+              </div>
+            }
+          >
+            <div className="">
+              <div className="search-bar position-relative">
+                <div className="serching">
+                  <input
+                    type="text"
+                    placeholder="search game here"
+                    className="search-casino-input"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                  />
+                  <div className="casino-search-icon">
+                    <IoIosSearch style={{ fontSize: "20px" }} />
+                  </div>
+                </div>
+                {filteredData.length === 0 ? (
+                  <div className="casedata-no-data-search">
+                    <div className="no-search-result">
+                      <span>No Search result found</span>
+                    </div>
+                    <div
+                      className="request-demo"
+                      data-bs-toggle="offcanvas"
+                      data-bs-target="#offcanvasRequestCasino"
+                      aria-controls="offcanvasRequestCasino"
+                    >
+                      <AiOutlinePlus className="me-2" />
+                      <span>Request New Casino</span>
+                    </div>
+                  </div>
+                ) : (
+                  <div>
+                    {filteredData.map((data, index) => (
+                      <div className="casino-data-display" key={data.id}>
+                        <input
+                          type="checkbox"
+                          className="casino-checkbox"
+                          id={data.id}
+                        />
+                        <div className="casino-data-bar">
+                          <label htmlFor={data.id}>{data.name}</label>
+                          <Link>{data.link}</Link>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            </div>
+            <div className="line">
+              <span></span>
+            </div>
+          </Drawer>
+        )} */}
+      </Drawer>
+
+      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN BOOTSTRAP */}
       <div
         className="offcanvas offcanvas-end compass-sidebar"
         tabIndex="-1"

@@ -1,9 +1,10 @@
 import Axios from "axios";
+import Cookies from "universal-cookie";
 const api = process.env.REACT_APP_API_KEY;
 
 export default function call({ path, method, data }) {
-  // const token = localStorage.getItem("accessToken");
-  const token = localStorage.getItem("token");
+  var cookie = new Cookies()
+  const access_token = cookie.get('access_token')
 
   return new Promise((resolve, reject) => {
     const config = {
@@ -12,8 +13,8 @@ export default function call({ path, method, data }) {
       data,
     };
 
-    if (token) {
-      config.headers = { Authorization: `Bearer ${token}` };
+    if (access_token) {
+      config.headers = { Authorization: `Bearer ${access_token}` };
     }
 
     Axios(config)
