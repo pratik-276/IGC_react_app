@@ -2,7 +2,7 @@ import Cookies from "universal-cookie";
 
 export default function authHeader(headerType) {
     var cookie = new Cookies()
-    const access_token = cookie.get('access')
+    const access_token = cookie.get('access_token')
 
     if (access_token) {
         // for Node.js Express back-end

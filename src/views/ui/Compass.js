@@ -4,7 +4,7 @@ import "./index.css";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { Pagination } from "react-bootstrap";
-import { data, gameData } from "./dummydata";
+import { data } from "./dummydata";
 import { FaChartLine, FaPlus } from "react-icons/fa6";
 import { CiCirclePlus, CiPause1 } from "react-icons/ci";
 import { IoIosSearch, IoMdSearch } from "react-icons/io";
@@ -15,8 +15,10 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
 import CompassData from "../../services/CompassApi";
-import { Button, Drawer } from "antd";
+import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import toast from "react-hot-toast";
+import Loader from "../../layouts/loader/Loader";
 
 const options = ["Pause", "inProgress", "Not Available"];
 const options1 = ["one", "two", "three"];
@@ -27,17 +29,28 @@ const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
 const Compass = () => {
   const user_id = localStorage.getItem("user_id");
+
   const [compassRead, setCompassRead] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectAll, setSelectAll] = useState(false);
+  const [loader, setLoader] = useState(true);
+
   const [selectedOption, setSelectedOption] = useState(null);
+
   const [trackTime, setTrackTime] = useState("");
+
   const [searchQuery, setSearchQuery] = useState("");
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
   const [open, setOpen] = useState(false);
-  const [childrenDrawer, setChildrenDrawer] = useState(false);
 
-  const showDrawer = () => {
+  const [casinoDrawer, setCasinoDrawer] = useState(false);
+  const [gameDrawer, setGameDrawer] = useState(false);
+  const [newCasino, setNewCasino] = useState(false);
+
+  const showFirstDrawer = () => {
     setOpen(true);
   };
 
@@ -46,13 +59,36 @@ const Compass = () => {
     setSelectedOption("");
   };
 
-  const showChildrenDrawer = () => {
-    setChildrenDrawer(true);
+  // FUNCTION FOR OPEN CASINO DRAWER
+  const showCasinoDrawer = () => {
+    setCasinoDrawer(true);
     setSelectedOption("");
   };
 
-  const onChildrenDrawerClose = () => {
-    setChildrenDrawer(false);
+  // FUNCTION FOR CLOSE GAME DRAWER
+  const onCasinoDrawerClose = () => {
+    setCasinoDrawer(false);
+  };
+
+  // FUNCTION FOR OPEN GAME DRAWER
+  const showGameDrawer = () => {
+    setGameDrawer(true);
+    setSelectedOption("");
+  };
+
+  // FUNCTION FOR CLOSE GAME DRAWER
+  const onGameDrawerClose = () => {
+    setGameDrawer(false);
+  };
+
+  // FUNCTION FOR OPEN ADD NEW CASINO DRAWER
+  const showNewCasinoDrawer = () => {
+    setNewCasino(true);
+  };
+
+  // FUNCTION FOR CLOSE NEW CASINO DRAWER
+  const onNewCasinoDrawerClose = () => {
+    setNewCasino(false);
   };
 
   const [currentPage, setCurrentPage] = useState(1);
@@ -65,8 +101,8 @@ const Compass = () => {
     const endIndex = startIndex + itemsPerPage;
     return array?.slice(startIndex, endIndex);
   };
-  const paginatedItems = paginate(data, currentPage, itemsPerPage);
-  const totalPages = Math.ceil(data.length / itemsPerPage);
+  const paginatedItems = paginate(compassRead, currentPage, itemsPerPage);
+  const totalPages = Math.ceil(compassRead?.length / itemsPerPage);
 
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
@@ -86,14 +122,12 @@ const Compass = () => {
 
   const SelectTime = (option) => {
     setTrackTime(option);
-    // console.log(option?.label, "option");
     setStartDate(null);
     setEndDate(null);
   };
 
   const handleStartDateChange = (date) => {
     setStartDate(date);
-    console.log("start date", date);
     if (endDate && date > endDate) {
       setEndDate(null);
     }
@@ -101,18 +135,47 @@ const Compass = () => {
 
   const handleEndDateChange = (date) => {
     setEndDate(date);
-    console.log("end date", date);
     if (!startDate || date >= startDate) {
       setEndDate(date);
     }
   };
 
   const getCompassReadData = () => {
-    const payload = { user_id: user_id };
-
-    CompassData.compass_read(payload)
+    CompassData.compass_read({ user_id: parseInt(user_id) })
       .then((res) => {
         if (res?.success === true) {
+          setCompassRead(res?.data);
+          setLoader(false);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  const handleCheckboxChange = (event) => {
+    const itemId = parseInt(event.target.id);
+    if (event.target.checked) {
+      setSelectedItems([...selectedItems, itemId]);
+    } else {
+      setSelectedItems(selectedItems.filter((id) => id !== itemId));
+    }
+  };
+
+  const toggleSelectAll = () => {
+    const allIds = compassRead.map((datas) => datas?.id);
+    if (selectAll) {
+      setSelectedItems([]);
+    } else {
+      setSelectedItems(allIds);
+    }
+    setSelectAll(!selectAll);
+  };
+
+  const handleDelete = () => {
+    CompassData.compass_delete({ id: selectedItems })
+      .then((res) => {
+        if (res?.success === true) {
+          getCompassReadData();
+          toast.success(res?.message);
         }
       })
       .catch((err) => console.log(err));
@@ -125,222 +188,268 @@ const Compass = () => {
   return (
     <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
-      <div className="compass h-100">
-        {paginatedItems?.length == 0 ? (
-          <>
-            <div className="row h-100 align-items-center justify-content-center">
-              <div className="col-md-5">
-                <div className="compass-text text-center">
-                  <p>Currently there are no games or Casino configured</p>
-                  <Button className="btn game_add_btn" onClick={showDrawer}>
-                    Calibrate Casino or Game <FaPlus className="ms-2" />
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="compass-data">
-              <div className="row align-items-center">
-                <div className="col-md-6">
-                  <h3>Calibrate Compass</h3>
-                  <span>Track, add, delete all your games and operators</span>
-                </div>
-                {/* <div className="col-md-4">
-                  <button
-                    className="btn game_add_btn"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRight"
-                    aria-controls="offcanvasRight"
-                  >
-                    Demo Model <FaPlus className="ms-2" />
-                  </button>
-                </div> */}
-                <div className="col-md-6 text-end">
-                  <button className="btn game_add_btn" onClick={showDrawer}>
-                    Calibrate Casino or Game <FaPlus className="ms-2" />
-                  </button>
-                </div>
-              </div>
-              <div className="compass-data-border mb-3">
-                <span></span>
-              </div>
-              <div className="d-flex justify-content-between">
-                <div className="calibrate-dropdown">
-                  <Dropdown options={options} placeholder="Status" />
-                  <Dropdown options={options1} placeholder="Operator" />
-                  <Dropdown options={options2} placeholder="Game" />
-                  <Dropdown options={options3} placeholder="All Time" />
-                </div>
-
-                <div className="compass-right-icon">
-                  <div className="compass-search">
-                    <FaChartLine />
-                  </div>
-                  <div className="compass-search">
-                    <i className="bi bi-trash3"></i>
-                  </div>
-                  <div className="compass-search">
-                    <CiPause1 />
-                  </div>
-                  <div className="compass-search">
-                    <IoMdSearch />
-                  </div>
-                </div>
-              </div>
-              <div className="compass-data-table pt-3">
-                <table className="table table-bordered">
-                  <thead className="table-heading-name">
-                    <tr>
-                      <th scope="col">
-                        <input type="checkbox" className="casino-checkbox" />
-                      </th>
-                      <th scope="col">Created On</th>
-                      <th scope="col">Operator Name</th>
-                      <th scope="col">Game Name </th>
-                      <th scope="col" className="text-center">
-                        Tracking Timeline
-                      </th>
-                      <th scope="col" className="text-center">
-                        Credits consumed
-                      </th>
-                      <th scope="col" className="text-center">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="table-body-items">
-                    {paginatedItems?.map((datas) => {
-                      return (
-                        <tr key={datas.name} className="table-body-items-table">
-                          <td scope="row" style={{ width: "5%" }}>
-                            <input
-                              type="checkbox"
-                              className="casino-checkbox"
-                              id={data.id}
-                            />
-                          </td>
-                          <td scope="row" style={{ width: "13%" }}>
-                            <span className="m-0">{datas.createdData}</span>
-                          </td>
-                          <td
-                            scope="row"
-                            style={{ width: "20%", fontSize: "14px" }}
-                          >
-                            <p className="m-0">{datas.name}</p>
-                            <Link to="/">{datas.link}</Link>
-                          </td>
-                          <td style={{ width: "20%", fontSize: "14px" }}>
-                            <p className="m-0">{datas.gameName}</p>
-                            <Link to="/">{datas.link}</Link>
-                          </td>
-                          <td className="text-center">
-                            <span className="tracking-time">
-                              {datas.Timeline}
-                            </span>
-                          </td>
-                          <td style={{ width: "15%" }} className="text-center">
-                            <span className="credits">{datas.Credits}</span>
-                          </td>
-                          <td className="text-center">
-                            <span className="action-btn"></span>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
-              </div>
-
-              <div>
-                <div className="d-flex justify-content-between align-items-center">
-                  <div>
-                    <span>
-                      Showing {(currentPage - 1) * itemsPerPage + 1} -
-                      {Math.min(currentPage * itemsPerPage, data.length)} out
-                      of&nbsp;
-                      {data.length}
-                    </span>
-                  </div>
-                  <div>
-                    {totalPages > 1 && (
-                      <div className="d-flex justify-content-center orderlist_pagination">
-                        <Pagination className="custom-pagination">
-                          <Pagination.Prev
-                            onClick={() =>
-                              setCurrentPage((prev) => Math.max(prev - 1, 1))
-                            }
-                            disabled={currentPage === 1}
-                          >
-                            <MdKeyboardArrowLeft className="me-2" /> Prev
-                          </Pagination.Prev>
-                          {[...Array(totalPages).keys()].map((page) => {
-                            if (
-                              page === 0 ||
-                              page === totalPages - 1 ||
-                              (page >= currentPage - 1 &&
-                                page <= currentPage + 1)
-                            ) {
-                              return (
-                                <Pagination.Item
-                                  key={page}
-                                  active={page + 1 === currentPage}
-                                  onClick={() => handlePageChange(page + 1)}
-                                  className="custom-pagination-item"
-                                >
-                                  {page + 1}
-                                </Pagination.Item>
-                              );
-                            } else if (
-                              (page === 1 && currentPage > 4) ||
-                              (page === totalPages - 2 &&
-                                currentPage < totalPages - 3)
-                            ) {
-                              return (
-                                <Pagination.Item
-                                  key={page}
-                                  disabled
-                                  className="custom-pagination-item"
-                                >
-                                  ...
-                                </Pagination.Item>
-                              );
-                            }
-                            return null;
-                          })}
-                          <Pagination.Next
-                            onClick={() =>
-                              setCurrentPage((prev) =>
-                                Math.min(prev + 1, totalPages)
-                              )
-                            }
-                            disabled={currentPage === totalPages}
-                          >
-                            Next
-                            <MdKeyboardArrowRight className="ms-2" />
-                          </Pagination.Next>
-                        </Pagination>
+      {loader ? (
+        <Loader />
+      ) : (
+        <>
+          <div className="compass h-100">
+            <>
+              {paginatedItems?.length == 0 ? (
+                <>
+                  <div className="row h-100 align-items-center justify-content-center">
+                    <div className="col-md-5">
+                      <div className="compass-text text-center">
+                        <p>Currently there are no games or Casino configured</p>
+                        <button
+                          className="btn game_add_btn"
+                          onClick={showFirstDrawer}
+                        >
+                          Calibrate Casino or Game <FaPlus className="ms-2" />
+                        </button>
                       </div>
-                    )}
+                    </div>
                   </div>
-                  <div className="d-flex align-items-center pagination_per_select">
-                    <span className="me-1">Items per Page: </span>
-                    <Dropdown
-                      options={options4.map((option) => ({
-                        value: option,
-                        label: option,
-                      }))}
-                      onChange={handleItemsPerPageChange}
-                      value={itemsPerPage.toString()}
-                    />
+                </>
+              ) : (
+                <>
+                  <div className="compass-data">
+                    <div className="row align-items-center">
+                      <div className="col-md-6">
+                        <h3>Calibrate Compass</h3>
+                        <span>
+                          Track, add, delete all your games and operators
+                        </span>
+                      </div>
+                      {/* <div className="col-md-4">
+                <button
+                  className="btn game_add_btn"
+                  data-bs-toggle="offcanvas"
+                  data-bs-target="#offcanvasRight"
+                  aria-controls="offcanvasRight"
+                >
+                  Demo Model <FaPlus className="ms-2" />
+                </button>
+              </div> */}
+                      <div className="col-md-6 text-end">
+                        <button
+                          className="btn game_add_btn"
+                          onClick={showFirstDrawer}
+                        >
+                          Calibrate Casino or Game <FaPlus className="ms-2" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="compass-data-border mb-3">
+                      <span></span>
+                    </div>
+                    <div className="d-flex justify-content-between">
+                      <div className="calibrate-dropdown">
+                        <Dropdown options={options} placeholder="Status" />
+                        <Dropdown options={options1} placeholder="Operator" />
+                        <Dropdown options={options2} placeholder="Game" />
+                        <Dropdown options={options3} placeholder="All Time" />
+                      </div>
+
+                      <div className="compass-right-icon">
+                        <div className="compass-search">
+                          <FaChartLine />
+                        </div>
+                        <div className="compass-search" onClick={handleDelete}>
+                          <i className="bi bi-trash3"></i>
+                        </div>
+                        <div className="compass-search">
+                          <CiPause1 />
+                        </div>
+                        <div className="compass-search">
+                          <IoMdSearch />
+                        </div>
+                      </div>
+                    </div>
+                    <div className="compass-data-table pt-3">
+                      <table className="table table-bordered">
+                        <thead className="table-heading-name">
+                          <tr>
+                            <th scope="col">
+                              <input
+                                type="checkbox"
+                                className="casino-checkbox"
+                                onChange={toggleSelectAll}
+                                checked={selectAll}
+                              />
+                            </th>
+                            <th scope="col">Created On</th>
+                            <th scope="col">Operator Name</th>
+                            <th scope="col">Game Name </th>
+                            <th scope="col" className="text-center">
+                              Tracking Timeline
+                            </th>
+                            <th scope="col" className="text-center">
+                              Credits consumed
+                            </th>
+                            <th scope="col" className="text-center">
+                              Status
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody className="table-body-items">
+                          {paginatedItems?.map((datas) => {
+                            const startDate = new Date(datas?.start_date);
+                            const formattedStartDate = startDate
+                              ?.toLocaleDateString("en-GB")
+                              .replace(/\//g, "-");
+                            const endDate = new Date(datas?.end_date);
+                            const formattedEndDate = endDate
+                              ?.toLocaleDateString("en-GB")
+                              .replace(/\//g, "-");
+                            return (
+                              <tr
+                                key={datas.id}
+                                className="table-body-items-table"
+                              >
+                                <td scope="row" style={{ width: "5%" }}>
+                                  <input
+                                    type="checkbox"
+                                    className="casino-checkbox"
+                                    id={datas.id}
+                                    onChange={handleCheckboxChange}
+                                  />
+                                </td>
+                                <td scope="row" style={{ width: "13%" }}>
+                                  <span className="m-0">
+                                    {datas.createdData}
+                                  </span>
+                                </td>
+                                <td
+                                  scope="row"
+                                  style={{ width: "20%", fontSize: "14px" }}
+                                >
+                                  <p className="m-0">{datas.name}</p>
+                                  <Link to="/">{datas.link}</Link>
+                                </td>
+                                <td style={{ width: "20%", fontSize: "14px" }}>
+                                  <p className="m-0">{datas.gameName}</p>
+                                  <Link to="/">{datas.link}</Link>
+                                </td>
+                                <td className="text-center">
+                                  <span className="tracking-time">
+                                    {formattedStartDate} to {formattedEndDate}
+                                  </span>
+                                </td>
+                                <td
+                                  style={{ width: "15%" }}
+                                  className="text-center"
+                                >
+                                  {/* <span className="credits">{datas.Credits}</span> */}
+                                  <span className="credits">-</span>
+                                </td>
+                                <td className="text-center">
+                                  <span className="action-btn"></span>
+                                </td>
+                              </tr>
+                            );
+                          })}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <div>
+                      <div className="d-flex justify-content-between align-items-center">
+                        <div>
+                          <span>
+                            Showing {(currentPage - 1) * itemsPerPage + 1} -
+                            {Math.min(
+                              currentPage * itemsPerPage,
+                              compassRead?.length
+                            )}
+                            &nbsp;out of&nbsp;
+                            {compassRead?.length}
+                          </span>
+                        </div>
+                        <div>
+                          {totalPages > 1 && (
+                            <div className="d-flex justify-content-center orderlist_pagination">
+                              <Pagination className="custom-pagination">
+                                <Pagination.Prev
+                                  onClick={() =>
+                                    setCurrentPage((prev) =>
+                                      Math.max(prev - 1, 1)
+                                    )
+                                  }
+                                  disabled={currentPage === 1}
+                                >
+                                  <MdKeyboardArrowLeft className="me-2" /> Prev
+                                </Pagination.Prev>
+                                {[...Array(totalPages).keys()].map((page) => {
+                                  if (
+                                    page === 0 ||
+                                    page === totalPages - 1 ||
+                                    (page >= currentPage - 1 &&
+                                      page <= currentPage + 1)
+                                  ) {
+                                    return (
+                                      <Pagination.Item
+                                        key={page}
+                                        active={page + 1 === currentPage}
+                                        onClick={() =>
+                                          handlePageChange(page + 1)
+                                        }
+                                        className="custom-pagination-item"
+                                      >
+                                        {page + 1}
+                                      </Pagination.Item>
+                                    );
+                                  } else if (
+                                    (page === 1 && currentPage > 4) ||
+                                    (page === totalPages - 2 &&
+                                      currentPage < totalPages - 3)
+                                  ) {
+                                    return (
+                                      <Pagination.Item
+                                        key={page}
+                                        disabled
+                                        className="custom-pagination-item"
+                                      >
+                                        ...
+                                      </Pagination.Item>
+                                    );
+                                  }
+                                  return null;
+                                })}
+                                <Pagination.Next
+                                  onClick={() =>
+                                    setCurrentPage((prev) =>
+                                      Math.min(prev + 1, totalPages)
+                                    )
+                                  }
+                                  disabled={currentPage === totalPages}
+                                >
+                                  Next
+                                  <MdKeyboardArrowRight className="ms-2" />
+                                </Pagination.Next>
+                              </Pagination>
+                            </div>
+                          )}
+                        </div>
+                        <div className="d-flex align-items-center pagination_per_select">
+                          <span className="me-1">Items per Page: </span>
+                          <Dropdown
+                            options={options4.map((option) => ({
+                              value: option,
+                              label: option,
+                            }))}
+                            onChange={handleItemsPerPageChange}
+                            value={itemsPerPage?.toString()}
+                          />
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+                </>
+              )}
+            </>
+          </div>
+        </>
+      )}
 
       {/* CALIBRATE COMPASS DEMO SCREEN OFFCANVAS HERE */}
       <div
@@ -558,7 +667,7 @@ const Compass = () => {
       {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN ANTD */}
       <Drawer
         title="Calibrate"
-        width={childrenDrawer ? "100%" : "70%"}
+        width={casinoDrawer || gameDrawer || newCasino ? "100%" : "70%"}
         closable={true}
         onClose={onClose}
         maskClosable={false}
@@ -579,7 +688,7 @@ const Compass = () => {
                   !selectedOption ? "btn-disabled" : ""
                 }`}
                 disabled={!selectedOption}
-                onClick={showChildrenDrawer}
+                onClick={showCasinoDrawer}
               >
                 Next
               </button>
@@ -589,14 +698,16 @@ const Compass = () => {
                   !selectedOption ? "btn-disabled" : ""
                 }`}
                 disabled={!selectedOption}
-                onClick={showChildrenDrawer}
+                onClick={showGameDrawer}
               >
                 Next
               </button>
             )}
           </div>
         }
-        className={childrenDrawer ? "show_children_drawer" : ""}
+        className={
+          casinoDrawer || gameDrawer || newCasino ? "show_children_drawer" : ""
+        }
       >
         <div
           className={`calibrate-title ${
@@ -606,7 +717,7 @@ const Compass = () => {
         >
           <span>Select Casino</span>
           <div className="casino-select-listing mt-4">
-            {data?.map((data, index) => (
+            {/* {data?.map((data, index) => (
               <div className="calibrate-casino-data-display" key={data.id}>
                 <FiMinusCircle style={{ fontSize: "22px" }} />
                 <div className="casino-data-bar">
@@ -614,7 +725,7 @@ const Compass = () => {
                   <Link>{data.link}</Link>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
           <div className="calibrate-content mt-4">
             <div className="calibrate-icon">
@@ -631,7 +742,7 @@ const Compass = () => {
         >
           <span>Select Game</span>
           <div className="casino-select-listing mt-4">
-            {data?.map((data, index) => (
+            {/* {data?.map((data, index) => (
               <div className="calibrate-casino-data-display" key={data.id}>
                 <FiMinusCircle style={{ fontSize: "22px" }} />
                 <div className="casino-data-bar">
@@ -639,7 +750,7 @@ const Compass = () => {
                   <Link>{data.link}</Link>
                 </div>
               </div>
-            ))}
+            ))} */}
           </div>
           <div className="calibrate-content mt-4">
             <div className="calibrate-icon">
@@ -650,20 +761,21 @@ const Compass = () => {
             </div>
           </div>
         </div>
-        {/* For Select Casino in antd drawer */}
-        {/* {selectedOption === "Casino 1" && ( */}
+
+        {/* FOR SELECT CASINO DRAWER */}
         <Drawer
           title="Choose Casino"
           width="50%"
+          className="choose_casino_drawer"
           closable={true}
           maskClosable={false}
-          onClose={onChildrenDrawerClose}
-          open={childrenDrawer}
+          onClose={onCasinoDrawerClose}
+          open={casinoDrawer}
           closeIcon={<CloseOutlined className="custom-close-icon" />}
           footer={
             <div style={{ textAlign: "right" }}>
               <button
-                onClick={onChildrenDrawerClose}
+                onClick={onCasinoDrawerClose}
                 style={{ marginRight: 8 }}
                 className="compass-sidebar-back"
               >
@@ -678,517 +790,193 @@ const Compass = () => {
             </div>
           }
         >
-          <div className="">
-            <div className="search-bar position-relative">
-              <div className="serching">
-                <input
-                  type="text"
-                  placeholder="search game here"
-                  className="search-casino-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <div className="casino-search-icon">
-                  <IoIosSearch style={{ fontSize: "20px" }} />
+          <div className="search-bar position-relative">
+            <div className="serching">
+              <input
+                type="text"
+                placeholder="search game here"
+                className="search-casino-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="casino-search-icon">
+                <IoIosSearch style={{ fontSize: "20px" }} />
+              </div>
+            </div>
+            {filteredData.length === 0 ? (
+              <div className="casedata-no-data-search">
+                <div className="no-search-result">
+                  <span>No Search result found</span>
+                </div>
+                <div className="request-demo" onClick={showNewCasinoDrawer}>
+                  <AiOutlinePlus className="me-2" />
+                  <span>Request New Casino</span>
                 </div>
               </div>
-              {filteredData.length === 0 ? (
-                <div className="casedata-no-data-search">
-                  <div className="no-search-result">
-                    <span>No Search result found</span>
-                  </div>
-                  <div
-                    className="request-demo"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRequestCasino"
-                    aria-controls="offcanvasRequestCasino"
-                  >
-                    <AiOutlinePlus className="me-2" />
-                    <span>Request New Casino</span>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  {filteredData.map((data, index) => (
-                    <div className="casino-data-display" key={data.id}>
-                      <input
-                        type="checkbox"
-                        className="casino-checkbox"
-                        id={data.id}
-                      />
-                      <div className="casino-data-bar">
-                        <label htmlFor={data.id}>{data.name}</label>
-                        <Link>{data.link}</Link>
-                      </div>
+            ) : (
+              <div>
+                {filteredData.map((data, index) => (
+                  <div className="casino-data-display" key={data.id}>
+                    <input
+                      type="checkbox"
+                      className="casino-checkbox"
+                      id={data.id}
+                    />
+                    <div className="casino-data-bar">
+                      <label htmlFor={data.id}>{data.name}</label>
+                      <Link>{data.link}</Link>
                     </div>
-                  ))}
-                </div>
-              )}
-            </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
           <div className="line">
             <span></span>
           </div>
         </Drawer>
-        {/* )} */}
-        {/* {selectedOption === "Casino 2" && (
-          <Drawer
-            title="Choose Casino"
-            width="50%"
-            closable={true}
-            maskClosable={false}
-            onClose={onChildrenDrawerClose}
-            open={childrenDrawer}
-            closeIcon={<CloseOutlined className="custom-close-icon" />}
-            footer={
-              <div style={{ textAlign: "right" }}>
-                <button
-                  onClick={onChildrenDrawerClose}
-                  style={{ marginRight: 8 }}
-                  className="compass-sidebar-back"
-                >
-                  Back
-                </button>
-                <button
-                  style={{ marginRight: 8 }}
-                  className="compass-sidebar-back"
-                >
-                  Save
-                </button>
-              </div>
-            }
-          >
-            <div className="">
-              <div className="search-bar position-relative">
-                <div className="serching">
-                  <input
-                    type="text"
-                    placeholder="search game here"
-                    className="search-casino-input"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                  <div className="casino-search-icon">
-                    <IoIosSearch style={{ fontSize: "20px" }} />
-                  </div>
-                </div>
-                {filteredData.length === 0 ? (
-                  <div className="casedata-no-data-search">
-                    <div className="no-search-result">
-                      <span>No Search result found</span>
-                    </div>
-                    <div
-                      className="request-demo"
-                      data-bs-toggle="offcanvas"
-                      data-bs-target="#offcanvasRequestCasino"
-                      aria-controls="offcanvasRequestCasino"
-                    >
-                      <AiOutlinePlus className="me-2" />
-                      <span>Request New Casino</span>
-                    </div>
-                  </div>
-                ) : (
-                  <div>
-                    {filteredData.map((data, index) => (
-                      <div className="casino-data-display" key={data.id}>
-                        <input
-                          type="checkbox"
-                          className="casino-checkbox"
-                          id={data.id}
-                        />
-                        <div className="casino-data-bar">
-                          <label htmlFor={data.id}>{data.name}</label>
-                          <Link>{data.link}</Link>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-            <div className="line">
-              <span></span>
-            </div>
-          </Drawer>
-        )} */}
-      </Drawer>
 
-      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN BOOTSTRAP */}
-      <div
-        className="offcanvas offcanvas-end compass-sidebar"
-        tabIndex="-1"
-        id="offcanvasCalibrate"
-        aria-labelledby="offcanvasRightCalibrate"
-        data-bs-backdrop="static"
-      >
-        <div className="offcanvas-header">
-          <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
-            Calibrate
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-            onClick={() => setSelectedOption("")}
-          ></button>
-        </div>
-        <div className="offcanvas-body select-casino-game-body">
-          <div
-            className={`calibrate-title ${
-              selectedOption === "Casino 1" ? "selected" : ""
-            }`}
-            onClick={() => handleSelectOption("Casino 1")}
-          >
-            <span>Select Casino</span>
-            <div className="casino-select-listing mt-4">
-              {data?.map((data, index) => (
-                <div className="calibrate-casino-data-display" key={data.id}>
-                  <FiMinusCircle style={{ fontSize: "22px" }} />
-                  <div className="casino-data-bar">
-                    <label htmlFor={data.id}>{data.name}</label>
-                    <Link>{data.link}</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="calibrate-content mt-4">
-              <div className="calibrate-icon">
-                <CiCirclePlus />
-              </div>
-              <p>Start calibrating by adding Casino</p>
-            </div>
-          </div>
-          <div
-            className={`calibrate-title mt-4 ${
-              selectedOption === "Casino 2" ? "selected" : ""
-            }`}
-            onClick={() => handleSelectOption("Casino 2")}
-          >
-            <span>Select Game</span>
-            <div className="casino-select-listing mt-4">
-              {data?.map((data, index) => (
-                <div className="calibrate-casino-data-display" key={data.id}>
-                  <FiMinusCircle style={{ fontSize: "22px" }} />
-                  <div className="casino-data-bar">
-                    <label htmlFor={data.id}>{data.name}</label>
-                    <Link>{data.link}</Link>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="calibrate-content mt-4">
-              <div className="calibrate-icon">
-                <CiCirclePlus />
-              </div>
-              <div>
-                <p>Start calibrating by adding Game</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="offcanvas-footer">
-          <div
-            id="offcanvasRightCalibrate"
-            className="sidebar-model-heading text-end"
-          >
-            <button
-              className="compass-sidebar-back"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-              onClick={() => setSelectedOption("")}
-            >
-              Back
-            </button>
-            {selectedOption == "Casino 1" ? (
+        {/* FOR SELECT GAME DRAWER */}
+        <Drawer
+          title="Choose Game"
+          width="50%"
+          className="choose_casino_drawer"
+          closable={true}
+          maskClosable={false}
+          onClose={onGameDrawerClose}
+          open={gameDrawer}
+          closeIcon={<CloseOutlined className="custom-close-icon" />}
+          footer={
+            <div style={{ textAlign: "right" }}>
               <button
-                className={`compass-sidebar-next ${
-                  !selectedOption ? "btn-disabled" : ""
-                }`}
-                data-bs-toggle="offcanvas"
-                data-bs-target="#casinoSelected"
-                aria-controls="casinoSelected"
-                disabled={!selectedOption}
-                onClick={() => setSelectedOption("")}
+                onClick={onGameDrawerClose}
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
               >
-                Next
+                Back
               </button>
+              <button
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
+              >
+                Save
+              </button>
+            </div>
+          }
+        >
+          <div className="search-bar position-relative">
+            <div className="serching">
+              <input
+                type="text"
+                placeholder="search game here"
+                className="search-casino-input"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+              <div className="casino-search-icon">
+                <IoIosSearch style={{ fontSize: "20px" }} />
+              </div>
+            </div>
+            {filteredData.length === 0 ? (
+              <div className="casedata-no-data-search">
+                <div className="no-search-result">
+                  <span>No Search result found</span>
+                </div>
+                <div className="request-demo" onClick={showNewCasinoDrawer}>
+                  <AiOutlinePlus className="me-2" />
+                  <span>Request New Casino</span>
+                </div>
+              </div>
             ) : (
-              <button
-                className={`compass-sidebar-next ${
-                  !selectedOption ? "btn-disabled" : ""
-                }`}
-                data-bs-toggle="offcanvas"
-                data-bs-target="#offcanvasRight"
-                aria-controls="offcanvasRight"
-                disabled={!selectedOption}
-                onClick={() => setSelectedOption("")}
-              >
-                Next
-              </button>
+              <div>
+                {filteredData.map((data, index) => (
+                  <div className="casino-data-display" key={data.id}>
+                    <input
+                      type="checkbox"
+                      className="casino-checkbox"
+                      id={data.id}
+                    />
+                    <div className="casino-data-bar">
+                      <label htmlFor={data.id}>{data.name}</label>
+                      <Link>{data.link}</Link>
+                    </div>
+                  </div>
+                ))}
+              </div>
             )}
           </div>
-        </div>
-      </div>
-
-      {/* FOR CHOOSE CASINO  */}
-      <div
-        className="offcanvas offcanvas-end casino-sidebar"
-        tabIndex="-1"
-        id="casinoSelected"
-        aria-labelledby="offcanvasRightLabelCasino"
-      >
-        <div className="offcanvas-header">
-          <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
-            Choose Casino
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-        <div className="offcanvas-body p-0 bg-white">
-          <div className="">
-            <div className="search-bar position-relative">
-              <div className="serching">
-                <input
-                  type="text"
-                  placeholder="search game here"
-                  className="search-casino-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <div className="casino-search-icon">
-                  <IoIosSearch style={{ fontSize: "20px" }} />
-                </div>
-              </div>
-              {filteredData.length === 0 ? (
-                <div className="casedata-no-data-search">
-                  <div className="no-search-result">
-                    <span>No Search result found</span>
-                  </div>
-                  <div
-                    className="request-demo"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRequestCasino"
-                    aria-controls="offcanvasRequestCasino"
-                  >
-                    <AiOutlinePlus className="me-2" />
-                    <span>Request New Casino</span>
-                  </div>
-                </div>
-              ) : (
-                <div>
-                  {filteredData.map((data, index) => (
-                    <div className="casino-data-display" key={data.id}>
-                      <input
-                        type="checkbox"
-                        className="casino-checkbox"
-                        id={data.id}
-                      />
-                      <div className="casino-data-bar">
-                        <label htmlFor={data.id}>{data.name}</label>
-                        <Link>{data.link}</Link>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
           <div className="line">
             <span></span>
           </div>
-        </div>
-        <div className="offcanvas-footer">
-          <div
-            id="offcanvasRightCalibrate"
-            className="sidebar-model-heading text-end"
-          >
-            <button
-              className="compass-sidebar-back"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            >
-              Back
-            </button>
-            <button className="compass-sidebar-next" disabled>
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
+        </Drawer>
 
-      {/* FOR CHOOSE GAME  */}
-      <div
-        className="offcanvas offcanvas-end casino-sidebar"
-        tabIndex="-1"
-        id="offcanvasRight"
-        aria-labelledby="offcanvasRightLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
-            Select Game
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-
-        <div className="offcanvas-body p-0 bg-white">
-          <div className="">
-            <div className="search-bar position-relative">
-              <div className="serching">
-                <input
-                  type="text"
-                  placeholder="search game here"
-                  className="search-casino-input"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <div className="casino-search-icon">
-                  <IoIosSearch style={{ fontSize: "20px" }} />
+        {/* FOR ADD NEW CASINO DRAWER HERE */}
+        <Drawer
+          title="Request New Casino"
+          width="50%"
+          className="choose_casino_drawer"
+          closable={true}
+          maskClosable={false}
+          onClose={onNewCasinoDrawerClose}
+          open={newCasino}
+          closeIcon={<CloseOutlined className="custom-close-icon" />}
+          footer={
+            <div style={{ textAlign: "right" }}>
+              <button
+                onClick={onNewCasinoDrawerClose}
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
+              >
+                Back
+              </button>
+              <button
+                style={{ marginRight: 8 }}
+                className="compass-sidebar-back"
+              >
+                Save
+              </button>
+            </div>
+          }
+        >
+          <div className="bg-white p-4">
+            <div className="row">
+              <div className="col-md-8">
+                <div className="casino-input-field new_casino_add">
+                  <div className="form-group">
+                    <label htmlFor="">Enter Casino Name</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="Name here"
+                    />
+                  </div>
+                  <div className="form-group">
+                    <label htmlFor="">Enter URL</label>
+                    <input
+                      type="text"
+                      className="form-control"
+                      placeholder="URL here"
+                    />
+                  </div>
                 </div>
               </div>
-              {gameData.length === 0 ? (
-                <div className="casedata-no-data-search">
-                  <div className="no-search-result">
-                    <span>No Search result found</span>
-                  </div>
-                  <div
-                    className="request-demo"
-                    data-bs-toggle="offcanvas"
-                    data-bs-target="#offcanvasRequestCasino"
-                    aria-controls="offcanvasRequestCasino"
-                  >
-                    <AiOutlinePlus className="me-2" />
-                    <span>Request New Casino</span>
-                  </div>
-                </div>
-              ) : (
+
+              <div className="url-preview mt-5">
+                <h5>
+                  <b>URL Preview</b>
+                </h5>
                 <div>
-                  {gameData.map((data, index) => (
-                    <div className="casino-data-display" key={data.id}>
-                      <input
-                        type="checkbox"
-                        className="casino-checkbox"
-                        id={data.id}
-                      />
-                      <div className="casino-data-bar game-data-bar">
-                        <label htmlFor={data.id}>{data.game}</label>
-                        <span>{data?.provider}</span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="line">
-            <span></span>
-          </div>
-        </div>
-
-        <div className="offcanvas-footer">
-          <div
-            id="offcanvasRightCalibrate"
-            className="sidebar-model-heading text-end"
-          >
-            <button
-              className="compass-sidebar-back"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            >
-              Back
-            </button>
-            <button className="compass-sidebar-next" disabled>
-              Save
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* FOR REQUEST A NEW CASINO OFFCANVAS*/}
-      <div
-        className="offcanvas offcanvas-end casino-sidebar"
-        tabIndex="-1"
-        id="offcanvasRequestCasino"
-        aria-labelledby="offcanvasRightLabel"
-      >
-        <div className="offcanvas-header">
-          <h5 id="offcanvasRightCalibrate" className="sidebar-model-heading">
-            Choose Casino
-          </h5>
-          <button
-            type="button"
-            className="btn-close text-reset"
-            data-bs-dismiss="offcanvas"
-            aria-label="Close"
-          ></button>
-        </div>
-
-        <div className="offcanvas-body bg-white p-4">
-          <div className="row">
-            <div className="col-md-8">
-              <div className="casino-input-field new_casino_add">
-                <div className="form-group">
-                  <label htmlFor="">Enter Casino Name</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="Name here"
-                  />
-                </div>
-                <div className="form-group">
-                  <label htmlFor="">Enter URL</label>
-                  <input
-                    type="text"
-                    className="form-control"
-                    placeholder="URL here"
+                  <img
+                    src="https://play-lh.googleusercontent.com/FNVQyeiRF2_1PtLj6vXRjvr4-IGwdaShsTvjSFS_v8TmdHdllJ5lUAHlweR5B44dNQ=w526-h296-rw"
+                    alt=""
+                    className="w-100 bordered mt-3"
                   />
                 </div>
               </div>
             </div>
-
-            <div className="url-preview mt-5">
-              <h5>
-                <b>URL Preview</b>
-              </h5>
-              {/* <span>Enter Url for a preview</span> */}
-              <div>
-                <img
-                  src="https://play-lh.googleusercontent.com/FNVQyeiRF2_1PtLj6vXRjvr4-IGwdaShsTvjSFS_v8TmdHdllJ5lUAHlweR5B44dNQ=w526-h296-rw"
-                  alt=""
-                  className="w-100 bordered mt-3"
-                />
-              </div>
-            </div>
           </div>
-        </div>
-        <div className="offcanvas-footer">
-          <div
-            id="offcanvasRightCalibrate"
-            className="sidebar-model-heading text-end"
-          >
-            <button
-              className="compass-sidebar-back"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            >
-              Back
-            </button>
-            <button className="new-request-casino-btn" disabled>
-              Request Casino
-            </button>
-          </div>
-        </div>
-      </div>
+        </Drawer>
+      </Drawer>
     </>
   );
 };

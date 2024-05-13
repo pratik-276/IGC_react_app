@@ -305,6 +305,7 @@ input[type="checkbox"] {
     display: flex;
     align-items: center;
     margin-top: 15px;
+    cursor: pointer;
 }
 
 .request-demo svg {
@@ -374,6 +375,14 @@ input[type="checkbox"] {
 .casino-input-field .form-group .form-control {
     border: 1px solid #ADB5BD;
     padding: 13px 15px;
+}
+
+.casino-input-field .form-group .form-control:focus {
+    box-shadow: none;
+}
+
+.casino-input-field .form-group .form-control:focus-visible {
+    border: 1px solid #DC9B00;
 }
 
 .url-preview img {
@@ -675,4 +684,18 @@ input[type="checkbox"] {
 .custom-close-icon {
     position: absolute;
     right: 15px;
+}
+
+.choose_casino_drawer .ant-drawer-body {
+    padding: 0 !important;
+}
+
+.ant-drawer-header {
+    background-color: #ebecf4 !important;
+    border-bottom: 1px solid #dee2e6 !important;
+}
+
+.ant-drawer-footer {
+    background-color: #ebecf4 !important;
+    border-top: 1px solid #dee2e6 !important;
 }
