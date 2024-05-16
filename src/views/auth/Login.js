@@ -23,8 +23,6 @@ const Login = () => {
     password: "",
   });
 
-  const [errorMessage, setErrorMessage] = useState("");
-
   const togglePassword = (e) => {
     e.preventDefault();
     if (passwordType === "password") {
@@ -93,13 +91,14 @@ const Login = () => {
             cookies.set("refresh_token", res?.data?.refresh, { path: "/" });
             toast.success("Login Successfully");
             navigate("/");
-          } else {
-            setErrorMessage(res?.message);
-            toast.error(res?.message)
-            console.log("res", res.message)
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          toast.error(err);
+          if (err.response && err.response.status === 401) {
+            toast.error("Unauthorized. Please check your credentials.");
+          }
+        });
     }
   };
 

@@ -1,45 +1,27 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import "./index.css";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import { Pagination } from "react-bootstrap";
 import { data } from "./dummydata";
-import { FaChartLine, FaPlus } from "react-icons/fa6";
-import { CiCirclePlus, CiPause1 } from "react-icons/ci";
-import { IoIosSearch, IoMdSearch } from "react-icons/io";
-import { AiOutlinePlus } from "react-icons/ai";
+import { CiCirclePlus } from "react-icons/ci";
 import { FiMinusCircle } from "react-icons/fi";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
-import CompassData from "../../services/CompassApi";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
-import toast from "react-hot-toast";
-import Loader from "../../layouts/loader/Loader";
+import NewCasino from "../modules/NewCasino";
+import CompassDataPage from "../modules/CompassDataPage";
+import ChooseCasinoPage from "../modules/ChooseCasinoPage";
+import ChooseGamePage from "../modules/ChooseGamePage";
 
-const options = ["Pause", "inProgress", "Not Available"];
-const options1 = ["one", "two", "three"];
-const options2 = ["one", "two", "three"];
-const options3 = [5, 10, 15, 20];
-const options4 = ["5", "10", "15", "20"];
 const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
 const Compass = () => {
-  const user_id = localStorage.getItem("user_id");
-
-  const [compassRead, setCompassRead] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
-  const [selectAll, setSelectAll] = useState(false);
-  const [loader, setLoader] = useState(true);
-
   const [selectedOption, setSelectedOption] = useState(null);
 
   const [trackTime, setTrackTime] = useState("");
-
-  const [searchQuery, setSearchQuery] = useState("");
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -49,10 +31,6 @@ const Compass = () => {
   const [casinoDrawer, setCasinoDrawer] = useState(false);
   const [gameDrawer, setGameDrawer] = useState(false);
   const [newCasino, setNewCasino] = useState(false);
-
-  const showFirstDrawer = () => {
-    setOpen(true);
-  };
 
   const onClose = () => {
     setOpen(false);
@@ -81,40 +59,10 @@ const Compass = () => {
     setGameDrawer(false);
   };
 
-  // FUNCTION FOR OPEN ADD NEW CASINO DRAWER
-  const showNewCasinoDrawer = () => {
-    setNewCasino(true);
-  };
-
   // FUNCTION FOR CLOSE NEW CASINO DRAWER
   const onNewCasinoDrawerClose = () => {
     setNewCasino(false);
   };
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(5);
-
-  // Pagination function
-  const paginate = (array, currentPage, itemsPerPage) => {
-    if (!Array.isArray(array)) return [];
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const endIndex = startIndex + itemsPerPage;
-    return array?.slice(startIndex, endIndex);
-  };
-  const paginatedItems = paginate(compassRead, currentPage, itemsPerPage);
-  const totalPages = Math.ceil(compassRead?.length / itemsPerPage);
-
-  const handlePageChange = (pageNumber) => {
-    setCurrentPage(pageNumber);
-  };
-
-  const handleItemsPerPageChange = (option) => {
-    setItemsPerPage(parseInt(option.value));
-  };
-
-  const filteredData = data.filter((data) => {
-    return data?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase());
-  });
 
   const handleSelectOption = (option) => {
     setSelectedOption(option);
@@ -140,316 +88,10 @@ const Compass = () => {
     }
   };
 
-  const getCompassReadData = () => {
-    CompassData.compass_read({ user_id: parseInt(user_id) })
-      .then((res) => {
-        if (res?.success === true) {
-          setCompassRead(res?.data);
-          setLoader(false);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  const handleCheckboxChange = (event) => {
-    const itemId = parseInt(event.target.id);
-    if (event.target.checked) {
-      setSelectedItems([...selectedItems, itemId]);
-    } else {
-      setSelectedItems(selectedItems.filter((id) => id !== itemId));
-    }
-  };
-
-  const toggleSelectAll = () => {
-    const allIds = compassRead.map((datas) => datas?.id);
-    if (selectAll) {
-      setSelectedItems([]);
-    } else {
-      setSelectedItems(allIds);
-    }
-    setSelectAll(!selectAll);
-  };
-
-  const handleDelete = () => {
-    CompassData.compass_delete({ id: selectedItems })
-      .then((res) => {
-        if (res?.success === true) {
-          getCompassReadData();
-          toast.success(res?.message);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
-
-  useEffect(() => {
-    getCompassReadData();
-  }, [user_id]);
-
   return (
     <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
-      {loader ? (
-        <Loader />
-      ) : (
-        <>
-          <div className="compass h-100">
-            <>
-              {paginatedItems?.length == 0 ? (
-                <>
-                  <div className="row h-100 align-items-center justify-content-center">
-                    <div className="col-md-5">
-                      <div className="compass-text text-center">
-                        <p>Currently there are no games or Casino configured</p>
-                        <button
-                          className="btn game_add_btn"
-                          onClick={showFirstDrawer}
-                        >
-                          Calibrate Casino or Game <FaPlus className="ms-2" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              ) : (
-                <>
-                  <div className="compass-data">
-                    <div className="row align-items-center">
-                      <div className="col-md-6">
-                        <h3>Calibrate Compass</h3>
-                        <span>
-                          Track, add, delete all your games and operators
-                        </span>
-                      </div>
-                      {/* <div className="col-md-4">
-                <button
-                  className="btn game_add_btn"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#offcanvasRight"
-                  aria-controls="offcanvasRight"
-                >
-                  Demo Model <FaPlus className="ms-2" />
-                </button>
-              </div> */}
-                      <div className="col-md-6 text-end">
-                        <button
-                          className="btn game_add_btn"
-                          onClick={showFirstDrawer}
-                        >
-                          Calibrate Casino or Game <FaPlus className="ms-2" />
-                        </button>
-                      </div>
-                    </div>
-                    <div className="compass-data-border mb-3">
-                      <span></span>
-                    </div>
-                    <div className="d-flex justify-content-between">
-                      <div className="calibrate-dropdown">
-                        <Dropdown options={options} placeholder="Status" />
-                        <Dropdown options={options1} placeholder="Operator" />
-                        <Dropdown options={options2} placeholder="Game" />
-                        <Dropdown options={options3} placeholder="All Time" />
-                      </div>
-
-                      <div className="compass-right-icon">
-                        <div className="compass-search">
-                          <FaChartLine />
-                        </div>
-                        <div className="compass-search" onClick={handleDelete}>
-                          <i className="bi bi-trash3"></i>
-                        </div>
-                        <div className="compass-search">
-                          <CiPause1 />
-                        </div>
-                        <div className="compass-search">
-                          <IoMdSearch />
-                        </div>
-                      </div>
-                    </div>
-                    <div className="compass-data-table pt-3">
-                      <table className="table table-bordered">
-                        <thead className="table-heading-name">
-                          <tr>
-                            <th scope="col">
-                              <input
-                                type="checkbox"
-                                className="casino-checkbox"
-                                onChange={toggleSelectAll}
-                                checked={selectAll}
-                              />
-                            </th>
-                            <th scope="col">Created On</th>
-                            <th scope="col">Operator Name</th>
-                            <th scope="col">Game Name </th>
-                            <th scope="col" className="text-center">
-                              Tracking Timeline
-                            </th>
-                            <th scope="col" className="text-center">
-                              Credits consumed
-                            </th>
-                            <th scope="col" className="text-center">
-                              Status
-                            </th>
-                          </tr>
-                        </thead>
-                        <tbody className="table-body-items">
-                          {paginatedItems?.map((datas) => {
-                            const startDate = new Date(datas?.start_date);
-                            const formattedStartDate = startDate
-                              ?.toLocaleDateString("en-GB")
-                              .replace(/\//g, "-");
-                            const endDate = new Date(datas?.end_date);
-                            const formattedEndDate = endDate
-                              ?.toLocaleDateString("en-GB")
-                              .replace(/\//g, "-");
-                            return (
-                              <tr
-                                key={datas.id}
-                                className="table-body-items-table"
-                              >
-                                <td scope="row" style={{ width: "5%" }}>
-                                  <input
-                                    type="checkbox"
-                                    className="casino-checkbox"
-                                    id={datas.id}
-                                    onChange={handleCheckboxChange}
-                                  />
-                                </td>
-                                <td scope="row" style={{ width: "13%" }}>
-                                  <span className="m-0">
-                                    {datas.createdData}
-                                  </span>
-                                </td>
-                                <td
-                                  scope="row"
-                                  style={{ width: "20%", fontSize: "14px" }}
-                                >
-                                  <p className="m-0">{datas.name}</p>
-                                  <Link to="/">{datas.link}</Link>
-                                </td>
-                                <td style={{ width: "20%", fontSize: "14px" }}>
-                                  <p className="m-0">{datas.gameName}</p>
-                                  <Link to="/">{datas.link}</Link>
-                                </td>
-                                <td className="text-center">
-                                  <span className="tracking-time">
-                                    {formattedStartDate} to {formattedEndDate}
-                                  </span>
-                                </td>
-                                <td
-                                  style={{ width: "15%" }}
-                                  className="text-center"
-                                >
-                                  {/* <span className="credits">{datas.Credits}</span> */}
-                                  <span className="credits">-</span>
-                                </td>
-                                <td className="text-center">
-                                  <span className="action-btn"></span>
-                                </td>
-                              </tr>
-                            );
-                          })}
-                        </tbody>
-                      </table>
-                    </div>
-
-                    <div>
-                      <div className="d-flex justify-content-between align-items-center">
-                        <div>
-                          <span>
-                            Showing {(currentPage - 1) * itemsPerPage + 1} -
-                            {Math.min(
-                              currentPage * itemsPerPage,
-                              compassRead?.length
-                            )}
-                            &nbsp;out of&nbsp;
-                            {compassRead?.length}
-                          </span>
-                        </div>
-                        <div>
-                          {totalPages > 1 && (
-                            <div className="d-flex justify-content-center orderlist_pagination">
-                              <Pagination className="custom-pagination">
-                                <Pagination.Prev
-                                  onClick={() =>
-                                    setCurrentPage((prev) =>
-                                      Math.max(prev - 1, 1)
-                                    )
-                                  }
-                                  disabled={currentPage === 1}
-                                >
-                                  <MdKeyboardArrowLeft className="me-2" /> Prev
-                                </Pagination.Prev>
-                                {[...Array(totalPages).keys()].map((page) => {
-                                  if (
-                                    page === 0 ||
-                                    page === totalPages - 1 ||
-                                    (page >= currentPage - 1 &&
-                                      page <= currentPage + 1)
-                                  ) {
-                                    return (
-                                      <Pagination.Item
-                                        key={page}
-                                        active={page + 1 === currentPage}
-                                        onClick={() =>
-                                          handlePageChange(page + 1)
-                                        }
-                                        className="custom-pagination-item"
-                                      >
-                                        {page + 1}
-                                      </Pagination.Item>
-                                    );
-                                  } else if (
-                                    (page === 1 && currentPage > 4) ||
-                                    (page === totalPages - 2 &&
-                                      currentPage < totalPages - 3)
-                                  ) {
-                                    return (
-                                      <Pagination.Item
-                                        key={page}
-                                        disabled
-                                        className="custom-pagination-item"
-                                      >
-                                        ...
-                                      </Pagination.Item>
-                                    );
-                                  }
-                                  return null;
-                                })}
-                                <Pagination.Next
-                                  onClick={() =>
-                                    setCurrentPage((prev) =>
-                                      Math.min(prev + 1, totalPages)
-                                    )
-                                  }
-                                  disabled={currentPage === totalPages}
-                                >
-                                  Next
-                                  <MdKeyboardArrowRight className="ms-2" />
-                                </Pagination.Next>
-                              </Pagination>
-                            </div>
-                          )}
-                        </div>
-                        <div className="d-flex align-items-center pagination_per_select">
-                          <span className="me-1">Items per Page: </span>
-                          <Dropdown
-                            options={options4.map((option) => ({
-                              value: option,
-                              label: option,
-                            }))}
-                            onChange={handleItemsPerPageChange}
-                            value={itemsPerPage?.toString()}
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </>
-              )}
-            </>
-          </div>
-        </>
-      )}
+      <CompassDataPage setOpen={setOpen} open={open} />
 
       {/* CALIBRATE COMPASS DEMO SCREEN OFFCANVAS HERE */}
       <div
@@ -666,7 +308,7 @@ const Compass = () => {
 
       {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN ANTD */}
       <Drawer
-        title="Calibrate"
+        title="Configure"
         width={casinoDrawer || gameDrawer || newCasino ? "100%" : "70%"}
         closable={true}
         onClose={onClose}
@@ -731,7 +373,7 @@ const Compass = () => {
             <div className="calibrate-icon">
               <CiCirclePlus />
             </div>
-            <p>Start calibrating by adding Casino</p>
+            <p>Start configuration by adding operator first</p>
           </div>
         </div>
         <div
@@ -757,7 +399,7 @@ const Compass = () => {
               <CiCirclePlus />
             </div>
             <div>
-              <p>Start calibrating by adding Game</p>
+              <p>Start configuration by adding Casino game first</p>
             </div>
           </div>
         </div>
@@ -790,50 +432,7 @@ const Compass = () => {
             </div>
           }
         >
-          <div className="search-bar position-relative">
-            <div className="serching">
-              <input
-                type="text"
-                placeholder="search game here"
-                className="search-casino-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <div className="casino-search-icon">
-                <IoIosSearch style={{ fontSize: "20px" }} />
-              </div>
-            </div>
-            {filteredData.length === 0 ? (
-              <div className="casedata-no-data-search">
-                <div className="no-search-result">
-                  <span>No Search result found</span>
-                </div>
-                <div className="request-demo" onClick={showNewCasinoDrawer}>
-                  <AiOutlinePlus className="me-2" />
-                  <span>Request New Casino</span>
-                </div>
-              </div>
-            ) : (
-              <div>
-                {filteredData.map((data, index) => (
-                  <div className="casino-data-display" key={data.id}>
-                    <input
-                      type="checkbox"
-                      className="casino-checkbox"
-                      id={data.id}
-                    />
-                    <div className="casino-data-bar">
-                      <label htmlFor={data.id}>{data.name}</label>
-                      <Link>{data.link}</Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="line">
-            <span></span>
-          </div>
+          <ChooseCasinoPage setNewCasino={setNewCasino} />
         </Drawer>
 
         {/* FOR SELECT GAME DRAWER */}
@@ -864,50 +463,7 @@ const Compass = () => {
             </div>
           }
         >
-          <div className="search-bar position-relative">
-            <div className="serching">
-              <input
-                type="text"
-                placeholder="search game here"
-                className="search-casino-input"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-              <div className="casino-search-icon">
-                <IoIosSearch style={{ fontSize: "20px" }} />
-              </div>
-            </div>
-            {filteredData.length === 0 ? (
-              <div className="casedata-no-data-search">
-                <div className="no-search-result">
-                  <span>No Search result found</span>
-                </div>
-                <div className="request-demo" onClick={showNewCasinoDrawer}>
-                  <AiOutlinePlus className="me-2" />
-                  <span>Request New Casino</span>
-                </div>
-              </div>
-            ) : (
-              <div>
-                {filteredData.map((data, index) => (
-                  <div className="casino-data-display" key={data.id}>
-                    <input
-                      type="checkbox"
-                      className="casino-checkbox"
-                      id={data.id}
-                    />
-                    <div className="casino-data-bar">
-                      <label htmlFor={data.id}>{data.name}</label>
-                      <Link>{data.link}</Link>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-          <div className="line">
-            <span></span>
-          </div>
+          <ChooseGamePage />
         </Drawer>
 
         {/* FOR ADD NEW CASINO DRAWER HERE */}
@@ -938,43 +494,7 @@ const Compass = () => {
             </div>
           }
         >
-          <div className="bg-white p-4">
-            <div className="row">
-              <div className="col-md-8">
-                <div className="casino-input-field new_casino_add">
-                  <div className="form-group">
-                    <label htmlFor="">Enter Casino Name</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="Name here"
-                    />
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="">Enter URL</label>
-                    <input
-                      type="text"
-                      className="form-control"
-                      placeholder="URL here"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              <div className="url-preview mt-5">
-                <h5>
-                  <b>URL Preview</b>
-                </h5>
-                <div>
-                  <img
-                    src="https://play-lh.googleusercontent.com/FNVQyeiRF2_1PtLj6vXRjvr4-IGwdaShsTvjSFS_v8TmdHdllJ5lUAHlweR5B44dNQ=w526-h296-rw"
-                    alt=""
-                    className="w-100 bordered mt-3"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <NewCasino />
         </Drawer>
       </Drawer>
     </>

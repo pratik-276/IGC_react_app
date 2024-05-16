@@ -8,11 +8,11 @@ const ProtectedRoute = (props) => {
 
   const user_id = localStorage.getItem("user_id");
 
-  //   useEffect(() => {
-  //     if (userType == 2 && location.pathname === "/Dealer_login") {
-  //       navigate("/");
-  //     }
-  //   }, [userType, location.pathname]);
+  useEffect(() => {
+    if (user_id && location.pathname === "/login") {
+      navigate("/");
+    }
+  }, [user_id, location.pathname]);
 
   const checkUser = () => {
     if (!user_id) {

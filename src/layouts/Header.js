@@ -43,6 +43,7 @@ const Header = () => {
     localStorage.removeItem("user_id");
     cookies.remove("access_token");
     cookies.remove("refresh_token");
+    navigate("/")
   };
 
   useLayoutEffect(() => {}, [user_id]);
