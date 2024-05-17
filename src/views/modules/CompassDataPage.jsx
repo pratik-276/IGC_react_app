@@ -10,7 +10,7 @@ import { Pagination } from "react-bootstrap";
 import CompassData from "../../services/CompassApi";
 import toast from "react-hot-toast";
 
-const options = ["Pause", "inProgress", "Not Available"];
+const options = ["Pause", "inProgress", "Not Available"]; 
 const options1 = ["one", "two", "three"];
 const options2 = ["one", "two", "three"];
 const options3 = [5, 10, 15, 20];
@@ -135,16 +135,7 @@ const CompassDataPage = ({ setOpen }) => {
                           Track, add, delete all your games and operators
                         </span>
                       </div>
-                      {/* <div className="col-md-4">
-                <button
-                  className="btn game_add_btn"
-                  data-bs-toggle="offcanvas"
-                  data-bs-target="#offcanvasRight"
-                  aria-controls="offcanvasRight"
-                >
-                  Demo Model <FaPlus className="ms-2" />
-                </button>
-              </div> */}
+                     
                       <div className="col-md-6 text-end">
                         <button
                           className="btn game_add_btn"
@@ -207,7 +198,7 @@ const CompassDataPage = ({ setOpen }) => {
                           </tr>
                         </thead>
                         <tbody className="table-body-items">
-                          {paginatedItems?.map((datas) => {
+                          {paginatedItems?.map((datas, index) => {
                             const startDate = new Date(datas?.start_date);
                             const formattedStartDate = startDate
                               ?.toLocaleDateString("en-GB")
@@ -218,7 +209,7 @@ const CompassDataPage = ({ setOpen }) => {
                               .replace(/\//g, "-");
                             return (
                               <tr
-                                key={datas.id}
+                                key={index}
                                 className="table-body-items-table"
                               >
                                 <td style={{ width: "5%" }}>

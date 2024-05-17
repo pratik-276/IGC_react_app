@@ -53,11 +53,7 @@ const Sidebar = () => {
                       : "nav-link py-2"
                   }
                 >
-                  {typeof navi.icon === "string" ? (
-                    <i className={navi.icon} style={{ fontSize: "23px" }}></i>
-                  ) : (
-                    <navi.icon style={{ fontSize: "23px" }} />
-                  )}
+                  <navi.icon style={{ fontSize: "23px" }} />
                   <span className="ms-3 d-inline-block">{navi.title}</span>
                 </Link>
               </NavItem>

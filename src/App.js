@@ -1,5 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
 import Layout from "./views/Layout";
 import Home from "./views/Home";
 import GameTracking from "./views/ui/GameTracking";
@@ -7,7 +8,6 @@ import Compass from "./views/ui/Compass";
 import Login from "./views/auth/Login";
 import Signup from "./views/auth/Signup";
 import ForgotPass from "./views/auth/ForgotPass";
-import { Toaster } from "react-hot-toast";
 import ProtectedRoute from "./utils/ProtectedRoute";
 
 const App = () => {
