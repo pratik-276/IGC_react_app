@@ -10,7 +10,7 @@ import { Pagination } from "react-bootstrap";
 import CompassData from "../../services/CompassApi";
 import toast from "react-hot-toast";
 
-const options = ["Pause", "inProgress", "Not Available"]; 
+const options = ["Pause", "inProgress", "Not Available"];
 const options1 = ["one", "two", "three"];
 const options2 = ["one", "two", "three"];
 const options3 = [5, 10, 15, 20];
@@ -101,6 +101,7 @@ const CompassDataPage = ({ setOpen }) => {
   };
   // Pagination function end section
 
+
   return (
     <>
       {loader ? (
@@ -135,7 +136,7 @@ const CompassDataPage = ({ setOpen }) => {
                           Track, add, delete all your games and operators
                         </span>
                       </div>
-                     
+
                       <div className="col-md-6 text-end">
                         <button
                           className="btn game_add_btn"

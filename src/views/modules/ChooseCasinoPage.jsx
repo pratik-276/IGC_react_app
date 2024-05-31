@@ -5,8 +5,8 @@ import { Link } from "react-router-dom";
 import CompassData from "../../services/CompassApi";
 import Loader from "../../layouts/loader/Loader";
 
-const ChooseCasinoPage = ({ setNewCasino }) => {
-  const [searchQuery, setSearchQuery] = useState("");
+const ChooseCasinoPage = ({ setNewCasino, setSearchQuery, searchQuery }) => {
+  // const [searchQuery, setSearchQuery] = useState("");
   const [casinoData, setCasinoData] = useState([]);
   const [loader, setLoader] = useState(true);
 

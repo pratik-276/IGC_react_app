@@ -43,12 +43,22 @@ const get_game = async () => {
     return d;
 };
 
+const request_new_casino = async (data) => {
+    let d = await Call({
+        path: "request_new_casino",
+        method: "POST",
+        data
+    });
+    return d;
+};
+
 const exportObject = {
     compass_read,
     compass_create,
     compass_delete,
     get_operator,
-    get_game
+    get_game,
+    request_new_casino
 };
 
 export default exportObject;

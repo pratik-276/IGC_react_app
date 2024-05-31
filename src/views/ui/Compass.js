@@ -32,6 +32,8 @@ const Compass = () => {
   const [gameDrawer, setGameDrawer] = useState(false);
   const [newCasino, setNewCasino] = useState(false);
 
+  const [searchQuery, setSearchQuery] = useState("");
+
   const onClose = () => {
     setOpen(false);
     setSelectedOption("");
@@ -46,6 +48,7 @@ const Compass = () => {
   // FUNCTION FOR CLOSE GAME DRAWER
   const onCasinoDrawerClose = () => {
     setCasinoDrawer(false);
+    setSearchQuery("")
   };
 
   // FUNCTION FOR OPEN GAME DRAWER
@@ -432,7 +435,7 @@ const Compass = () => {
             </div>
           }
         >
-          <ChooseCasinoPage setNewCasino={setNewCasino} />
+          <ChooseCasinoPage setNewCasino={setNewCasino} searchQuery={searchQuery} setSearchQuery={setSearchQuery}/>
         </Drawer>
 
         {/* FOR SELECT GAME DRAWER */}
@@ -467,35 +470,13 @@ const Compass = () => {
         </Drawer>
 
         {/* FOR ADD NEW CASINO DRAWER HERE */}
-        <Drawer
-          title="Request New Casino"
-          width="50%"
-          className="choose_casino_drawer"
-          closable={true}
-          maskClosable={false}
-          onClose={onNewCasinoDrawerClose}
-          open={newCasino}
-          closeIcon={<CloseOutlined className="custom-close-icon" />}
-          footer={
-            <div style={{ textAlign: "right" }}>
-              <button
-                onClick={onNewCasinoDrawerClose}
-                style={{ marginRight: 8 }}
-                className="compass-sidebar-back"
-              >
-                Back
-              </button>
-              <button
-                style={{ marginRight: 8 }}
-                className="compass-sidebar-back"
-              >
-                Save
-              </button>
-            </div>
-          }
-        >
-          <NewCasino />
-        </Drawer>
+        <NewCasino
+          onNewCasinoDrawerClose={onNewCasinoDrawerClose}
+          newCasino={newCasino}
+          setCasinoDrawer={setCasinoDrawer}
+          setSearchQuery={setSearchQuery}
+          setNewCasino={setNewCasino}
+        />
       </Drawer>
     </>
   );
