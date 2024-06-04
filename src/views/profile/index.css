@@ -1,0 +1,69 @@
+.profile_box_title{
+    display: flex;
+    margin-bottom: 25px;
+    align-items: center;
+}
+
+.profile_box_title h3{
+    margin: 0;
+    margin-right: 15px;
+    font-size: 18px;
+    color: #222222;
+    font-weight: 600;
+}
+
+.profile_box_title a{
+    color: #222222;
+    font-size: 20px;
+}
+
+.profile_box{
+    margin-bottom: 30px;
+}
+
+.profile_box:last-child{
+    margin: 0;
+}
+
+.profile_box .form-group{
+    margin-bottom: 15px;
+    position: relative;
+}
+
+.profile_box .form-group label {
+    position: absolute;
+    top: -8px;
+    left: 10px;
+    background-color: #fff;
+    padding: 0 5px;
+    font-size: 12px;
+    color: #ADB5BD;
+    font-weight: 400;
+    z-index: 1  ;
+}
+
+.profile_box .form-group .form-control {
+    border: 1px solid #ADB5BD;
+    padding: 13px 15px;
+}
+
+.profile_box .form-group .form-control::placeholder {
+    font-size: 13px;
+    opacity: 1;
+}
+
+.profile_box .form-group input{
+    color: #222222;
+}
+
+.profile_box .form-group .form-control:focus {
+    box-shadow: none;
+}
+
+.profile_box .form-group .form-control:focus-visible {
+    border: 1px solid #ADB5BD;
+}
+
+.date-pick .react-datepicker-wrapper{
+    width: 100%;
+}

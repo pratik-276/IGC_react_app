@@ -9,6 +9,7 @@ import Login from "./views/auth/Login";
 import Signup from "./views/auth/Signup";
 import ForgotPass from "./views/auth/ForgotPass";
 import ProtectedRoute from "./utils/ProtectedRoute";
+import ProfileMenu from "./views/profile/ProfileMenu";
 
 const App = () => {
   return (
@@ -23,6 +24,14 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <Compass />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="my-account"
+            element={
+              <ProtectedRoute>
+                <ProfileMenu />
               </ProtectedRoute>
             }
           />

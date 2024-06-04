@@ -670,7 +670,7 @@ input[type="checkbox"] {
 }
 
 .ant-drawer-content-wrapper {
-    transform: none !important;
+    /* transform: none !important; */
 }
 
 .ant-drawer-close {

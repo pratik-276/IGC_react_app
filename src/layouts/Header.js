@@ -43,7 +43,7 @@ const Header = () => {
     localStorage.removeItem("user_id");
     cookies.remove("access_token");
     cookies.remove("refresh_token");
-    navigate("/")
+    navigate("/");
   };
 
   useLayoutEffect(() => {}, [user_id]);
@@ -92,7 +92,11 @@ const Header = () => {
           <Nav className="me-auto" navbar></Nav>
           {user_id ? (
             <>
-              <Dropdown isOpen={dropdownOpen} toggle={toggle}>
+              <Dropdown
+                isOpen={dropdownOpen}
+                toggle={toggle}
+                className="profile_dropdown"
+              >
                 <DropdownToggle color="transparent">
                   <div className="profile_icon">
                     <div className="profile_name text-end">
@@ -107,12 +111,12 @@ const Header = () => {
                   </div>
                 </DropdownToggle>
                 <DropdownMenu>
-                  {/* <DropdownItem header>Info</DropdownItem>
-              <DropdownItem>My Account</DropdownItem>
-              <DropdownItem>Edit Profile</DropdownItem>
-              <DropdownItem divider />
-              <DropdownItem>My Balance</DropdownItem>
-              <DropdownItem>Inbox</DropdownItem> */}
+                  <DropdownItem onClick={() => navigate("/my-account")}>
+                    My Account
+                  </DropdownItem>
+                  <DropdownItem>Billing</DropdownItem>
+                  <DropdownItem>Help & Support</DropdownItem>
+                  <DropdownItem>Refer and Earn</DropdownItem>
                   <DropdownItem onClick={logOut}>Logout</DropdownItem>
                 </DropdownMenu>
               </Dropdown>
