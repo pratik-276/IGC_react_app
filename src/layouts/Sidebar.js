@@ -46,7 +46,7 @@ const ProfileMenu = [
 
 const Sidebar = () => {
   const navigate = useNavigate();
-  
+
   const showMobilemenu = () => {
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
@@ -54,7 +54,10 @@ const Sidebar = () => {
 
   return (
     <>
-      {location.pathname === "/my-account" || "/billing-section" || "/help-support" || "/refer-earn"? (
+      {location.pathname === "/my-account" ||
+      location.pathname === "/billing-section" ||
+      location.pathname === "/help-support" ||
+      location.pathname === "/refer-earn" ? (
         <>
           <div className="profile-sidebar">
             <div className="d-flex">
