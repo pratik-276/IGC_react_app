@@ -10,6 +10,9 @@ import Signup from "./views/auth/Signup";
 import ForgotPass from "./views/auth/ForgotPass";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import ProfileMenu from "./views/profile/ProfileMenu";
+import Billing from "./views/profile/Billing";
+import ReferEarn from "./views/profile/ReferEarn";
+import HelpSupport from "./views/profile/HelpSupport";
 
 const App = () => {
   return (
@@ -32,6 +35,30 @@ const App = () => {
             element={
               <ProtectedRoute>
                 <ProfileMenu />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="billing-section"
+            element={
+              <ProtectedRoute>
+                <Billing />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="help-support"
+            element={
+              <ProtectedRoute>
+                <HelpSupport />
+              </ProtectedRoute>
+            }
+          />
+           <Route
+            path="refer-earn"
+            element={
+              <ProtectedRoute>
+                <ReferEarn />
               </ProtectedRoute>
             }
           />

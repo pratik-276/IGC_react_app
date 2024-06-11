@@ -1,7 +1,7 @@
 import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
-import { Link, useLocation, useNavigate } from "react-router-dom";
 import { Button, Nav, NavItem } from "reactstrap";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaLocationArrow } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
 
@@ -32,15 +32,15 @@ const ProfileMenu = [
   },
   {
     title: "Billing",
-    href: "/game-tracking",
+    href: "/billing-section",
   },
   {
     title: "Help & Support",
-    href: "/calibrate-compass",
+    href: "/help-support",
   },
   {
     title: "Refer & Earn",
-    href: "/calibrate-compass",
+    href: "/refer-earn",
   },
 ];
 
@@ -54,7 +54,7 @@ const Sidebar = () => {
 
   return (
     <>
-      {location.pathname === "/my-account" ? (
+      {location.pathname === "/my-account" || "/billing-section" || "/help-support" || "/refer-earn"? (
         <>
           <div className="profile-sidebar">
             <div className="d-flex">
