@@ -1,3 +1,5 @@
+/* FOR PROFILE ROUTE CSS */
+
 .profile_box_title {
     display: flex;
     margin-bottom: 25px;
@@ -160,7 +162,7 @@
 }
 
 
-/* FOR PROFILE MENU DRAWER */
+/* FOR PROFILE MENU DRAWER CSS*/
 .profile_menu_drawer .ant-drawer-header {
     position: relative;
 }
@@ -172,9 +174,21 @@
     transform: translate(0, -50%);
 }
 
-
-
-
 .ant-picker-dropdown {
     z-index: 9999 !important;
 }
+
+.ant-picker-now-btn {
+    text-decoration: none !important;
+}
+
+
+/* FOR BILLING ROUTE CSS */
+
+
+
+/* FOR HELP & SUPPORT ROUTE CSS */
+
+
+
+/* FOR REFER & EARN ROUTE CSS */

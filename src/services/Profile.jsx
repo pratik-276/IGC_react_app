@@ -9,8 +9,18 @@ const Profile = async (data) => {
     return d;
 };
 
+const UpdateProfile = async (data) => {
+    let d = await Call({
+        path: "update_profile",
+        method: "PUT",
+        data
+    });
+    return d;
+};
+
 const exportObject = {
-    Profile
+    Profile,
+    UpdateProfile
 };
 
 export default exportObject;

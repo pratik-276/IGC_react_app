@@ -362,7 +362,7 @@ const Compass = () => {
         >
           <span>Select Casino</span>
           <div className="casino-select-listing mt-4">
-            {/* {data?.map((data, index) => (
+            {data?.map((data, index) => (
               <div className="calibrate-casino-data-display" key={data.id}>
                 <FiMinusCircle style={{ fontSize: "22px" }} />
                 <div className="casino-data-bar">
@@ -370,7 +370,7 @@ const Compass = () => {
                   <Link>{data.link}</Link>
                 </div>
               </div>
-            ))} */}
+            ))}
           </div>
           <div className="calibrate-content mt-4">
             <div className="calibrate-icon">

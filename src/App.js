@@ -13,60 +13,63 @@ import ProfileMenu from "./views/profile/ProfileMenu";
 import Billing from "./views/profile/Billing";
 import ReferEarn from "./views/profile/ReferEarn";
 import HelpSupport from "./views/profile/HelpSupport";
+import ProfileProvider from "./context/ProfileContext";
 
 const App = () => {
   return (
     <>
-      <Toaster toastOptions={{ duration: 3000 }} />
-      <Routes>
-        <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route path="/game-tracking" element={<GameTracking />} />
-          <Route
-            path="calibrate-compass"
-            element={
-              <ProtectedRoute>
-                <Compass />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="my-account"
-            element={
-              <ProtectedRoute>
-                <ProfileMenu />
-              </ProtectedRoute>
-            }
-          />
-           <Route
-            path="billing-section"
-            element={
-              <ProtectedRoute>
-                <Billing />
-              </ProtectedRoute>
-            }
-          />
-           <Route
-            path="help-support"
-            element={
-              <ProtectedRoute>
-                <HelpSupport />
-              </ProtectedRoute>
-            }
-          />
-           <Route
-            path="refer-earn"
-            element={
-              <ProtectedRoute>
-                <ReferEarn />
-              </ProtectedRoute>
-            }
-          />
-        </Route>
-        <Route path="/login" element={<Login />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/forget-password" element={<ForgotPass />} />
-      </Routes>
+      <ProfileProvider>
+        <Toaster toastOptions={{ duration: 3000 }} />
+        <Routes>
+          <Route path="/" element={<Layout />}>
+            <Route index element={<Home />} />
+            <Route path="/game-tracking" element={<GameTracking />} />
+            <Route
+              path="calibrate-compass"
+              element={
+                <ProtectedRoute>
+                  <Compass />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="my-account"
+              element={
+                <ProtectedRoute>
+                  <ProfileMenu />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="billing-section"
+              element={
+                <ProtectedRoute>
+                  <Billing />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="help-support"
+              element={
+                <ProtectedRoute>
+                  <HelpSupport />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="refer-earn"
+              element={
+                <ProtectedRoute>
+                  <ReferEarn />
+                </ProtectedRoute>
+              }
+            />
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/forget-password" element={<ForgotPass />} />
+        </Routes>
+      </ProfileProvider>
     </>
   );
 };

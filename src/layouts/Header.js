@@ -1,4 +1,4 @@
-import React, { useLayoutEffect } from "react";
+import React, { useContext, useLayoutEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import {
   Navbar,
@@ -16,14 +16,19 @@ import user1 from "../assets/images/users/user4.jpg";
 import logo from "../assets/images/logos/AEG-Logo.png";
 import "./layout.css";
 import Cookies from "universal-cookie";
+import profileService from "../services/Profile";
+import { ProfileSystem } from "../context/ProfileContext";
 
 const cookies = new Cookies();
 
 const Header = () => {
   const navigate = useNavigate();
+  const { state: namestate } = useContext(ProfileSystem);
   const user_id = localStorage.getItem("user_id");
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
+
+  const [profile, setProfile] = useState([]);
 
   const toggle = () => setDropdownOpen((prevState) => !prevState);
 
@@ -46,7 +51,22 @@ const Header = () => {
     navigate("/");
   };
 
-  useLayoutEffect(() => {}, [user_id]);
+  const getProfile = () => {
+    profileService
+      .Profile({ user_id: parseInt(user_id) })
+      .then((res) => {
+        if (res && res.data) {
+          setProfile(res.data);
+        }
+      })
+      .catch((err) => console.log(err));
+  };
+
+  useLayoutEffect(() => {
+    if (user_id) {
+      getProfile();
+    }
+  }, [user_id, namestate?.profilename]);
 
   return (
     <>
@@ -100,7 +120,8 @@ const Header = () => {
                 <DropdownToggle color="transparent">
                   <div className="profile_icon">
                     <div className="profile_name text-end">
-                      <h3>Shantanu Khoraskar</h3>
+                      <h3>{profile?.username || "Hello user"}</h3>
+                      <p>{profile?.email}</p>
                     </div>
                     <img
                       src={user1}

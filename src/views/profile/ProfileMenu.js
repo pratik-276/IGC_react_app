@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import "./index.css";
 import { Drawer, DatePicker } from "antd";
 import Dropdown from "react-dropdown";
@@ -8,6 +8,8 @@ import { GoPencil } from "react-icons/go";
 import { IoIosArrowDown } from "react-icons/io";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import moment from "moment/moment";
+import toast from "react-hot-toast";
+import { ProfileSystem } from "../../context/ProfileContext";
 
 const selectGender = ["Male", "Female", "Transgender"];
 const selectCompanyCategories = [
@@ -19,12 +21,13 @@ const selectCompanyCategories = [
 
 const ProfileMenu = () => {
   const user_id = localStorage.getItem("user_id");
+  const { dispatch: profilename, state: namestate } = useContext(ProfileSystem);
 
-  const [profileData, setProfileData] = useState({
-    firstName: "",
-    lastName: "",
-    gender: "",
-  });
+  const [profile, setProfile] = useState([]);
+
+  const [profileData, setProfileData] = useState([]);
+
+  const [editProfileData, setEditProfileData] = useState([]);
 
   const [birthDate, setBirthDate] = useState("");
 
@@ -37,13 +40,17 @@ const ProfileMenu = () => {
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
+  const [contactOpen, setContactOpen] = useState(false);
 
   const getProfile = () => {
     profileService
       .Profile({ user_id: parseInt(user_id) })
       .then((res) => {
         if (res && res.data) {
-          setProfileData(res.data);
+          setProfile(res.data);
+          setEditProfileData({
+            ...res.data,
+          });
         }
       })
       .catch((err) => console.log(err));
@@ -73,7 +80,8 @@ const ProfileMenu = () => {
     });
   };
 
-  const profileMenuDrawer = () => {
+  const profileMenuDrawer = (data) => {
+    setProfileData(data);
     setProfileOpen(true);
   };
 
@@ -82,12 +90,23 @@ const ProfileMenu = () => {
     resetProfileData();
   };
 
-  const companyMenuDrawer = () => {
+  const companyMenuDrawer = (data) => {
+    setProfileData(data);
     setCompanyOpen(true);
   };
 
   const onCompanyClose = () => {
     setCompanyOpen(false);
+    resetCompanyData();
+  };
+
+  const contactMenuDrawer = (data) => {
+    setProfileData(data);
+    setContactOpen(true);
+  };
+
+  const onContactClose = () => {
+    setContactOpen(false);
     resetCompanyData();
   };
 
@@ -98,12 +117,45 @@ const ProfileMenu = () => {
 
   const submitProfileData = () => {
     const data = {
-      firstName: profileData?.firstName ? profileData?.firstName : null,
-      lastName: profileData?.lastName ? profileData?.lastName : null,
-      gender: profileData?.gender ? profileData?.gender : null,
-      birthDate: birthDate ? birthDate : null,
+      user_id: parseInt(user_id),
+      username: profileData?.username
+        ? profileData?.username
+        : editProfileData?.username,
+      // lastName: profileData?.lastName ? profileData?.lastName : null,
+      gender: profileData?.gender
+        ? profileData?.gender
+        : editProfileData?.gender,
+      dob: profileData?.dob ? profileData?.dob : editProfileData?.dob,
+      company: profileData?.company
+        ? profileData?.company
+        : editProfileData?.company,
+      company_site: profileData?.company_site
+        ? profileData?.company_site
+        : editProfileData?.company_site,
+      phone_number: profileData?.phone_number
+        ? profileData?.phone_number
+        : editProfileData?.phone_number,
+      email: profileData?.email ? profileData?.email : editProfileData?.email,
     };
-    console.log("hello all data", data);
+
+    profileService
+      .UpdateProfile(data)
+      .then((res) => {
+        if (res.success === true) {
+          profilename({
+            type: "SET_NAME",
+            payload: { profilename: !namestate?.profilename },
+          });
+          setProfileData(res.data);
+          toast.success(res.message);
+          getProfile();
+          resetProfileData();
+          setProfileOpen(false);
+          setContactOpen(false);
+          setCompanyOpen(false);
+        }
+      })
+      .catch((err) => console.log(err));
   };
 
   return (
@@ -116,7 +168,7 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Basic Details</h3>
-                    <span onClick={profileMenuDrawer}>
+                    <span onClick={() => profileMenuDrawer(editProfileData)}>
                       <GoPencil />
                     </span>
                   </div>
@@ -128,13 +180,7 @@ const ProfileMenu = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter first name"
-                          value={profileData.firstName}
-                          onChange={(e) =>
-                            setProfileData({
-                              ...profileData,
-                              firstName: e.target.value,
-                            })
-                          }
+                          value={editProfileData?.username}
                         />
                       </div>
                     </div>
@@ -145,13 +191,7 @@ const ProfileMenu = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter last name"
-                          value={profileData.lastName}
-                          onChange={(e) =>
-                            setProfileData({
-                              ...profileData,
-                              lastName: e.target.value,
-                            })
-                          }
+                          value={editProfileData.lastName}
                         />
                       </div>
                     </div>
@@ -161,13 +201,7 @@ const ProfileMenu = () => {
                         <Dropdown
                           options={selectGender}
                           placeholder="Select gender"
-                          value={profileData.gender}
-                          onChange={(option) =>
-                            setProfileData({
-                              ...profileData,
-                              gender: option.value,
-                            })
-                          }
+                          value={editProfileData?.gender}
                           className="form-control w-100"
                         />
                         <IoIosArrowDown
@@ -187,7 +221,6 @@ const ProfileMenu = () => {
                           value={
                             birthDate ? moment(birthDate, "DD-MM-YYYY") : null
                           }
-                          onChange={onChange}
                         />
                       </div>
                     </div>
@@ -196,7 +229,7 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Organization Details</h3>
-                    <span onClick={companyMenuDrawer}>
+                    <span onClick={() => companyMenuDrawer(editProfileData)}>
                       <GoPencil />
                     </span>
                   </div>
@@ -208,13 +241,7 @@ const ProfileMenu = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter company name"
-                          value={companyData.companyName}
-                          onChange={(e) =>
-                            setCompanyData({
-                              ...companyData,
-                              companyName: e.target.value,
-                            })
-                          }
+                          value={editProfileData?.company || ""}
                         />
                       </div>
                     </div>
@@ -224,14 +251,8 @@ const ProfileMenu = () => {
                         <input
                           type="text"
                           className="form-control"
-                          placeholder="Enter company size"
-                          value={companyData.companyWebsite}
-                          onChange={(e) =>
-                            setCompanyData({
-                              ...companyData,
-                              companyWebsite: e.target.value,
-                            })
-                          }
+                          placeholder="Enter company website"
+                          value={editProfileData?.company_site || ""}
                         />
                       </div>
                     </div>
@@ -242,13 +263,7 @@ const ProfileMenu = () => {
                           type="text"
                           className="form-control"
                           placeholder="Enter company size"
-                          value={companyData.companySize}
-                          onChange={(e) =>
-                            setCompanyData({
-                              ...companyData,
-                              companySize: e.target.value,
-                            })
-                          }
+                          value={editProfileData?.category || ""}
                         />
                       </div>
                     </div>
@@ -258,13 +273,7 @@ const ProfileMenu = () => {
                         <Dropdown
                           options={selectCompanyCategories}
                           placeholder="Select company category"
-                          value={companyData.companyCategory}
-                          onChange={(option) =>
-                            setCompanyData({
-                              ...companyData,
-                              companyCategory: option.value,
-                            })
-                          }
+                          value={editProfileData.category || ""}
                           className="form-control w-100"
                         />
                         <IoIosArrowDown
@@ -278,7 +287,7 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Contact Details</h3>
-                    <span onClick={profileMenuDrawer}>
+                    <span onClick={() => contactMenuDrawer(editProfileData)}>
                       <GoPencil />
                     </span>
                   </div>
@@ -290,6 +299,7 @@ const ProfileMenu = () => {
                           type="tel"
                           className="form-control"
                           placeholder="Enter phone number"
+                          value={editProfileData?.phone_number}
                         />
                         <span className="phone_verify_btn">
                           <IoCheckmarkSharp />
@@ -303,6 +313,7 @@ const ProfileMenu = () => {
                           type="email"
                           className="form-control"
                           placeholder="Enter email address"
+                          value={editProfileData?.email}
                         />
                         <span className="email_verify_btn">Verify</span>
                       </div>
@@ -350,11 +361,11 @@ const ProfileMenu = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter first name"
-                  value={profileData.firstName}
+                  value={profileData.username}
                   onChange={(e) =>
                     setProfileData({
                       ...profileData,
-                      firstName: e.target.value,
+                      username: e.target.value,
                     })
                   }
                 />
@@ -432,7 +443,12 @@ const ProfileMenu = () => {
             >
               Back
             </button>
-            <button className="compass-sidebar-next">Save</button>
+            <button
+              className="compass-sidebar-next"
+              onClick={() => submitProfileData()}
+            >
+              Save
+            </button>
           </div>
         }
       >
@@ -445,11 +461,11 @@ const ProfileMenu = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter company name"
-                  value={companyData.companyName}
+                  value={profileData.company}
                   onChange={(e) =>
-                    setCompanyData({
-                      ...companyData,
-                      companyName: e.target.value,
+                    setProfileData({
+                      ...profileData,
+                      company: e.target.value,
                     })
                   }
                 />
@@ -462,11 +478,11 @@ const ProfileMenu = () => {
                   type="text"
                   className="form-control"
                   placeholder="Enter company website"
-                  value={companyData.companyWebsite}
+                  value={profileData.company_site}
                   onChange={(e) =>
-                    setCompanyData({
-                      ...companyData,
-                      companyWebsite: e.target.value,
+                    setProfileData({
+                      ...profileData,
+                      company_site: e.target.value,
                     })
                   }
                 />
@@ -479,10 +495,10 @@ const ProfileMenu = () => {
                   type="number"
                   className="form-control"
                   placeholder="Enter company size"
-                  value={companyData.companySize}
+                  value={profileData.companySize}
                   onChange={(e) =>
-                    setCompanyData({
-                      ...companyData,
+                    setProfileData({
+                      ...profileData,
                       companySize: e.target.value,
                     })
                   }
@@ -495,11 +511,11 @@ const ProfileMenu = () => {
                 <Dropdown
                   options={selectCompanyCategories}
                   placeholder="Select company category"
-                  value={companyData.companyCategory}
+                  value={profileData?.category}
                   onChange={(option) =>
-                    setCompanyData({
-                      ...companyData,
-                      companyCategory: option.value,
+                    setProfileData({
+                      ...profileData,
+                      category: option.value,
                     })
                   }
                   className="form-control w-100"
@@ -515,6 +531,70 @@ const ProfileMenu = () => {
       </Drawer>
 
       {/* FOR FILL CONTACT DETAILS DRAWER */}
+      <Drawer
+        title="Contact Details"
+        width={700}
+        onClose={onContactClose}
+        open={contactOpen}
+        maskClosable={false}
+        className="profile_menu_drawer"
+        footer={
+          <div style={{ textAlign: "right" }}>
+            <button
+              onClick={onContactClose}
+              style={{ marginRight: 8 }}
+              className="compass-sidebar-back"
+            >
+              Back
+            </button>
+            <button
+              className="compass-sidebar-next"
+              onClick={() => submitProfileData()}
+            >
+              Save
+            </button>
+          </div>
+        }
+      >
+        <div className="profile_box">
+          <div className="row">
+            <div className="col-md-7 mb-2">
+              <div className="form-group">
+                <label htmlFor="">Phone Number</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  placeholder="Enter phone number"
+                  value={profileData.phone_number}
+                  onChange={(e) =>
+                    setProfileData({
+                      ...profileData,
+                      phone_number: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+            <div className="col-md-7 mb-2">
+              <div className="form-group">
+                <label htmlFor="">Company Email</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  placeholder="Enter company email"
+                  value={profileData.email}
+                  onChange={(e) =>
+                    setProfileData({
+                      ...profileData,
+                      email: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </Drawer>
     </>
   );
 };
