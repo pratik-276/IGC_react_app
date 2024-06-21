@@ -35,9 +35,9 @@ const get_operator = async () => {
     return d;
 };
 
-const get_game = async () => {
+const get_game = async (currPage) => {
     let d = await Call({
-        path: "get_game",
+        path: `get_game?page=${currPage}`,
         method: "GET",
     });
     return d;
@@ -47,7 +47,7 @@ const request_new_casino = async (data) => {
     let d = await Call({
         path: "request_new_casino",
         method: "POST",
-        data
+        data,
     });
     return d;
 };
@@ -58,7 +58,7 @@ const exportObject = {
     compass_delete,
     get_operator,
     get_game,
-    request_new_casino
+    request_new_casino,
 };
 
 export default exportObject;

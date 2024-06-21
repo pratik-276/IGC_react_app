@@ -22,21 +22,14 @@ const selectCompanyCategories = [
 const ProfileMenu = () => {
   const user_id = localStorage.getItem("user_id");
   const { dispatch: profilename, state: namestate } = useContext(ProfileSystem);
-
-  const [profile, setProfile] = useState([]);
+  const { dispatch: profileemail, state: emailstate } =
+    useContext(ProfileSystem);
 
   const [profileData, setProfileData] = useState([]);
 
   const [editProfileData, setEditProfileData] = useState([]);
 
   const [birthDate, setBirthDate] = useState("");
-
-  const [companyData, setCompanyData] = useState({
-    companyName: "",
-    companyWebsite: "",
-    companySize: "",
-    companyCategory: "",
-  });
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
@@ -47,7 +40,6 @@ const ProfileMenu = () => {
       .Profile({ user_id: parseInt(user_id) })
       .then((res) => {
         if (res && res.data) {
-          setProfile(res.data);
           setEditProfileData({
             ...res.data,
           });
@@ -71,15 +63,6 @@ const ProfileMenu = () => {
     setBirthDate("");
   };
 
-  const resetCompanyData = () => {
-    setCompanyData({
-      companyName: "",
-      companyWebsite: "",
-      companySize: "",
-      companyCategory: "",
-    });
-  };
-
   const profileMenuDrawer = (data) => {
     setProfileData(data);
     setProfileOpen(true);
@@ -97,7 +80,6 @@ const ProfileMenu = () => {
 
   const onCompanyClose = () => {
     setCompanyOpen(false);
-    resetCompanyData();
   };
 
   const contactMenuDrawer = (data) => {
@@ -107,7 +89,6 @@ const ProfileMenu = () => {
 
   const onContactClose = () => {
     setContactOpen(false);
-    resetCompanyData();
   };
 
   const onChange = (date) => {
@@ -121,11 +102,10 @@ const ProfileMenu = () => {
       username: profileData?.username
         ? profileData?.username
         : editProfileData?.username,
-      // lastName: profileData?.lastName ? profileData?.lastName : null,
       gender: profileData?.gender
         ? profileData?.gender
         : editProfileData?.gender,
-      dob: profileData?.dob ? profileData?.dob : editProfileData?.dob,
+      dob: birthDate ? birthDate : editProfileData?.dob,
       company: profileData?.company
         ? profileData?.company
         : editProfileData?.company,
@@ -145,6 +125,11 @@ const ProfileMenu = () => {
           profilename({
             type: "SET_NAME",
             payload: { profilename: !namestate?.profilename },
+          });
+
+          profileemail({
+            type: "SET_EMAIl",
+            payload: { profileemail: !emailstate?.profileemail },
           });
           setProfileData(res.data);
           toast.success(res.message);
@@ -218,9 +203,7 @@ const ProfileMenu = () => {
                           allowClear
                           className="form-control w-100"
                           placeholder="Select date"
-                          value={
-                            birthDate ? moment(birthDate, "DD-MM-YYYY") : null
-                          }
+                          // value={editProfileData?.dob}
                         />
                       </div>
                     </div>

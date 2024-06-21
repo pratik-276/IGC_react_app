@@ -24,6 +24,7 @@ const cookies = new Cookies();
 const Header = () => {
   const navigate = useNavigate();
   const { state: namestate } = useContext(ProfileSystem);
+  const { state: emailstate } = useContext(ProfileSystem);
   const user_id = localStorage.getItem("user_id");
   const [isOpen, setIsOpen] = React.useState(false);
   const [dropdownOpen, setDropdownOpen] = React.useState(false);
@@ -66,7 +67,7 @@ const Header = () => {
     if (user_id) {
       getProfile();
     }
-  }, [user_id, namestate?.profilename]);
+  }, [user_id, namestate?.profilename, emailstate?.email]);
 
   return (
     <>

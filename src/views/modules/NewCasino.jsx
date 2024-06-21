@@ -6,7 +6,7 @@ import { CloseOutlined } from "@ant-design/icons";
 
 const NewCasino = (props) => {
 
-  const { onNewCasinoDrawerClose, newCasino, setCasinoDrawer, setSearchQuery, setNewCasino } = props
+  const { onNewCasinoDrawerClose, newCasino, setCasinoDrawer, setNewCasino } = props
 
   const user_id = localStorage.getItem("user_id")
 
@@ -21,11 +21,10 @@ const NewCasino = (props) => {
     })
       .then((res) => {
         if (res?.success === true) {
-          toast.success("Casino requested successfully");
+          toast.success(res?.message);
           setCasinoDrawer(true)
           setOperator_Name("")
           setOperator_URl("")
-          setSearchQuery("")
           setNewCasino(false)
         }
       })
