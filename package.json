@@ -5,6 +5,9 @@
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.3.7",
+    "@emotion/react": "^11.13.0",
+    "@emotion/styled": "^11.13.0",
+    "@mui/x-charts": "^7.11.1",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.4.0",
     "@testing-library/user-event": "13.5.0",
@@ -34,6 +37,7 @@
     "react-router-dom": "6.12.1",
     "react-scripts": "5.0.1",
     "reactstrap": "9.2.0",
+    "recharts": "^2.12.7",
     "universal-cookie": "^7.1.4",
     "web-vitals": "2.1.4"
   },

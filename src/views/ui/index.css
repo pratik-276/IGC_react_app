@@ -709,7 +709,7 @@ input[type="checkbox"] {
 
 .tracker-details {
   background-color: #fff;
-  padding: 20px;
+  padding: 15px;
   border: 1px solid #cccee5;
   border-radius: 5px;
 }
@@ -718,7 +718,7 @@ input[type="checkbox"] {
   display: flex;
   align-items: center;
   font-weight: 600;
-  font-size: 24px;
+  font-size: 20px;
 }
 
 .tracker-details-body .tracker-details-table .p-datatable-table {
@@ -815,4 +815,46 @@ input[type="checkbox"] {
     rgb(84 112 222 / 8%) 0%,
     rgb(84 112 222 / 12%) 100%
   ) !important;
+  border-image: linear-gradient(90deg, #5470de #0f40ff) !important;
+}
+
+/* FOR DASHBOARD TABLE ABVOE SECTION */
+
+.game-track-box {
+  border: 1px solid #cfd6d9 !important;
+  background: none !important;
+}
+
+.game-track-box .game-track-box-chart h6 {
+  margin: 0;
+  font-size: 16px !important;
+  font-weight: 500 !important;
+}
+
+.game-track-box .game-track-box-chart p {
+  font-size: 14px !important;
+  font-weight: 400 !important;
+  color: #178eff;
+}
+
+.game-track-box .game-track-box-chart h4 {
+  font-weight: 600 !important;
+  font-size: 20px !important;
+  color: #222222 !important;
+}
+
+/* Game casino track chart styles */
+
+.position-view-box .recharts-wrapper {
+  width: 100% !important;
+  height: 200px !important;
+}
+
+.tracker-details-table
+  .p-paginator
+  .p-paginator-pages
+  .p-paginator-page.p-highlight {
+  background: #392f6c;
+  color: #fff;
+  border: none !important;
 }
