@@ -14,11 +14,13 @@ import Billing from "./views/profile/Billing";
 import ReferEarn from "./views/profile/ReferEarn";
 import HelpSupport from "./views/profile/HelpSupport";
 import ProfileProvider from "./context/ProfileContext";
+import ScrollToTop from  "./layouts/ScrollToTop"
 
 const App = () => {
   return (
     <>
       <ProfileProvider>
+        <ScrollToTop />
         <Toaster toastOptions={{ duration: 3000 }} />
         <Routes>
           <Route path="/" element={<Layout />}>

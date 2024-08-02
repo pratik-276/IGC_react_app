@@ -1,31 +1,107 @@
 import React from "react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
+import ReactApexChart from "react-apexcharts";
 
 const MiniCasinoTrackChart = () => {
+  const options = {
+    chart: {
+      width: 370,
+      height: 46,
+      type: "area",
+      sparkline: {
+        enabled: true,
+      },
+      toolbar: {
+        show: false,
+      },
+      background: "transparent", // Ensure background is transparent
+    },
+    dataLabels: {
+      enabled: false,
+    },
+    stroke: {
+      curve: "smooth",
+      width: 1.5, // Line width
+    },
+    fill: {
+      type: "gradient",
+      gradient: {
+        shadeIntensity: 1,
+        inverseColors: false,
+        opacityFrom: 0.45,
+        opacityTo: 0.05,
+        stops: [50, 100, 100, 100],
+      },
+    },
+    tooltip: {
+      fixed: {
+        enabled: false,
+      },
+      x: {
+        show: false,
+      },
+      y: {
+        title: {
+          formatter: function (seriesName) {
+            return "";
+          },
+        },
+      },
+      marker: {
+        show: false,
+      },
+    },
+    xaxis: {
+      type: "datetime",
+      labels: {
+        show: false,
+      },
+      axisBorder: {
+        show: false, // Hide axis border
+      },
+      axisTicks: {
+        show: false, // Hide axis ticks
+      },
+    },
+    yaxis: {
+      labels: {
+        show: false,
+      },
+      axisBorder: {
+        show: false, // Hide axis border
+      },
+      axisTicks: {
+        show: false, // Hide axis ticks
+      },
+    },
+  };
+
+  const series = [
+    {
+      name: "Data",
+      data: [
+        { x: new Date("2024-01-01").getTime(), y: 20 },
+        { x: new Date("2024-02-01").getTime(), y: 40 },
+        { x: new Date("2024-03-01").getTime(), y: 30 },
+        { x: new Date("2024-04-01").getTime(), y: 50 },
+        { x: new Date("2024-05-01").getTime(), y: 60 },
+        { x: new Date("2024-05-01").getTime(), y: 40 },
+        { x: new Date("2024-05-01").getTime(), y: 20 },
+        { x: new Date("2024-05-01").getTime(), y: 70 },
+      ],
+    },
+  ];
+
   return (
-    <LineChart
-      width={500}
-      height={300}
-      data={[
-        { x: 1, y: 0.9 },
-        { x: 2, y: 2.5 },
-        { x: 3, y: 2 },
-        { x: 5, y: 8.5 },
-      ]}
-    >
-      <CartesianGrid stroke="#f5f5f5" />
-      <XAxis dataKey="x" hide />
-      <YAxis hide />
-      <Tooltip />
-      <Line type="monotone" dataKey="y" stroke="#8884d8" />
-    </LineChart>
+    <>
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="area"
+        height={46}
+        width={370}
+        className="apex-charts"
+      />
+    </>
   );
 };
 

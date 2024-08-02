@@ -760,7 +760,7 @@ input[type="checkbox"] {
 .tracker-details .position-view-box {
   background-color: #fdf7ea;
   padding: 15px 15px 25px;
-  border-width: 2px;
+  border-width: 1px;
   border-style: solid;
   border-image: linear-gradient(
     90deg,
@@ -812,10 +812,37 @@ input[type="checkbox"] {
 .tracker-details .best_position_box {
   background: linear-gradient(
     90deg,
-    rgb(84 112 222 / 8%) 0%,
-    rgb(84 112 222 / 12%) 100%
+    rgba(84, 112, 222, 8%) 35%,
+    rgba(84, 112, 222, 12%) 100%
   ) !important;
-  border-image: linear-gradient(90deg, #5470de #0f40ff) !important;
+  border-image: linear-gradient(
+    90deg,
+    rgb(84, 112, 222) 35%,
+    rgb(15, 64, 255) 100%
+  ) !important;
+  border-image-slice: 1 !important;
+}
+
+.tracker-details .best_position_box h5 {
+  color: #1634a9 !important;
+}
+
+.tracker-details .worst_position_box {
+  background: linear-gradient(
+    90deg,
+    rgba(7, 190, 170, 8%) 35%,
+    rgba(7, 190, 170, 12%) 100%
+  ) !important;
+  border-image: linear-gradient(
+    90deg,
+    rgb(7, 190, 170) 35%,
+    rgb(6, 135, 121) 100%
+  ) !important;
+  border-image-slice: 1 !important;
+}
+
+.tracker-details .worst_position_box h5 {
+  color: #09ab9a !important;
 }
 
 /* FOR DASHBOARD TABLE ABVOE SECTION */

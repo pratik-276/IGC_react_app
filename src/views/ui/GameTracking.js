@@ -180,7 +180,7 @@ const GameTracking = () => {
                         <div className="col-md-4">
                           <div className="position-view-box-bottom">
                             <h4>6</h4>
-                            <span>Section Name</span>
+                            <span>Game Position</span>
                           </div>
                         </div>
                       </div>
@@ -210,14 +210,14 @@ const GameTracking = () => {
                         <div className="col-md-4">
                           <div className="position-view-box-bottom">
                             <h4>6</h4>
-                            <span>Section Name</span>
+                            <span>Game Position</span>
                           </div>
                         </div>
                       </div>
                     </div>
                   </div>
                   <div className="col-md-4">
-                    <div className="position-view-box">
+                    <div className="position-view-box worst_position_box">
                       <div className="d-flex justify-content-between align-items-center position-view-box-head">
                         <h5>Worst Position</h5>
                         <div className="d-flex align-items-center">
@@ -240,7 +240,7 @@ const GameTracking = () => {
                         <div className="col-md-4">
                           <div className="position-view-box-bottom">
                             <h4>6</h4>
-                            <span>Section Name</span>
+                            <span>Game Position</span>
                           </div>
                         </div>
                       </div>

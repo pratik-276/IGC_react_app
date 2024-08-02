@@ -60,11 +60,16 @@ const TrackerDetailsTable = ({ setShow }) => {
     return <span className="trend-details-badge">{row?.trend}</span>;
   };
 
+  const HandleShowDetails = () => {
+    window.scrollTo(0, 0);
+    setShow(true);
+  };
+
   const actionBodyTemplate = () => {
     return (
       <MdArrowForwardIos
         style={{ fontSize: "24px" }}
-        onClick={() => setShow(true)}
+        onClick={HandleShowDetails}
       />
     );
   };
