@@ -7,20 +7,12 @@ import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { ProductService } from "../views/ui/ProductService";
 
-const TrackerDetailsTable = ({ setShow }) => {
-  const [products, setProducts] = useState(null);
+const TrackerDetailsTable = ({ setShow, gameTracking }) => {
   const [selectedProducts, setSelectedProducts] = useState(null);
   const [globalFilter, setGlobalFilter] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  
   const dt = useRef(null);
-
-  useEffect(() => {
-    ProductService.getProducts().then((data) => {
-      setProducts(data);
-      setLoading(false);
-    });
-  }, []);
 
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -79,7 +71,7 @@ const TrackerDetailsTable = ({ setShow }) => {
       <div className="">
         <DataTable
           ref={dt}
-          value={products}
+          value={gameTracking}
           selection={selectedProducts}
           onSelectionChange={(e) => setSelectedProducts(e.value)}
           dataKey="id"
@@ -92,19 +84,18 @@ const TrackerDetailsTable = ({ setShow }) => {
           currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
           globalFilter={globalFilter}
           header={header}
-          loading={loading}
           scrollable
           scrollHeight="400px"
         >
           <Column selectionMode="multiple" exportable={false}></Column>
           <Column
-            field="casino"
+            field="operator_name"
             header="Casino "
             sortable
             style={{ minWidth: "10rem" }}
           ></Column>
           <Column
-            field="game"
+            field="game_name"
             header="Game"
             sortable
             style={{ minWidth: "10rem" }}
@@ -116,7 +107,7 @@ const TrackerDetailsTable = ({ setShow }) => {
             style={{ minWidth: "10rem" }}
           ></Column>
           <Column
-            field="avgPosition"
+            field="avg_position"
             header="Avg.Position"
             sortable
             style={{ minWidth: "10rem" }}

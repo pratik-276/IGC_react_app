@@ -1,15 +1,37 @@
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-const PositionChangeChart = () => {
-  const series = [50, 50, 100];
+const PositionChangeChart = ({ gameTracking }) => {
+  console.log("gameTracking", gameTracking);
+
+  if (!gameTracking) {
+    return <p>No data available</p>;
+  }
+
+  const neutral =
+    gameTracking?.tracker_count?.count -
+    gameTracking?.trackers_gaining_position?.count;
+
+  const gainers =
+    gameTracking?.tracker_count?.count -
+    gameTracking?.trackers_gaining_position?.count;
+
+  const losers =
+    gameTracking?.tracker_count?.count -
+    gameTracking?.trackers_losing_position?.count;
+
+  const series = [gainers, losers, neutral];
   const options = {
     chart: {
       height: 320,
       type: "pie",
     },
-    series: [50, 50, 100],
-    labels: ["Gainers (3)", "Losers", "Neutral"],
+    series: [gainers, losers, neutral],
+    labels: [
+      `Gainers (${gainers})`,
+      `Losers (${losers})`,
+      `Neutral (${neutral})`,
+    ],
 
     legend: {
       show: true,

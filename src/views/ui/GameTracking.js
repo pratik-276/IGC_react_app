@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -14,10 +14,34 @@ import TrackerDetailsTable from "../../tables/TrackerDetailsTable";
 import PositionChangeChart from "../../charts/PositionChangeChart";
 import MiniCasinoTrackChart from "../../charts/MiniCasinoTrackChart";
 
+import GameData from "../../services/GameTracker";
+
 const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
 const GameTracking = () => {
+  const user_id = localStorage.getItem("user_id");
   const [show, setShow] = useState(false);
+
+  const [gameTracking, setGameTracking] = useState([]);
+
+  useEffect(() => {
+    const data = {
+      user_id: 1,
+      status: "live",
+      start_datetime: "2024-06-01",
+      end_datetime: "2024-07-01",
+    };
+
+    GameData.tracker_summary(data)
+      .then((res) => {
+        if (res?.success === true) {
+          setGameTracking(res?.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
 
   return (
     <>
@@ -87,9 +111,12 @@ const GameTracking = () => {
                         <p>View Details</p>
                       </div>
                       <div>
-                        <h4 className="m-0 text-end">3,459</h4>
+                        <h4 className="m-0 text-end">
+                          {gameTracking?.average_position?.position}
+                        </h4>
                         <p className="text-success">
-                          4.66% <FaArrowUpLong />
+                          {gameTracking?.average_position?.percentage_change}{" "}
+                          <FaArrowUpLong />
                         </p>
                       </div>
                     </div>
@@ -135,7 +162,7 @@ const GameTracking = () => {
                   </div>
                 </div>
                 <div className="col-md-4 text-center">
-                  <PositionChangeChart />
+                  <PositionChangeChart gameTracking={gameTracking} />
                 </div>
               </div>
             </div>
@@ -143,7 +170,10 @@ const GameTracking = () => {
             {/* Tracker Details Table */}
             <div className="tracker-details mt-3">
               <div className="tracker-details-body">
-                <TrackerDetailsTable setShow={setShow} />
+                <TrackerDetailsTable
+                  setShow={setShow}
+                  gameTracking={gameTracking?.tracker_details}
+                />
               </div>
             </div>
           </>
