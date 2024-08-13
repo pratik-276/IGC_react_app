@@ -13,14 +13,14 @@ const MiniCasinoTrackChart = () => {
       toolbar: {
         show: false,
       },
-      background: "transparent", // Ensure background is transparent
+      background: "transparent", 
     },
     dataLabels: {
       enabled: false,
     },
     stroke: {
       curve: "smooth",
-      width: 1.5, // Line width
+      width: 1.5, 
     },
     fill: {
       type: "gradient",

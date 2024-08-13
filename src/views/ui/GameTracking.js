@@ -17,10 +17,12 @@ import MiniCasinoTrackChart from "../../charts/MiniCasinoTrackChart";
 import GameData from "../../services/GameTracker";
 
 const TrackingTime = ["7days", "1 month", "3 months", "custom"];
+const TrackingStatus = ["All", "Live"];
 
 const GameTracking = () => {
   const user_id = localStorage.getItem("user_id");
   const [show, setShow] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [gameTracking, setGameTracking] = useState([]);
 
@@ -36,10 +38,12 @@ const GameTracking = () => {
       .then((res) => {
         if (res?.success === true) {
           setGameTracking(res?.data);
+          setLoading(false);
         }
       })
       .catch((err) => {
         console.log(err);
+        setLoading(false);
       });
   }, []);
 
@@ -60,7 +64,7 @@ const GameTracking = () => {
               <div className="row justify-content-end">
                 <div className="col-md-3">
                   <Dropdown
-                    options={TrackingTime}
+                    options={TrackingStatus}
                     placeholder="Status"
                     className="w-100"
                   />
@@ -94,7 +98,9 @@ const GameTracking = () => {
                         <p>View Details</p>
                       </div>
                       <div>
-                        <h4 className="m-0 text-end">56</h4>
+                        <h4 className="m-0 text-end">
+                          {gameTracking?.tracker_count?.count}
+                        </h4>
                         <p className="text-danger">
                           -4.66% <FaArrowDownLong />
                         </p>
@@ -133,7 +139,9 @@ const GameTracking = () => {
                         <p>View Details</p>
                       </div>
                       <div>
-                        <h4 className="m-0 text-end">1000</h4>
+                        <h4 className="m-0 text-end">
+                          {gameTracking?.trackers_gaining_position?.count}
+                        </h4>
                         <p className="text-success">
                           -4.66% <FaArrowUpLong />
                         </p>
@@ -150,7 +158,9 @@ const GameTracking = () => {
                         <p>View Details</p>
                       </div>
                       <div>
-                        <h4 className="m-0 text-end">489</h4>
+                        <h4 className="m-0 text-end">
+                          {gameTracking?.trackers_losing_position?.count}
+                        </h4>
                         <p className="text-danger">
                           -4.66% <FaArrowDownLong />
                         </p>
@@ -162,7 +172,10 @@ const GameTracking = () => {
                   </div>
                 </div>
                 <div className="col-md-4 text-center">
-                  <PositionChangeChart gameTracking={gameTracking} />
+                  <PositionChangeChart
+                    gameTracking={gameTracking}
+                    loading={loading}
+                  />
                 </div>
               </div>
             </div>

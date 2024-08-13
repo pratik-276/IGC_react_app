@@ -1,18 +1,15 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import { ProductService } from "../views/ui/ProductService";
 
 const TrackerDetailsTable = ({ setShow, gameTracking }) => {
-  const [selectedProducts, setSelectedProducts] = useState(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
-  const [loading, setLoading] = useState(true);
-  
   const dt = useRef(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [selectedRows, setSelectedRows] = useState(null);
 
   const header = (
     <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
@@ -32,24 +29,24 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
     </div>
   );
 
+  const StatusBodyTemplate = (row) => {
+    return <span>{row ? row?.status : "-"}</span>;
+  };
+
   const AverageBodyTemplate = (row) => {
-    return (
-      <>
-        <span style={{ color: "#8A92A6" }}>{row?.avgPosition}</span>
-      </>
-    );
+    return <span style={{ color: "#8A92A6" }}>{row?.avg_position}</span>;
   };
 
   const MinBodyTemplate = (row) => {
-    return <span style={{ color: "#8A92A6" }}>{row?.minPosition}</span>;
+    return <span style={{ color: "#8A92A6" }}>{row?.worst_position}</span>;
   };
 
   const MaxBodyTemplate = (row) => {
-    return <span style={{ color: "#8A92A6" }}>{row?.maxPosition}</span>;
+    return <span style={{ color: "#8A92A6" }}>{row?.best_position}</span>;
   };
 
   const TrendBodyTemplate = (row) => {
-    return <span className="trend-details-badge">{row?.trend}</span>;
+    return <span className="trend-details-badge">{row?.last_week_trend}</span>;
   };
 
   const HandleShowDetails = () => {
@@ -57,11 +54,14 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
     setShow(true);
   };
 
-  const actionBodyTemplate = () => {
+  const actionBodyTemplate = (rowData) => {
     return (
       <MdArrowForwardIos
         style={{ fontSize: "24px" }}
-        onClick={HandleShowDetails}
+        onClick={() => {
+          HandleShowDetails(rowData.tracker_id);
+          console.log("row", rowData.tracker_id);
+        }}
       />
     );
   };
@@ -72,9 +72,9 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
         <DataTable
           ref={dt}
           value={gameTracking}
-          selection={selectedProducts}
-          onSelectionChange={(e) => setSelectedProducts(e.value)}
-          dataKey="id"
+          selection={selectedRows}
+          onSelectionChange={(e) => setSelectedRows(e.value)}
+          dataKey="tracker_id"
           removableSort
           paginator
           className="tracker-details-table"
@@ -103,6 +103,7 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
           <Column
             field="status"
             header="Status"
+            body={StatusBodyTemplate}
             sortable
             style={{ minWidth: "10rem" }}
           ></Column>
@@ -115,7 +116,7 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
             className="text-center "
           ></Column>
           <Column
-            field="minPosition"
+            field="worst_position"
             header="Min Position"
             sortable
             style={{ minWidth: "10rem" }}
@@ -123,7 +124,7 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
             className="text-center"
           ></Column>
           <Column
-            field="maxPosition"
+            field="best_position"
             header="Max Position"
             sortable
             style={{ minWidth: "10rem" }}
@@ -131,7 +132,7 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
             className="text-center"
           ></Column>
           <Column
-            field="trend"
+            field="last_week_trend"
             header="Trend"
             sortable
             style={{ minWidth: "10rem" }}
@@ -140,7 +141,7 @@ const TrackerDetailsTable = ({ setShow, gameTracking }) => {
           <Column
             field=""
             header=""
-            className="d-flex align-items-center"
+            className="text-center"
             body={actionBodyTemplate}
           ></Column>
         </DataTable>
