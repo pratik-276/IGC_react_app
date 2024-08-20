@@ -8,19 +8,20 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
+import dayjs from "dayjs";
 
-const generateDateLabels = () => {
-  const month = "Dec";
-  const days = Array.from({ length: 30 }, (_, i) => `${month} ${i + 1}`);
-  return days;
-};
+const AveragePositionChart = ({ trackingDetails }) => {
+  const data = trackingDetails?.daywise_data.map(
+    ({ created_date, overall_game_position }) => ({
+      date: dayjs(created_date).format("MMM DD"),
+      overall_game_position,
+    })
+  );
 
-const data = generateDateLabels().map((date, index) => ({
-  date,
-  uv: Math.random() * 250,
-}));
+  const minY = trackingDetails?.daywise_data.map(
+    (item) => item.overall_game_position
+  );
 
-const AveragePositionChart = () => {
   return (
     <>
       <div className="tracker-details-head mb-5">
@@ -39,18 +40,18 @@ const AveragePositionChart = () => {
               bottom: 0,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
+            <CartesianGrid strokeDasharray="5 5" vertical={false} />
             <XAxis dataKey="date" />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
-              ticks={[0, 50, 100, 150, 200, 250]}
+              ticks={minY}
               axisLine={false}
               tickLine={false}
             />
             <Tooltip />
             <Area
               type="monotone"
-              dataKey="uv"
+              dataKey="overall_game_position"
               stroke="#5865F2"
               fill="none"
               strokeWidth={2}

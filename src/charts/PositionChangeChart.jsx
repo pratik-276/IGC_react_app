@@ -2,7 +2,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
 
-const PositionChangeChart = ({ gameTracking, loading }) => {
+const PositionChangeChart = ({ gameTracking }) => {
   if (!gameTracking) {
     return <p>No data available</p>;
   }
@@ -59,18 +59,12 @@ const PositionChangeChart = ({ gameTracking, loading }) => {
   return (
     <>
       <span>Position Changes</span>
-      {loading ? (
-        <div className="d-flex align-items-center justify-content-center mt-5">
-          <ProgressSpinner />
-        </div>
-      ) : (
-        <ReactApexChart
-          options={options}
-          series={series}
-          type="pie"
-          height="320"
-        />
-      )}
+      <ReactApexChart
+        options={options}
+        series={series}
+        type="pie"
+        height="320"
+      />
     </>
   );
 };

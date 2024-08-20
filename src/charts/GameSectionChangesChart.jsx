@@ -20,7 +20,7 @@ const data = generateDateLabels().map((date, index) => ({
   uv: Math.random() * 250,
 }));
 
-const GameSectionChangesChart = () => {
+const GameSectionChangesChart = ({ trackingDetails }) => {
   return (
     <>
       <div className="tracker-details-head mb-5">

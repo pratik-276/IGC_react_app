@@ -20,16 +20,16 @@ const tracker_summary = async (data) => {
 
 const tracker_detail = async (data) => {
   let d = await Call({
-    path: "tracker_detail",
+    path: "tracker_dashboard_details",
     method: "post",
     data,
   });
   return d;
 };
 
-const tracker_selection_filter = async (data) => {
+const tracker_dashboard_filter = async (data) => {
   let d = await Call({
-    path: "tracker_selection_filter",
+    path: "tracker_dashboard_filter",
     method: "post",
     data,
   });
@@ -39,7 +39,7 @@ const tracker_selection_filter = async (data) => {
 const exportObject = {
   create_alert,
   tracker_summary,
-  tracker_selection_filter,
+  tracker_dashboard_filter,
   tracker_detail,
 };
 
