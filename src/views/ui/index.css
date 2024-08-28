@@ -757,6 +757,14 @@ input[type="checkbox"] {
 }
 
 /* DETAILS PAGE OF GAME TRACKING */
+
+.tracker_details_boxes {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 15px;
+  padding-top: 25px;
+}
+
 .tracker-details .position-view-box {
   background-color: #fdf7ea;
   padding: 15px 15px 25px;
