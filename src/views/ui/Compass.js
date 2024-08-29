@@ -84,7 +84,7 @@ const Compass = () => {
             >
               Back
             </button>
-            {selectedOption == "Casino 1" ? (
+            {selectedOption === "Casino 1" ? (
               <button
                 className={`compass-sidebar-next ${
                   !selectedOption ? "btn-disabled" : ""
@@ -118,7 +118,7 @@ const Compass = () => {
           onClick={() => handleSelectOption("Casino 1")}
         >
           <span>Select Casino</span>
-          <div className="casino-select-listing mt-4">
+          {/* <div className="casino-select-listing mt-4">
             {data?.map((data, index) => (
               <div className="calibrate-casino-data-display" key={data.id}>
                 <FiMinusCircle style={{ fontSize: "22px" }} />
@@ -128,7 +128,7 @@ const Compass = () => {
                 </div>
               </div>
             ))}
-          </div>
+          </div> */}
           <div className="calibrate-content mt-4">
             <div className="calibrate-icon">
               <CiCirclePlus />

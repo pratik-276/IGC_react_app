@@ -5,8 +5,6 @@ import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
-import Dropdown from "react-dropdown";
-import "react-dropdown/style.css";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
@@ -18,9 +16,41 @@ import MiniCasinoTrackChart from "../../charts/MiniCasinoTrackChart";
 import GameData from "../../services/GameTracker";
 import { Spin } from "antd";
 import TrackerDetails from "../../GameTrackDetails/TrackerDetails";
+import MiniGainPositionChart from "../../charts/MiniGainPositionChart";
+import MiniAvgPositionChart from "../../charts/MiniAvgPositionChart";
+import MiniLossPositionChart from "../../charts/MiniLossPositionChart";
 
-const TrackingTime = ["7days", "1 month", "3 months", "custom"];
-const TrackingStatus = ["Live", "Old"];
+import Select from "react-select";
+
+const TrackingTime = [
+  {
+    value: "7days",
+    label: "7days",
+  },
+  {
+    value: "1 month",
+    label: "1 month",
+  },
+  {
+    value: "3 months",
+    label: "3 months",
+  },
+  {
+    value: "custom",
+    label: "custom",
+  },
+];
+
+const TrackingStatus = [
+  {
+    value: "Live",
+    label: "Live",
+  },
+  {
+    value: "Old",
+    label: "Old",
+  },
+];
 
 const GameTracking = () => {
   const [show, setShow] = useState(false);
@@ -28,6 +58,8 @@ const GameTracking = () => {
 
   const [gameTracking, setGameTracking] = useState([]);
   const [trackingDetails, setTrackingDetails] = useState([]);
+  const [trackingFilters, setTrackingFilters] = useState([]);
+  const [status, setStatus] = useState([]);
   const [loader2, setLoader2] = useState(true);
 
   useEffect(() => {
@@ -43,6 +75,7 @@ const GameTracking = () => {
         if (res?.success === true) {
           setGameTracking(res?.data);
           setLoader(false);
+          setStatus(res?.success);
         }
       })
       .catch((err) => {
@@ -92,6 +125,17 @@ const GameTracking = () => {
     return <span className="trend-details-badge">{row?.last_week_trend}</span>;
   };
 
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <MdArrowForwardIos
+        style={{ fontSize: "24px" }}
+        onClick={() => {
+          HandleShowDetails(rowData.tracker_id);
+        }}
+      />
+    );
+  };
+
   const HandleShowDetails = (id) => {
     window.scrollTo(0, 0);
     setShow(true);
@@ -106,17 +150,37 @@ const GameTracking = () => {
       .catch((err) => {
         console.log(err);
       });
+
+    const data = {
+      user_id: 1,
+      status: "live",
+      start_datetime: "2024-06-01",
+      end_datetime: "2024-07-01",
+    };
+
+    GameData.tracker_dashboard_filter(data)
+      .then((res) => {
+        if (res?.success === true) {
+          setTrackingFilters(res?.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "24px" }}
-        onClick={() => {
-          HandleShowDetails(rowData.tracker_id);
-        }}
-      />
-    );
+  const handleDetailsChage = (id) => {
+    setLoader2(true);
+    GameData.tracker_detail({ tracker_id: id?.value })
+      .then((res) => {
+        if (res?.success === true) {
+          setTrackingDetails(res?.data);
+          setLoader2(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   };
 
   return (
@@ -124,7 +188,7 @@ const GameTracking = () => {
       <div className="compass">
         <div className="compass-data">
           <div className="row align-items-center">
-            <div className="col-md-6">
+            <div className="col-md-5 col-lg-5">
               <h4 className="m-0">Overview Dashboard</h4>
               <span>
                 View, Filter and analyse data as per your requirements with
@@ -132,21 +196,50 @@ const GameTracking = () => {
               </span>
             </div>
 
-            <div className="col-md-6">
+            <div className="col-md-7 col-lg-7">
               <div className="row justify-content-end">
-                <div className="col-md-3">
-                  <Dropdown
-                    options={TrackingStatus}
-                    placeholder="Status"
-                    className="w-100"
-                  />
+                {show === true && (
+                  <div className="col-md-5">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={false}
+                      name="trackingFiltersId"
+                      options={
+                        trackingFilters &&
+                        trackingFilters?.map((datas) => ({
+                          label: datas?.tracker_name,
+                          value: datas?.tracker_id,
+                        }))
+                      }
+                      placeholder="Select Tracker"
+                      onChange={(id) => handleDetailsChage(id)}
+                    />
+                  </div>
+                )}
+                <div className="col-md-2 px-0">
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      name="trackingstatus"
+                      options={TrackingStatus}
+                      placeholder="Status"
+                    />
+                  </div>
                 </div>
                 <div className="col-md-3">
-                  <Dropdown
-                    options={TrackingTime}
-                    placeholder="All time "
-                    className="w-100"
-                  />
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      name="color"
+                      options={TrackingTime}
+                      placeholder="All Time"
+                    />
+                  </div>
                 </div>
               </div>
             </div>
@@ -215,7 +308,7 @@ const GameTracking = () => {
                           </div>
                         </div>
                         <div className="chart-section-box">
-                          <MiniCasinoTrackChart />
+                          <MiniAvgPositionChart />
                         </div>
                       </div>
                     </div>
@@ -236,7 +329,7 @@ const GameTracking = () => {
                           </div>
                         </div>
                         <div className="chart-section-box">
-                          <MiniCasinoTrackChart />
+                          <MiniGainPositionChart />
                         </div>
                       </div>
                       <div className="position-view-box game-track-box mt-3">
@@ -255,7 +348,7 @@ const GameTracking = () => {
                           </div>
                         </div>
                         <div className="chart-section-box">
-                          <MiniCasinoTrackChart />
+                          <MiniLossPositionChart />
                         </div>
                       </div>
                     </div>

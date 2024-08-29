@@ -16,6 +16,8 @@ const ChooseGamePage = ({ setNewCasino, onGameDrawerClose, gameDrawer }) => {
   const [gameData, setGameData] = useState([]);
   const [lastList, setLastList] = useState(false);
 
+  const [selectedGames, setSelectedGames] = useState(new Set());
+
   const filteredData = gameData.filter((data) => {
     return data?.game_original_name
       ?.toLowerCase()
@@ -46,127 +48,148 @@ const ChooseGamePage = ({ setNewCasino, onGameDrawerClose, gameDrawer }) => {
 
   useEffect(() => {
     if (!lastList && prevPage !== currPage) {
-    fetchData();
-  }
-}, [currPage, lastList, prevPage]);
-
-const onScroll = () => {
-  if (listInnerRef.current) {
-    const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
-    if (scrollTop + clientHeight >= scrollHeight - 5 && !loading) {
-      setCurrPage((prevPage) => prevPage + 1);
+      fetchData();
     }
-  }
-};
+  }, [currPage, lastList, prevPage]);
 
-const closeDrawer = () => {
-  setCurrPage(1)
-}
-
-const handleClose = () => {
-  onGameDrawerClose();
-  closeDrawer();
-};
-
-const handleBackButtonClick = () => {
-  setCurrPage(1); 
-  onGameDrawerClose(); 
-};
-
-
-return (
-  <>
-    <Drawer
-      title="Choose Game"
-      width="50%"
-      className="choose_casino_drawer"
-      closable={true}
-      maskClosable={false}
-      onClose={handleClose}
-      open={gameDrawer}
-      closeIcon={<CloseOutlined className="custom-close-icon" />}
-      footer={
-        <div style={{ textAlign: "right" }}>
-          <button
-            onClick={handleBackButtonClick}
-            style={{ marginRight: 8 }}
-            className="compass-sidebar-back"
-          >
-            Back
-          </button>
-          <button
-            style={{ marginRight: 8 }}
-            className="compass-sidebar-back"
-          >
-            Save
-          </button>
-        </div>
+  const onScroll = () => {
+    if (listInnerRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = listInnerRef.current;
+      if (scrollTop + clientHeight >= scrollHeight - 5 && !loading) {
+        setCurrPage((prevPage) => prevPage + 1);
       }
-    >
-      <div className="search-bar position-relative">
-        <div className="serching">
-          <input
-            type="text"
-            placeholder="search game here"
-            className="search-casino-input"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-          />
-          <div className="casino-search-icon">
-            <IoIosSearch style={{ fontSize: "20px" }} />
+    }
+  };
+
+  const closeDrawer = () => {
+    setCurrPage(1);
+  };
+
+  const handleClose = () => {
+    onGameDrawerClose();
+    closeDrawer();
+    setSelectedGames(new Set());
+  };
+
+  const handleBackButtonClick = () => {
+    setCurrPage(1);
+    onGameDrawerClose();
+    setSelectedGames(new Set());
+  };
+
+  const handleCheckboxChange = (data) => {
+    setSelectedGames((prev) => {
+      const newSelected = new Set(prev);
+      if (newSelected.has(data)) {
+        newSelected.delete(data);
+      } else {
+        newSelected.add(data);
+      }
+      return newSelected;
+    });
+  };
+
+  const handleSave = () => {
+    const selectedArray = Array.from(selectedGames);
+    console.log("Selected Game IDs:", selectedArray);
+  };
+
+  return (
+    <>
+      <Drawer
+        title="Choose Game"
+        width="50%"
+        className="choose_casino_drawer"
+        closable={true}
+        maskClosable={false}
+        onClose={handleClose}
+        open={gameDrawer}
+        closeIcon={<CloseOutlined className="custom-close-icon" />}
+        footer={
+          <div style={{ textAlign: "right" }}>
+            <button
+              onClick={handleBackButtonClick}
+              style={{ marginRight: 8 }}
+              className="compass-sidebar-back"
+            >
+              Back
+            </button>
+            <button
+              style={{ marginRight: 8 }}
+              className="compass-sidebar-back"
+              onClick={handleSave}
+            >
+              Save
+            </button>
           </div>
-        </div>
-        {filteredData.length === 0 ? (
-          <div className="casedata-no-data-search">
-            <div className="no-search-result">
-              <span>No Search result found</span>
+        }
+      >
+        <div className="search-bar position-relative">
+          <div className="serching">
+            <input
+              type="text"
+              placeholder="search game here"
+              className="search-casino-input"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <div className="casino-search-icon">
+              <IoIosSearch style={{ fontSize: "20px" }} />
             </div>
-            <div className="request-demo" onClick={showNewCasinoDrawer}>
+          </div>
+          {filteredData.length === 0 ? (
+            <div className="casedata-no-data-search">
+              <div className="no-search-result">
+                <span>No Search result found</span>
+              </div>
+              {/* <div className="request-demo" onClick={showNewCasinoDrawer}>
               <AiOutlinePlus className="me-2" />
               <span>Request New Casino</span>
+            </div> */}
             </div>
-          </div>
-        ) : (
-          <div>
-            {loader ? (
-              <Loader />
-            ) : (
-              <>
-                <div
-                  className="game-list-container"
-                  onScroll={onScroll}
-                  ref={listInnerRef}
-                  style={{ height: '500px', overflowY: 'auto' }}
-                >
-                  {filteredData.map((data, index) => (
-                    <div className="casino-data-display" key={data?.id}>
-                      <input
-                        type="checkbox"
-                        className="casino-checkbox"
-                        id={data?.id}
-                      />
-                      <div className="casino-data-bar">
-                        <label htmlFor={data?.id}>
-                          {data?.game_original_name}
-                        </label>
-                        <span style={{ color: "#8A92A6" }}>
-                          {data?.game_provider_name}
-                        </span>
+          ) : (
+            <div>
+              {loader ? (
+                <Loader />
+              ) : (
+                <>
+                  <div
+                    className="game-list-container"
+                    onScroll={onScroll}
+                    ref={listInnerRef}
+                    style={{ height: "500px", overflowY: "auto" }}
+                  >
+                    {filteredData.map((data, index) => (
+                      <div className="casino-data-display" key={data?.id}>
+                        <input
+                          type="checkbox"
+                          className="casino-checkbox"
+                          id={data?.id}
+                          checked={selectedGames.has(data)}
+                          onChange={() => handleCheckboxChange(data)}
+                        />
+                        <div className="casino-data-bar">
+                          <label htmlFor={data?.id}>
+                            {data?.game_original_name}
+                          </label>
+                          <span style={{ color: "#8A92A6" }}>
+                            {data?.game_provider_name}
+                          </span>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
-              </>
-            )}
-          </div>
-        )}
-      </div>
-      <div className="line">
-        <span></span>
-      </div>
-    </Drawer>
-  </>
-);
+                    ))}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+        <div className="line">
+          <span></span>
+        </div>
+      </Drawer>
+    </>
+  );
 };
 
 export default ChooseGamePage;

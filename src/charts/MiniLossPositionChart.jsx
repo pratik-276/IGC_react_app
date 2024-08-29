@@ -1,7 +1,7 @@
 import React from "react";
 import { LineChart, Line, ResponsiveContainer, Tooltip } from "recharts";
 
-const MiniCasinoTrackChart = () => {
+const MiniLossPositionChart = () => {
   const data = [
     {
       name: "Page A",
@@ -48,15 +48,23 @@ const MiniCasinoTrackChart = () => {
   ];
 
   return (
-    <div style={{ width: "100%", height: 60 }}>
-      <ResponsiveContainer>
-        <LineChart data={data}>
-          <Tooltip />
-          <Line type="monotone" dataKey="pv" stroke="#FFC246" strokeWidth={1} dot={false}/>
-        </LineChart>
-      </ResponsiveContainer>
-    </div>
+    <>
+      <div style={{ width: "100%", height: 60 }}>
+        <ResponsiveContainer>
+          <LineChart data={data}>
+            <Tooltip />
+            <Line
+              type="monotone"
+              dataKey="pv"
+              stroke="#0D99E6"
+              strokeWidth={1}
+              dot={false}
+            />
+          </LineChart>
+        </ResponsiveContainer>
+      </div>
+    </>
   );
 };
 
-export default MiniCasinoTrackChart;
+export default MiniLossPositionChart;

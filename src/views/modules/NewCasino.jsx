@@ -5,27 +5,28 @@ import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
 const NewCasino = (props) => {
+  const { onNewCasinoDrawerClose, newCasino, setCasinoDrawer, setNewCasino } =
+    props;
 
-  const { onNewCasinoDrawerClose, newCasino, setCasinoDrawer, setNewCasino } = props
+  const user_id = localStorage.getItem("user_id");
 
-  const user_id = localStorage.getItem("user_id")
-
-  const [operator_name, setOperator_Name] = useState("")
-  const [operator_url, setOperator_URl] = useState("")
+  const [operator_name, setOperator_Name] = useState("");
+  const [operator_url, setOperator_URl] = useState("");
 
   const handleSubmit = () => {
     CompassData.request_new_casino({
       user_id,
       operator_name,
-      operator_url
+      operator_url,
     })
       .then((res) => {
         if (res?.success === true) {
+          console.log("res", res.message);
           toast.success(res?.message);
-          setCasinoDrawer(true)
-          setOperator_Name("")
-          setOperator_URl("")
-          setNewCasino(false)
+          setCasinoDrawer(true);
+          setOperator_Name("");
+          setOperator_URl("");
+          setNewCasino(false);
         }
       })
       .catch((err) => {
@@ -56,8 +57,9 @@ const NewCasino = (props) => {
             <button
               style={{ marginRight: 8 }}
               // className="compass-sidebar-back"
-              className={`compass-sidebar-back ${!operator_name || !operator_url ? "btn-disabled" : ""
-                }`}
+              className={`compass-sidebar-back ${
+                !operator_name || !operator_url ? "btn-disabled" : ""
+              }`}
               onClick={handleSubmit}
               disabled={!operator_name || !operator_url}
             >

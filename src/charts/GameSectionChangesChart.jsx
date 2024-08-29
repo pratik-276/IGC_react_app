@@ -7,18 +7,27 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  Text,
 } from "recharts";
 
+
 const generateDateLabels = () => {
+  const year = 2024;
   const month = "Dec";
-  const days = Array.from({ length: 30 }, (_, i) => `${month} ${i + 1}`);
-  return days;
+  return Array.from({ length: 30 }, (_, i) => `${i + 1}-${month}-${year}`);
 };
 
-const data = generateDateLabels().map((date, index) => ({
+// Generate data with the formatted dates
+const data = generateDateLabels().map((date) => ({
   date,
   uv: Math.random() * 250,
 }));
+
+const CustomTick = ({ x, y, payload }) => ( 
+  <Text x={x} y={y} dy={10} textAnchor="middle" fill="#666" angle={-45}>
+    {payload.value}
+  </Text>
+);
 
 const GameSectionChangesChart = ({ trackingDetails }) => {
   return (
@@ -36,14 +45,18 @@ const GameSectionChangesChart = ({ trackingDetails }) => {
               top: 10,
               right: 30,
               left: 0,
-              bottom: 0,
+              bottom: 50,
             }}
           >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="date" />
+            <CartesianGrid strokeDasharray="5 5" vertical={false} />
+            <XAxis
+              dataKey="date"
+              tick={<CustomTick />}
+              interval={0} 
+            />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
-              ticks={[0, 50, 100, 150, 200, 250]}
+              ticks={[150]}
               axisLine={false}
               tickLine={false}
             />

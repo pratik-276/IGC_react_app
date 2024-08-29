@@ -765,6 +765,12 @@ input[type="checkbox"] {
   padding-top: 25px;
 }
 
+.dashboard_dropdown {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
 .tracker-details .position-view-box {
   background-color: #fdf7ea;
   padding: 15px 15px 25px;
@@ -858,6 +864,7 @@ input[type="checkbox"] {
 .game-track-box {
   border: 1px solid #cfd6d9 !important;
   background: none !important;
+  border-radius: 5px;
 }
 
 .game-track-box .game-track-box-chart h6 {

@@ -166,6 +166,7 @@ const ProfileMenu = () => {
                           className="form-control"
                           placeholder="Enter first name"
                           value={editProfileData?.username}
+                          disabled
                         />
                       </div>
                     </div>
@@ -177,22 +178,31 @@ const ProfileMenu = () => {
                           className="form-control"
                           placeholder="Enter last name"
                           value={editProfileData.lastName}
+                          disabled
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
                         <label htmlFor="">Gender</label>
-                        <Dropdown
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter last name"
+                          value={editProfileData?.gender}
+                          disabled
+                        />
+                        {/* <Dropdown
                           options={selectGender}
                           placeholder="Select gender"
                           value={editProfileData?.gender}
                           className="form-control w-100"
+                          disabled
                         />
                         <IoIosArrowDown
                           className="profile_calender_icon"
                           style={{ fontSize: "22px" }}
-                        />
+                        /> */}
                       </div>
                     </div>
                     <div className="col-md-6">
@@ -203,6 +213,7 @@ const ProfileMenu = () => {
                           allowClear
                           className="form-control w-100"
                           placeholder="Select date"
+                          disabled
                           // value={editProfileData?.dob}
                         />
                       </div>
@@ -225,6 +236,7 @@ const ProfileMenu = () => {
                           className="form-control"
                           placeholder="Enter company name"
                           value={editProfileData?.company || ""}
+                          disabled
                         />
                       </div>
                     </div>
@@ -236,6 +248,7 @@ const ProfileMenu = () => {
                           className="form-control"
                           placeholder="Enter company website"
                           value={editProfileData?.company_site || ""}
+                          disabled
                         />
                       </div>
                     </div>
@@ -247,13 +260,21 @@ const ProfileMenu = () => {
                           className="form-control"
                           placeholder="Enter company size"
                           value={editProfileData?.category || ""}
+                          disabled
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
                         <label htmlFor="">Company Category</label>
-                        <Dropdown
+                        <input
+                          type="text"
+                          className="form-control"
+                          placeholder="Enter company size"
+                          value={editProfileData.category || ""}
+                          disabled
+                        />
+                        {/* <Dropdown
                           options={selectCompanyCategories}
                           placeholder="Select company category"
                           value={editProfileData.category || ""}
@@ -262,7 +283,7 @@ const ProfileMenu = () => {
                         <IoIosArrowDown
                           className="profile_calender_icon"
                           style={{ fontSize: "22px" }}
-                        />
+                        /> */}
                       </div>
                     </div>
                   </div>

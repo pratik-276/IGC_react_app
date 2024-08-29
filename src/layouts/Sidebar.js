@@ -48,8 +48,12 @@ const Sidebar = () => {
   const navigate = useNavigate();
 
   const showMobilemenu = () => {
-    document.getElementById("sidebarArea").classList.toggle("showSidebar");
+    const sidebar = document?.getElementById("sidebarArea");
+    if (window?.innerWidth < 768) {
+      sidebar?.classList?.toggle("showSidebar");
+    }
   };
+
   let location = useLocation();
 
   return (
@@ -59,7 +63,7 @@ const Sidebar = () => {
       location.pathname === "/help-support" ||
       location.pathname === "/refer-earn" ? (
         <>
-          <div className="profile-sidebar">
+          <div className="profile-sidebar" id="sidebarArea">
             <div className="d-flex">
               <Button
                 color="white"
@@ -100,7 +104,7 @@ const Sidebar = () => {
         </>
       ) : (
         <>
-          <div className="sidebar">
+          <div className="sidebar" id="sidebarArea">
             <div className="d-flex">
               <Button
                 color="white"

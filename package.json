@@ -36,6 +36,7 @@
     "react-paginate": "^8.2.0",
     "react-router-dom": "6.12.1",
     "react-scripts": "5.0.1",
+    "react-select": "^5.8.0",
     "reactstrap": "9.2.0",
     "recharts": "^2.12.7",
     "universal-cookie": "^7.1.4",

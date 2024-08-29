@@ -7,10 +7,15 @@ import Loader from "../../layouts/loader/Loader";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
 
-const ChooseCasinoPage = ({ setNewCasino, onCasinoDrawerClose, casinoDrawer }) => {
+const ChooseCasinoPage = ({
+  setNewCasino,
+  onCasinoDrawerClose,
+  casinoDrawer,
+}) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [casinoData, setCasinoData] = useState([]);
   const [loader, setLoader] = useState(true);
+  const [selectedCasinos, setSelectedCasinos] = useState(new Set());
 
   const filteredData = casinoData?.filter((data) => {
     return data?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase());
@@ -39,13 +44,30 @@ const ChooseCasinoPage = ({ setNewCasino, onCasinoDrawerClose, casinoDrawer }) =
   }, []);
 
   const closeDrawer = () => {
-    setSearchQuery("")
-    onCasinoDrawerClose()
-  }
+    setSearchQuery("");
+    onCasinoDrawerClose();
+    setSelectedCasinos(new Set());
+  };
+
+  const handleCheckboxChange = (data) => {
+    setSelectedCasinos((prev) => {
+      const newSelected = new Set(prev);
+      if (newSelected.has(data)) {
+        newSelected.delete(data);
+      } else {
+        newSelected.add(data);
+      }
+      return newSelected;
+    });
+  };
+
+  const handleSave = () => {
+    const selectedArray = Array.from(selectedCasinos);
+    console.log("Selected Casino IDs:", selectedArray);
+  };
 
   return (
     <>
-
       <Drawer
         title="Choose Casino"
         width="50%"
@@ -67,6 +89,7 @@ const ChooseCasinoPage = ({ setNewCasino, onCasinoDrawerClose, casinoDrawer }) =
             <button
               style={{ marginRight: 8 }}
               className="compass-sidebar-back"
+              onClick={handleSave}
             >
               Save
             </button>
@@ -108,6 +131,8 @@ const ChooseCasinoPage = ({ setNewCasino, onCasinoDrawerClose, casinoDrawer }) =
                         type="checkbox"
                         className="casino-checkbox"
                         id={data?.id}
+                        checked={selectedCasinos.has(data)}
+                        onChange={() => handleCheckboxChange(data)}
                       />
                       <div className="casino-data-bar">
                         <label htmlFor={data?.id}>{data?.name}</label>
