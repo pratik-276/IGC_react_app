@@ -12,6 +12,7 @@ import {
 import dayjs from "dayjs";
 
 const AveragePositionChart = ({ trackingDetails }) => {
+  
   const data = trackingDetails?.daywise_data.map(
     ({ created_date, overall_game_position }) => ({
       date: dayjs(created_date).format("MMM-DD-YYYY"),

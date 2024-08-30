@@ -86,7 +86,9 @@
   width: calc(100% - 275px);
   padding: 16px;
   margin-left: 275px;
-  background-color: #f3f6fe;
+}
+.game-tracking-path {
+  background-color: #f3f6fe !important;
 }
 
 .all-time-status-dropdown .Dropdown-root {

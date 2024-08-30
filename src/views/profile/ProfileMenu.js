@@ -1,23 +1,15 @@
 import React, { useContext, useEffect, useState } from "react";
 import "./index.css";
-import { Drawer, DatePicker } from "antd";
-import Dropdown from "react-dropdown";
+import { Drawer } from "antd";
 import "react-dropdown/style.css";
 import profileService from "../../services/Profile";
 import { GoPencil } from "react-icons/go";
-import { IoIosArrowDown } from "react-icons/io";
-import { IoCheckmarkSharp } from "react-icons/io5";
-import moment from "moment/moment";
 import toast from "react-hot-toast";
 import { ProfileSystem } from "../../context/ProfileContext";
-
-const selectGender = ["Male", "Female", "Transgender"];
-const selectCompanyCategories = [
-  "Healthcare",
-  "Finance",
-  "Manufacturing",
-  "Real Estate",
-];
+import { FormFeedback, Input, Label } from "reactstrap";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { IoCheckmarkSharp } from "react-icons/io5";
 
 const ProfileMenu = () => {
   const user_id = localStorage.getItem("user_id");
@@ -26,10 +18,7 @@ const ProfileMenu = () => {
     useContext(ProfileSystem);
 
   const [profileData, setProfileData] = useState([]);
-
-  const [editProfileData, setEditProfileData] = useState([]);
-
-  const [birthDate, setBirthDate] = useState("");
+  const [editProfileData, setEditProfileData] = useState(null);
 
   const [profileOpen, setProfileOpen] = useState(false);
   const [companyOpen, setCompanyOpen] = useState(false);
@@ -39,10 +28,8 @@ const ProfileMenu = () => {
     profileService
       .Profile({ user_id: parseInt(user_id) })
       .then((res) => {
-        if (res && res.data) {
-          setEditProfileData({
-            ...res.data,
-          });
+        if (res && res?.data) {
+          setProfileData(res?.data);
         }
       })
       .catch((err) => console.log(err));
@@ -54,23 +41,14 @@ const ProfileMenu = () => {
     }
   }, [user_id]);
 
-  const resetProfileData = () => {
-    setProfileData({
-      firstName: "",
-      lastName: "",
-      gender: "",
-    });
-    setBirthDate("");
-  };
-
   const profileMenuDrawer = (data) => {
-    setProfileData(data);
+    setEditProfileData(data);
     setProfileOpen(true);
   };
 
   const onClose = () => {
     setProfileOpen(false);
-    resetProfileData();
+    getProfile();
   };
 
   const companyMenuDrawer = (data) => {
@@ -80,6 +58,7 @@ const ProfileMenu = () => {
 
   const onCompanyClose = () => {
     setCompanyOpen(false);
+    getProfile();
   };
 
   const contactMenuDrawer = (data) => {
@@ -89,59 +68,120 @@ const ProfileMenu = () => {
 
   const onContactClose = () => {
     setContactOpen(false);
+    getProfile();
   };
 
-  const onChange = (date) => {
-    // console.log("Selected date (moment object):", date?.format("DD-MM-YYYY"));
-    setBirthDate(date?.format("DD-MM-YYYY"));
-  };
+  const formik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      user_id: (editProfileData && editProfileData.id) || profileData?.id,
+      first_name:
+        (editProfileData && editProfileData.first_name) ||
+        profileData?.first_name,
+      last_name:
+        (editProfileData && editProfileData.last_name) ||
+        profileData?.last_name,
+      gender:
+        (editProfileData && editProfileData.gender) || profileData?.gender,
+      dob:
+        (editProfileData && editProfileData.dob?.split("T")[0]) ||
+        profileData?.dob?.split("T")[0],
+    },
+    validationSchema: Yup.object({
+      first_name: Yup.string().required("Please enter first name"),
+      last_name: Yup.string().required("Please enter last name"),
+      gender: Yup.string().required("Please select gender"),
+      dob: Yup.string().required("Please select date"),
+    }),
+    onSubmit: (values) => {
+      profileService
+        .UpdateProfile(values)
+        .then((res) => {
+          if (res.success === true) {
+            profilename({
+              type: "SET_NAME",
+              payload: { profilename: !namestate?.profilename },
+            });
 
-  const submitProfileData = () => {
-    const data = {
-      user_id: parseInt(user_id),
-      username: profileData?.username
-        ? profileData?.username
-        : editProfileData?.username,
-      gender: profileData?.gender
-        ? profileData?.gender
-        : editProfileData?.gender,
-      dob: birthDate ? birthDate : editProfileData?.dob,
-      company: profileData?.company
-        ? profileData?.company
-        : editProfileData?.company,
-      company_site: profileData?.company_site
-        ? profileData?.company_site
-        : editProfileData?.company_site,
-      phone_number: profileData?.phone_number
-        ? profileData?.phone_number
-        : editProfileData?.phone_number,
-      email: profileData?.email ? profileData?.email : editProfileData?.email,
-    };
+            profileemail({
+              type: "SET_EMAIl",
+              payload: { profileemail: !emailstate?.profileemail },
+            });
+            toast.success(res.message);
+            getProfile();
+            setProfileOpen(false);
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+  });
 
-    profileService
-      .UpdateProfile(data)
-      .then((res) => {
-        if (res.success === true) {
-          profilename({
-            type: "SET_NAME",
-            payload: { profilename: !namestate?.profilename },
-          });
+  const companyFormik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      user_id: (editProfileData && editProfileData.id) || profileData?.id,
+      company:
+        (editProfileData && editProfileData.company) || profileData?.company,
+      company_site:
+        (editProfileData && editProfileData.company_site) ||
+        profileData?.company_site,
+      company_size:
+        (editProfileData && editProfileData.company_size) ||
+        profileData?.company_size,
+      category:
+        (editProfileData && editProfileData.category) || profileData?.category,
+    },
+    validationSchema: Yup.object({
+      company: Yup.string().required("Please enter company name"),
+      company_site: Yup.string().required("Please enter company website"),
+      company_size: Yup.string().required("Please enter company size"),
+      category: Yup.string().required("Please select category"),
+    }),
+    onSubmit: (values) => {
+      profileService
+        .UpdateProfile(values)
+        .then((res) => {
+          if (res.success === true) {
+            toast.success(res.message);
+            getProfile();
+            setCompanyOpen(false);
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+  });
 
-          profileemail({
-            type: "SET_EMAIl",
-            payload: { profileemail: !emailstate?.profileemail },
-          });
-          setProfileData(res.data);
-          toast.success(res.message);
-          getProfile();
-          resetProfileData();
-          setProfileOpen(false);
-          setContactOpen(false);
-          setCompanyOpen(false);
-        }
-      })
-      .catch((err) => console.log(err));
-  };
+  const contactFormik = useFormik({
+    enableReinitialize: true,
+    initialValues: {
+      user_id: (editProfileData && editProfileData.id) || profileData?.id,
+      phone_number:
+        (editProfileData && editProfileData.phone_number) ||
+        profileData?.phone_number,
+      email: (editProfileData && editProfileData.email) || profileData?.email,
+    },
+    validationSchema: Yup.object({
+      phone_number: Yup.string()
+        .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+        .required("Please enter mobile number"),
+      email: Yup.string()
+        .email("Must be a valid Email")
+        .max(255)
+        .required("Email is required"),
+    }),
+    onSubmit: (values) => {
+      profileService
+        .UpdateProfile(values)
+        .then((res) => {
+          if (res.success === true) {
+            toast.success(res.message);
+            getProfile();
+            setContactOpen(false);
+          }
+        })
+        .catch((err) => console.log(err));
+    },
+  });
 
   return (
     <>
@@ -153,68 +193,53 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Basic Details</h3>
-                    <span onClick={() => profileMenuDrawer(editProfileData)}>
+                    <span onClick={() => profileMenuDrawer(profileData)}>
                       <GoPencil />
                     </span>
                   </div>
                   <div className="row">
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">First Name</label>
-                        <input
+                        <Label>First Name</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter first name"
-                          value={editProfileData?.username}
-                          disabled
+                          value={profileData?.first_name}
+                          readOnly
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Last Name</label>
-                        <input
+                        <Label>Last Name</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter last name"
-                          value={editProfileData.lastName}
-                          disabled
+                          value={profileData?.last_name}
+                          readOnly
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Gender</label>
-                        <input
+                        <Label>Gender</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter last name"
-                          value={editProfileData?.gender}
-                          disabled
+                          value={profileData?.gender}
+                          readOnly
                         />
-                        {/* <Dropdown
-                          options={selectGender}
-                          placeholder="Select gender"
-                          value={editProfileData?.gender}
-                          className="form-control w-100"
-                          disabled
-                        />
-                        <IoIosArrowDown
-                          className="profile_calender_icon"
-                          style={{ fontSize: "22px" }}
-                        /> */}
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group date-pick">
-                        <label htmlFor="">Date of birth</label>
-                        <DatePicker
-                          format="DD-MM-YYYY"
-                          allowClear
-                          className="form-control w-100"
-                          placeholder="Select date"
-                          disabled
-                          // value={editProfileData?.dob}
+                        <Label>Date of birth</Label>
+                        <Input
+                          name="dob"
+                          type="text"
+                          value={
+                            profileData?.dob
+                              ? profileData?.dob?.split("T")[0]
+                              : ""
+                          }
+                          readOnly
                         />
                       </div>
                     </div>
@@ -223,67 +248,49 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Organization Details</h3>
-                    <span onClick={() => companyMenuDrawer(editProfileData)}>
+                    <span onClick={() => companyMenuDrawer(profileData)}>
                       <GoPencil />
                     </span>
                   </div>
                   <div className="row">
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Company Name</label>
-                        <input
+                        <Label>Company Name</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter company name"
-                          value={editProfileData?.company || ""}
-                          disabled
+                          value={profileData?.company}
+                          readOnly
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Company Website</label>
-                        <input
+                        <Label>Company Website</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter company website"
-                          value={editProfileData?.company_site || ""}
-                          disabled
+                          value={profileData?.company_site}
+                          readOnly
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Company Size</label>
-                        <input
+                        <Label>Company Size</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter company size"
-                          value={editProfileData?.category || ""}
-                          disabled
+                          value={profileData?.company_size}
+                          readOnly
                         />
                       </div>
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Company Category</label>
-                        <input
+                        <Label>Company Category</Label>
+                        <Input
                           type="text"
-                          className="form-control"
-                          placeholder="Enter company size"
-                          value={editProfileData.category || ""}
-                          disabled
+                          value={profileData?.category}
+                          readOnly
                         />
-                        {/* <Dropdown
-                          options={selectCompanyCategories}
-                          placeholder="Select company category"
-                          value={editProfileData.category || ""}
-                          className="form-control w-100"
-                        />
-                        <IoIosArrowDown
-                          className="profile_calender_icon"
-                          style={{ fontSize: "22px" }}
-                        /> */}
                       </div>
                     </div>
                   </div>
@@ -291,19 +298,18 @@ const ProfileMenu = () => {
                 <div className="profile_box">
                   <div className="profile_box_title">
                     <h3>Contact Details</h3>
-                    <span onClick={() => contactMenuDrawer(editProfileData)}>
+                    <span onClick={() => contactMenuDrawer(profileData)}>
                       <GoPencil />
                     </span>
                   </div>
                   <div className="row">
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Phone Number</label>
-                        <input
-                          type="tel"
-                          className="form-control"
-                          placeholder="Enter phone number"
-                          value={editProfileData?.phone_number}
+                        <Label>Phone Number</Label>
+                        <Input
+                          type="text"
+                          value={profileData?.phone_number}
+                          readOnly
                         />
                         <span className="phone_verify_btn">
                           <IoCheckmarkSharp />
@@ -312,12 +318,11 @@ const ProfileMenu = () => {
                     </div>
                     <div className="col-md-6">
                       <div className="form-group">
-                        <label htmlFor="">Email Address</label>
-                        <input
-                          type="email"
-                          className="form-control"
-                          placeholder="Enter email address"
-                          value={editProfileData?.email}
+                        <Label>Email Address</Label>
+                        <Input
+                          type="text"
+                          value={profileData?.email}
+                          readOnly
                         />
                         <span className="email_verify_btn">Verify</span>
                       </div>
@@ -349,7 +354,7 @@ const ProfileMenu = () => {
             </button>
             <button
               className="compass-sidebar-next"
-              onClick={() => submitProfileData()}
+              onClick={formik.handleSubmit}
             >
               Save
             </button>
@@ -360,70 +365,101 @@ const ProfileMenu = () => {
           <div className="row">
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">First Name</label>
-                <input
+                <Label className="form-label">First Name</Label>
+                <Input
                   type="text"
+                  name="first_name"
                   className="form-control"
                   placeholder="Enter first name"
-                  value={profileData.username}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      username: e.target.value,
-                    })
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.first_name || ""}
+                  invalid={
+                    formik.touched.first_name && formik.errors.first_name
+                      ? true
+                      : false
                   }
                 />
+                {formik.touched.first_name && formik.errors.first_name ? (
+                  <FormFeedback type="invalid">
+                    {formik.errors.first_name}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Last Name</label>
-                <input
-                  type="text"
+                <div className="form-group">
+                  <Label className="form-label">Last Name</Label>
+                  <Input
+                    type="text"
+                    name="last_name"
+                    className="form-control"
+                    placeholder="Enter last name"
+                    onChange={formik.handleChange}
+                    onBlur={formik.handleBlur}
+                    value={formik.values.last_name || ""}
+                    invalid={
+                      formik.touched.last_name && formik.errors.last_name
+                        ? true
+                        : false
+                    }
+                  />
+                  {formik.touched.last_name && formik.errors.last_name ? (
+                    <FormFeedback type="invalid">
+                      {formik.errors.last_name}
+                    </FormFeedback>
+                  ) : null}
+                </div>
+              </div>
+            </div>
+            <div className="col-md-7 mb-2">
+              <div className="form-group">
+                <Label className="form-label">Gender</Label>
+                <Input
+                  type="select"
+                  name="gender"
                   className="form-control"
-                  placeholder="Enter last name"
-                  value={profileData.lastName}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      lastName: e.target.value,
-                    })
-                  }
-                />
-              </div>
-            </div>
-            <div className="col-md-7 mb-2">
-              <div className="form-group">
-                <label htmlFor="">Gender</label>
-                <Dropdown
-                  options={selectGender}
                   placeholder="Select gender"
-                  value={profileData.gender}
-                  onChange={(option) =>
-                    setProfileData({
-                      ...profileData,
-                      gender: option.value,
-                    })
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  value={formik.values.gender || ""}
+                  invalid={
+                    formik.touched.gender && formik.errors.gender ? true : false
                   }
-                  className="form-control w-100"
-                />
-                <IoIosArrowDown
-                  className="profile_calender_icon"
-                  style={{ fontSize: "22px" }}
-                />
+                >
+                  <option value="" label="Select gender" />
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                  <option value="Transgender">Transgender</option>
+                </Input>
+                {formik.touched.gender && formik.errors.gender ? (
+                  <FormFeedback type="invalid">
+                    {formik.errors.gender}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7">
               <div className="form-group date-pick">
-                <label htmlFor="">Date of birth</label>
-                <DatePicker
-                  format="DD-MM-YYYY"
-                  allowClear
-                  className="form-control w-100"
-                  placeholder="Select date"
-                  onChange={onChange}
-                  value={birthDate ? moment(birthDate, "DD-MM-YYYY") : null}
+                <Label className="form-label">Date of birth</Label>
+                <Input
+                  type="date"
+                  name="dob"
+                  className="form-control"
+                  value={formik?.values?.dob?.split("T")[0]}
+                  format="YYYY-MM-DD"
+                  onChange={formik.handleChange}
+                  onBlur={formik.handleBlur}
+                  invalid={
+                    formik.touched.dob && formik.errors.dob ? true : false
+                  }
                 />
+                {formik.touched.dob && formik.errors.dob ? (
+                  <FormFeedback type="invalid">
+                    {formik.errors.dob}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
           </div>
@@ -449,7 +485,7 @@ const ProfileMenu = () => {
             </button>
             <button
               className="compass-sidebar-next"
-              onClick={() => submitProfileData()}
+              onClick={companyFormik.handleSubmit}
             >
               Save
             </button>
@@ -460,74 +496,112 @@ const ProfileMenu = () => {
           <div className="row">
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Company Name</label>
-                <input
+                <Label className="form-label">Company Name</Label>
+                <Input
+                  name="company"
                   type="text"
                   className="form-control"
                   placeholder="Enter company name"
-                  value={profileData.company}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      company: e.target.value,
-                    })
+                  onChange={companyFormik.handleChange}
+                  onBlur={companyFormik.handleBlur}
+                  value={companyFormik.values.company || ""}
+                  invalid={
+                    companyFormik.touched.company &&
+                    companyFormik.errors.company
+                      ? true
+                      : false
                   }
                 />
+                {companyFormik.touched.company &&
+                companyFormik.errors.company ? (
+                  <FormFeedback type="invalid">
+                    {companyFormik.errors.company}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Company Website</label>
-                <input
+                <Label className="form-label">Company Website</Label>
+                <Input
+                  name="company_site"
                   type="text"
                   className="form-control"
                   placeholder="Enter company website"
-                  value={profileData.company_site}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      company_site: e.target.value,
-                    })
+                  onChange={companyFormik.handleChange}
+                  onBlur={companyFormik.handleBlur}
+                  value={companyFormik.values.company_site || ""}
+                  invalid={
+                    companyFormik.touched.company_site &&
+                    companyFormik.errors.company_site
+                      ? true
+                      : false
                   }
                 />
+                {companyFormik.touched.company_site &&
+                companyFormik.errors.company_site ? (
+                  <FormFeedback type="invalid">
+                    {companyFormik.errors.company_site}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Company Size</label>
-                <input
-                  type="number"
+                <Label className="form-label">Company Size</Label>
+                <Input
+                  name="company_size"
+                  type="text"
                   className="form-control"
                   placeholder="Enter company size"
-                  value={profileData.companySize}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      companySize: e.target.value,
-                    })
+                  onChange={companyFormik.handleChange}
+                  onBlur={companyFormik.handleBlur}
+                  value={companyFormik.values.company_size || ""}
+                  invalid={
+                    companyFormik.touched.company_size &&
+                    companyFormik.errors.company_size
+                      ? true
+                      : false
                   }
                 />
+                {companyFormik.touched.company_size &&
+                companyFormik.errors.company_size ? (
+                  <FormFeedback type="invalid">
+                    {companyFormik.errors.company_size}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7">
               <div className="form-group">
-                <label htmlFor="">Company Category</label>
-                <Dropdown
-                  options={selectCompanyCategories}
+                <Label className="form-label">Company Category</Label>
+                <Input
+                  name="category"
+                  type="select"
+                  className="form-control"
                   placeholder="Select company category"
-                  value={profileData?.category}
-                  onChange={(option) =>
-                    setProfileData({
-                      ...profileData,
-                      category: option.value,
-                    })
+                  onChange={companyFormik.handleChange}
+                  onBlur={companyFormik.handleBlur}
+                  value={companyFormik.values.category || ""}
+                  invalid={
+                    companyFormik.touched.category &&
+                    companyFormik.errors.category
+                      ? true
+                      : false
                   }
-                  className="form-control w-100"
-                />
-                <IoIosArrowDown
-                  className="profile_calender_icon"
-                  style={{ fontSize: "22px" }}
-                />
+                >
+                  <option value="" label="Select company category" />
+                  <option value="Healthcare">Healthcare</option>
+                  <option value="Finance">Finance</option>
+                  <option value="Manufacturing">Manufacturing</option>
+                  <option value="Real Estate">Real Estate</option>
+                </Input>
+                {companyFormik.touched.category &&
+                companyFormik.errors.category ? (
+                  <FormFeedback type="invalid">
+                    {companyFormik.errors.category}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
           </div>
@@ -553,7 +627,7 @@ const ProfileMenu = () => {
             </button>
             <button
               className="compass-sidebar-next"
-              onClick={() => submitProfileData()}
+              onClick={contactFormik.handleSubmit}
             >
               Save
             </button>
@@ -564,36 +638,52 @@ const ProfileMenu = () => {
           <div className="row">
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Phone Number</label>
-                <input
+                <Label className="form-label">Phone Number</Label>
+                <Input
+                  name="phone_number"
                   type="number"
                   className="form-control"
                   placeholder="Enter phone number"
-                  value={profileData.phone_number}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      phone_number: e.target.value,
-                    })
+                  onChange={contactFormik.handleChange}
+                  onBlur={contactFormik.handleBlur}
+                  value={contactFormik.values.phone_number || ""}
+                  invalid={
+                    contactFormik.touched.phone_number &&
+                    contactFormik.errors.phone_number
+                      ? true
+                      : false
                   }
                 />
+                {contactFormik.touched.phone_number &&
+                contactFormik.errors.phone_number ? (
+                  <FormFeedback type="invalid">
+                    {contactFormik.errors.phone_number}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <label htmlFor="">Company Email</label>
-                <input
-                  type="text"
+                <Label className="form-label">Company Email</Label>
+                <Input
+                  name="email"
+                  type="email"
                   className="form-control"
-                  placeholder="Enter company email"
-                  value={profileData.email}
-                  onChange={(e) =>
-                    setProfileData({
-                      ...profileData,
-                      email: e.target.value,
-                    })
+                  placeholder="Enter email address"
+                  onChange={contactFormik.handleChange}
+                  onBlur={contactFormik.handleBlur}
+                  value={contactFormik.values.email || ""}
+                  invalid={
+                    contactFormik.touched.email && contactFormik.errors.email
+                      ? true
+                      : false
                   }
                 />
+                {contactFormik.touched.email && contactFormik.errors.email ? (
+                  <FormFeedback type="invalid">
+                    {contactFormik.errors.email}
+                  </FormFeedback>
+                ) : null}
               </div>
             </div>
           </div>

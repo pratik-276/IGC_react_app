@@ -121,7 +121,10 @@ const Header = () => {
                 <DropdownToggle color="transparent">
                   <div className="profile_icon">
                     <div className="profile_name text-end">
-                      <h3>{profile?.username || "Hello user"}</h3>
+                      <h3>
+                        {profile?.first_name + " " + profile?.last_name ||
+                          "Hello user"}
+                      </h3>
                       <p>{profile?.email}</p>
                     </div>
                     <img
