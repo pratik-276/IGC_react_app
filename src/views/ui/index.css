@@ -900,3 +900,6 @@ input[type="checkbox"] {
   color: #fff;
   border: none !important;
 }
+.anychart-credits {
+  display: none !important;
+}
