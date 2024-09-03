@@ -1,65 +1,90 @@
-import React from "react";
-import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
 
-const generateDateLabels = () => {
-  const month = "Dec";
-  const days = Array.from({ length: 30 }, (_, i) => `${month} ${i + 1}`);
-  return days;
+
+import React, { useEffect, useRef } from 'react';
+import { Chart, registerables } from 'chart.js';
+import annotationPlugin from 'chartjs-plugin-annotation';
+import dayjs from 'dayjs';
+
+Chart.register(...registerables);
+Chart.register(annotationPlugin);
+
+const MyChart = () => {
+  const chartRef = useRef(null);
+
+  useEffect(() => {
+    const data = [
+      { x: 4, y: 5, width: 4, height: 5, label: 4 },
+      { x: 4, y: 10, width: 4, height: 5, label: 7 },
+      { x: 8, y: 15, width: 4, height: 5, label: 12 },
+      { x: 8, y: 25, width: 4, height: 5, label: 16 },
+      { x: 12, y: 5, width: 4, height: 5, label: 8 },
+      { x: 16, y: 0, width: 4, height: 5, label: 6 },
+      { x: 20, y: 10, width: 4, height: 5, label: 12 }, 
+      { x: 24, y: 20, width: 4, height: 5, label: 18 },
+      { x: 24, y: 30, width: 4, height: 5, label: 9 },
+    ];
+
+    const rectangles = data.map(o => ({
+      type: 'box',
+      backgroundColor: 'rgba(0, 0, 254, 0.4)',
+      xMin: o.x,
+      yMin: o.y,
+      xMax: o.x + o.width,
+      yMax: o.y + o.height
+    }));
+
+    const labels = data.map(o => ({
+      type: 'label',
+      content: o.label,  
+      color: 'white',
+      font: {
+        size: 16    
+      },
+      position: {
+        x: 'center',
+        y: 'center'
+      },
+      xValue: o.x + o.width / 2,
+      yValue: o.y + o.height / 2
+    }));
+
+    const ctx = chartRef.current.getContext('2d');
+    new Chart(ctx, {
+      type: 'scatter',
+      options: {
+        plugins: {
+          annotation: {
+            annotations: rectangles.concat(labels)
+          }
+        },
+        scales: {
+          x: {
+            position: 'bottom',
+            suggestedMin: 0,
+            suggestedMax: 32,
+            ticks: {
+              stepSize: 4
+            }
+          },
+          y: {
+            suggestedMin: 0,
+            suggestedMax: 35,
+            ticks: {
+              stepSize: 5
+            }
+          }
+        }
+      }
+    });
+
+    return () => {
+      if (chartRef.current) {
+        Chart.getChart(chartRef.current).destroy();
+      }
+    };
+  }, []);
+
+  return <canvas ref={chartRef}></canvas>;
 };
 
-const data = generateDateLabels().map((date, index) => ({
-  date,
-  uv: Math.random() * 250,
-}));
-
-const GamePositionChangesChart = () => {
-  return (
-    <>
-      <div className="tracker-details-head mb-5">
-        <h5 className="m-0">Game Position Changes</h5>
-      </div>
-      <div
-        style={{ width: "100%", height: 300, backgroundColor: "transparent" }}
-      >
-        <ResponsiveContainer>
-          <AreaChart
-            data={data}
-            margin={{
-              top: 10,
-              right: 30,
-              left: 0,
-              bottom: 0,
-            }}
-          >
-            <CartesianGrid strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="date" />
-            <YAxis
-              tickFormatter={(tick) => `${tick}`}
-              ticks={[0, 50, 100, 150, 200, 250]}
-              axisLine={false}
-              tickLine={false}
-            />
-            <Tooltip />
-            <Area
-              type="monotone"
-              dataKey="uv"
-              stroke="#5865F2"
-              fill="none"
-              strokeWidth={2}
-            />
-          </AreaChart>
-        </ResponsiveContainer>
-      </div>
-    </>
-  );
-};
-
-export default GamePositionChangesChart;
+export default MyChart;
