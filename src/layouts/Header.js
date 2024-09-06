@@ -18,6 +18,7 @@ import "./layout.css";
 import Cookies from "universal-cookie";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
+import toast from "react-hot-toast";
 
 const cookies = new Cookies();
 
@@ -26,8 +27,9 @@ const Header = () => {
   const { state: namestate } = useContext(ProfileSystem);
   const { state: emailstate } = useContext(ProfileSystem);
   const user_id = localStorage.getItem("user_id");
-  const [isOpen, setIsOpen] = React.useState(false);
-  const [dropdownOpen, setDropdownOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [profile, setProfile] = useState([]);
 
@@ -47,20 +49,37 @@ const Header = () => {
 
   const logOut = () => {
     localStorage.removeItem("user_id");
-    cookies.remove("access_token");
-    cookies.remove("refresh_token");
-    navigate("/");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    navigate("/login");
   };
 
-  const getProfile = () => {
-    profileService
-      .Profile({ user_id: parseInt(user_id) })
-      .then((res) => {
-        if (res && res.data) {
-          setProfile(res.data);
+  const getProfile = async () => {
+    setLoading(true);
+    try {
+      const profileResponse = await profileService.Profile({
+        user_id: parseInt(user_id),
+      });
+
+      if (profileResponse?.success === true) {
+        setProfile(profileResponse?.data);
+      } else {
+        if (profileResponse?.error?.status === 401) {
+          // cookies.remove("access_token", { path: "/" });
+          // cookies.remove("refresh_token", { path: "/" });
+          localStorage.removeItem("access_token");
+          localStorage.removeItem("refresh_token");
+          localStorage.removeItem("user_id");
+          toast.error("Session expired. Please log in again.");
+          navigate("/login");
         }
-      })
-      .catch((err) => console.log(err));
+      }
+    } catch (err) {
+      console.log(err);
+      toast.error("An error occurred. Please try again.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useLayoutEffect(() => {
@@ -121,10 +140,17 @@ const Header = () => {
                 <DropdownToggle color="transparent">
                   <div className="profile_icon">
                     <div className="profile_name text-end">
-                      <h3>
-                        {profile?.first_name + " " + profile?.last_name ||
-                          "Hello user"}
-                      </h3>
+                      {loading ? (
+                        "Hello user"
+                      ) : (
+                        <>
+                          <h3>
+                            {profile?.first_name + " " + profile?.last_name ||
+                              "Hello user"}
+                          </h3>
+                        </>
+                      )}
+
                       <p>{profile?.email}</p>
                     </div>
                     <img

@@ -6,16 +6,21 @@ import CompassData from "../../services/CompassApi";
 import Loader from "../../layouts/loader/Loader";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import { useCasinoContext } from "../../context/casinoContext";
+import toast from "react-hot-toast";
 
 const ChooseCasinoPage = ({
   setNewCasino,
   onCasinoDrawerClose,
   casinoDrawer,
+  setCasinoDrawer,
 }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [casinoData, setCasinoData] = useState([]);
   const [loader, setLoader] = useState(true);
-  const [selectedCasinos, setSelectedCasinos] = useState(new Set());
+
+  const { selectedCasinos, addCasino, removeCasino, clearCasinos, casinoList } =
+    useCasinoContext();
 
   const filteredData = casinoData?.filter((data) => {
     return data?.name?.toLowerCase()?.includes(searchQuery?.toLowerCase());
@@ -46,24 +51,22 @@ const ChooseCasinoPage = ({
   const closeDrawer = () => {
     setSearchQuery("");
     onCasinoDrawerClose();
-    setSelectedCasinos(new Set());
+    clearCasinos();
   };
 
   const handleCheckboxChange = (data) => {
-    setSelectedCasinos((prev) => {
-      const newSelected = new Set(prev);
-      if (newSelected.has(data)) {
-        newSelected.delete(data);
-      } else {
-        newSelected.add(data);
-      }
-      return newSelected;
-    });
+    if (selectedCasinos.has(data)) {
+      removeCasino(data);
+    } else {
+      addCasino(data);
+    }
   };
 
   const handleSave = () => {
     const selectedArray = Array.from(selectedCasinos);
-    console.log("Selected Casino IDs:", selectedArray);
+    casinoList(selectedArray);
+    setCasinoDrawer(false);
+    toast.success("Casino selected succesfully");
   };
 
   return (

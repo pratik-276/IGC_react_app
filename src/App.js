@@ -14,63 +14,83 @@ import Billing from "./views/profile/Billing";
 import ReferEarn from "./views/profile/ReferEarn";
 import HelpSupport from "./views/profile/HelpSupport";
 import ProfileProvider from "./context/ProfileContext";
-import ScrollToTop from  "./layouts/ScrollToTop"
+import ScrollToTop from "./layouts/ScrollToTop";
+import { CasinoProvider } from "./context/casinoContext";
+import { GameProvider } from "./context/gameContext";
 
 const App = () => {
   return (
     <>
       <ProfileProvider>
-        <ScrollToTop />
-        <Toaster toastOptions={{ duration: 3000 }} />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="/game-tracking" element={<GameTracking />} />
-            <Route
-              path="calibrate-compass"
-              element={
-                <ProtectedRoute>
-                  <Compass />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="my-account"
-              element={
-                <ProtectedRoute>
-                  <ProfileMenu />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="billing-section"
-              element={
-                <ProtectedRoute>
-                  <Billing />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="help-support"
-              element={
-                <ProtectedRoute>
-                  <HelpSupport />
-                </ProtectedRoute>
-              }
-            />
-            <Route
-              path="refer-earn"
-              element={
-                <ProtectedRoute>
-                  <ReferEarn />
-                </ProtectedRoute>
-              }
-            />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/forget-password" element={<ForgotPass />} />
-        </Routes>
+        <CasinoProvider>
+          <GameProvider>
+            <ScrollToTop />
+            <Toaster toastOptions={{ duration: 3000 }} position="top-right" />
+            <Routes>
+              <Route path="/" element={<Layout />}>
+                <Route
+                  index
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/game-tracking"
+                  element={
+                    <ProtectedRoute>
+                      <GameTracking />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="calibrate-compass"
+                  element={
+                    <ProtectedRoute>
+                      <Compass />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="my-account"
+                  element={
+                    <ProtectedRoute>
+                      <ProfileMenu />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="billing-section"
+                  element={
+                    <ProtectedRoute>
+                      <Billing />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="help-support"
+                  element={
+                    <ProtectedRoute>
+                      <HelpSupport />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="refer-earn"
+                  element={
+                    <ProtectedRoute>
+                      <ReferEarn />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forget-password" element={<ForgotPass />} />
+            </Routes>
+          </GameProvider>
+        </CasinoProvider>
       </ProfileProvider>
     </>
   );

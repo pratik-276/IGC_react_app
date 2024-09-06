@@ -106,8 +106,8 @@ const Signup = () => {
         .then((res) => {
           if (res?.success === true) {
             localStorage.setItem("user_id", res?.data?.user_id);
-            cookies.set("access_token", res?.data?.access, { path: "/" });
-            cookies.set("refresh_token", res?.data?.refresh, { path: "/" });
+            localStorage.setItem("access_token", res?.data?.access);
+            localStorage.setItem("refresh_token", res?.data?.refresh);
             toast.success(res?.message);
             navigate("/");
           } else {
@@ -137,13 +137,32 @@ const Signup = () => {
     setConfirmPasswordType("password");
   };
 
-  // Sign in With Google Function Here
-  const handleClick = () => {
+  const handleGoogleLogin = () => {
     signInWithPopup(auth, provider)
       .then((data) => {
-        setEmail(data?.user?.email);
-        localStorage.setItem("email", data?.user?.email);
-        navigate("/");
+        const email = data?.user?.email;
+        if (email) {
+          UserLogin.login({ user_email: email, password: "user@123" })
+            .then((res) => {
+              if (res?.success === true) {
+                localStorage.setItem("user_id", res?.data?.user_id);
+                localStorage.setItem("access_token", res?.data?.access);
+                localStorage.setItem("refresh_token", res?.data?.refresh);
+                toast.success("Login Successfully");
+                navigate("/");
+              } else {
+                toast.error("Login failed");
+              }
+            })
+            .catch((err) => {
+              toast.error("Error during login");
+              if (err.response && err.response.status === 401) {
+                toast.error("Unauthorized. Please check your credentials.");
+              }
+            });
+        } else {
+          toast.error("No email found from Google sign-in");
+        }
       })
       .catch((error) => {
         console.error("Error signing in with Google:", error);
@@ -279,7 +298,7 @@ const Signup = () => {
                       </h4>
                       <button
                         className="btn google_login"
-                        onClick={handleClick}
+                        onClick={handleGoogleLogin}
                       >
                         <FcGoogle className="me-2 google_icon" />
                         Sign in with Google

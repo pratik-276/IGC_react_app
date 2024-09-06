@@ -676,9 +676,9 @@ input[type="checkbox"] {
   z-index: 9999 !important;
 }
 
-.ant-drawer-content-wrapper {
+/* .ant-drawer-content-wrapper {
   transform: none !important;
-}
+} */
 
 .ant-drawer-close {
   width: 0 !important;

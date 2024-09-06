@@ -95,7 +95,7 @@ const NewCasino = (props) => {
               </div>
             </div>
 
-            <div className="url-preview mt-5">
+            {/* <div className="url-preview mt-5">
               <h5>
                 <b>URL Preview</b>
               </h5>
@@ -106,7 +106,7 @@ const NewCasino = (props) => {
                   className="w-100 bordered mt-3"
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </Drawer>

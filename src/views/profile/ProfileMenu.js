@@ -10,6 +10,7 @@ import { FormFeedback, Input, Label } from "reactstrap";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IoCheckmarkSharp } from "react-icons/io5";
+import Loader from "../../layouts/loader/Loader";
 
 const ProfileMenu = () => {
   const user_id = localStorage.getItem("user_id");
@@ -18,6 +19,7 @@ const ProfileMenu = () => {
     useContext(ProfileSystem);
 
   const [profileData, setProfileData] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [editProfileData, setEditProfileData] = useState(null);
 
   const [profileOpen, setProfileOpen] = useState(false);
@@ -25,11 +27,13 @@ const ProfileMenu = () => {
   const [contactOpen, setContactOpen] = useState(false);
 
   const getProfile = () => {
+    setLoading(true);
     profileService
       .Profile({ user_id: parseInt(user_id) })
       .then((res) => {
-        if (res && res?.data) {
+        if (res?.success === true) {
           setProfileData(res?.data);
+          setLoading(false);
         }
       })
       .catch((err) => console.log(err));
@@ -87,12 +91,12 @@ const ProfileMenu = () => {
         (editProfileData && editProfileData.dob?.split("T")[0]) ||
         profileData?.dob?.split("T")[0],
     },
-    validationSchema: Yup.object({
-      first_name: Yup.string().required("Please enter first name"),
-      last_name: Yup.string().required("Please enter last name"),
-      gender: Yup.string().required("Please select gender"),
-      dob: Yup.string().required("Please select date"),
-    }),
+    // validationSchema: Yup.object({
+    //   first_name: Yup.string().required("Please enter first name"),
+    //   last_name: Yup.string().required("Please enter last name"),
+    //   gender: Yup.string().required("Please select gender"),
+    //   dob: Yup.string().required("Please select date"),
+    // }),
     onSubmit: (values) => {
       profileService
         .UpdateProfile(values)
@@ -131,12 +135,12 @@ const ProfileMenu = () => {
       category:
         (editProfileData && editProfileData.category) || profileData?.category,
     },
-    validationSchema: Yup.object({
-      company: Yup.string().required("Please enter company name"),
-      company_site: Yup.string().required("Please enter company website"),
-      company_size: Yup.string().required("Please enter company size"),
-      category: Yup.string().required("Please select category"),
-    }),
+    // validationSchema: Yup.object({
+    //   company: Yup.string().required("Please enter company name"),
+    //   company_site: Yup.string().required("Please enter company website"),
+    //   company_size: Yup.string().required("Please enter company size"),
+    //   category: Yup.string().required("Please select category"),
+    // }),
     onSubmit: (values) => {
       profileService
         .UpdateProfile(values)
@@ -160,15 +164,15 @@ const ProfileMenu = () => {
         profileData?.phone_number,
       email: (editProfileData && editProfileData.email) || profileData?.email,
     },
-    validationSchema: Yup.object({
-      phone_number: Yup.string()
-        .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
-        .required("Please enter mobile number"),
-      email: Yup.string()
-        .email("Must be a valid Email")
-        .max(255)
-        .required("Email is required"),
-    }),
+    // validationSchema: Yup.object({
+    //   phone_number: Yup.string()
+    //     .matches(/^\d{10}$/, "Phone number must be exactly 10 digits")
+    //     .required("Please enter mobile number"),
+    //   email: Yup.string()
+    //     .email("Must be a valid Email")
+    //     .max(255)
+    //     .required("Email is required"),
+    // }),
     onSubmit: (values) => {
       profileService
         .UpdateProfile(values)
@@ -188,149 +192,157 @@ const ProfileMenu = () => {
       <div className="container">
         <div className="profile_main">
           <div className="row">
-            <div className="col-md-8">
-              <div className="profile_inr">
-                <div className="profile_box">
-                  <div className="profile_box_title">
-                    <h3>Basic Details</h3>
-                    <span onClick={() => profileMenuDrawer(profileData)}>
-                      <GoPencil />
-                    </span>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>First Name</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.first_name}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Last Name</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.last_name}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Gender</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.gender}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group date-pick">
-                        <Label>Date of birth</Label>
-                        <Input
-                          name="dob"
-                          type="text"
-                          value={
-                            profileData?.dob
-                              ? profileData?.dob?.split("T")[0]
-                              : ""
-                          }
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="profile_box">
-                  <div className="profile_box_title">
-                    <h3>Organization Details</h3>
-                    <span onClick={() => companyMenuDrawer(profileData)}>
-                      <GoPencil />
-                    </span>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Company Name</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.company}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Company Website</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.company_site}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Company Size</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.company_size}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Company Category</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.category}
-                          readOnly
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="profile_box">
-                  <div className="profile_box_title">
-                    <h3>Contact Details</h3>
-                    <span onClick={() => contactMenuDrawer(profileData)}>
-                      <GoPencil />
-                    </span>
-                  </div>
-                  <div className="row">
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Phone Number</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.phone_number}
-                          readOnly
-                        />
-                        <span className="phone_verify_btn">
-                          <IoCheckmarkSharp />
+            {loading ? (
+              <>
+                <Loader />
+              </>
+            ) : (
+              <>
+                <div className="col-md-8">
+                  <div className="profile_inr">
+                    <div className="profile_box">
+                      <div className="profile_box_title">
+                        <h3>Basic Details</h3>
+                        <span onClick={() => profileMenuDrawer(profileData)}>
+                          <GoPencil />
                         </span>
                       </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>First Name</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.first_name}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Last Name</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.last_name}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Gender</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.gender}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group date-pick">
+                            <Label>Date of birth</Label>
+                            <Input
+                              name="dob"
+                              type="text"
+                              value={
+                                profileData?.dob
+                                  ? profileData?.dob?.split("T")[0]
+                                  : ""
+                              }
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="col-md-6">
-                      <div className="form-group">
-                        <Label>Email Address</Label>
-                        <Input
-                          type="text"
-                          value={profileData?.email}
-                          readOnly
-                        />
-                        <span className="email_verify_btn">Verify</span>
+                    <div className="profile_box">
+                      <div className="profile_box_title">
+                        <h3>Organization Details</h3>
+                        <span onClick={() => companyMenuDrawer(profileData)}>
+                          <GoPencil />
+                        </span>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Company Name</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.company}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Company Website</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.company_site}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Company Size</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.company_size}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Company Category</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.category}
+                              readOnly
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="profile_box">
+                      <div className="profile_box_title">
+                        <h3>Contact Details</h3>
+                        <span onClick={() => contactMenuDrawer(profileData)}>
+                          <GoPencil />
+                        </span>
+                      </div>
+                      <div className="row">
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Phone Number</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.phone_number}
+                              readOnly
+                            />
+                            <span className="phone_verify_btn">
+                              <IoCheckmarkSharp />
+                            </span>
+                          </div>
+                        </div>
+                        <div className="col-md-6">
+                          <div className="form-group">
+                            <Label>Email Address</Label>
+                            <Input
+                              type="text"
+                              value={profileData?.email}
+                              readOnly
+                            />
+                            <span className="email_verify_btn">Verify</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -374,17 +386,17 @@ const ProfileMenu = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.first_name || ""}
-                  invalid={
-                    formik.touched.first_name && formik.errors.first_name
-                      ? true
-                      : false
-                  }
+                  // invalid={
+                  //   formik.touched.first_name && formik.errors.first_name
+                  //     ? true
+                  //     : false
+                  // }
                 />
-                {formik.touched.first_name && formik.errors.first_name ? (
+                {/* {formik.touched.first_name && formik.errors.first_name ? (
                   <FormFeedback type="invalid">
                     {formik.errors.first_name}
                   </FormFeedback>
-                ) : null}
+                ) : null} */}
               </div>
             </div>
             <div className="col-md-7 mb-2">
@@ -399,17 +411,7 @@ const ProfileMenu = () => {
                     onChange={formik.handleChange}
                     onBlur={formik.handleBlur}
                     value={formik.values.last_name || ""}
-                    invalid={
-                      formik.touched.last_name && formik.errors.last_name
-                        ? true
-                        : false
-                    }
                   />
-                  {formik.touched.last_name && formik.errors.last_name ? (
-                    <FormFeedback type="invalid">
-                      {formik.errors.last_name}
-                    </FormFeedback>
-                  ) : null}
                 </div>
               </div>
             </div>
@@ -424,20 +426,12 @@ const ProfileMenu = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.gender || ""}
-                  invalid={
-                    formik.touched.gender && formik.errors.gender ? true : false
-                  }
                 >
                   <option value="" label="Select gender" />
                   <option value="Male">Male</option>
                   <option value="Female">Female</option>
                   <option value="Transgender">Transgender</option>
                 </Input>
-                {formik.touched.gender && formik.errors.gender ? (
-                  <FormFeedback type="invalid">
-                    {formik.errors.gender}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
             <div className="col-md-7">
@@ -451,15 +445,7 @@ const ProfileMenu = () => {
                   format="YYYY-MM-DD"
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
-                  invalid={
-                    formik.touched.dob && formik.errors.dob ? true : false
-                  }
                 />
-                {formik.touched.dob && formik.errors.dob ? (
-                  <FormFeedback type="invalid">
-                    {formik.errors.dob}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
           </div>
@@ -505,19 +491,7 @@ const ProfileMenu = () => {
                   onChange={companyFormik.handleChange}
                   onBlur={companyFormik.handleBlur}
                   value={companyFormik.values.company || ""}
-                  invalid={
-                    companyFormik.touched.company &&
-                    companyFormik.errors.company
-                      ? true
-                      : false
-                  }
                 />
-                {companyFormik.touched.company &&
-                companyFormik.errors.company ? (
-                  <FormFeedback type="invalid">
-                    {companyFormik.errors.company}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
@@ -531,19 +505,7 @@ const ProfileMenu = () => {
                   onChange={companyFormik.handleChange}
                   onBlur={companyFormik.handleBlur}
                   value={companyFormik.values.company_site || ""}
-                  invalid={
-                    companyFormik.touched.company_site &&
-                    companyFormik.errors.company_site
-                      ? true
-                      : false
-                  }
                 />
-                {companyFormik.touched.company_site &&
-                companyFormik.errors.company_site ? (
-                  <FormFeedback type="invalid">
-                    {companyFormik.errors.company_site}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
             <div className="col-md-7 mb-2">
@@ -557,19 +519,7 @@ const ProfileMenu = () => {
                   onChange={companyFormik.handleChange}
                   onBlur={companyFormik.handleBlur}
                   value={companyFormik.values.company_size || ""}
-                  invalid={
-                    companyFormik.touched.company_size &&
-                    companyFormik.errors.company_size
-                      ? true
-                      : false
-                  }
                 />
-                {companyFormik.touched.company_size &&
-                companyFormik.errors.company_size ? (
-                  <FormFeedback type="invalid">
-                    {companyFormik.errors.company_size}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
             <div className="col-md-7">
@@ -583,12 +533,6 @@ const ProfileMenu = () => {
                   onChange={companyFormik.handleChange}
                   onBlur={companyFormik.handleBlur}
                   value={companyFormik.values.category || ""}
-                  invalid={
-                    companyFormik.touched.category &&
-                    companyFormik.errors.category
-                      ? true
-                      : false
-                  }
                 >
                   <option value="" label="Select company category" />
                   <option value="Healthcare">Healthcare</option>
@@ -596,12 +540,6 @@ const ProfileMenu = () => {
                   <option value="Manufacturing">Manufacturing</option>
                   <option value="Real Estate">Real Estate</option>
                 </Input>
-                {companyFormik.touched.category &&
-                companyFormik.errors.category ? (
-                  <FormFeedback type="invalid">
-                    {companyFormik.errors.category}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
           </div>
@@ -647,22 +585,10 @@ const ProfileMenu = () => {
                   onChange={contactFormik.handleChange}
                   onBlur={contactFormik.handleBlur}
                   value={contactFormik.values.phone_number || ""}
-                  invalid={
-                    contactFormik.touched.phone_number &&
-                    contactFormik.errors.phone_number
-                      ? true
-                      : false
-                  }
                 />
-                {contactFormik.touched.phone_number &&
-                contactFormik.errors.phone_number ? (
-                  <FormFeedback type="invalid">
-                    {contactFormik.errors.phone_number}
-                  </FormFeedback>
-                ) : null}
               </div>
             </div>
-            <div className="col-md-7 mb-2">
+            {/* <div className="col-md-7 mb-2">
               <div className="form-group">
                 <Label className="form-label">Company Email</Label>
                 <Input
@@ -673,19 +599,9 @@ const ProfileMenu = () => {
                   onChange={contactFormik.handleChange}
                   onBlur={contactFormik.handleBlur}
                   value={contactFormik.values.email || ""}
-                  invalid={
-                    contactFormik.touched.email && contactFormik.errors.email
-                      ? true
-                      : false
-                  }
                 />
-                {contactFormik.touched.email && contactFormik.errors.email ? (
-                  <FormFeedback type="invalid">
-                    {contactFormik.errors.email}
-                  </FormFeedback>
-                ) : null}
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
       </Drawer>

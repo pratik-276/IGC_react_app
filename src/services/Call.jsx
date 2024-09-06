@@ -1,10 +1,11 @@
 import Axios from "axios";
-import Cookies from "universal-cookie";
+// import Cookies from "universal-cookie";
 const api = process.env.REACT_APP_API_KEY;
 
 export default function call({ path, method, data }) {
-  var cookie = new Cookies()
-  const access_token = cookie.get('access_token')
+  // var cookie = new Cookies();
+  // const access_token = cookie.get('access_token')
+  const access_token = localStorage.getItem("access_token");
 
   return new Promise((resolve, reject) => {
     const config = {
