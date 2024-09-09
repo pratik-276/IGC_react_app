@@ -46,7 +46,7 @@ const Login = () => {
       .then((data) => {
         const email = data?.user?.email;
         if (email) {
-          UserLogin.login({ user_email: email, password: "user@123" })
+          UserLogin.SignUp({ user_email: email, password: "user@123" })
             .then((res) => {
               if (res?.success === true) {
                 localStorage.setItem("user_id", res?.data?.user_id);

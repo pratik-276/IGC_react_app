@@ -145,8 +145,10 @@ const Header = () => {
                       ) : (
                         <>
                           <h3>
-                            {profile?.first_name + " " + profile?.last_name ||
-                              "Hello user"}
+                            {profile?.first_name?.length > 0 ||
+                            profile?.last_name?.length > 0
+                              ? profile?.first_name + " " + profile?.last_name
+                              : "Hello User"}
                           </h3>
                         </>
                       )}
