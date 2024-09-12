@@ -34,6 +34,18 @@ const Compass = () => {
     }
   }, [gameJson]);
 
+  const handleRemoveCasino = (id) => {
+    const updatedCasinos = casinos.filter((casino) => casino.id !== id);
+    setCasinos(updatedCasinos);
+    localStorage.setItem("casinos", JSON.stringify(updatedCasinos));
+  };
+
+  const handleRemoveGame = (id) => {
+    const updatedGames = game.filter((g) => g.id !== id);
+    setGame(updatedGames);
+    localStorage.setItem("games", JSON.stringify(updatedGames));
+  };
+
   const [selectedOption, setSelectedOption] = useState(null);
 
   const [open, setOpen] = useState(false);
@@ -50,15 +62,15 @@ const Compass = () => {
     setSelectedOption("");
   };
 
+  const showSelectedCasino = () => {
+    setOpen(false);
+    setConfigure(true);
+  };
+
   // CASINO DRAWER OPEN
   const showCasinoDrawer = () => {
-    if (casinoJSON?.length > 0) {
-      setOpen(false);
-      setConfigure(true);
-    } else {
-      setCasinoDrawer(true);
-      setSelectedOption("");
-    }
+    setCasinoDrawer(true);
+    setSelectedOption("");
   };
 
   // CASINO DRAWER CLOSE
@@ -69,13 +81,15 @@ const Compass = () => {
 
   // GAME DRAWER OPEN
   const showGameDrawer = () => {
-    if (gameJson?.length > 0) {
-      setOpen(false);
-      setConfigure(true);
-    } else {
-      setGameDrawer(true);
-      setSelectedOption("");
-    }
+    // if (casinoJSON?.length > 0 && gameJson?.length > 0) {
+    //   setOpen(false);
+    //   setConfigure(true);
+    // } else {
+    //   setGameDrawer(true);
+    //   setSelectedOption("");
+    // }
+    setGameDrawer(true);
+    setSelectedOption("");
   };
 
   const onConfigueDrawerClose = () => {
@@ -158,21 +172,30 @@ const Compass = () => {
             className={`calibrate-title ${
               selectedOption === "Casino 1" ? "selected" : ""
             }`}
-            onClick={() => handleSelectOption("Casino 1")}
           >
             <span>Select Casino</span>
             <div className="casino-select-listing mt-4">
               {casinos?.map((data, index) => (
-                <div className="calibrate-casino-data-display" key={index}>
-                  <FiMinusCircle style={{ fontSize: "22px" }} />
-                  <div className="casino-data-bar">
+                <div
+                  className="calibrate-casino-data-display"
+                  key={index}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FiMinusCircle
+                    style={{ fontSize: "22px" }}
+                    onClick={() => handleRemoveCasino(data?.id)}
+                  />
+                  <div className="casino-data-bar" onClick={showSelectedCasino}>
                     <label htmlFor={data?.id}>{data?.name}</label>
                     <Link>{data?.site_url}</Link>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="calibrate-content mt-4">
+            <div
+              className="calibrate-content mt-4"
+              onClick={() => handleSelectOption("Casino 1")}
+            >
               <div className="calibrate-icon">
                 <CiCirclePlus />
               </div>
@@ -183,21 +206,30 @@ const Compass = () => {
             className={`calibrate-title mt-4 ${
               selectedOption === "Casino 2" ? "selected" : ""
             }`}
-            onClick={() => handleSelectOption("Casino 2")}
           >
             <span>Select Game</span>
             <div className="casino-select-listing mt-4">
               {game?.map((data, index) => (
-                <div className="calibrate-casino-data-display" key={index}>
-                  <FiMinusCircle style={{ fontSize: "22px" }} />
-                  <div className="casino-data-bar">
+                <div
+                  className="calibrate-casino-data-display"
+                  key={index}
+                  style={{ cursor: "pointer" }}
+                >
+                  <FiMinusCircle
+                    style={{ fontSize: "22px" }}
+                    onClick={() => handleRemoveGame(data?.id)}
+                  />
+                  <div className="casino-data-bar" onClick={showSelectedCasino}>
                     <label htmlFor={data?.id}>{data?.game_original_name}</label>
                     <Link>{data?.game_provider_name}</Link>
                   </div>
                 </div>
               ))}
             </div>
-            <div className="calibrate-content mt-4">
+            <div
+              className="calibrate-content mt-4"
+              onClick={() => handleSelectOption("Casino 2")}
+            >
               <div className="calibrate-icon">
                 <CiCirclePlus />
               </div>
@@ -235,7 +267,7 @@ const Compass = () => {
           />
         </Drawer>
 
-        {/* FOR ADD NEW CASINO DRAWER HERE */}
+        {/* FOR VIEW Tracking list DRAWER HERE */}
         <Configure
           setConfigure={setConfigure}
           configure={configure}
