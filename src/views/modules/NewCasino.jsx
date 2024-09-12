@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import CompassData from "../../services/CompassApi";
 import toast from "react-hot-toast";
 import { Drawer } from "antd";
 import { CloseOutlined } from "@ant-design/icons";
+import countryList from 'react-select-country-list';
 
 const NewCasino = (props) => {
   const { onNewCasinoDrawerClose, newCasino, setCasinoDrawer, setNewCasino } =
@@ -12,12 +13,16 @@ const NewCasino = (props) => {
 
   const [operator_name, setOperator_Name] = useState("");
   const [operator_url, setOperator_URl] = useState("");
+  const [operator_country, setOperator_country] = useState("");
+
+  const country_options = useMemo(() => countryList().getData(), [])
 
   const handleSubmit = () => {
     CompassData.request_new_casino({
       user_id,
       operator_name,
       operator_url,
+      operator_country
     })
       .then((res) => {
         if (res?.success === true) {
@@ -26,6 +31,7 @@ const NewCasino = (props) => {
           setCasinoDrawer(true);
           setOperator_Name("");
           setOperator_URl("");
+          setOperator_country("");
           setNewCasino(false);
         }
       })
@@ -91,6 +97,24 @@ const NewCasino = (props) => {
                     value={operator_url}
                     onChange={(e) => setOperator_URl(e.target.value)}
                   />
+                </div>
+                <div className="form-group">
+                  <label htmlFor="">Select Country (if applicable)</label>
+                  <select 
+                    className="form-control"
+                    options={country_options} 
+                    value={operator_country} 
+                    onChange={(e) => setOperator_country(e.target.value)}
+                    placeholder="Country to access this casino from"
+                  >
+                    {
+                      country_options.map((country, index) => (
+                        <option key={country.label + "" + index} value={country.label}>
+                          {country.label}
+                        </option>
+                      ))
+                    }
+                  </select>
                 </div>
               </div>
             </div>

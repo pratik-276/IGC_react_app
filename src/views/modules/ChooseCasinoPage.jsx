@@ -103,7 +103,7 @@ const ChooseCasinoPage = ({
           <div className="serching">
             <input
               type="text"
-              placeholder="search game here"
+              placeholder="Search Casino"
               className="search-casino-input"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
@@ -115,7 +115,7 @@ const ChooseCasinoPage = ({
           {filteredData?.length === 0 ? (
             <div className="casedata-no-data-search">
               <div className="no-search-result">
-                <span>No Search result found</span>
+                <span>No Casinos Found</span>
               </div>
               <div className="request-demo" onClick={showNewCasinoDrawer}>
                 <AiOutlinePlus className="me-2" />
