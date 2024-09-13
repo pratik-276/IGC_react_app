@@ -26,7 +26,6 @@ const NewCasino = (props) => {
     })
       .then((res) => {
         if (res?.success === true) {
-          console.log("res", res.message);
           toast.success(res?.message);
           setCasinoDrawer(true);
           setOperator_Name("");
@@ -62,7 +61,6 @@ const NewCasino = (props) => {
             </button>
             <button
               style={{ marginRight: 8 }}
-              // className="compass-sidebar-back"
               className={`compass-sidebar-back ${
                 !operator_name || !operator_url ? "btn-disabled" : ""
               }`}

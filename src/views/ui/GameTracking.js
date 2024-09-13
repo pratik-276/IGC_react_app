@@ -88,8 +88,8 @@ const GameTracking = () => {
   const [selectedRows, setSelectedRows] = useState(null);
 
   const header = (
-    <div className="flex flex-wrap gap-2 align-items-center justify-content-between">
-      <div className="tracker-details-head">
+    <div className="d-md-flex align-items-center justify-content-between">
+      <div className="tracker-details-head game-track-head">
         <h5 className="m-0">
           Tracker Details <MdInfoOutline className="ms-1" />
         </h5>
@@ -100,6 +100,7 @@ const GameTracking = () => {
           type="search"
           onInput={(e) => setGlobalFilter(e.target.value)}
           placeholder="Select Game"
+          className="w-100"
         />
       </IconField>
     </div>
@@ -189,21 +190,22 @@ const GameTracking = () => {
         <div className="compass-data">
           <div className="row align-items-center">
             <div className="col-md-5 col-lg-5">
-              <h4 className="m-0">Overview Dashboard</h4>
+              <h4 className="m-md-0">Overview Dashboard</h4>
               <span>
                 View, Filter and analyse data as per your requirements with
                 adaptive dashboard
               </span>
             </div>
 
-            <div className="col-md-7 col-lg-7">
+            <div className="col-md-7 col-lg-7 my-2 my-md-0 my-lg-0">
               <div className="row justify-content-end">
                 {show === true && (
-                  <div className="col-md-5">
+                  <div className="col-md-5 tracker-game-dropdown-mobile">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
                       isClearable={false}
+                      isSearchable={false}
                       name="trackingFiltersId"
                       options={
                         trackingFilters &&
@@ -217,24 +219,26 @@ const GameTracking = () => {
                     />
                   </div>
                 )}
-                <div className="col-md-2 px-0">
+                <div className="col-md-2 px-md-0">
                   <div className="all-time-status-dropdown">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
                       isClearable={true}
+                      isSearchable={false}
                       name="trackingstatus"
                       options={TrackingStatus}
                       placeholder="Status"
                     />
                   </div>
                 </div>
-                <div className="col-md-3">
+                <div className="col-md-3 all-time-dropdown">
                   <div className="all-time-status-dropdown">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
                       isClearable={true}
+                      isSearchable={false}
                       name="color"
                       options={TrackingTime}
                       placeholder="All Time"
@@ -312,8 +316,8 @@ const GameTracking = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-4 ps-0">
-                      <div className="position-view-box game-track-box">
+                    <div className="col-md-4 ps-md-0">
+                      <div className="position-view-box game-track-box game-track-box-mobile">
                         <div className="d-flex justify-content-between align-items-center position-view-box-head game-track-box-chart">
                           <div>
                             <h6>Games Gaining Positions</h6>
@@ -352,7 +356,7 @@ const GameTracking = () => {
                         </div>
                       </div>
                     </div>
-                    <div className="col-md-4 text-center">
+                    <div className="col-md-4 text-center mt-3 mt-md-0 mt-lg-0">
                       <PositionChangeChart gameTracking={gameTracking} />
                     </div>
                   </div>

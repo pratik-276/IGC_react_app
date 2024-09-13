@@ -64,48 +64,36 @@ const Sidebar = () => {
       location.pathname === "/refer-earn" ? (
         <>
           <div className="profile-sidebar" id="sidebarArea">
-            <div className="d-flex">
-              <Button
-                color="white"
-                className="ms-auto text-white d-lg-none"
-                onClick={() => showMobilemenu()}
+            <Nav vertical className="sidebarNav">
+              <button
+                className="profile_back_btn"
+                onClick={() => navigate("/")}
               >
-                <i className="bi bi-x"></i>
-              </Button>
-            </div>
+                <FaChevronLeft className="me-2" />
+                Back to Home
+              </button>
 
-            <div className="">
-              <Nav vertical className="sidebarNav">
-                <button
-                  className="profile_back_btn"
-                  onClick={() => navigate("/")}
-                >
-                  <FaChevronLeft className="me-2" />
-                  Back to Home
-                </button>
-
-                {ProfileMenu.map((navi, index) => (
-                  <NavItem key={index} className="sidenav-bg">
-                    <Link
-                      to={navi.href}
-                      className={
-                        location.pathname === navi.href
-                          ? "active nav-link py-2"
-                          : "nav-link py-2"
-                      }
-                    >
-                      <span className="ms-3 d-inline-block">{navi.title}</span>
-                    </Link>
-                  </NavItem>
-                ))}
-              </Nav>
-            </div>
+              {ProfileMenu.map((navi, index) => (
+                <NavItem key={index} className="sidenav-bg">
+                  <Link
+                    to={navi.href}
+                    className={
+                      location.pathname === navi.href
+                        ? "active nav-link py-2"
+                        : "nav-link py-2"
+                    }
+                  >
+                    <span className="ms-3 d-inline-block">{navi.title}</span>
+                  </Link>
+                </NavItem>
+              ))}
+            </Nav>
           </div>
         </>
       ) : (
         <>
           <div className="sidebar" id="sidebarArea">
-            <div className="d-flex">
+            <div className="d-flex d-none">
               <Button
                 color="white"
                 className="ms-auto text-white d-lg-none"

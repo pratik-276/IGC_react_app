@@ -719,6 +719,7 @@ input[type="checkbox"] {
   align-items: center;
   font-weight: 600;
   font-size: 20px;
+  color: #000;
 }
 
 .tracker-details-body .tracker-details-table .p-datatable-table {
@@ -902,4 +903,28 @@ input[type="checkbox"] {
 }
 .anychart-credits {
   display: none !important;
+}
+
+/* FOR MOBILE SCREEN VIEW STYLES */
+
+@media screen and (max-width: 767px) {
+  .tracker_details_boxes {
+    grid-template-columns: none !important;
+  }
+
+  .all-time-dropdown {
+    margin-top: 10px;
+  }
+
+  .game-track-head h5 {
+    margin-bottom: 10px !important;
+  }
+
+  .game-track-box-mobile{
+    margin-top: 16px;
+  }
+
+  .tracker-game-dropdown-mobile{
+    margin-bottom: 10px;
+  }
 }

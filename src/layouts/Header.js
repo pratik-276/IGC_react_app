@@ -4,23 +4,20 @@ import {
   Navbar,
   Collapse,
   Nav,
-  NavbarBrand,
   DropdownToggle,
   DropdownMenu,
   DropdownItem,
   Dropdown,
   Button,
 } from "reactstrap";
-import { ReactComponent as LogoWhite } from "../assets/images/logos/adminprowhite.svg";
 import user1 from "../assets/images/users/user4.jpg";
 import logo from "../assets/images/logos/AEG-Logo.png";
 import "./layout.css";
-import Cookies from "universal-cookie";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
 import toast from "react-hot-toast";
-
-const cookies = new Cookies();
+import { FaBars } from "react-icons/fa6";
+import { FaTimes } from "react-icons/fa";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -28,6 +25,7 @@ const Header = () => {
   const { state: emailstate } = useContext(ProfileSystem);
   const user_id = localStorage.getItem("user_id");
   const [isOpen, setIsOpen] = useState(false);
+  const [isSidebarVisible, setSidebarVisible] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [loading, setLoading] = useState(true);
 
@@ -40,6 +38,7 @@ const Header = () => {
   };
 
   const showMobilemenu = () => {
+    setSidebarVisible(!isSidebarVisible);
     document.getElementById("sidebarArea").classList.toggle("showSidebar");
   };
 
@@ -97,24 +96,24 @@ const Header = () => {
         className="fix-header fixed-top header"
       >
         <div className="d-flex align-items-center">
-          <div className="d-lg-block d-none me-5 pe-3">
+          <div className="d-lg-none me-2" onClick={() => showMobilemenu()}>
+            {isSidebarVisible ? (
+              <FaTimes style={{ fontSize: "25px" }} />
+            ) : (
+              <FaBars style={{ fontSize: "25px" }} />
+            )}
+          </div>
+          <div className="d-lg-block d-none">
             <Link to="/">
               <img src={logo} alt="" height="60" />
             </Link>
           </div>
-          <NavbarBrand href="/">
-            <LogoWhite className="d-lg-none" />
-          </NavbarBrand>
-          <Button
-            color="primary"
-            className=" d-lg-none"
-            onClick={() => showMobilemenu()}
-          >
-            <i className="bi bi-list"></i>
-          </Button>
+          <Link to="/">
+            <img src={logo} alt="" height="50" className="d-lg-none me-4" />
+          </Link>
         </div>
         <div className="hstack gap-2">
-          <Button
+          {/* <Button
             color="primary"
             size="sm"
             className="d-sm-block d-md-none"
@@ -125,7 +124,15 @@ const Header = () => {
             ) : (
               <i className="bi bi-three-dots-vertical"></i>
             )}
-          </Button>
+          </Button> */}
+
+          <img
+            src={user1}
+            alt="profile"
+            className="rounded-circle ms-2 d-sm-block d-md-none"
+            width="40"
+            onClick={Handletoggle}
+          />
         </div>
 
         <Collapse navbar isOpen={isOpen}>
