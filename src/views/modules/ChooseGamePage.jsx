@@ -6,36 +6,56 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import { useGameContext } from "../../context/gameContext";
 import toast from "react-hot-toast";
+import { debounce } from "lodash";
 
 const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const [searchQuery, setSearchQuery] = useState("");
   const [loader, setLoader] = useState(false);
   const [currPage, setCurrPage] = useState(1);
   const [gameData, setGameData] = useState([]);
+  const [noGamesFound, setNoGamesFound] = useState(false);
   const gameListContainerRef = useRef(null);
   const { selectedGame, addGame, removeGame, clearGame, gameList } =
     useGameContext();
 
-  const fetchData = useCallback(async () => {
-    setLoader(true);
-    try {
-      const data = {
-        search_term: searchQuery ?? "",
-      };
-      const res = await CompassData.get_game(currPage, data);
-      if (res) {
-        setGameData((prevData) => [...prevData, ...res.results]);
+  const debouncedFetchData = useCallback(
+    debounce(async (query, page) => {
+      setLoader(true);
+      setNoGamesFound(false);
+      try {
+        const data = {
+          search_term: query ?? "",
+        };
+        const res = await CompassData.get_game(page, data);
+        if (res) {
+          if (res.results.length === 0) {
+            setNoGamesFound(true);
+          }
+          setGameData((prevData) => [...prevData, ...res.results]);
+        }
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setLoader(false);
       }
-    } catch (err) {
-      console.log(err);
-    } finally {
-      setLoader(false);
-    }
-  }, [currPage, searchQuery]);
+    }, 300),
+    []
+  );
 
   useEffect(() => {
-    fetchData();
-  }, [fetchData]);
+    if (searchQuery) {
+      setGameData([]);
+      setNoGamesFound(false);
+      setCurrPage(1);
+      debouncedFetchData(searchQuery, 1);
+    }
+  }, [searchQuery, debouncedFetchData]);
+
+  useEffect(() => {
+    if (!searchQuery) {
+      debouncedFetchData("", currPage);
+    }
+  }, [currPage, searchQuery, debouncedFetchData]);
 
   const handleScroll = (event) => {
     const { scrollTop, scrollHeight, clientHeight } = event.target;
@@ -133,30 +153,38 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
           }}
           onScroll={handleScroll}
         >
-          {gameData.map((data) => (
-            <div className="casino-data-display" key={data?.id}>
-              <input
-                type="checkbox"
-                className="casino-checkbox"
-                id={data?.id}
-                checked={selectedGame.has(data)}
-                onChange={() => handleCheckboxChange(data)}
-              />
-              <div className="casino-data-bar">
-                <label htmlFor={data?.id}>{data?.game_original_name}</label>
-                <span style={{ color: "#8A92A6" }}>
-                  {data?.game_provider_name}
-                </span>
-              </div>
+          {noGamesFound ? (
+            <div style={{ textAlign: "center", padding: "20px" }}>
+              <p>No games found</p>
             </div>
-          ))}
-          {loader && (
-            <div
-              className="loader-container"
-              style={{ textAlign: "center", padding: "10px" }}
-            >
-              <Loader />
-            </div>
+          ) : (
+            <>
+              {gameData.map((data) => (
+                <div className="casino-data-display" key={data?.id}>
+                  <input
+                    type="checkbox"
+                    className="casino-checkbox"
+                    id={data?.id}
+                    checked={selectedGame.has(data)}
+                    onChange={() => handleCheckboxChange(data)}
+                  />
+                  <div className="casino-data-bar">
+                    <label htmlFor={data?.id}>{data?.game_original_name}</label>
+                    <span style={{ color: "#8A92A6" }}>
+                      {data?.game_provider_name}
+                    </span>
+                  </div>
+                </div>
+              ))}
+              {loader && (
+                <div
+                  className="loader-container"
+                  style={{ textAlign: "center", padding: "10px" }}
+                >
+                  <Loader />
+                </div>
+              )}
+            </>
           )}
         </div>
       </div>
