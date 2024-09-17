@@ -50,6 +50,8 @@ const Header = () => {
     localStorage.removeItem("user_id");
     localStorage.removeItem("access_token");
     localStorage.removeItem("refresh_token");
+    localStorage.removeItem("casinos");
+    localStorage.removeItem("games");
     navigate("/login");
   };
 

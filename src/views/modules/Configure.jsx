@@ -34,19 +34,7 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
   }, [gameJson]);
 
   const gameAndCasino = [...casinos, ...game];
-
-  // const game_casinos_list = []
-  // for(var i=0; i<length(casinos); i++){
-  //   casino_name = casinos[i]
-  //   for(var j=0; j<length(games); j++){
-  //     game_name = games[j]
-  //     game_casinos_list.add({
-  //       'casino': casino_name,
-  //       'game': game_name
-  //     })
-  //   }
-  // }
-
+  
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
