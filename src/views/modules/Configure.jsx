@@ -16,6 +16,20 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
 
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
+  const [casinoGamePairs, setCasinoGamePairs] = useState([]);
+
+  useEffect(() => {
+    // Initialize casino-game pairs when casinos or games change
+    const pairs = [];
+    for (const gameItem of game) {
+      for (const casino of casinos) {
+        const uniqueCasino = { ...casino, id: `${casino.id}-${gameItem.id}` };
+        pairs.push({ casino: uniqueCasino, game: gameItem });
+      }
+    }
+    setCasinoGamePairs(pairs);
+  }, [casinos, game]);
+
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
 
@@ -34,7 +48,7 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
   }, [gameJson]);
 
   const gameAndCasino = [...casinos, ...game];
-  
+
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
@@ -61,15 +75,57 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
   const handleClose = () => {
     onConfigueDrawerClose();
   };
+  
+  const generateTableRows = () => {
+    const rows = [];
 
-  const handleRemove = (id) => {
-    const updatedCasinos = casinos.filter((casino) => casino?.id !== id);
-    const updatedGames = game.filter((gameItem) => gameItem?.id !== id);
-    setCasinos(updatedCasinos);
-    setGame(updatedGames);
-    localStorage.setItem("casinos", JSON.stringify(updatedCasinos));
-    localStorage.setItem("games", JSON.stringify(updatedGames));
+    for (const gameItem of game) {
+      for (const casino of casinos) {
+        const uniqueCasino = { ...casino, id: `${casino.id}-${gameItem.id}` };
+        rows.push(
+          <tr
+            key={`${uniqueCasino.id}-${gameItem.id}`}
+            className="table-body-items-table"
+          >
+            <td scope="row" style={{ width: "40%", fontSize: "14px" }}>
+              <p className="m-0">{casino.name}</p>
+              <Link to={casino.site_url}>{casino.site_url}</Link>
+            </td>
+            <td style={{ width: "20%", fontSize: "14px" }}>
+              <p className="m-0">{gameItem.game_original_name}</p>
+              <Link to="/">{gameItem.game_provider_name}</Link>
+            </td>
+            <td className="text-end">
+              <span className="badge rounded-pill me-5">
+                Combination already exists
+              </span>
+              <FiMinusCircle
+                style={{ fontSize: "25px", color: "#607290" }}
+                onClick={() => {
+                  handleGameRemove(gameItem.id);
+                  handleCasinoRemove(uniqueCasino.id);
+                }}
+              />
+            </td>
+          </tr>
+        );
+      }
+    }
+
+    return rows;
   };
+
+  const handleGameRemove = (gameId) => {
+    console.log(`Remove game with ID: ${gameId}`);
+  };
+
+  const handleCasinoRemove = (casinoId) => {
+    console.log(`Remove casino with ID: ${casinoId}`);
+  };
+
+  if (casinos?.length === 0 || game?.length === 0) {
+    return <p>Loading data...</p>;
+  }
 
   return (
     <>
@@ -131,39 +187,7 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
                 {gameAndCasino?.length > 0 ? (
                   <>
                     <tbody className="table-body-items">
-                      {casinos.map((casino) =>
-                        game.map((gameItem) => (
-                          <tr
-                            key={`${casino.id}-${gameItem.id}`}
-                            className="table-body-items-table"
-                          >
-                            <td
-                              scope="row"
-                              style={{ width: "40%", fontSize: "14px" }}
-                            >
-                              <p className="m-0">{casino.name}</p>
-                              <Link to={casino.site_url}>
-                                {casino.site_url}
-                              </Link>
-                            </td>
-                            <td style={{ width: "20%", fontSize: "14px" }}>
-                              <p className="m-0">
-                                {gameItem.game_original_name}
-                              </p>
-                              <Link to="/">{gameItem.game_provider_name}</Link>
-                            </td>
-                            <td className="text-end">
-                              <span className="badge rounded-pill me-5">
-                                Combination already exists
-                              </span>
-                              <FiMinusCircle
-                                style={{ fontSize: "25px", color: "#607290" }}
-                                onClick={() => handleRemove(gameItem.id)}
-                              />
-                            </td>
-                          </tr>
-                        ))
-                      )}
+                      {generateTableRows()}
                     </tbody>
                   </>
                 ) : (

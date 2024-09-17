@@ -15,6 +15,9 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const [gameData, setGameData] = useState([]);
   const [noGamesFound, setNoGamesFound] = useState(false);
   const gameListContainerRef = useRef(null);
+
+  const [localSelectedGames, setLocalSelectedGames] = useState([]);
+
   const { selectedGame, addGame, removeGame, clearGame, gameList } =
     useGameContext();
 
@@ -101,19 +104,37 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     }
   };
 
-  const handleCheckboxChange = (data) => {
-    if (selectedGame.has(data)) {
-      removeGame(data);
-    } else {
-      addGame(data);
+  useEffect(() => {
+    if (gameDrawer) {
+      const storedCasinos = JSON.parse(localStorage.getItem("games")) || [];
+      setLocalSelectedGames(storedCasinos);
     }
+  }, [gameDrawer]);
+
+  useEffect(() => {
+    setLocalSelectedGames(selectedGame);
+  }, [selectedGame]);
+
+  const isChecked = (casino) => {
+    return localSelectedGames.some((selected) => selected.id === casino.id);
+  };
+
+  const handleCheckboxChange = (data) => {
+    setLocalSelectedGames((prev) => {
+      const exists = prev.some((casino) => casino.id === data.id);
+      if (exists) {
+        return prev.filter((casino) => casino.id !== data.id);
+      } else {
+        return [...prev, data];
+      }
+    });
   };
 
   const handleSave = () => {
-    const selectedArray = Array.from(selectedGame);
-    gameList(selectedArray);
-    setGameDrawer(false);
     clearGame();
+    localSelectedGames.forEach((casino) => addGame(casino));
+    localStorage.setItem("games", JSON.stringify(localSelectedGames));
+    setGameDrawer(false);
     toast.success("Game selected successfully");
     setSearchQuery("");
   };
@@ -185,7 +206,7 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
                     type="checkbox"
                     className="casino-checkbox"
                     id={data?.id}
-                    checked={selectedGame.has(data)}
+                    checked={isChecked(data)}
                     onChange={() => handleCheckboxChange(data)}
                   />
                   <div className="casino-data-bar">

@@ -3,27 +3,29 @@ import React, { createContext, useState, useContext } from "react";
 const CasinoContext = createContext();
 
 export const CasinoProvider = ({ children }) => {
-  const [selectedCasinos, setSelectedCasinos] = useState(new Set());
+  const [selectedCasinos, setSelectedCasinos] = useState(() => {
+    const storedCasinos = localStorage.getItem("casinos");
+    return storedCasinos ? JSON.parse(storedCasinos) : [];
+  });
 
   const addCasino = (casino) => {
-    setSelectedCasinos((prev) => new Set(prev.add(casino)));
+    setSelectedCasinos((prevSelectedCasinos) => {
+      const newSet = [...prevSelectedCasinos, casino];
+      localStorage.setItem("casinos", JSON.stringify(newSet));
+      return newSet;
+    });
   };
 
   const removeCasino = (casino) => {
-    setSelectedCasinos((prev) => {
-      const newSelected = new Set(prev);
-      newSelected.delete(casino);
-      return newSelected;
+    setSelectedCasinos((prevSelectedCasinos) => {
+      const newSet = prevSelectedCasinos.filter((c) => c.id !== casino.id);
+      localStorage.setItem("casinos", JSON.stringify(newSet));
+      return newSet;
     });
   };
 
   const clearCasinos = () => {
-    setSelectedCasinos(new Set());
-  };
-
-  const casinoList = (casino) => {
-    const casinoJSON = JSON.stringify(casino);
-    localStorage.setItem("casinos", casinoJSON);
+    setSelectedCasinos([]);
   };
 
   return (
@@ -33,7 +35,6 @@ export const CasinoProvider = ({ children }) => {
         addCasino,
         removeCasino,
         clearCasinos,
-        casinoList,
       }}
     >
       {children}

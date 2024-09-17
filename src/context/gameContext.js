@@ -3,27 +3,29 @@ import React, { createContext, useState, useContext } from "react";
 const GameContext = createContext();
 
 export const GameProvider = ({ children }) => {
-  const [selectedGame, setSelectedGame] = useState(new Set());
+  const [selectedGame, setSelectedGame] = useState(() => {
+    const storedGames = localStorage.getItem("games");
+    return storedGames ? JSON.parse(storedGames) : [];
+  });
 
   const addGame = (casino) => {
-    setSelectedGame((prev) => new Set(prev.add(casino)));
+    setSelectedGame((prevSelectedCasinos) => {
+      const newSet = [...prevSelectedCasinos, casino];
+      localStorage.setItem("games", JSON.stringify(newSet));
+      return newSet;
+    });
   };
 
   const removeGame = (casino) => {
-    setSelectedGame((prev) => {
-      const newSelected = new Set(prev);
-      newSelected.delete(casino);
-      return newSelected;
+    setSelectedGame((prevSelectedCasinos) => {
+      const newSet = prevSelectedCasinos.filter((c) => c.id !== casino.id);
+      localStorage.setItem("games", JSON.stringify(newSet));
+      return newSet;
     });
   };
 
   const clearGame = () => {
-    setSelectedGame(new Set());
-  };
-
-  const gameList = (game) => {
-    const gameJSON = JSON.stringify(game);
-    localStorage.setItem("games", gameJSON);
+    setSelectedGame([]);
   };
 
   return (
@@ -33,7 +35,6 @@ export const GameProvider = ({ children }) => {
         addGame,
         removeGame,
         clearGame,
-        gameList,
       }}
     >
       {children}

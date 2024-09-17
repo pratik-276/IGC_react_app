@@ -172,7 +172,7 @@ const Compass = () => {
                     style={{ fontSize: "22px" }}
                     onClick={() => handleRemoveCasino(data?.id)}
                   />
-                  <div className="casino-data-bar" onClick={showSelectedCasino}>
+                  <div className="casino-data-bar">
                     <label htmlFor={data?.id}>{data?.name}</label>
                     <Link>{data?.site_url}</Link>
                   </div>
@@ -202,7 +202,7 @@ const Compass = () => {
                     style={{ fontSize: "22px" }}
                     onClick={() => handleRemoveGame(data?.id)}
                   />
-                  <div className="casino-data-bar" onClick={showSelectedCasino}>
+                  <div className="casino-data-bar">
                     <label htmlFor={data?.id}>{data?.game_original_name}</label>
                     <Link>{data?.game_provider_name}</Link>
                   </div>
