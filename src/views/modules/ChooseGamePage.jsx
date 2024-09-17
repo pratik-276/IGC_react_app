@@ -18,32 +18,28 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
 
   const [localSelectedGames, setLocalSelectedGames] = useState([]);
 
-  const { selectedGame, addGame, removeGame, clearGame, gameList } =
-    useGameContext();
+  const { selectedGame, addGame, clearGame } = useGameContext();
 
-  const debouncedFetchData = useCallback(
-    debounce(async (query, page) => {
-      setLoader(true);
-      setNoGamesFound(false);
-      try {
-        const data = {
-          search_term: query ?? "",
-        };
-        const res = await CompassData.get_game(page, data);
-        if (res) {
-          if (res.results.length === 0) {
-            setNoGamesFound(true);
-          }
-          setGameData((prevData) => [...prevData, ...res.results]);
+  const fetchData = useCallback(async (query, page) => {
+    setLoader(true);
+    setNoGamesFound(false);
+    try {
+      const data = { search_term: query ?? "" };
+      const res = await CompassData.get_game(page, data);
+      if (res) {
+        if (res.results.length === 0) {
+          setNoGamesFound(true);
         }
-      } catch (err) {
-        console.log(err);
-      } finally {
-        setLoader(false);
+        setGameData((prevData) => [...prevData, ...res.results]);
       }
-    }, 300),
-    []
-  );
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoader(false);
+    }
+  }, []);
+
+  const debouncedFetchData = useCallback(debounce(fetchData, 300), [fetchData]);
 
   useEffect(() => {
     if (gameDrawer) {
@@ -91,6 +87,8 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const handleClose = () => {
     onGameDrawerClose();
     clearGame();
+    setCurrPage(1);
+    debouncedFetchData("", 1);
     if (gameListContainerRef.current) {
       gameListContainerRef.current.scrollTop = 0;
     }
@@ -99,6 +97,8 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const handleBackButtonClick = () => {
     onGameDrawerClose();
     clearGame();
+    setCurrPage(1);
+    debouncedFetchData("", 1);
     if (gameListContainerRef.current) {
       gameListContainerRef.current.scrollTop = 0;
     }
@@ -137,6 +137,11 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     setGameDrawer(false);
     toast.success("Game selected successfully");
     setSearchQuery("");
+    setCurrPage(1);
+    debouncedFetchData("", 1);
+    if (gameListContainerRef.current) {
+      gameListContainerRef.current.scrollTop = 0;
+    }
   };
 
   return (

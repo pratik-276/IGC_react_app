@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { FiMinusCircle } from "react-icons/fi";
 import { Link } from "react-router-dom";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { FaCalendarAlt } from "react-icons/fa";
-import { Drawer } from "antd";
+import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
+import { Drawer } from "antd";
 
 const TrackingTime = ["7days", "1 month", "3 months", "custom"];
 
@@ -16,20 +16,6 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
 
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
-  const [casinoGamePairs, setCasinoGamePairs] = useState([]);
-
-  useEffect(() => {
-    // Initialize casino-game pairs when casinos or games change
-    const pairs = [];
-    for (const gameItem of game) {
-      for (const casino of casinos) {
-        const uniqueCasino = { ...casino, id: `${casino.id}-${gameItem.id}` };
-        pairs.push({ casino: uniqueCasino, game: gameItem });
-      }
-    }
-    setCasinoGamePairs(pairs);
-  }, [casinos, game]);
-
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
 
@@ -75,7 +61,7 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
   const handleClose = () => {
     onConfigueDrawerClose();
   };
-  
+
   const generateTableRows = () => {
     const rows = [];
 
