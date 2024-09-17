@@ -67,6 +67,8 @@ const ChooseCasinoPage = ({
     casinoList(selectedArray);
     setCasinoDrawer(false);
     toast.success("Casino selected succesfully");
+    clearCasinos();
+    setSearchQuery("");
   };
 
   return (

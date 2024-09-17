@@ -20,6 +20,17 @@ const Compass = () => {
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
 
+  const [selectedOption, setSelectedOption] = useState(null);
+
+  const [open, setOpen] = useState(false);
+
+  const [casinoDrawer, setCasinoDrawer] = useState(false);
+  const [gameDrawer, setGameDrawer] = useState(false);
+  const [newCasino, setNewCasino] = useState(false);
+  const [configure, setConfigure] = useState(false);
+
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     if (casinoJSON) {
       const parsedCasinos = JSON.parse(casinoJSON);
@@ -46,20 +57,8 @@ const Compass = () => {
     localStorage.setItem("games", JSON.stringify(updatedGames));
   };
 
-  const [selectedOption, setSelectedOption] = useState(null);
-
-  const [open, setOpen] = useState(false);
-
-  const [casinoDrawer, setCasinoDrawer] = useState(false);
-  const [gameDrawer, setGameDrawer] = useState(false);
-  const [newCasino, setNewCasino] = useState(false);
-  const [configure, setConfigure] = useState(false);
-
-  const [searchQuery, setSearchQuery] = useState("");
-
   const onClose = () => {
     setOpen(false);
-    setSelectedOption("");
   };
 
   const showSelectedCasino = () => {
@@ -81,13 +80,6 @@ const Compass = () => {
 
   // GAME DRAWER OPEN
   const showGameDrawer = () => {
-    // if (casinoJSON?.length > 0 && gameJson?.length > 0) {
-    //   setOpen(false);
-    //   setConfigure(true);
-    // } else {
-    //   setGameDrawer(true);
-    //   setSelectedOption("");
-    // }
     setGameDrawer(true);
     setSelectedOption("");
   };
@@ -115,6 +107,12 @@ const Compass = () => {
     }
   };
 
+  const showConfigueDrawer = () => {
+    setConfigure(true);
+  };
+
+  const showNextButton = casinos?.length > 0 && game?.length > 0;
+
   return (
     <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
@@ -130,38 +128,27 @@ const Compass = () => {
           maskClosable={false}
           open={open}
           closeIcon={<CloseOutlined className="custom-close-icon" />}
-          // footer={
-          //   <div style={{ textAlign: "right" }}>
-          //     <button
-          //       onClick={onClose}
-          //       style={{ marginRight: 8 }}
-          //       className="compass-sidebar-back"
-          //     >
-          //       Back
-          //     </button>
-          //     {selectedOption === "Casino 1" ? (
-          //       <button
-          //         className={`compass-sidebar-next ${
-          //           !selectedOption ? "btn-disabled" : ""
-          //         }`}
-          //         disabled={!selectedOption}
-          //         onClick={showCasinoDrawer}
-          //       >
-          //         Next
-          //       </button>
-          //     ) : (
-          //       <button
-          //         className={`compass-sidebar-next ${
-          //           !selectedOption ? "btn-disabled" : ""
-          //         }`}
-          //         disabled={!selectedOption}
-          //         onClick={showGameDrawer}
-          //       >
-          //         Next
-          //       </button>
-          //     )}
-          //   </div>
-          // }
+          footer={
+            <>
+              {showNextButton && (
+                <div style={{ textAlign: "right" }}>
+                  <button
+                    onClick={onClose}
+                    style={{ marginRight: 8 }}
+                    className="compass-sidebar-back"
+                  >
+                    Back
+                  </button>
+                  <button
+                    className="compass-sidebar-next"
+                    onClick={showConfigueDrawer}
+                  >
+                    Next
+                  </button>
+                </div>
+              )}
+            </>
+          }
           className={
             casinoDrawer || gameDrawer || newCasino
               ? "show_children_drawer"
@@ -169,9 +156,9 @@ const Compass = () => {
           }
         >
           <div
-            className={`calibrate-title ${
-              selectedOption === "Casino 1" ? "selected" : ""
-            }`}
+            // className={`calibrate-title ${showCasinos ? "selected" : ""}`}
+            className="calibrate-title"
+            style={{ cursor: "pointer" }}
           >
             <span>Select Casino</span>
             <div className="casino-select-listing mt-4">
@@ -202,11 +189,7 @@ const Compass = () => {
               <p>Start configuration by adding operator first</p>
             </div>
           </div>
-          <div
-            className={`calibrate-title mt-4 ${
-              selectedOption === "Casino 2" ? "selected" : ""
-            }`}
-          >
+          <div className="calibrate-title mt-4" style={{ cursor: "pointer" }}>
             <span>Select Game</span>
             <div className="casino-select-listing mt-4">
               {game?.map((data, index) => (

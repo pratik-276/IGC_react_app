@@ -43,6 +43,21 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   );
 
   useEffect(() => {
+    if (gameDrawer) {
+      setSearchQuery("");
+      setGameData([]);
+      setCurrPage(1);
+      setNoGamesFound(false);
+
+      debouncedFetchData("", 1);
+
+      if (gameListContainerRef.current) {
+        gameListContainerRef.current.scrollTop = 0;
+      }
+    }
+  }, [gameDrawer, debouncedFetchData]);
+
+  useEffect(() => {
     if (searchQuery) {
       setGameData([]);
       setNoGamesFound(false);
@@ -98,7 +113,9 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     const selectedArray = Array.from(selectedGame);
     gameList(selectedArray);
     setGameDrawer(false);
+    clearGame();
     toast.success("Game selected successfully");
+    setSearchQuery("");
   };
 
   return (
@@ -122,8 +139,11 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
           </button>
           <button
             style={{ marginRight: 8 }}
-            className="compass-sidebar-back"
+            className={`compass-sidebar-back ${
+              selectedGame.size === 0 ? "btn-disabled" : ""
+            }`}
             onClick={handleSave}
+            disabled={selectedGame.size === 0}
           >
             Save
           </button>
