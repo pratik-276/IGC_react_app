@@ -9,13 +9,15 @@ import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 
-const TrackingTime = ["7days", "1 month", "3 months", "custom"];
+const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
 
-const Configure = ({ configure, onConfigueDrawerClose }) => {
+const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
   const [trackTime, setTrackTime] = useState("");
 
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
+  const [displayedGames, setDisplayedGames] = useState({});
+
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
 
@@ -30,10 +32,16 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
     if (gameJson) {
       const allGames = JSON.parse(gameJson);
       setGame(allGames);
-    }
-  }, [gameJson]);
 
-  const gameAndCasino = [...casinos, ...game];
+      const casinoandgamedisplay = {};
+      casinos.forEach((casino) => {
+        allGames.forEach((game) => {
+          casinoandgamedisplay[`${casino.id}-${game.id}`] = true;
+        });
+      });
+      setDisplayedGames(casinoandgamedisplay);
+    }
+  }, [gameJson, casinos]);
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -65,53 +73,67 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
   const generateTableRows = () => {
     const rows = [];
 
-    for (const gameItem of game) {
-      for (const casino of casinos) {
-        const uniqueCasino = { ...casino, id: `${casino.id}-${gameItem.id}` };
-        rows.push(
-          <tr
-            key={`${uniqueCasino.id}-${gameItem.id}`}
-            className="table-body-items-table"
-          >
-            <td scope="row" style={{ width: "40%", fontSize: "14px" }}>
-              <p className="m-0">{casino.name}</p>
-              <Link to={casino.site_url}>{casino.site_url}</Link>
-            </td>
-            <td style={{ width: "20%", fontSize: "14px" }}>
-              <p className="m-0">{gameItem.game_original_name}</p>
-              <Link to="/">{gameItem.game_provider_name}</Link>
-            </td>
-            <td className="text-end">
-              <span className="badge rounded-pill me-5">
-                Combination already exists
-              </span>
-              <FiMinusCircle
-                style={{ fontSize: "25px", color: "#607290" }}
-                onClick={() => {
-                  handleGameRemove(gameItem.id);
-                  handleCasinoRemove(uniqueCasino.id);
-                }}
-              />
-            </td>
-          </tr>
-        );
+    for (const casino of casinos) {
+      for (const gameItem of game) {
+        const uniqueCasinoGameId = `${casino.id}-${gameItem.id}`;
+
+        if (displayedGames[uniqueCasinoGameId]) {
+          rows.push(
+            <tr key={uniqueCasinoGameId} className="table-body-items-table">
+              <td scope="row" style={{ width: "40%", fontSize: "14px" }}>
+                <p className="m-0">{casino.name}</p>
+                <Link to={casino.site_url}>{casino.site_url}</Link>
+              </td>
+              <td style={{ width: "20%", fontSize: "14px" }}>
+                <p className="m-0">{gameItem.game_original_name}</p>
+                <Link to="/">{gameItem.game_provider_name}</Link>
+              </td>
+              <td className="text-end">
+                <span className="badge rounded-pill me-5">
+                  Combination already exists
+                </span>
+                <FiMinusCircle
+                  style={{
+                    fontSize: "25px",
+                    color: "#607290",
+                    cursor: "pointer",
+                  }}
+                  onClick={() => removeCombination(casino.id, gameItem.id)}
+                />
+              </td>
+            </tr>
+          );
+        }
       }
     }
 
     return rows;
   };
 
-  const handleGameRemove = (gameId) => {
-    console.log(`Remove game with ID: ${gameId}`);
-  };
+  const removeCombination = (casinoId, gameId) => {
+    const uniqueId = `${casinoId}-${gameId}`;
 
-  const handleCasinoRemove = (casinoId) => {
-    console.log(`Remove casino with ID: ${casinoId}`);
-  };
+    setDisplayedGames((prev) => ({
+      ...prev,
+      [uniqueId]: false,
+    }));
 
-  if (casinos?.length === 0 || game?.length === 0) {
-    return <p>Loading data...</p>;
-  }
+    const updatedGames = game.filter((game) => game.id !== gameId);
+
+    const updatedCasinos = casinos.filter((casino) => {
+      if (casino.id === casinoId) {
+        return updatedGames.length > 0;
+      }
+      return true;
+    });
+
+    localStorage.setItem("casinos", JSON.stringify(updatedCasinos));
+    localStorage.setItem("games", JSON.stringify(updatedGames));
+
+    if (updatedGames.length > 0) {
+      return setConfigure(true);
+    }
+  };
 
   return (
     <>
@@ -137,6 +159,7 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
               style={{ marginRight: 8 }}
               className="compass-sidebar-back"
               onClick={handleClose}
+              disabled={!(casinos?.length > 0 && game?.length > 0)}
             >
               Save
             </button>
@@ -170,33 +193,17 @@ const Configure = ({ configure, onConfigueDrawerClose }) => {
             </table>
             <div className="table-scroll-container">
               <table className="table table-bordered m-0">
-                {gameAndCasino?.length > 0 ? (
-                  <>
-                    <tbody className="table-body-items">
-                      {generateTableRows()}
-                    </tbody>
-                  </>
-                ) : (
-                  <>
-                    <tbody className="table-body-items">
-                      <tr>
-                        <td
-                          colSpan="3"
-                          style={{
-                            textAlign: "center",
-                            fontSize: "16px",
-                            padding: "20px",
-                          }}
-                        >
-                          <p className="m-0">
-                            No selected game or operator. Please select one
-                            first.
-                          </p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </>
-                )}
+                <tbody className="table-body-items">
+                  {casinos?.length > 0 && game?.length > 0 ? (
+                    generateTableRows()
+                  ) : (
+                    <tr>
+                      <td colSpan="3" style={{ textAlign: "center" }}>
+                        select first game and casino please
+                      </td>
+                    </tr>
+                  )}
+                </tbody>
               </table>
             </div>
           </div>
