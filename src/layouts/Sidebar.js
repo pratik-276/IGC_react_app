@@ -22,6 +22,11 @@ const navigation = [
     href: "/calibrate-compass",
     icon: IoMdCompass,
   },
+  {
+    title: "Beta Dashboards",
+    href: "/dashboard",
+    icon: IoMdCompass,
+  },
 ];
 
 // For Profile Navigation
