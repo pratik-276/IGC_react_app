@@ -17,6 +17,7 @@ import ProfileProvider from "./context/ProfileContext";
 import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
+import Dashboard from "./views/ui/Dashboard";
 
 const App = () => {
   return (
@@ -49,6 +50,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Compass />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <Dashboard />
                     </ProtectedRoute>
                   }
                 />
