@@ -571,32 +571,6 @@ input[type="checkbox"] {
   color: #dc9b00 !important;
 }
 
-.tracking-game-credit .react-datepicker-wrapper {
-  width: 90%;
-}
-
-.tracking-game-credit .react-datepicker__view-calendar-icon input {
-  padding: 6px 12px !important;
-  border-radius: 6px;
-  color: #222222;
-  border: 1px solid #adb5bd;
-}
-
-.tracking-game-credit
-  .react-datepicker__view-calendar-icon
-  input:focus-visible {
-  outline: none;
-}
-
-.tracking-game-credit
-  .react-datepicker__input-container
-  .react-datepicker__calendar-icon {
-  right: 10px;
-  padding: 0;
-  top: 50%;
-  transform: translate(0, -50%);
-}
-
 .tracking-game-time .tracking_time_dropdown label {
   color: #222222;
   font-weight: 600;
@@ -920,11 +894,24 @@ input[type="checkbox"] {
     margin-bottom: 10px !important;
   }
 
-  .game-track-box-mobile{
+  .game-track-box-mobile {
     margin-top: 16px;
   }
 
-  .tracker-game-dropdown-mobile{
+  .tracker-game-dropdown-mobile {
     margin-bottom: 10px;
   }
+}
+
+.calibrate-compass-table .p-column-header-content .p-column-title {
+  color: #222222 !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+
+.start-end-date-selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 75%;
 }

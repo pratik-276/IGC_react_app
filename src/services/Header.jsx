@@ -6,7 +6,6 @@ export default function authHeader(headerType) {
     const access_token = localStorage.getItem('access_token')
 
     if (access_token) {
-        // for Node.js Express back-end
         if (headerType === "") {
             return {
                 Authorization: "Bearer " + access_token,

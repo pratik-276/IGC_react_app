@@ -44,15 +44,6 @@ const get_game = async (currPage, data) => {
   return d;
 };
 
-// const get_game = async (data) => {
-//   let d = await Call({
-//     path: `get_game`,
-//     method: "POST",
-//     data,
-//   });
-//   return d;
-// };
-
 const request_new_casino = async (data) => {
   let d = await Call({
     path: "request_new_casino",

@@ -1,6 +1,6 @@
 import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
-import { Button, Nav, NavItem } from "reactstrap";
+import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaLocationArrow } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
@@ -46,14 +46,6 @@ const ProfileMenu = [
 
 const Sidebar = () => {
   const navigate = useNavigate();
-
-  const showMobilemenu = () => {
-    const sidebar = document?.getElementById("sidebarArea");
-    if (window?.innerWidth < 768) {
-      sidebar?.classList?.toggle("showSidebar");
-    }
-  };
-
   let location = useLocation();
 
   return (
@@ -93,16 +85,6 @@ const Sidebar = () => {
       ) : (
         <>
           <div className="sidebar" id="sidebarArea">
-            <div className="d-flex d-none">
-              <Button
-                color="white"
-                className="ms-auto text-white d-lg-none"
-                onClick={() => showMobilemenu()}
-              >
-                <i className="bi bi-x"></i>
-              </Button>
-            </div>
-
             <div className="p-3">
               <Nav vertical className="sidebarNav">
                 {navigation.map((navi, index) => (

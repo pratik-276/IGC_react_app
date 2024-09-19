@@ -24,8 +24,8 @@ import Select from "react-select";
 
 const TrackingTime = [
   {
-    value: "7days",
-    label: "7days",
+    value: "7 days",
+    label: "7 days",
   },
   {
     value: "1 month",

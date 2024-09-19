@@ -2,17 +2,25 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
-import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
-import { FaCalendarAlt } from "react-icons/fa";
 import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
-import { Drawer } from "antd";
+import { Drawer, DatePicker } from "antd";
+import moment from "moment";
+import GameData from "../../services/CompassApi";
+import toast from "react-hot-toast";
 
-const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
-
-const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
+const Configure = ({
+  configure,
+  onConfigueDrawerClose,
+  setConfigure,
+  setOpen,
+}) => {
+  const user_id = localStorage.getItem("user_id");
+  const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
   const [trackTime, setTrackTime] = useState("");
+
+  const [initialDate, setInitialDate] = useState("");
+  const [finalDate, setFinalDate] = useState("");
 
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
@@ -20,6 +28,9 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
 
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
+
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   useEffect(() => {
     if (casinoJSON) {
@@ -43,31 +54,10 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
     }
   }, [gameJson, casinos]);
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
-
-  const SelectTime = (option) => {
-    setTrackTime(option);
-    setStartDate(null);
-    setEndDate(null);
-  };
-
-  const handleStartDateChange = (date) => {
-    setStartDate(date);
-    if (endDate && date > endDate) {
-      setEndDate(null);
-    }
-  };
-
-  const handleEndDateChange = (date) => {
-    setEndDate(date);
-    if (!startDate || date >= startDate) {
-      setEndDate(date);
-    }
-  };
-
   const handleClose = () => {
     onConfigueDrawerClose();
+    setStartDate(null);
+    setEndDate(null);
   };
 
   const generateTableRows = () => {
@@ -135,6 +125,90 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
     }
   };
 
+  const onStartDateChange = (date, dateString) => {
+    setStartDate(date?.format("YYYY-MM-DD"));
+    setEndDate(null);
+  };
+
+  const onEndDateChange = (date, dateString) => {
+    setEndDate(date?.format("YYYY-MM-DD"));
+  };
+
+  const disableStartDate = (current) => {
+    return current && current < moment().startOf("day");
+  };
+
+  const disableEndDate = (current) => {
+    return current && startDate && current <= moment(startDate, "YYYY-MM-DD");
+  };
+
+  const formatDate = (date) => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  };
+
+  const handleTrackTimeChange = (option) => {
+    const selectedTime = option.value;
+    setTrackTime(selectedTime);
+
+    const today = new Date();
+    setInitialDate(formatDate(today));
+
+    let calculatedFinalDate = new Date(today);
+    switch (selectedTime) {
+      case "7 days":
+        calculatedFinalDate.setDate(today.getDate() + 6);
+        break;
+      case "1 month":
+        calculatedFinalDate.setMonth(today.getMonth() + 1);
+        break;
+      case "3 months":
+        calculatedFinalDate.setMonth(today.getMonth() + 3);
+        break;
+      case "custom":
+        calculatedFinalDate = "";
+        break;
+      default:
+        break;
+    }
+
+    setFinalDate(calculatedFinalDate ? formatDate(calculatedFinalDate) : "");
+  };
+
+  const handleSaveCasinoGame = () => {
+    const data = [];
+    casinos?.forEach((casino) => {
+      game?.forEach((g) => {
+        data.push({
+          user_id: user_id,
+          operator_id: casino.id,
+          game_id: g.id,
+          start_date: trackTime === "custom" ? startDate : initialDate,
+          end_date: trackTime === "custom" ? endDate : finalDate,
+        });
+      });
+    });
+
+    GameData.compass_create(data)
+      .then((res) => {
+        if (res?.success === true) {
+          toast.success("Combination Create Successfully!");
+          onConfigueDrawerClose();
+          setStartDate(null);
+          setEndDate(null);
+          setTrackTime("");
+          localStorage.removeItem("games");
+          localStorage.removeItem("casinos");
+          setOpen(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   return (
     <>
       <Drawer
@@ -158,7 +232,7 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
             <button
               style={{ marginRight: 8 }}
               className="compass-sidebar-back"
-              onClick={handleClose}
+              onClick={handleSaveCasinoGame}
               disabled={!(casinos?.length > 0 && game?.length > 0)}
             >
               Save
@@ -214,13 +288,13 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
                 <div className="col-md-6">
                   <div className="tracking_gaming_date">
                     <div className="row">
-                      <div className="col-md-6">
+                      <div className="col-md-4">
                         <div className="form-group tracking_time_dropdown credit-field">
                           <label className="">Select Tracking Time</label>
                           <Dropdown
                             options={TrackingTime}
                             placeholder="Select tracking Time"
-                            onChange={(option) => SelectTime(option)}
+                            onChange={handleTrackTimeChange}
                             value={trackTime}
                             className="w-100"
                           />
@@ -229,63 +303,40 @@ const Configure = ({ configure, onConfigueDrawerClose, setConfigure }) => {
                     </div>
                   </div>
                   <div className="tracking_csm_date">
-                    {trackTime?.label === "custom" && (
+                    {trackTime === "custom" && (
                       <>
-                        <div className="row">
-                          <div className="col-md-6">
-                            <div className="form-group credit-field">
-                              <label>Tracking starts on</label>
-                              <div className="tracking-game-credit">
-                                <DatePicker
-                                  selected={startDate}
-                                  showIcon
-                                  onChange={(date) =>
-                                    handleStartDateChange(date)
-                                  }
-                                  className="w-100"
-                                  dateFormat="dd/MM/yyyy"
-                                  dropdownMode="select"
-                                  toggleCalendarOnIconClick
-                                  placeholderText="Select date"
-                                  closeOnScroll={false}
-                                  selectsStart
-                                  startDate={startDate}
-                                  icon={
-                                    <FaCalendarAlt
-                                      style={{ color: "#ADB5BD" }}
-                                    />
-                                  }
-                                  // endDate={endDate}
-                                />
-                              </div>
+                        <div className="start-end-date-selection">
+                          <div className="form-group credit-field">
+                            <label>Tracking starts on</label>
+                            <div className="tracking-game-credit">
+                              <DatePicker
+                                onChange={onStartDateChange}
+                                className="w-100"
+                                allowClear={false}
+                                format="DD-MM-YYYY"
+                                disabledDate={disableStartDate}
+                                value={
+                                  startDate
+                                    ? moment(startDate, "YYYY-MM-DD")
+                                    : null
+                                }
+                              />
                             </div>
                           </div>
-                          <div className="col-md-6">
-                            <div className="form-group credit-field">
-                              <label>Tracking ends on</label>
-                              <div className="tracking-game-credit">
-                                <DatePicker
-                                  selected={endDate}
-                                  dateFormat="dd/MM/yyyy"
-                                  toggleCalendarOnIconClick
-                                  dropdownMode="select"
-                                  placeholderText="Select date"
-                                  showIcon
-                                  onChange={(date) => handleEndDateChange(date)}
-                                  className="w-100"
-                                  closeOnScroll={false}
-                                  selectsEnd
-                                  startDate={startDate}
-                                  endDate={endDate}
-                                  minDate={startDate}
-                                  disabled={!startDate}
-                                  icon={
-                                    <FaCalendarAlt
-                                      style={{ color: "#ADB5BD" }}
-                                    />
-                                  }
-                                />
-                              </div>
+                          <div className="form-group credit-field">
+                            <label>Tracking ends on</label>
+                            <div className="tracking-game-credit">
+                              <DatePicker
+                                onChange={onEndDateChange}
+                                className="w-100"
+                                format="DD-MM-YYYY"
+                                allowClear={false}
+                                disabled={!startDate}
+                                disabledDate={disableEndDate}
+                                value={
+                                  endDate ? moment(endDate, "YYYY-MM-DD") : null
+                                }
+                              />
                             </div>
                           </div>
                         </div>
