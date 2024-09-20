@@ -160,7 +160,7 @@ const GameTracking = () => {
       });
 
     const data = {
-      user_id: 1,
+      user_id: user_id,
       status: "live",
       start_datetime: "2024-06-01",
       end_datetime: "2024-07-01",
