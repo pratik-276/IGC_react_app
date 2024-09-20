@@ -14,10 +14,11 @@ const Configure = ({
   onConfigueDrawerClose,
   setConfigure,
   setOpen,
+  getCompassReadData,
 }) => {
   const user_id = localStorage.getItem("user_id");
   const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
-  const [trackTime, setTrackTime] = useState("");
+  const [trackTime, setTrackTime] = useState(null);
 
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
@@ -58,6 +59,7 @@ const Configure = ({
     onConfigueDrawerClose();
     setStartDate(null);
     setEndDate(null);
+    setTrackTime(null);
   };
 
   const generateTableRows = () => {
@@ -198,10 +200,13 @@ const Configure = ({
           onConfigueDrawerClose();
           setStartDate(null);
           setEndDate(null);
-          setTrackTime("");
+          setTrackTime(null);
           localStorage.removeItem("games");
           localStorage.removeItem("casinos");
           setOpen(false);
+          getCompassReadData();
+          setCasinos([]);
+          setGame([]);
         }
       })
       .catch((err) => {
@@ -231,9 +236,13 @@ const Configure = ({
             </button>
             <button
               style={{ marginRight: 8 }}
-              className="compass-sidebar-back"
+              className={`compass-sidebar-back ${
+                !trackTime || !(casinos.length > 0 && game.length > 0)
+                  ? "btn-disabled"
+                  : ""
+              }`}
               onClick={handleSaveCasinoGame}
-              disabled={!(casinos?.length > 0 && game?.length > 0)}
+              disabled={!trackTime || !(casinos.length > 0 && game.length > 0)}
             >
               Save
             </button>
@@ -288,7 +297,7 @@ const Configure = ({
                 <div className="col-md-6">
                   <div className="tracking_gaming_date">
                     <div className="row">
-                      <div className="col-md-4">
+                      <div className="col-md-6">
                         <div className="form-group tracking_time_dropdown credit-field">
                           <label className="">Select Tracking Time</label>
                           <Dropdown

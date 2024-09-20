@@ -13,14 +13,15 @@ import ChooseGamePage from "../modules/ChooseGamePage";
 import { Link } from "react-router-dom";
 import Configure from "../modules/Configure";
 
+import CompassData from "../../services/CompassApi";
+
 const Compass = () => {
+  const user_id = localStorage.getItem("user_id");
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
 
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
-
-  const [selectedOption, setSelectedOption] = useState(null);
 
   const [open, setOpen] = useState(false);
 
@@ -32,18 +33,14 @@ const Compass = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   useEffect(() => {
-    if (casinoJSON) {
-      const parsedCasinos = JSON.parse(casinoJSON);
-      setCasinos(parsedCasinos);
-    }
-  }, [casinoJSON]);
+    const parsedCasinos = JSON.parse(casinoJSON);
+    setCasinos(parsedCasinos);
+  }, [casinoJSON, casinos]);
 
   useEffect(() => {
-    if (gameJson) {
-      const allGames = JSON.parse(gameJson);
-      setGame(allGames);
-    }
-  }, [gameJson]);
+    const allGames = JSON.parse(gameJson);
+    setGame(allGames);
+  }, [gameJson, game]);
 
   const handleRemoveCasino = (id) => {
     const updatedCasinos = casinos.filter((casino) => casino.id !== id);
@@ -57,20 +54,10 @@ const Compass = () => {
     localStorage.setItem("games", JSON.stringify(updatedGames));
   };
 
-  const onClose = () => {
-    setOpen(false);
-  };
-
-  const showSelectedCasino = () => {
-    setOpen(false);
-    setConfigure(true);
-  };
+  const onClose = () => setOpen(false);
 
   // CASINO DRAWER OPEN
-  const showCasinoDrawer = () => {
-    setCasinoDrawer(true);
-    setSelectedOption("");
-  };
+  const showCasinoDrawer = () => setCasinoDrawer(true);
 
   // CASINO DRAWER CLOSE
   const onCasinoDrawerClose = () => {
@@ -79,46 +66,60 @@ const Compass = () => {
   };
 
   // GAME DRAWER OPEN
-  const showGameDrawer = () => {
-    setGameDrawer(true);
-    setSelectedOption("");
-  };
-
-  const onConfigueDrawerClose = () => {
-    setConfigure(false);
-  };
+  const showGameDrawer = () => setGameDrawer(true);
 
   // GAME DRAWER CLOSE
-  const onGameDrawerClose = () => {
-    setGameDrawer(false);
-  };
+  const onGameDrawerClose = () => setGameDrawer(false);
 
   // NEW DRAWER OPEN
-  const onNewCasinoDrawerClose = () => {
-    setNewCasino(false);
-  };
+  const onNewCasinoDrawerClose = () => setNewCasino(false);
+
+  const onConfigueDrawerClose = () => setConfigure(false);
 
   const handleSelectOption = (option) => {
-    setSelectedOption(option);
-    if (option == "Casino 1") {
+    if (option === "Casino 1") {
       showCasinoDrawer();
     } else {
       showGameDrawer();
     }
   };
 
-  const showConfigueDrawer = () => {
-    setConfigure(true);
-  };
+  const showConfigueDrawer = () => setConfigure(true);
 
   const showNextButton = casinos?.length > 0 && game?.length > 0;
+
+  // CODE FOR CALIBRATE COMPASS TABLE LISTING START
+  const [compassRead, setCompassRead] = useState([]);
+  const [loader, setLoader] = useState(true);
+
+  const getCompassReadData = () => {
+    setLoader(true);
+    CompassData.compass_read({ user_id: parseInt(user_id) })
+      .then((res) => {
+        if (res?.success) {
+          setCompassRead(res?.data);
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoader(false));
+  };
+
+  useEffect(() => {
+    getCompassReadData();
+  }, [user_id]);
 
   return (
     <>
       {/* CALIBRATE COMPASS FIRST PAGE */}
-      <CompassDataPage open={open} setOpen={setOpen} />
+      <CompassDataPage
+        open={open}
+        setOpen={setOpen}
+        compassRead={compassRead}
+        loader={loader}
+        getCompassReadData={getCompassReadData}
+      />
 
-      {/* CALIBRATE COMPASS FIRST OFF CANVAS FOR CHOOSE CASINO OR GAME IN ANTD */}
+      {/* CALIBRATE COMPASS FIRST DRAWER FOR CHOOSE CASINO OR GAME IN ANTD */}
       <div className="casino_game_selection">
         <Drawer
           title="Configure"
@@ -155,11 +156,7 @@ const Compass = () => {
               : ""
           }
         >
-          <div
-            // className={`calibrate-title ${showCasinos ? "selected" : ""}`}
-            className="calibrate-title"
-            style={{ cursor: "pointer" }}
-          >
+          <div className="calibrate-title" style={{ cursor: "pointer" }}>
             <span>Select Casino</span>
             <div className="casino-select-listing mt-4">
               {casinos?.map((data, index) => (
@@ -256,6 +253,9 @@ const Compass = () => {
           configure={configure}
           setOpen={setOpen}
           onConfigueDrawerClose={onConfigueDrawerClose}
+          getCompassReadData={getCompassReadData}
+          setCasinos={setCasinos}
+          setGame={setGame}
         />
       </div>
     </>

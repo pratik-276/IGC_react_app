@@ -26,7 +26,7 @@ const App = () => {
         <CasinoProvider>
           <GameProvider>
             <ScrollToTop />
-            <Toaster toastOptions={{ duration: 3000 }} position="top-right" />
+            <Toaster toastOptions={{ duration: 1500 }} position="top-right" />
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route

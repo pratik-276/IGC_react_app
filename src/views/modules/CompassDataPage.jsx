@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import Loader from "../../layouts/loader/Loader";
@@ -19,36 +19,21 @@ const options2 = ["One", "Two", "Three"];
 const options3 = [5, 10, 15, 20];
 const options4 = [5, 10, 15, 20];
 
-const CompassDataPage = ({ setOpen }) => {
-  const user_id = localStorage.getItem("user_id");
+const CompassDataPage = ({
+  setOpen,
+  compassRead,
+  loader,
+  getCompassReadData,
+  setCasinos,
+  setGame,
+}) => {
   const dt = useRef(null);
 
   const [selectedRows, setSelectedRows] = useState([]);
-  const [compassRead, setCompassRead] = useState([]);
-
-  const [loader, setLoader] = useState(true);
   const [deleteLoader, setDeleteLoader] = useState(false);
 
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(10);
-
-  const getCompassReadData = () => {
-    setLoader(true);
-    CompassData.compass_read({ user_id: parseInt(user_id) })
-      .then((res) => {
-        if (res?.success) {
-          setCompassRead(res?.data);
-        }
-      })
-      .catch(console.error)
-      .finally(() => setLoader(false));
-  };
-
-  useEffect(() => {
-    if (setOpen) {
-      getCompassReadData();
-    }
-  }, [user_id, setOpen]);
 
   const handleDelete = () => {
     if (selectedRows.length === 0) return;
@@ -62,6 +47,7 @@ const CompassDataPage = ({ setOpen }) => {
           getCompassReadData();
           setSelectedRows([]);
           toast.success(res?.message);
+          setPage(0);
         }
       })
       .catch(console.error)
@@ -281,7 +267,7 @@ const CompassDataPage = ({ setOpen }) => {
                               <Pagination.Item
                                 key={num}
                                 onClick={() => setPage(num)}
-                                active={num + 1 === totalPages}
+                                active={num === page}
                                 className="custom-pagination-item"
                               >
                                 {num + 1}
