@@ -12,21 +12,18 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "react-bootstrap";
-
-const options = ["Pause", "In Progress", "Not Available"];
-const options1 = ["One", "Two", "Three"];
-const options2 = ["One", "Two", "Three"];
-const options3 = [5, 10, 15, 20];
-const options4 = [5, 10, 15, 20];
+import Select from "react-select";
 
 const CompassDataPage = ({
   setOpen,
   compassRead,
   loader,
   getCompassReadData,
-  setCasinos,
-  setGame,
 }) => {
+  const options = ["Pause", "In Progress", "Not Available"];
+  const options3 = [5, 10, 15, 20];
+  const options4 = [5, 10, 15, 20];
+
   const dt = useRef(null);
 
   const [selectedRows, setSelectedRows] = useState([]);
@@ -34,6 +31,27 @@ const CompassDataPage = ({
 
   const [page, setPage] = useState(0);
   const [rows, setRows] = useState(10);
+
+  const [operatorFilter, setOperatorFilter] = useState(null);
+  const [gameFilter, setGameFilter] = useState(null);
+
+  const filterData = () => {
+    let filteredData = compassRead;
+
+    if (operatorFilter) {
+      filteredData = filteredData.filter(
+        (item) => item.name === operatorFilter
+      );
+    }
+
+    if (gameFilter) {
+      filteredData = filteredData.filter(
+        (item) => item.game_original_name === gameFilter
+      );
+    }
+
+    return filteredData;
+  };
 
   const handleDelete = () => {
     if (selectedRows.length === 0) return;
@@ -48,15 +66,15 @@ const CompassDataPage = ({
           setSelectedRows([]);
           toast.success(res?.message);
           setPage(0);
+          setOperatorFilter(null);
+          setGameFilter(null);
         }
       })
       .catch(console.error)
       .finally(() => setDeleteLoader(false));
   };
 
-  const showFirstDrawer = () => {
-    setOpen(true);
-  };
+  const showFirstDrawer = () => setOpen(true);
 
   const createdBodyTemplate = () => <span className="text-center">-</span>;
 
@@ -100,9 +118,72 @@ const CompassDataPage = ({
     </td>
   );
 
-  const totalRecords = compassRead?.length;
+  const filteredData = filterData();
+  const totalRecords = filteredData.length;
   const totalPages = Math.ceil(totalRecords / rows);
-  const paginatedData = compassRead?.slice(page * rows, (page + 1) * rows);
+  const paginatedData = filteredData.slice(page * rows, (page + 1) * rows);
+
+  const dateTimePeriod = [
+    {
+      id: "7 days",
+      date: "7 days",
+    },
+    {
+      id: "1 month",
+      date: "1 month",
+    },
+    {
+      id: "3 month",
+      date: "3 month",
+    },
+    {
+      id: "custom",
+      date: "custom",
+    },
+  ];
+
+  const statusPeriod = [
+    {
+      id: "Pause",
+      status: "Pause",
+    },
+    {
+      id: "In Progress",
+      status: "In Progress",
+    },
+    {
+      id: "Not Available",
+      status: "Not Available",
+    },
+  ];
+
+  const operatorOption = Array.from(
+    new Set(compassRead?.map((data) => data.name))
+  ).map((name) => ({
+    value: name,
+    label: name,
+  }));
+
+  const gameOption = Array.from(
+    new Set(compassRead?.map((data) => data.game_original_name))
+  ).map((name) => ({
+    value: name,
+    label: name,
+  }));
+
+  const timeOption = dateTimePeriod?.map((data) => ({
+    value: data.id,
+    label: data.date,
+  }));
+
+  const statusOption = statusPeriod?.map((data) => ({
+    value: data.id,
+    label: data.status,
+  }));
+
+  const casinoFilterChange = (option) => {
+    setOperatorFilter(option ? option.value : null);
+  };
 
   return (
     <>
@@ -145,10 +226,58 @@ const CompassDataPage = ({
               </div>
               <div className="d-flex justify-content-between">
                 <div className="calibrate-dropdown">
-                  <Dropdown options={options} placeholder="Status" />
-                  <Dropdown options={options1} placeholder="Operator" />
-                  <Dropdown options={options2} placeholder="Game" />
-                  <Dropdown options={options3} placeholder="All Time" />
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="trackingstatus"
+                      options={statusOption}
+                      placeholder="Status"
+                      onChange={casinoFilterChange}
+                    />
+                  </div>
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="trackingstatus"
+                      options={operatorOption}
+                      placeholder="Operator"
+                      onChange={casinoFilterChange}
+                    />
+                  </div>
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="trackingstatus"
+                      options={gameOption}
+                      placeholder="Game"
+                      onChange={(option) =>
+                        setGameFilter(option ? option.value : null)
+                      }
+                    />
+                  </div>
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="trackingstatus"
+                      options={timeOption}
+                      placeholder="All Time"
+                      onChange={(option) =>
+                        setGameFilter(option ? option.value : null)
+                      }
+                    />
+                  </div>
                 </div>
                 <div className="compass-right-icon">
                   <div className="compass-search">
@@ -312,7 +441,7 @@ const CompassDataPage = ({
                       label: option,
                     }))}
                     onChange={(e) => setRows(Number(e.value))}
-                    value={rows.toString()}
+                    value={rows?.toString()}
                   />
                 </div>
               </div>

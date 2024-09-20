@@ -35,12 +35,12 @@ const Compass = () => {
   useEffect(() => {
     const parsedCasinos = JSON.parse(casinoJSON);
     setCasinos(parsedCasinos);
-  }, [casinoJSON, casinos]);
+  }, [casinoJSON,]);
 
   useEffect(() => {
     const allGames = JSON.parse(gameJson);
     setGame(allGames);
-  }, [gameJson, game]);
+  }, [gameJson,]);
 
   const handleRemoveCasino = (id) => {
     const updatedCasinos = casinos.filter((casino) => casino.id !== id);
@@ -56,22 +56,17 @@ const Compass = () => {
 
   const onClose = () => setOpen(false);
 
-  // CASINO DRAWER OPEN
   const showCasinoDrawer = () => setCasinoDrawer(true);
 
-  // CASINO DRAWER CLOSE
   const onCasinoDrawerClose = () => {
     setCasinoDrawer(false);
     setSearchQuery("");
   };
 
-  // GAME DRAWER OPEN
   const showGameDrawer = () => setGameDrawer(true);
 
-  // GAME DRAWER CLOSE
   const onGameDrawerClose = () => setGameDrawer(false);
 
-  // NEW DRAWER OPEN
   const onNewCasinoDrawerClose = () => setNewCasino(false);
 
   const onConfigueDrawerClose = () => setConfigure(false);
