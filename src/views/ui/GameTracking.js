@@ -53,6 +53,7 @@ const TrackingStatus = [
 ];
 
 const GameTracking = () => {
+  const user_id = localStorage.getItem("user_id");
   const [show, setShow] = useState(false);
   const [loader, setLoader] = useState(true);
 
@@ -64,7 +65,7 @@ const GameTracking = () => {
 
   useEffect(() => {
     const data = {
-      user_id: 1,
+      user_id: user_id,
       status: "live",
       start_datetime: "2024-06-01",
       end_datetime: "2024-07-01",
@@ -153,7 +154,7 @@ const GameTracking = () => {
       });
 
     const data = {
-      user_id: 1,
+      user_id: user_id,
       status: "live",
       start_datetime: "2024-06-01",
       end_datetime: "2024-07-01",
