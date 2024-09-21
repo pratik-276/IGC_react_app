@@ -35,6 +35,15 @@ const get_operator = async () => {
   return d;
 };
 
+
+const get_provider = async () => {
+  let d = await Call({
+    path: "get_provider",
+    method: "GET",
+  });
+  return d;
+};
+
 const get_game = async (currPage, data) => {
   let d = await Call({
     path: `get_game?page=${currPage}`,
@@ -57,6 +66,7 @@ const exportObject = {
   compass_read,
   compass_create,
   compass_delete,
+  get_provider,
   get_operator,
   get_game,
   request_new_casino,

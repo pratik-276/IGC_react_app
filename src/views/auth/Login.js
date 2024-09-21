@@ -141,7 +141,7 @@ const Login = () => {
                       <p>Your partner in gaming insights!</p>
                     </div>
                     <div className="login_detail_inr">
-                      <button
+                      {/* <button
                         className="btn google_login"
                         onClick={handleGoogleLogin}
                       >
@@ -150,7 +150,7 @@ const Login = () => {
                       </button>
                       <h4>
                         <span>Or Sign in with</span>
-                      </h4>
+                      </h4> */}
                       <form onSubmit={handleSubmit}>
                         <div className="form-group">
                           <input

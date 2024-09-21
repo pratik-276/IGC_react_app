@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "./Auth.css";
 import { FcGoogle } from "react-icons/fc";
@@ -7,14 +7,18 @@ import { FaEye, FaEyeSlash } from "react-icons/fa";
 import { signInWithPopup } from "firebase/auth";
 import { auth, provider } from "./config";
 import UserLogin from "../../services/Login";
+import CompassData from "../../services/CompassApi";
 import Cookies from "universal-cookie";
 import toast from "react-hot-toast";
+
 
 const cookies = new Cookies();
 
 const Signup = () => {
   const navigate = useNavigate();
   const [passShow, setPassShow] = useState(false);
+  const [providerData, setProviderData] = useState([]);
+  const [selectedProvider, setSelectedProvider] = useState('---');
 
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -24,6 +28,10 @@ const Signup = () => {
     password: "",
     confirmPassword: "",
   });
+
+  useEffect(() => {
+    getProviderData();
+  }, []);
 
   const [errors, setErrors] = useState({});
   const [passwordType, setPasswordType] = useState("password");
@@ -62,6 +70,19 @@ const Signup = () => {
     return isValid;
   };
 
+  const getProviderData = () => {
+    CompassData.get_provider()
+      .then((res) => {
+        if (res?.success) {
+          setProviderData(res.data);
+          console.log("res.data", res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
   const handleEmailChange = (e) => {
     setEmail(e.target.value);
     setIsValidEmail(true);
@@ -90,6 +111,10 @@ const Signup = () => {
     const isValid = validateEmail(email);
     setIsValidEmail(isValid);
     if (isValid) {
+      if (selectedProvider === '---') {
+        toast.error("Please select a provider");
+        return;
+      }
       console.log("Valid email:", email);
       setPassShow(true);
     } else {
@@ -102,13 +127,19 @@ const Signup = () => {
     e.preventDefault();
     if (validatePassword()) {
       navigate("/login");
-      UserLogin.SignUp({ user_email: email, password: input?.password })
+      UserLogin.SignUp({ user_email: email, provider: selectedProvider, password: input?.password })
         .then((res) => {
           if (res?.success === true) {
-            localStorage.setItem("user_id", res?.data?.user_id);
-            localStorage.setItem("access_token", res?.data?.access);
-            localStorage.setItem("refresh_token", res?.data?.refresh);
-            toast.success(res?.message);
+            
+            if(res?.status === 300){
+              toast.error(res?.message);
+            }
+            if(res?.status === 200){
+              localStorage.setItem("user_id", res?.data?.user_id);
+              localStorage.setItem("access_token", res?.data?.access);
+              localStorage.setItem("refresh_token", res?.data?.refresh);
+              toast.success(res?.message);
+            }
             navigate("/");
           } else {
             setErrorMessage(res?.message);
@@ -206,12 +237,33 @@ const Signup = () => {
                                 </div>
                               )}
                             </div>
-                            <div className="auth_login_btn mb-4">
-                              <button className="login_btn">
-                                Next
-                                <IoIosArrowForward className="ms-2" />
-                              </button>
+                            <div className="form-group position-relative">
+                              <label>Select Game Provider</label>
+                              <select 
+                                className="form-control"
+                                options={providerData} 
+                                value={selectedProvider} 
+                                onChange={(e) => setSelectedProvider(e.target.value)}
+                              >
+                                <option key={"---"} value={provider.game_provider_name} disabled>
+                                      ---
+                                    </option>
+                                {
+                                  providerData.map((provider, index) => (
+                                    <option key={provider.game_provider_name + "" + index} value={provider.game_provider_name}>
+                                      {provider.game_provider_name}
+                                    </option>
+                                  ))
+                                }
+                              </select>
                             </div>
+                            <div className="auth_login_btn mb-4">
+                                <button className="login_btn">
+                                  Next
+                                  <IoIosArrowForward className="ms-2" />
+                                </button>
+                              </div>
+                            
                           </form>
                         </>
                       )}
@@ -293,7 +345,7 @@ const Signup = () => {
                           </form>
                         </>
                       )}
-                      <h4 className="pb-2">
+                      {/* <h4 className="pb-2">
                         <span>Or Sign in with</span>
                       </h4>
                       <button
@@ -302,7 +354,7 @@ const Signup = () => {
                       >
                         <FcGoogle className="me-2 google_icon" />
                         Sign in with Google
-                      </button>
+                      </button> */}
 
                       <div className="auth_signup_link mt-5">
                         <p className="m-0">Already have account?</p>
