@@ -67,6 +67,8 @@ body {
 .compass-data .calibrate-dropdown {
   display: flex;
   gap: 20px;
+  position: relative;
+  z-index: 9;
 }
 
 .compass-data .compass-search {
@@ -914,4 +916,8 @@ input[type="checkbox"] {
   grid-template-columns: repeat(2, 1fr);
   gap: 20px;
   width: 75%;
+}
+
+.select__indicator-separator {
+  display: none !important;
 }
