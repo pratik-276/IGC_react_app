@@ -118,7 +118,9 @@ const Login = () => {
           }
         })
         .catch((err) => {
-          toast.error(err);
+          toast.error(err, {
+            duration: 10000,
+          });
           if (err.response && err.response.status === 401) {
             toast.error("Unauthorized. Please check your credentials.");
           }

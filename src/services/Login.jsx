@@ -18,9 +18,19 @@ const SignUp = async (data) => {
     return d;
 };
 
+const verify = async (data) => {
+    let d = await Call({
+        path: "verify_email",
+        method: "post",
+        data,
+    });
+    return d;
+};
+
 const exportObject = {
     login,
-    SignUp
+    SignUp,
+    verify
 };
 
 export default exportObject;
