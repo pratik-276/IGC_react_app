@@ -350,11 +350,11 @@ const CompassDataPage = ({
                       header="Tracking Timeline"
                       body={StatusBodyTemplate}
                     ></Column>
-                    <Column
+                    {/* <Column
                       field="credit"
                       header="Credits consumed"
                       body={createdBodyTemplate}
-                    ></Column>
+                    ></Column> */}
                     <Column
                       field="status"
                       header="Status"
