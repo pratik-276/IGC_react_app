@@ -42,36 +42,44 @@ const TrackingTime = [
 ];
 
 const TrackingStatus = [
-  {
-    value: "Live",
-    label: "Live",
-  },
-  {
-    value: "Old",
-    label: "Old",
-  },
+  { value: "live", label: "Live" },
+  { value: "old", label: "Old" },
 ];
 
 const GameTracking = () => {
   const user_id = localStorage.getItem("user_id");
+  const dt = useRef(null);
+  const [globalFilter, setGlobalFilter] = useState(null);
+  const [selectedRows, setSelectedRows] = useState(null);
+
   const [show, setShow] = useState(false);
   const [loader, setLoader] = useState(true);
 
   const [trackTime, setTrackTime] = useState(null);
+  const [status, setStatus] = useState(null);
 
   const [gameTracking, setGameTracking] = useState([]);
   const [trackingDetails, setTrackingDetails] = useState([]);
   const [trackingFilters, setTrackingFilters] = useState([]);
   const [loader2, setLoader2] = useState(true);
 
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
+
   const arrayFromValues = Object.values(gameTracking);
 
+  const formatDate = (date) => date?.toISOString().split("T")[0];
+
   const overviewDashboard = () => {
+    const today = new Date();
+    const endDate = new Date();
+    endDate.setDate(today.getDate() - 7);
+
     const data = {
       user_id: user_id,
       status: "live",
-      start_datetime: "2024-06-01",
-      end_datetime: "2024-07-01",
+      start_datetime: formatDate(today),
+      end_datetime: formatDate(endDate),
     };
 
     GameData.tracker_summary(data)
@@ -89,10 +97,6 @@ const GameTracking = () => {
   useEffect(() => {
     overviewDashboard();
   }, [user_id]);
-
-  const dt = useRef(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
-  const [selectedRows, setSelectedRows] = useState(null);
 
   const header = (
     <div className="d-md-flex align-items-center justify-content-between">
@@ -191,24 +195,113 @@ const GameTracking = () => {
       });
   };
 
-  const formatDate = (date) => {
-    const year = date.getFullYear();
-    const month = String(date.getMonth() + 1).padStart(2, "0");
-    const day = String(date.getDate()).padStart(2, "0");
-    return `${year}-${month}-${day}`;
+  const handleStatusChange = (option) => {
+    setLoader(true);
+
+    if (!option) {
+      setStatus(null);
+      const today = new Date();
+      const endDate = new Date();
+      endDate.setDate(today.getDate() - 7);
+
+      const data = {
+        user_id: user_id,
+        status: "live",
+        start_datetime: formatDate(today),
+        end_datetime: formatDate(endDate),
+      };
+
+      GameData.tracker_dashboard_filter(data)
+        .then((res) => {
+          if (res?.success === true) {
+            setTrackingFilters(res?.data);
+            setLoader(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoader(false);
+        });
+
+      return;
+    }
+
+    const today = new Date();
+    const endDate = new Date();
+    endDate.setDate(today.getDate() - 7);
+
+    const selectedStatus = option.value;
+    setStatus(selectedStatus);
+
+    const data = {
+      user_id: user_id,
+      status: selectedStatus,
+      start_datetime: formatDate(today),
+      end_datetime: formatDate(endDate),
+    };
+
+    GameData.tracker_dashboard_filter(data)
+      .then((res) => {
+        if (res?.success === true) {
+          setTrackingFilters(res?.data);
+          setLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoader(false);
+      });
   };
 
   const handleTrackTimeChange = (option) => {
+    setLoader(true);
+
+    if (!option) {
+      setTrackTime(null);
+      const today = new Date();
+      const endDate = new Date();
+      endDate.setDate(today.getDate() - 7);
+
+      if (option?.value === "custom") {
+        setStartDate(null);
+        setEndDate(null);
+        setLoader(false);
+        return;
+      }
+
+      const data = {
+        user_id: user_id,
+        status: status ? status : "live",
+        start_datetime: formatDate(today),
+        end_datetime: formatDate(endDate),
+      };
+
+      GameData.tracker_dashboard_filter(data)
+        .then((res) => {
+          if (res?.success === true) {
+            setTrackingFilters(res?.data);
+            setLoader(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+          setLoader(false);
+        });
+
+      return;
+    }
+
     const selectedTime = option.value;
     setTrackTime(selectedTime);
 
     const today = new Date();
-    const todayDate = formatDate(today);
-
+    const endDate = new Date();
+    endDate.setDate(today.getDate() - 7);
     let calculatedFinalDate = new Date(today);
+
     switch (selectedTime) {
       case "7 days":
-        calculatedFinalDate.setDate(today.getDate() + 6);
+        calculatedFinalDate.setDate(today.getDate() + 7);
         break;
       case "1 month":
         calculatedFinalDate.setMonth(today.getMonth() + 1);
@@ -225,21 +318,59 @@ const GameTracking = () => {
 
     const lastDate = calculatedFinalDate ? formatDate(calculatedFinalDate) : "";
 
+    if (option?.value === "custom") {
+      setStartDate(null);
+      setEndDate(null);
+      setLoader(false);
+      return;
+    }
+
     const data = {
       user_id: user_id,
-      status: "live",
-      start_datetime: todayDate,
-      end_datetime: lastDate,
+      status: status ? status : "live",
+      start_datetime: formatDate(today),
+      end_datetime: lastDate || formatDate(endDate),
     };
 
     GameData.tracker_dashboard_filter(data)
       .then((res) => {
         if (res?.success === true) {
           setTrackingFilters(res?.data);
+          setLoader(false);
         }
       })
       .catch((err) => {
         console.log(err);
+        setLoader(false);
+      });
+  };
+
+  const onStartDateChange = (e) => {
+    setStartDate(e.target.value);
+    setEndDate("");
+  };
+
+  const onEndDateChange = (e) => {
+    setLoader(true);
+    setEndDate(e.target.value);
+
+    const data = {
+      user_id: user_id,
+      status: status ? status : "live",
+      start_datetime: startDate,
+      end_datetime: e.target.value,
+    };
+
+    GameData.tracker_dashboard_filter(data)
+      .then((res) => {
+        if (res?.success === true) {
+          setTrackingFilters(res?.data);
+          setLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLoader(false);
       });
   };
 
@@ -279,34 +410,70 @@ const GameTracking = () => {
                     />
                   </div>
                 )}
-                {gameTracking?.length > 0 && (
+                <div className="col-md-2 px-md-0">
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="trackingstatus"
+                      options={TrackingStatus}
+                      placeholder="Status"
+                      onChange={handleStatusChange}
+                      value={
+                        TrackingStatus?.find(
+                          (option) => option.value === status
+                        ) || null
+                      }
+                    />
+                  </div>
+                </div>
+                <div className="col-md-3 all-time-dropdown">
+                  <div className="all-time-status-dropdown">
+                    <Select
+                      className="basic-single"
+                      classNamePrefix="select"
+                      isClearable={true}
+                      isSearchable={false}
+                      name="color"
+                      options={TrackingTime}
+                      placeholder="All Time"
+                      onChange={handleTrackTimeChange}
+                      value={
+                        TrackingTime?.find(
+                          (option) => option.value === trackTime
+                        ) || null
+                      }
+                    />
+                  </div>
+                </div>
+                {trackTime === "custom" && (
                   <>
-                    <div className="col-md-2 px-md-0">
-                      <div className="all-time-status-dropdown">
-                        <Select
-                          className="basic-single"
-                          classNamePrefix="select"
-                          isClearable={true}
-                          isSearchable={false}
-                          name="trackingstatus"
-                          options={TrackingStatus}
-                          placeholder="Status"
-                        />
+                    <div className="d-flex justify-content-end gap-3 mt-2">
+                      <div className="form-group credit-field">
+                        <label>Start Date</label>
+                        <div className="tracking-game-credit">
+                          <input
+                            type="date"
+                            className="form-control game-tracking-start-date"
+                            id="date-input"
+                            onChange={onStartDateChange}
+                            value={startDate}
+                          />
+                        </div>
                       </div>
-                    </div>
-                    <div className="col-md-3 all-time-dropdown">
-                      <div className="all-time-status-dropdown">
-                        <Select
-                          className="basic-single"
-                          classNamePrefix="select"
-                          isClearable={false}
-                          isSearchable={false}
-                          name="color"
-                          options={TrackingTime}
-                          placeholder="All Time"
-                          onChange={handleTrackTimeChange}
-                          value={trackTime?.value}
-                        />
+                      <div className="form-group credit-field">
+                        <label>End Date</label>
+                        <div className="tracking-game-credit">
+                          <input
+                            type="date"
+                            className="form-control"
+                            id="date-input"
+                            onChange={onEndDateChange}
+                            value={endDate}
+                          />
+                        </div>
                       </div>
                     </div>
                   </>
