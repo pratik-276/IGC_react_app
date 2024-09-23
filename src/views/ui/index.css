@@ -187,7 +187,7 @@ input[type="checkbox"] {
   border-top: none;
 }
 
-.game-tracking-start-date:focus{
+.game-tracking-start-date:focus {
   box-shadow: none !important;
 }
 
@@ -885,6 +885,23 @@ input[type="checkbox"] {
   display: none !important;
 }
 
+.calibrate-compass-table .p-column-header-content .p-column-title {
+  color: #222222 !important;
+  font-weight: 600 !important;
+  font-size: 15px !important;
+}
+
+.start-end-date-selection {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 75%;
+}
+
+.select__indicator-separator {
+  display: none !important;
+}
+
 /* FOR MOBILE SCREEN VIEW STYLES */
 
 @media screen and (max-width: 767px) {
@@ -907,21 +924,20 @@ input[type="checkbox"] {
   .tracker-game-dropdown-mobile {
     margin-bottom: 10px;
   }
-}
 
-.calibrate-compass-table .p-column-header-content .p-column-title {
-  color: #222222 !important;
-  font-weight: 600 !important;
-  font-size: 15px !important;
-}
+  .create_casino_game_btn {
+    margin: 10px 0 8px 0;
+  }
 
-.start-end-date-selection {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 20px;
-  width: 75%;
-}
+  .compass-data .calibrate-dropdown {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px !important;
+  }
 
-.select__indicator-separator {
-  display: none !important;
+  .compass-data .compass-right-icon {
+    display: flex !important;
+    justify-content: end !important;
+    margin-top: 12px !important;
+  }
 }

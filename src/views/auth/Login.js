@@ -17,6 +17,7 @@ const Login = () => {
   const [value, setValue] = useState("");
   const [passwordType, setPasswordType] = useState("password");
   const [errors, setErrors] = useState({});
+  const [isButtonDisabled, setButtonDisabled] = useState(false);
 
   const [input, setInput] = useState({
     email: "",
@@ -102,7 +103,9 @@ const Login = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+
     if (validation()) {
+      setButtonDisabled(true);
       UserLogin.login({ user_email: input?.email, password: input?.password })
         .then((res) => {
           if (res?.success === true) {
@@ -111,6 +114,7 @@ const Login = () => {
             localStorage.setItem("refresh_token", res?.data?.refresh);
             toast.success("Login Successfully");
             navigate("/");
+            setButtonDisabled(false);
           }
         })
         .catch((err) => {
@@ -208,7 +212,10 @@ const Login = () => {
                           <Link to="/forget-password">Forgot Password?</Link>
                         </p>
                         <div className="auth_login_btn">
-                          <button className="login_btn">
+                          <button
+                            className="login_btn"
+                            disabled={isButtonDisabled}
+                          >
                             Login
                             <IoIosArrowForward className="ms-2" />
                           </button>

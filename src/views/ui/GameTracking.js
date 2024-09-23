@@ -77,9 +77,9 @@ const GameTracking = () => {
 
     const data = {
       user_id: user_id,
-      status: "live",
-      start_datetime: formatDate(today),
-      end_datetime: formatDate(endDate),
+      status: status ? status : "live",
+      start_datetime: formatDate(endDate),
+      end_datetime: formatDate(today),
     };
 
     GameData.tracker_summary(data)
@@ -204,23 +204,39 @@ const GameTracking = () => {
       const endDate = new Date();
       endDate.setDate(today.getDate() - 7);
 
+      const overviewData = {
+        user_id: user_id,
+        status: "live",
+        start_datetime: formatDate(endDate),
+        end_datetime: formatDate(today),
+      };
+
+      GameData.tracker_summary(overviewData)
+        .then((res) => {
+          if (res?.success === true) {
+            setGameTracking(res?.data || []);
+            setLoader(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       const data = {
         user_id: user_id,
         status: "live",
-        start_datetime: formatDate(today),
-        end_datetime: formatDate(endDate),
+        start_datetime: formatDate(endDate),
+        end_datetime: formatDate(today),
       };
 
       GameData.tracker_dashboard_filter(data)
         .then((res) => {
           if (res?.success === true) {
             setTrackingFilters(res?.data);
-            setLoader(false);
           }
         })
         .catch((err) => {
           console.log(err);
-          setLoader(false);
         });
 
       return;
@@ -233,18 +249,35 @@ const GameTracking = () => {
     const selectedStatus = option.value;
     setStatus(selectedStatus);
 
+    const overviewData = {
+      user_id: user_id,
+      status: selectedStatus,
+      start_datetime: formatDate(endDate),
+      end_datetime: formatDate(today),
+    };
+
+    GameData.tracker_summary(overviewData)
+      .then((res) => {
+        if (res?.success === true) {
+          setGameTracking(res?.data || []);
+          setLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     const data = {
       user_id: user_id,
       status: selectedStatus,
-      start_datetime: formatDate(today),
-      end_datetime: formatDate(endDate),
+      start_datetime: formatDate(endDate),
+      end_datetime: formatDate(today),
     };
 
     GameData.tracker_dashboard_filter(data)
       .then((res) => {
         if (res?.success === true) {
           setTrackingFilters(res?.data);
-          setLoader(false);
         }
       })
       .catch((err) => {
@@ -269,18 +302,35 @@ const GameTracking = () => {
         return;
       }
 
+      const overviewData = {
+        user_id: user_id,
+        status: status ? status : "live",
+        start_datetime: formatDate(endDate),
+        end_datetime: formatDate(today),
+      };
+
+      GameData.tracker_summary(overviewData)
+        .then((res) => {
+          if (res?.success === true) {
+            setGameTracking(res?.data || []);
+            setLoader(false);
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+
       const data = {
         user_id: user_id,
         status: status ? status : "live",
-        start_datetime: formatDate(today),
-        end_datetime: formatDate(endDate),
+        start_datetime: formatDate(endDate),
+        end_datetime: formatDate(today),
       };
 
       GameData.tracker_dashboard_filter(data)
         .then((res) => {
           if (res?.success === true) {
             setTrackingFilters(res?.data);
-            setLoader(false);
           }
         })
         .catch((err) => {
@@ -296,7 +346,7 @@ const GameTracking = () => {
 
     const today = new Date();
     const endDate = new Date();
-    endDate.setDate(today.getDate() - 7);
+    endDate.setDate(today.getDate() + 7);
     let calculatedFinalDate = new Date(today);
 
     switch (selectedTime) {
@@ -325,6 +375,24 @@ const GameTracking = () => {
       return;
     }
 
+    const overviewData = {
+      user_id: user_id,
+      status: status ? status : "live",
+      start_datetime: formatDate(today),
+      end_datetime: lastDate || formatDate(endDate),
+    };
+
+    GameData.tracker_summary(overviewData)
+      .then((res) => {
+        if (res?.success === true) {
+          setGameTracking(res?.data || []);
+          setLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     const data = {
       user_id: user_id,
       status: status ? status : "live",
@@ -336,7 +404,6 @@ const GameTracking = () => {
       .then((res) => {
         if (res?.success === true) {
           setTrackingFilters(res?.data);
-          setLoader(false);
         }
       })
       .catch((err) => {
@@ -354,6 +421,24 @@ const GameTracking = () => {
     setLoader(true);
     setEndDate(e.target.value);
 
+    const overviewData = {
+      user_id: user_id,
+      status: status ? status : "live",
+      start_datetime: startDate,
+      end_datetime: e.target.value,
+    };
+
+    GameData.tracker_summary(overviewData)
+      .then((res) => {
+        if (res?.success === true) {
+          setGameTracking(res?.data || []);
+          setLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
     const data = {
       user_id: user_id,
       status: status ? status : "live",
@@ -365,7 +450,6 @@ const GameTracking = () => {
       .then((res) => {
         if (res?.success === true) {
           setTrackingFilters(res?.data);
-          setLoader(false);
         }
       })
       .catch((err) => {
@@ -468,7 +552,7 @@ const GameTracking = () => {
                         <div className="tracking-game-credit">
                           <input
                             type="date"
-                            className="form-control"
+                            className="form-control game-tracking-start-date"
                             id="date-input"
                             onChange={onEndDateChange}
                             value={endDate}

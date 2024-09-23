@@ -122,6 +122,7 @@ const Compass = () => {
           closable={true}
           onClose={onClose}
           maskClosable={false}
+          classNames="casino_game_selection_drawer"
           open={open}
           closeIcon={<CloseOutlined className="custom-close-icon" />}
           footer={
