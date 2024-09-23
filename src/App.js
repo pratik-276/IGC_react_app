@@ -6,6 +6,7 @@ import Home from "./views/Home";
 import GameTracking from "./views/ui/GameTracking";
 import Compass from "./views/ui/Compass";
 import Login from "./views/auth/Login";
+import Verify from "./views/auth/Verify";
 import Signup from "./views/auth/Signup";
 import ForgotPass from "./views/auth/ForgotPass";
 import ProtectedRoute from "./utils/ProtectedRoute";
@@ -95,6 +96,7 @@ const App = () => {
                 />
               </Route>
               <Route path="/login" element={<Login />} />
+              <Route path="/verify" element={<Verify />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/forget-password" element={<ForgotPass />} />
             </Routes>

@@ -126,7 +126,7 @@ const Signup = () => {
   const handleVerifyPassWord = (e) => {
     e.preventDefault();
     if (validatePassword()) {
-      navigate("/login");
+      // navigate("/login");
       UserLogin.SignUp({ user_email: email, provider: selectedProvider, password: input?.password })
         .then((res) => {
           if (res?.success === true) {
@@ -138,9 +138,11 @@ const Signup = () => {
               localStorage.setItem("user_id", res?.data?.user_id);
               localStorage.setItem("access_token", res?.data?.access);
               localStorage.setItem("refresh_token", res?.data?.refresh);
-              toast.success(res?.message);
+              toast.success(res?.message, {
+                duration: 10000,
+              });
             }
-            navigate("/");
+            // navigate("/");
           } else {
             setErrorMessage(res?.message);
             toast.error(res?.message);
