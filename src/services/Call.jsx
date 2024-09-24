@@ -1,6 +1,7 @@
 import Axios from "axios";
 // import Cookies from "universal-cookie";
-const api = process.env.REACT_APP_API_KEY;
+//const api = process.env.REACT_APP_API_KEY;
+const api = "https://13.127.147.33/";
 
 export default function call({ path, method, data }) {
   // var cookie = new Cookies();
