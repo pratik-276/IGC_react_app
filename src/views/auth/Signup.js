@@ -129,26 +129,21 @@ const Signup = () => {
       // navigate("/login");
       UserLogin.SignUp({ user_email: email, provider: selectedProvider, password: input?.password })
         .then((res) => {
+          console.log(res.success, res.status, res.message, res);
           if (res?.success === true) {
-            
-            if(res?.status === 300){
-              toast.error(res?.message);
-            }
-            if(res?.status === 200){
-              localStorage.setItem("user_id", res?.data?.user_id);
-              localStorage.setItem("access_token", res?.data?.access);
-              localStorage.setItem("refresh_token", res?.data?.refresh);
-              toast.success(res?.message, {
-                duration: 10000,
-              });
-            }
-            // navigate("/");
+            toast.success(res?.message, {
+              duration: 10000,
+            });
           } else {
             setErrorMessage(res?.message);
             toast.error(res?.message);
           }
         })
-        .catch((err) => console.log(err));
+        .catch((err) => {
+          toast.error(err, {
+            duration: 10000,
+          });
+        });
     }
   };
 
