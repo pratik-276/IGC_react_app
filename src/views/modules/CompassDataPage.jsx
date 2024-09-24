@@ -20,8 +20,6 @@ const CompassDataPage = ({
   loader,
   getCompassReadData,
 }) => {
-  const options = ["Pause", "In Progress", "Not Available"];
-  const options3 = [5, 10, 15, 20];
   const options4 = [5, 10, 15, 20];
 
   const dt = useRef(null);
@@ -212,7 +210,7 @@ const CompassDataPage = ({
                   <h3>Calibrate Compass</h3>
                   <span>Track, add, delete all your games and operators</span>
                 </div>
-                <div className="col-md-6 text-end">
+                <div className="col-md-6 text-md-end create_casino_game_btn">
                   <button
                     className="btn game_add_btn"
                     onClick={showFirstDrawer}
@@ -224,7 +222,7 @@ const CompassDataPage = ({
               <div className="compass-data-border mb-3">
                 <span></span>
               </div>
-              <div className="d-flex justify-content-between">
+              <div className="d-md-flex d-lg-flex justify-content-between">
                 <div className="calibrate-dropdown">
                   <div className="all-time-status-dropdown">
                     <Select

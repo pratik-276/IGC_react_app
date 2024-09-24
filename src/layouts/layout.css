@@ -168,7 +168,7 @@
     left: -100%;
     transition: all 0.5s ease-in-out;
     top: 60px;
-    z-index: 1 !important;
+    z-index:99 !important;
   }
 
   .profile-sidebar {
