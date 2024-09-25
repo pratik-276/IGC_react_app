@@ -351,13 +351,13 @@ const GameTracking = () => {
 
     switch (selectedTime) {
       case "7 days":
-        calculatedFinalDate.setDate(today.getDate() + 7);
+        calculatedFinalDate.setDate(today.getDate() - 7);
         break;
       case "1 month":
-        calculatedFinalDate.setMonth(today.getMonth() + 1);
+        calculatedFinalDate.setMonth(today.getMonth() - 1);
         break;
       case "3 months":
-        calculatedFinalDate.setMonth(today.getMonth() + 3);
+        calculatedFinalDate.setMonth(today.getMonth() - 3);
         break;
       case "custom":
         calculatedFinalDate = null;
@@ -378,8 +378,8 @@ const GameTracking = () => {
     const overviewData = {
       user_id: user_id,
       status: status ? status : "live",
-      start_datetime: formatDate(today),
-      end_datetime: lastDate || formatDate(endDate),
+      start_datetime: lastDate || formatDate(endDate),
+      end_datetime: formatDate(today),
     };
 
     GameData.tracker_summary(overviewData)
@@ -396,8 +396,8 @@ const GameTracking = () => {
     const data = {
       user_id: user_id,
       status: status ? status : "live",
-      start_datetime: formatDate(today),
-      end_datetime: lastDate || formatDate(endDate),
+      start_datetime: lastDate || formatDate(endDate),
+      end_datetime: formatDate(today),
     };
 
     GameData.tracker_dashboard_filter(data)
