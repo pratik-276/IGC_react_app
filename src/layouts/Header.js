@@ -165,7 +165,7 @@ const Header = () => {
             <DropdownItem onClick={() => navigate("/my-account")}>
               My Account
             </DropdownItem>
-            <DropdownItem onClick={() => navigate("/billing-section")}>
+            {/* <DropdownItem onClick={() => navigate("/billing-section")}>
               Billing
             </DropdownItem>
             <DropdownItem onClick={() => navigate("/help-support")}>
@@ -173,7 +173,7 @@ const Header = () => {
             </DropdownItem>
             <DropdownItem onClick={() => navigate("/refer-earn")}>
               Refer and Earn
-            </DropdownItem>
+            </DropdownItem> */}
             <DropdownItem onClick={logOut}>Logout</DropdownItem>
           </DropdownMenu>
         </Dropdown>
