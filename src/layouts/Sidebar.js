@@ -4,6 +4,7 @@ import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { FaChevronLeft, FaLocationArrow } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
+import { MdViewKanban } from "react-icons/md";
 
 // For Gaming Navigation
 const navigation = [
@@ -25,7 +26,7 @@ const navigation = [
   {
     title: "Beta Dashboards",
     href: "/dashboard",
-    icon: IoMdCompass,
+    icon: MdViewKanban,
   },
 ];
 
@@ -35,18 +36,18 @@ const ProfileMenu = [
     title: "My Profile",
     href: "/my-account",
   },
-  {
-    title: "Billing",
-    href: "/billing-section",
-  },
-  {
-    title: "Help & Support",
-    href: "/help-support",
-  },
-  {
-    title: "Refer & Earn",
-    href: "/refer-earn",
-  },
+  // {
+  //   title: "Billing",
+  //   href: "/billing-section",
+  // },
+  // {
+  //   title: "Help & Support",
+  //   href: "/help-support",
+  // },
+  // {
+  //   title: "Refer & Earn",
+  //   href: "/refer-earn",
+  // },
 ];
 
 const Sidebar = () => {

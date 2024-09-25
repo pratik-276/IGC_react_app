@@ -112,6 +112,7 @@ const Login = () => {
             localStorage.setItem("user_id", res?.data?.user_id);
             localStorage.setItem("access_token", res?.data?.access);
             localStorage.setItem("refresh_token", res?.data?.refresh);
+            localStorage.setItem("user_company", res?.data?.user_company);
             toast.success("Login Successfully");
             navigate("/");
             setButtonDisabled(false);
@@ -213,7 +214,7 @@ const Login = () => {
                           </div>
                         )}
                         <p className="text-end m-0 pt-2 mb-4">
-                          <Link to="/forget-password">Forgot Password?</Link>
+                          {/* <Link to="/forget-password">Forgot Password?</Link> */}
                         </p>
                         <div className="auth_login_btn">
                           <button

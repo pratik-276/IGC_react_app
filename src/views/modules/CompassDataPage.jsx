@@ -13,6 +13,7 @@ import { Column } from "primereact/column";
 import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "react-bootstrap";
 import Select from "react-select";
+import { Link } from "react-router-dom";
 
 const CompassDataPage = ({
   setOpen,
@@ -224,7 +225,7 @@ const CompassDataPage = ({
               </div>
               <div className="d-md-flex d-lg-flex justify-content-between">
                 <div className="calibrate-dropdown">
-                  <div className="all-time-status-dropdown">
+                  {/* <div className="all-time-status-dropdown">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -235,7 +236,7 @@ const CompassDataPage = ({
                       placeholder="Status"
                       onChange={casinoFilterChange}
                     />
-                  </div>
+                  </div> */}
                   <div className="all-time-status-dropdown">
                     <Select
                       className="basic-single"
@@ -262,7 +263,7 @@ const CompassDataPage = ({
                       }
                     />
                   </div>
-                  <div className="all-time-status-dropdown">
+                  {/* <div className="all-time-status-dropdown">
                     <Select
                       className="basic-single"
                       classNamePrefix="select"
@@ -275,11 +276,13 @@ const CompassDataPage = ({
                         setGameFilter(option ? option.value : null)
                       }
                     />
-                  </div>
+                  </div> */}
                 </div>
                 <div className="compass-right-icon">
                   <div className="compass-search">
-                    <FaChartLine />
+                    <Link to="/game-tracking">
+                      <FaChartLine />
+                    </Link>
                   </div>
                   {deleteLoader ? (
                     <div className="compass-search">
@@ -298,12 +301,12 @@ const CompassDataPage = ({
                       <i className="bi bi-trash3"></i>
                     </div>
                   )}
-                  <div className="compass-search">
+                  {/* <div className="compass-search">
                     <CiPause1 />
                   </div>
                   <div className="compass-search">
                     <IoMdSearch />
-                  </div>
+                  </div> */}
                 </div>
               </div>
 

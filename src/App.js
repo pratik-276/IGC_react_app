@@ -70,7 +70,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route
+                {/* <Route
                   path="billing-section"
                   element={
                     <ProtectedRoute>
@@ -93,12 +93,12 @@ const App = () => {
                       <ReferEarn />
                     </ProtectedRoute>
                   }
-                />
+                /> */}
               </Route>
               <Route path="/login" element={<Login />} />
               <Route path="/verify" element={<Verify />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/forget-password" element={<ForgotPass />} />
+              {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
             </Routes>
           </GameProvider>
         </CasinoProvider>
