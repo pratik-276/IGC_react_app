@@ -544,6 +544,7 @@ const GameTracking = () => {
                             id="date-input"
                             onChange={onStartDateChange}
                             value={startDate}
+                            required
                           />
                         </div>
                       </div>
@@ -556,6 +557,7 @@ const GameTracking = () => {
                             id="date-input"
                             onChange={onEndDateChange}
                             value={endDate}
+                            required
                           />
                         </div>
                       </div>

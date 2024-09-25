@@ -4,8 +4,7 @@ import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
-import { Drawer, DatePicker } from "antd";
-import moment from "moment";
+import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
 import toast from "react-hot-toast";
 
@@ -127,21 +126,13 @@ const Configure = ({
     }
   };
 
-  const onStartDateChange = (date, dateString) => {
-    setStartDate(date?.format("YYYY-MM-DD"));
+  const onStartDateChange = (e) => {
+    setStartDate(e.target.value);
     setEndDate(null);
   };
 
-  const onEndDateChange = (date, dateString) => {
-    setEndDate(date?.format("YYYY-MM-DD"));
-  };
-
-  const disableStartDate = (current) => {
-    return current && current < moment().startOf("day");
-  };
-
-  const disableEndDate = (current) => {
-    return current && startDate && current <= moment(startDate, "YYYY-MM-DD");
+  const onEndDateChange = (e) => {
+    setEndDate(e.target.value);
   };
 
   const formatDate = (date) => date?.toISOString().split("T")[0];
@@ -214,7 +205,7 @@ const Configure = ({
       <Drawer
         title="Choose Casino"
         width="75%"
-        className="bg-white"
+        className="bg-white configure_add_drawer"
         closable={true}
         maskClosable={false}
         onClose={handleClose}
@@ -232,13 +223,17 @@ const Configure = ({
             <button
               style={{ marginRight: 8 }}
               className={`compass-sidebar-back ${
-                !trackTime || !(casinos?.length > 0 && game?.length > 0)
+                !trackTime ||
+                (trackTime === "custom" && (!startDate || !endDate)) ||
+                !(casinos?.length > 0 && game?.length > 0)
                   ? "btn-disabled"
                   : ""
               }`}
               onClick={handleSaveCasinoGame}
               disabled={
-                !trackTime || !(casinos?.length > 0 && game?.length > 0)
+                !trackTime ||
+                (trackTime === "custom" && (!startDate || !endDate)) ||
+                !(casinos?.length > 0 && game?.length > 0)
               }
             >
               Save
@@ -314,35 +309,40 @@ const Configure = ({
                         <div className="start-end-date-selection">
                           <div className="form-group credit-field">
                             <label>Tracking starts on</label>
-                            <div className="tracking-game-credit">
-                              <DatePicker
+                            <div className="tracking-game-credit date-input-wrapper">
+                              <input
+                                type="date"
+                                className="form-control"
+                                id="date-input"
                                 onChange={onStartDateChange}
-                                className="w-100"
-                                allowClear={false}
-                                format="DD-MM-YYYY"
-                                disabledDate={disableStartDate}
-                                value={
-                                  startDate
-                                    ? moment(startDate, "YYYY-MM-DD")
-                                    : null
-                                }
+                                required
+                                value={startDate}
+                                style={{ color: startDate ? "black" : "gray" }}
                               />
+                              {!startDate && (
+                                <div className="placeholder-text">
+                                  Select a date
+                                </div>
+                              )}
                             </div>
                           </div>
                           <div className="form-group credit-field">
                             <label>Tracking ends on</label>
-                            <div className="tracking-game-credit">
-                              <DatePicker
+                            <div className="tracking-game-credit date-input-wrapper">
+                              <input
+                                type="date"
+                                className="form-control"
+                                id="date-input"
                                 onChange={onEndDateChange}
-                                className="w-100"
-                                format="DD-MM-YYYY"
-                                allowClear={false}
-                                disabled={!startDate}
-                                disabledDate={disableEndDate}
-                                value={
-                                  endDate ? moment(endDate, "YYYY-MM-DD") : null
-                                }
+                                value={endDate}
+                                required
+                                style={{ color: endDate ? "black" : "gray" }}
                               />
+                              {!endDate && (
+                                <div className="placeholder-text">
+                                  Select a date
+                                </div>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -352,7 +352,7 @@ const Configure = ({
                 </div>
                 <div className="col-md-6">
                   <div className="row">
-                    <div className="col-md-6">
+                    <div className="col-md-6 col-6">
                       <div className="form-group credit-field">
                         <label>Expected credits usage</label>
                         <input
@@ -363,7 +363,7 @@ const Configure = ({
                         />
                       </div>
                     </div>
-                    <div className="col-md-6">
+                    <div className="col-md-6 col-6">
                       <div className="form-group credit-field">
                         <label>Credit Balance</label>
                         <input

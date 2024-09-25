@@ -35,12 +35,12 @@ const Compass = () => {
   useEffect(() => {
     const parsedCasinos = JSON.parse(casinoJSON);
     setCasinos(parsedCasinos);
-  }, [casinoJSON,]);
+  }, [casinoJSON]);
 
   useEffect(() => {
     const allGames = JSON.parse(gameJson);
     setGame(allGames);
-  }, [gameJson,]);
+  }, [gameJson]);
 
   const handleRemoveCasino = (id) => {
     const updatedCasinos = casinos.filter((casino) => casino.id !== id);
@@ -146,15 +146,15 @@ const Compass = () => {
               )}
             </>
           }
-          className={
+          className={`${
             casinoDrawer || gameDrawer || newCasino
               ? "show_children_drawer"
-              : ""
-          }
+              : "drawer-mobile"
+          }`}
         >
           <div className="calibrate-title" style={{ cursor: "pointer" }}>
             <span>Select Casino</span>
-            <div className="casino-select-listing mt-4">
+            <div className="casino-select-listing mt-2 mt-md-4">
               {casinos?.map((data, index) => (
                 <div
                   className="calibrate-casino-data-display"
@@ -182,9 +182,9 @@ const Compass = () => {
               <p>Start configuration by adding operator first</p>
             </div>
           </div>
-          <div className="calibrate-title mt-4" style={{ cursor: "pointer" }}>
+          <div className="calibrate-title mt-md-4 mt-3" style={{ cursor: "pointer" }}>
             <span>Select Game</span>
-            <div className="casino-select-listing mt-4">
+            <div className="casino-select-listing mt-2 mt-md-4">
               {game?.map((data, index) => (
                 <div
                   className="calibrate-casino-data-display"
