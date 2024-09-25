@@ -44,7 +44,7 @@ const NewCasino = (props) => {
       <Drawer
         title="Request New Casino"
         width="50%"
-        className="choose_casino_drawer"
+        className="choose_casino_drawer add_new_casino_drawer"
         closable={true}
         maskClosable={false}
         onClose={onNewCasinoDrawerClose}
@@ -72,7 +72,7 @@ const NewCasino = (props) => {
           </div>
         }
       >
-        <div className="bg-white p-4">
+        <div className="bg-white p-md-4 p-3">
           <div className="row">
             <div className="col-md-8">
               <div className="casino-input-field new_casino_add">

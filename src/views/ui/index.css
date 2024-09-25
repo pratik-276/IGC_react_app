@@ -954,4 +954,56 @@ input[type="checkbox"] {
     justify-content: end !important;
     margin-top: 12px !important;
   }
+
+  .drawer-mobile {
+    width: 100% !important;
+  }
+
+  .ant-drawer-content-wrapper {
+    width: 100% !important;
+  }
+
+  .drawer-mobile .ant-drawer-header .ant-drawer-header-title .ant-drawer-title {
+    font-size: 18px !important;
+  }
+
+  .drawer-mobile .ant-drawer-body {
+    padding: 13px 10px !important;
+  }
+  .add_new_casino_drawer .ant-drawer-footer {
+    display: flex !important;
+    justify-content: space-between !important;
+  }
+
+  .configure_add_drawer .ant-drawer-body {
+    padding: 15px !important;
+  }
+
+  .tracking_gaming_date {
+    margin-bottom: 15px !important;
+  }
+
+  .tracking_csm_date {
+    margin-bottom: 15px !important;
+  }
+
+  .start-end-date-selection {
+    width: 100% !important;
+  }
+  .date-input-wrapper {
+    position: relative;
+  }
+
+  .placeholder-text {
+    display: block !important;
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    color: gray;
+    pointer-events: none;
+  }
+}
+
+.placeholder-text {
+  display: none;
 }

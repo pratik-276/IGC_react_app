@@ -12,7 +12,7 @@ const Layout = () => {
       <Header />
       <div className="pageWrapper d-lg-flex">
         <Sidebar />
-        <div className={`main ${location.pathname === "/game-tracking" ? "game-tracking-path" : "" } ${location.pathname === "/my-account" ? "profile-sidebar-page" : "" }`}>
+        <div className={`main ${location.pathname === "/game-tracking" ? "game-tracking-path" : ""} ${location.pathname === "/my-account" ? "profile-sidebar-page" : "" }`}>
           <Outlet />
         </div>
       </div>
