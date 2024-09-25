@@ -134,6 +134,11 @@ const GameTracking = () => {
   };
 
   const TrendBodyTemplate = (row) => {
+    if(row?.last_week_trend === "0.0 %"){
+      return <span className="trend-details-badge-neutral">{row?.last_week_trend}</span>;
+    }else if(row?.last_week_trend.includes("-")){
+      return <span className="trend-details-badge-red">{row?.last_week_trend}</span>;
+    }
     return <span className="trend-details-badge">{row?.last_week_trend}</span>;
   };
 
@@ -170,15 +175,15 @@ const GameTracking = () => {
       end_datetime: "2024-07-01",
     };
 
-    GameData.tracker_dashboard_filter(data)
-      .then((res) => {
-        if (res?.success === true) {
-          setTrackingFilters(res?.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+    // GameData.tracker_dashboard_filter(data)
+    //   .then((res) => {
+    //     if (res?.success === true) {
+    //       setTrackingFilters(res?.data);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //   });
   };
 
   const handleDetailsChage = (id) => {
@@ -229,15 +234,15 @@ const GameTracking = () => {
         end_datetime: formatDate(today),
       };
 
-      GameData.tracker_dashboard_filter(data)
-        .then((res) => {
-          if (res?.success === true) {
-            setTrackingFilters(res?.data);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      // GameData.tracker_dashboard_filter(data)
+      //   .then((res) => {
+      //     if (res?.success === true) {
+      //       setTrackingFilters(res?.data);
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //   });
 
       return;
     }
@@ -274,16 +279,16 @@ const GameTracking = () => {
       end_datetime: formatDate(today),
     };
 
-    GameData.tracker_dashboard_filter(data)
-      .then((res) => {
-        if (res?.success === true) {
-          setTrackingFilters(res?.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
-      });
+    // GameData.tracker_dashboard_filter(data)
+    //   .then((res) => {
+    //     if (res?.success === true) {
+    //       setTrackingFilters(res?.data);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setLoader(false);
+    //   });
   };
 
   const handleTrackTimeChange = (option) => {
@@ -327,16 +332,16 @@ const GameTracking = () => {
         end_datetime: formatDate(today),
       };
 
-      GameData.tracker_dashboard_filter(data)
-        .then((res) => {
-          if (res?.success === true) {
-            setTrackingFilters(res?.data);
-          }
-        })
-        .catch((err) => {
-          console.log(err);
-          setLoader(false);
-        });
+      // GameData.tracker_dashboard_filter(data)
+      //   .then((res) => {
+      //     if (res?.success === true) {
+      //       setTrackingFilters(res?.data);
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.log(err);
+      //     setLoader(false);
+      //   });
 
       return;
     }
@@ -400,16 +405,16 @@ const GameTracking = () => {
       end_datetime: formatDate(today),
     };
 
-    GameData.tracker_dashboard_filter(data)
-      .then((res) => {
-        if (res?.success === true) {
-          setTrackingFilters(res?.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
-      });
+    // GameData.tracker_dashboard_filter(data)
+    //   .then((res) => {
+    //     if (res?.success === true) {
+    //       setTrackingFilters(res?.data);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setLoader(false);
+    //   });
   };
 
   const onStartDateChange = (e) => {
@@ -446,16 +451,16 @@ const GameTracking = () => {
       end_datetime: e.target.value,
     };
 
-    GameData.tracker_dashboard_filter(data)
-      .then((res) => {
-        if (res?.success === true) {
-          setTrackingFilters(res?.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
-      });
+    // GameData.tracker_dashboard_filter(data)
+    //   .then((res) => {
+    //     if (res?.success === true) {
+    //       setTrackingFilters(res?.data);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setLoader(false);
+    //   });
   };
 
   return (
@@ -464,17 +469,16 @@ const GameTracking = () => {
         <div className="compass-data">
           <div className="row align-items-center">
             <div className="col-md-5 col-lg-5">
-              <h4 className="m-md-0">Overview Dashboard</h4>
+              <h4 className="m-md-0">Compass Dashboard</h4>
 
               <span>
-                View, Filter and analyse data as per your requirements with
-                adaptive dashboard
+                View details related to all the compass configured
               </span>
             </div>
 
             <div className="col-md-7 col-lg-7 my-2 my-md-0 my-lg-0">
               <div className="row justify-content-end">
-                {show === true && (
+                {/* {show === true && (
                   <div className="col-md-5 tracker-game-dropdown-mobile">
                     <Select
                       className="basic-single"
@@ -493,7 +497,7 @@ const GameTracking = () => {
                       onChange={(id) => handleDetailsChage(id)}
                     />
                   </div>
-                )}
+                )} */}
                 <div className="col-md-2 px-md-0">
                   <div className="all-time-status-dropdown">
                     <Select
@@ -591,37 +595,37 @@ const GameTracking = () => {
                         </h5>
                       </div>
                       <div className="row pt-3">
-                        <div className="col-md-4">
-                          <div className="position-view-box game-track-box">
+                        <div className="col-md-4 d-flex flex-column justify-content-around">
+                          <div className="position-view-box game-track-box w-100">
                             <div className="d-flex justify-content-between align-items-center position-view-box-head game-track-box-chart">
                               <div>
-                                <h6>Games/Casino Tracked</h6>
-                                <p>View Details</p>
+                                <h6>Games/Casino<br /> Tracked</h6>
+                                {/* <p>View Details</p> */}
                               </div>
                               <div>
                                 <h4 className="m-0 text-end">
                                   {gameTracking?.tracker_count?.count}
                                 </h4>
-                                <p className="text-danger">
-                                  -4.66% <FaArrowDownLong />
+                                <p className="text-danger mb-0">
+                                  {/* -4.66% <FaArrowDownLong /> */}
                                 </p>
                               </div>
                             </div>
-                            <div className="chart-section-box">
+                            {/* <div className="chart-section-box">
                               <MiniCasinoTrackChart />
-                            </div>
+                            </div> */}
                           </div>
-                          <div className="position-view-box game-track-box mt-3">
+                          <div className="position-view-box game-track-box mt-3 w-100">
                             <div className="d-flex justify-content-between align-items-center position-view-box-head game-track-box-chart">
                               <div>
-                                <h6>Average Position</h6>
-                                <p>View Details</p>
+                                <h6>Average<br /> Position</h6>
+                                {/* <p>View Details</p> */}
                               </div>
                               <div>
                                 <h4 className="m-0 text-end">
                                   {gameTracking?.average_position?.position}
                                 </h4>
-                                <p className="text-success">
+                                <p className="text-success mb-0">
                                   {
                                     gameTracking?.average_position
                                       ?.percentage_change
@@ -630,17 +634,17 @@ const GameTracking = () => {
                                 </p>
                               </div>
                             </div>
-                            <div className="chart-section-box">
+                            {/* <div className="chart-section-box">
                               <MiniAvgPositionChart />
-                            </div>
+                            </div> */}
                           </div>
                         </div>
-                        <div className="col-md-4 ps-md-0">
-                          <div className="position-view-box game-track-box game-track-box-mobile">
+                        <div className="col-md-4 ps-md-0 d-flex flex-column justify-content-around">
+                          <div className="position-view-box game-track-box game-track-box-mobile w-100">
                             <div className="d-flex justify-content-between align-items-center position-view-box-head game-track-box-chart">
                               <div>
-                                <h6>Games Gaining Positions</h6>
-                                <p>View Details</p>
+                                <h6>Games Gaining<br /> Positions</h6>
+                                {/* <p>View Details</p> */}
                               </div>
                               <div>
                                 <h4 className="m-0 text-end">
@@ -649,20 +653,20 @@ const GameTracking = () => {
                                       ?.count
                                   }
                                 </h4>
-                                <p className="text-success">
-                                  -4.66% <FaArrowUpLong />
+                                <p className="text-success mb-0">
+                                  {/* -4.66% <FaArrowUpLong /> */}
                                 </p>
                               </div>
                             </div>
-                            <div className="chart-section-box">
+                            {/* <div className="chart-section-box">
                               <MiniGainPositionChart />
-                            </div>
+                            </div> */}
                           </div>
-                          <div className="position-view-box game-track-box mt-3">
+                          <div className="position-view-box game-track-box mt-3 w-100">
                             <div className="d-flex justify-content-between align-items-center position-view-box-head game-track-box-chart">
                               <div>
-                                <h6>Games Losing Positions</h6>
-                                <p>View Details</p>
+                                <h6>Games Losing<br /> Positions</h6>
+                                {/* <p>View Details</p> */}
                               </div>
                               <div>
                                 <h4 className="m-0 text-end">
@@ -671,14 +675,14 @@ const GameTracking = () => {
                                       ?.count
                                   }
                                 </h4>
-                                <p className="text-danger">
-                                  -4.66% <FaArrowDownLong />
+                                <p className="text-danger mb-0">
+                                  {/* -4.66% <FaArrowDownLong /> */}
                                 </p>
                               </div>
                             </div>
-                            <div className="chart-section-box">
+                            {/* <div className="chart-section-box">
                               <MiniLossPositionChart />
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                         <div className="col-md-4 text-center mt-3 mt-md-0 mt-lg-0">
@@ -708,10 +712,10 @@ const GameTracking = () => {
                           scrollable
                           scrollHeight="400px"
                         >
-                          <Column
+                          {/* <Column
                             selectionMode="multiple"
                             exportable={false}
-                          ></Column>
+                          ></Column> */}
                           <Column
                             field="operator_name"
                             header="Casino "
@@ -724,13 +728,13 @@ const GameTracking = () => {
                             sortable
                             style={{ minWidth: "10rem" }}
                           ></Column>
-                          <Column
+                          {/* <Column
                             field="status"
                             header="Status"
                             body={StatusBodyTemplate}
                             sortable
                             style={{ minWidth: "10rem" }}
-                          ></Column>
+                          ></Column> */}
                           <Column
                             field="avg_position"
                             header="Avg.Position"
@@ -740,19 +744,19 @@ const GameTracking = () => {
                             className="text-center "
                           ></Column>
                           <Column
-                            field="worst_position"
-                            header="Min Position"
-                            sortable
-                            style={{ minWidth: "10rem" }}
-                            body={MinBodyTemplate}
-                            className="text-center"
-                          ></Column>
-                          <Column
                             field="best_position"
-                            header="Max Position"
+                            header="Best Position"
                             sortable
                             style={{ minWidth: "10rem" }}
                             body={MaxBodyTemplate}
+                            className="text-center"
+                          ></Column>
+                          <Column
+                            field="worst_position"
+                            header="Worst Position"
+                            sortable
+                            style={{ minWidth: "10rem" }}
+                            body={MinBodyTemplate}
                             className="text-center"
                           ></Column>
                           <Column

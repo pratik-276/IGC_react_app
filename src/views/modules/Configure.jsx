@@ -184,6 +184,8 @@ const Configure = ({
           game_id: g.id,
           start_date: trackTime === "custom" ? startDate : initialDate,
           end_date: trackTime === "custom" ? endDate : finalDate,
+          game_name: g.game_original_name,
+          game_provider: g.game_provider_name,
         });
       });
     });

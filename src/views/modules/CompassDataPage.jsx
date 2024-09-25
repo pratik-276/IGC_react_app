@@ -75,7 +75,14 @@ const CompassDataPage = ({
 
   const showFirstDrawer = () => setOpen(true);
 
-  const createdBodyTemplate = () => <span className="text-center">-</span>;
+  // const createdBodyTemplate = () => <span className="text-center">-</span>;
+  const createdBodyTemplate = (row) => {
+    return (
+      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
+        {row?.created_at}
+      </h5>
+    );
+  };
 
   const StatusBodyTemplate = (row) => {
     const startDate = new Date(row?.start_date);
@@ -107,6 +114,14 @@ const CompassDataPage = ({
     return (
       <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
         {row?.game_original_name}
+      </h5>
+    );
+  };
+  
+  const gameProviderBodyTemplate = (row) => {
+    return (
+      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
+        {row?.game_provider}
       </h5>
     );
   };
@@ -347,6 +362,12 @@ const CompassDataPage = ({
                       body={gameNameBodyTemplate}
                     ></Column>
                     <Column
+                      field="game_provider"
+                      header="Provider"
+                      style={{ minWidth: "15rem" }}
+                      body={gameProviderBodyTemplate}
+                    ></Column>
+                    <Column
                       field="start_date"
                       header="Tracking Timeline"
                       body={StatusBodyTemplate}
@@ -434,7 +455,7 @@ const CompassDataPage = ({
                     </div>
                   )}
                 </div>
-                <div className="d-flex align-items-center pagination_per_select">
+                {/* <div className="d-flex align-items-center pagination_per_select">
                   <span className="me-1">Items per Page: </span>
                   <Dropdown
                     options={options4.map((option) => ({
@@ -444,7 +465,7 @@ const CompassDataPage = ({
                     onChange={(e) => setRows(Number(e.value))}
                     value={rows?.toString()}
                   />
-                </div>
+                </div> */}
               </div>
             </div>
           )}

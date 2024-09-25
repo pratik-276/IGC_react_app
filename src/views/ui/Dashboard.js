@@ -12,6 +12,7 @@ const Dashboard = () => {
   useEffect(() => {
     const user_company = localStorage.getItem("user_company");
     setUserCompanyName(user_company);
+    console.log('User Company: ' + user_company);
 
     if(user_company in company_to_dashboard){
       setDashboardLink(company_to_dashboard[user_company]);

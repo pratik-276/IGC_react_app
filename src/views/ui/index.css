@@ -729,6 +729,20 @@ input[type="checkbox"] {
   border: none !important;
 }
 
+.trend-details-badge-neutral {
+  padding: 5px 10px;
+  background: #edf5f0;
+  border-radius: 5px;
+  color: #e9de14;
+  font-weight: 600;
+}
+.trend-details-badge-red {
+  padding: 5px 10px;
+  background: #edf5f0;
+  border-radius: 5px;
+  color: #f01233;
+  font-weight: 600;
+}
 .trend-details-badge {
   padding: 5px 10px;
   background: #edf5f0;

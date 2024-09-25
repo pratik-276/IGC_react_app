@@ -8,15 +8,11 @@ const PositionChangeChart = ({ gameTracking }) => {
 
   const neutral =
     gameTracking?.tracker_count?.count -
-    gameTracking?.trackers_gaining_position?.count;
+    gameTracking?.trackers_gaining_position?.count - gameTracking?.trackers_losing_position?.count;
 
-  const gainers =
-    gameTracking?.tracker_count?.count -
-    gameTracking?.trackers_gaining_position?.count;
+  const gainers = gameTracking?.trackers_gaining_position?.count;
 
-  const losers =
-    gameTracking?.tracker_count?.count -
-    gameTracking?.trackers_losing_position?.count;
+  const losers = gameTracking?.trackers_losing_position?.count;
 
   const series = [gainers, losers, neutral];
   const options = {
