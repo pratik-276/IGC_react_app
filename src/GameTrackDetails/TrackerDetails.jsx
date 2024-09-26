@@ -114,9 +114,9 @@ const TrackerDetails = ({ trackingDetails }) => {
         <div className="tracker-details" style={{ marginTop: "16px" }}>
           <AveragePositionChart trackingDetails={trackingDetails} />
         </div>
-        <div className="tracker-details" style={{ marginTop: "16px" }}>
+        {/* <div className="tracker-details" style={{ marginTop: "16px" }}>
           <GameSectionChangesChart trackingDetails={trackingDetails} />
-        </div>
+        </div> */}
         <div className="tracker-details" style={{ marginTop: "16px" }}>
           <GamePositionChangesChart trackingDetails={trackingDetails} />
         </div>

@@ -15,7 +15,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
   
   const data = trackingDetails?.daywise_data.map(
     ({ created_date, overall_game_position }) => ({
-      date: dayjs(created_date).format("MMM-DD-YYYY"),
+      date: dayjs(created_date).format("MMM DD"),
       overall_game_position: overall_game_position,
     })
   );
@@ -25,7 +25,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
   );
 
   const CustomTick = ({ x, y, payload }) => (
-    <Text x={x} y={y} dy={10} textAnchor="middle" fill="#666" angle={-45}>
+    <Text x={x} y={y} dy={10} textAnchor="middle" fill="#666">
       {payload.value}
     </Text>
   );

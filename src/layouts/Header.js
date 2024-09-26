@@ -8,7 +8,7 @@ import {
   Dropdown,
 } from "reactstrap";
 import user1 from "../assets/images/users/user4.jpg";
-import logo from "../assets/images/logos/AEG-Logo.png";
+import logo from "../assets/images/logos/logo.png";
 import "./layout.css";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
