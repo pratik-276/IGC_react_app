@@ -12,21 +12,35 @@ import {
 import dayjs from "dayjs";
 
 const AveragePositionChart = ({ trackingDetails }) => {
-  
-  const data = trackingDetails?.daywise_data.map(
-    ({ created_date, overall_game_position }) => ({
-      date: dayjs(created_date).format("MMM DD"),
-      overall_game_position: overall_game_position,
-    })
+  const data =
+    trackingDetails?.daywise_data
+      .map(({ created_date, game_position }) => ({
+        date: dayjs(created_date).format("MMM DD"),
+        game_position: game_position,
+      }))
+      .reverse() || [];
+
+  const maxPosition = Math.max(
+    ...(data.map((item) => item.game_position) || [0])
   );
 
-  const minY = trackingDetails?.daywise_data.map(
-    (item) => item.overall_game_position
+  const nextMultipleOfTen = Math.ceil(maxPosition / 10) * 10;
+  const yTicks = Array.from(
+    { length: nextMultipleOfTen / 10 + 1 },
+    (_, i) => i * 10
   );
 
   const CustomTick = ({ x, y, payload }) => (
-    <Text x={x} y={y} dy={10} textAnchor="middle" fill="#666">
-      {payload.value}
+    <Text
+      x={x}
+      y={y}
+      dy={15}
+      textAnchor="middle"
+      fill="#666"
+      angle={-20}
+      fontSize={13}
+    >
+      {payload?.value}
     </Text>
   );
 
@@ -52,7 +66,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
             <XAxis dataKey="date" interval={0} tick={<CustomTick />} />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
-              ticks={minY}
+              ticks={yTicks}
               axisLine={false}
               tickLine={false}
               interval={0}
@@ -60,7 +74,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
             <Tooltip />
             <Area
               type="monotone"
-              dataKey="overall_game_position"
+              dataKey="game_position"
               stroke="#5865F2"
               fill="none"
               strokeWidth={2}
