@@ -134,6 +134,7 @@ const Signup = () => {
             toast.success(res?.message, {
               duration: 10000,
             });
+            navigate("/login");
           } else {
             setErrorMessage(res?.message);
             toast.error(res?.message);

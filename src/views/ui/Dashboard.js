@@ -4,7 +4,7 @@ import "./index.css";
 const Dashboard = () => {
   const [user_company_name, setUserCompanyName] = useState("");
   let company_to_dashboard = {
-    "Pixiu Gaming": "https://app.powerbi.com/view?r=eyJrIjoiYWVhMTcwYTMtYzk3My00YTZlLWE5ZjUtMzYxYzRlZDNlNjNlIiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9",
+    "Pixiu Gaming": "https://app.powerbi.com/view?r=eyJrIjoiOTQ1YjE2YjctMDE0MS00Y2MyLTlhOTAtOWZlNjA2ZjgzNGEwIiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9",
   }
 
   const [dashboardLink, setDashboardLink] = useState("");
@@ -35,7 +35,7 @@ const Dashboard = () => {
         height: "110%",
         border: "none",
       }} 
-      src="https://app.powerbi.com/view?r=eyJrIjoiYWVhMTcwYTMtYzk3My00YTZlLWE5ZjUtMzYxYzRlZDNlNjNlIiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9" 
+      src={dashboardLink} 
       frameborder="0" allowFullScreen="true">
       </iframe>
     )}
