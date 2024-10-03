@@ -19,6 +19,7 @@ import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
 import Dashboard from "./views/ui/Dashboard";
+import RawDataDashboard from "./views/ui/RawDataDashboard";
 
 const App = () => {
   return (
@@ -59,6 +60,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="all-data-dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <RawDataDashboard />
                     </ProtectedRoute>
                   }
                 />

@@ -28,6 +28,11 @@ const navigation = [
     href: "/dashboard",
     icon: MdViewKanban,
   },
+  {
+    title: "Raw Data",
+    href: "/all-data-dashboard",
+    icon: MdViewKanban,
+  },
 ];
 
 // For Profile Navigation
