@@ -24,7 +24,12 @@ const MyChart = ({ trackingDetails }) => {
     );
     console.log(data);
 
-    const uniqueYLabels = [...new Set(data.map((o) => o.y_label))];
+    // const uniqueYLabels = [...new Set(data.map((o) => o.y_label))];
+    const uniqueYLabels = ["Table Games - 11"];
+    const indices = uniqueYLabels.map((_, index) => index + 1);
+    console.log("indices", indices);
+    // const indices = uniqueYLabels.map(label => parseInt(label.split('-')[1].trim(), 10));
+    // const uniqueYLabels = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
     const rectangles = data.map((o) => ({
       type: "box",
@@ -66,20 +71,25 @@ const MyChart = ({ trackingDetails }) => {
             suggestedMin: 0,
             ticks: {
               stepSize: 1,
+              align: "center",
               callback: (value, index) => {
                 const customXLabels = data.map((item) => item.x_label);
                 return customXLabels[value] || "";
               },
+              labelOffset: 40,
             },
           },
+
           y: {
             suggestedMin: 1,
             reverse: true,
             ticks: {
               stepSize: 1,
               callback: (value) => {
-                return uniqueYLabels[value] || "";
+                // Calculate the label based on the reverse order
+                return indices[indices.length - 1 - value] || "";
               },
+              labelOffset: 30,
             },
           },
         },
@@ -91,7 +101,7 @@ const MyChart = ({ trackingDetails }) => {
         Chart.getChart(chartRef.current).destroy();
       }
     };
-  }, []);
+  }, [trackingDetails]);
 
   return (
     <div>
