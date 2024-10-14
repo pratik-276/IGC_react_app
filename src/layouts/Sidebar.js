@@ -13,26 +13,26 @@ const navigation = [
     href: "/",
     icon: IoMdHome,
   },
-  {
-    title: "iGame Tracker",
-    href: "/game-tracking",
-    icon: FaLocationArrow,
-  },
-  {
-    title: "Calibrate Compass",
-    href: "/calibrate-compass",
-    icon: IoMdCompass,
-  },
+  // {
+  //   title: "iGame Tracker",
+  //   href: "/game-tracking",
+  //   icon: FaLocationArrow,
+  // },
+  // {
+  //   title: "Calibrate Compass",
+  //   href: "/calibrate-compass",
+  //   icon: IoMdCompass,
+  // },
   {
     title: "Beta Dashboards",
     href: "/dashboard",
     icon: MdViewKanban,
   },
-  {
-    title: "Raw Data",
-    href: "/all-data-dashboard",
-    icon: MdViewKanban,
-  },
+  // {
+  //   title: "Raw Data",
+  //   href: "/all-data-dashboard",
+  //   icon: MdViewKanban,
+  // },
 ];
 
 // For Profile Navigation
