@@ -1,0 +1,85 @@
+.pageWrapper {
+  min-height: 100vh;
+}
+
+.contentArea {
+  flex-grow: 1;
+  // max-width: 1300px;
+  width: calc(100% - 260px);
+  margin: 0 auto;
+}
+
+.card {
+  box-shadow: $card-box-shadow;
+  margin-bottom: 30px;
+  background-color: $white;
+}
+
+.list-group-item {
+  background-color: $white !important;
+}
+
+.circle-box {
+  width: 40px;
+  height: 40px;
+  line-height: 40px;
+  text-align: center;
+  border-radius: 100%;
+
+  &.lg-box {
+    width: 60px;
+    height: 60px;
+    font-size: 21px;
+    line-height: 60px;
+  }
+}
+
+.button-group .btn {
+  margin: 3px;
+}
+
+table {
+
+  th,
+  td {
+    background-color: $white !important;
+  }
+
+  th {
+    font-weight: 500;
+  }
+}
+
+.dropdown-menu {
+  background-color: $white !important;
+}
+
+.container {
+  /*   background: gray; */
+    width: 100%;
+    overflow: auto;
+  }
+  
+  /* scrollbar */
+  ::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+  }
+  
+  ::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+  }
+  
+  ::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.3);
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  }
+  
+  ::-webkit-scrollbar-thumb:window-inactive {
+    background: rgba(255, 255, 255, 0.3);
+  }
+  

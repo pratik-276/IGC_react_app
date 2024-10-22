@@ -1,0 +1,82 @@
+{
+  "name": "client",
+  "homepage": "https://app.igamingcompass.com",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@ant-design/icons": "^5.3.7",
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
+    "@mui/material": "^6.1.0",
+    "@mui/styles": "^6.1.0",
+    "@testing-library/jest-dom": "5.16.5",
+    "@testing-library/react": "13.4.0",
+    "@testing-library/user-event": "13.5.0",
+    "antd": "^5.17.0",
+    "anychart": "^8.12.1",
+    "apexcharts": "^3.54.0",
+    "axios": "^1.6.8",
+    "bootstrap": "5.3.0",
+    "bootstrap-icons": "1.10.5",
+    "chart.js": "^4.4.4",
+    "chartjs-adapter-date-fns": "^3.0.0",
+    "chartjs-plugin-annotation": "^3.0.1",
+    "d3": "^7.9.0",
+    "date-fns": "^4.1.0",
+    "firebase": "^10.11.1",
+    "formik": "^2.4.6",
+    "i": "^0.3.7",
+    "moment": "^2.30.1",
+    "npm": "^10.8.2",
+    "otp-input-react": "^0.3.0",
+    "primeflex": "^3.3.1",
+    "primeicons": "^7.0.0",
+    "primereact": "^10.8.0",
+    "react": "18.2.0",
+    "react-apexcharts": "^1.4.0",
+    "react-bootstrap": "^2.10.2",
+    "react-datepicker": "^6.9.0",
+    "react-dom": "18.2.0",
+    "react-dropdown": "^1.11.0",
+    "react-google-charts": "^4.0.5",
+    "react-hot-toast": "^2.4.1",
+    "react-icons": "^5.1.0",
+    "react-range": "^1.10.0",
+    "react-router-dom": "6.12.1",
+    "react-scripts": "5.0.1",
+    "react-select": "^5.8.0",
+    "react-select-country-list": "^2.2.3",
+    "reactstrap": "^9.2.0",
+    "recharts": "^2.12.7",
+    "universal-cookie": "^7.1.4",
+    "web-vitals": "2.1.4",
+    "yup": "^1.4.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "sass": "^1.63.3"
+  }
+}
