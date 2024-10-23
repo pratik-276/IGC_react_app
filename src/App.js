@@ -82,7 +82,7 @@ const App = () => {
                   }
                 />
                 <Route 
-                  path="game-rank"
+                  path="game-rank-report"
                   element={
                     <ProtectedRoute>
                       <GameRank />
@@ -90,7 +90,7 @@ const App = () => {
                   }
                 />
                 <Route 
-                  path="game-provide-marketshare"
+                  path="game-provider-marketshare"
                   element={
                     <ProtectedRoute>
                       <GameProvideMarketshare />

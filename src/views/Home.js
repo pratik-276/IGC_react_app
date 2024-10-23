@@ -1,39 +1,59 @@
 import { Button, InputAdornment, Link, TextField } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { FaGem, FaMagnifyingGlass, FaAngleRight } from "react-icons/fa6";
 import Call from "./../services/Call";
 import Video from "../assets/images/intro.mp4"
 import { Card, CardBody, CardFooter, CardHeader, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { ProgressSpinner } from "primereact/progressspinner";
 
 const Home = () => {
-  async function getProfile() {
-    // const profile = await Call({
-    //   path: "get_profile",
-    //   method: "get"
-    // })
+  const [profile, setProfile] = useState({})
+  const [loading, setLoading] = useState(false)
 
-    // const operator = await Call({
-    //   path: 'get_operator',
-    //   method: 'get'
-    // })
+  async function getData() {
+    setLoading(true)
 
-    // console.log('profile', profile)
-    // console.log('operator', operator)
+    try {
+      const userId = localStorage.getItem("user_id");
+      const res = await Call({
+        path: "get_profile",
+        method: "POST",
+        data: {
+          user_id: userId
+        }
+      })
+
+      setProfile(res.data)
+
+      // const operator = await Call({
+      //   path: 'get_operator',
+      //   method: 'GET'
+      // })
+    } catch (e) {
+      console.log(e)
+    } finally {
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
-    getProfile()
+    getData()
   }, [])
 
   const navigate = useNavigate()
 
   return (
     <>
-      <div className="container">
+      {loading &&
+        <div style={{ display: 'flex' }}>
+          <ProgressSpinner />
+        </div>
+      }
+      {!loading && <div className="container">
         <div className="d-flex flex-row justify-content-between">
           <div>
-            <h3>Welcome, Subrajit</h3>
+            <h3>{`${greetBasedOnTime()}, ${capitalizeFirstLetter(profile?.first_name)}`}</h3>
             <div className="compass-data">
               <span>
                 we have kept all your reports ready for you
@@ -46,7 +66,7 @@ const Home = () => {
             </Button>
             <div className="compass-data">
               <span>
-                Your trial Plan ends on Oct 4, 2024
+                Your trial Plan ends on Dec 4, 2024
               </span>
             </div>
           </div>
@@ -91,8 +111,8 @@ const Home = () => {
             </span>
           </div>
           <div className="d-flex flex-row gap-3">
-            <ReportCard onButtonPress={() => navigate('game-rank') } title="Game Provide Marketshare" />
-            <ReportCard onButtonPress={() => navigate('game-rank') } title="Game Rank" />
+            <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
           </div>
         </div>
 
@@ -106,15 +126,12 @@ const Home = () => {
             </span>
           </div>
           <div className="d-flex flex-row gap-3 flex-wrap">
-            <ReportCard onButtonPress={() => navigate('game-rank') } title="Game Provide Marketshare" />
-            <ReportCard onButtonPress={() => navigate('game-rank') } title="Game Rank" />
-            <ReportCard onButtonPress={() => navigate('game-rank') } title="Game Provide Marketshare" />
+            <ReportCard onButtonPress={() => { }} title="Game Provide Marketshare" />
+            <ReportCard onButtonPress={() => { }} title="Game Rank" />
+            <ReportCard onButtonPress={() => { }} title="Game Provide Marketshare" />
           </div>
         </div>
-
-        <Button href="game-rank">Game Rank</Button>
-        <h4>Reports coming soon ...</h4>
-      </div>
+      </div>}
     </>
   );
 };
@@ -133,6 +150,24 @@ const ReportCard = ({ title, onButtonPress }) => {
       </CardFooter>
     </Card>
   )
+}
+
+function greetBasedOnTime() {
+  const currentHour = new Date().getHours();
+
+  if (currentHour < 12) {
+    return "Good Morning";
+  } else if (currentHour < 18) {
+    return "Good Afternoon";
+  } else {
+    return "Good Evening";
+  }
+}
+
+function capitalizeFirstLetter(str) {
+  if (!str) return ""
+  if (str.length === 0) return str;
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 export default Home;

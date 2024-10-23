@@ -103,7 +103,7 @@ const GameRank = () => {
     }
 
     return (
-        <div>
+        <div className="container">
             <div className="row align-items-center pb-3 pt-3">
                 <div className="col-md-6">
                     <h3>Game Rank</h3>
@@ -119,8 +119,7 @@ const GameRank = () => {
                     rowsPerPageOptions={[5, 10, 25, 50]}
                     value={tableData}
                     tableStyle={{ minWidth: '50rem' }}
-                    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-                    paginatorClassName="justify-content-between"
+                    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
                     currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
                 >
                     <Column field="game_name" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Name</div>} body={gameNameTemplate}></Column>
