@@ -11,16 +11,26 @@ import call from "../../services/Call";
 import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import toast from "react-hot-toast";
 import { ProgressBar } from 'primereact/progressbar';
+import { FilterMatchMode, FilterOperator } from 'primereact/api';
 
 const GameProvideMarketshare = () => {
     const [loading, setLoading] = useState(false)
     const [tableData, setTableData] = useState([])
-    const [totalRecords, setTotalRecords] = useState(0)
-    const [currentPage, setCurrentPage] = useState(1)
     const [regions, setRegions] = useState([])
     const [yearMonthList, setYearMonthList] = useState([])
     const [selectedRegion, setSelectedRegion] = useState("")
     const [selectedMonthYear, setSelectedMonthYear] = useState("")
+
+    useEffect(() => {
+        getPageData()
+    }, [selectedRegion, selectedMonthYear])
+
+    useEffect(() => {
+        import('../../utils/DatatableBottomFix')
+            .then(({datatableBottomItemFix}) => {
+                console.log(datatableBottomItemFix())
+            })
+    }, [tableData])
 
     async function getRegions() {
         const res = await call({
@@ -53,7 +63,7 @@ const GameProvideMarketshare = () => {
 
     async function getMarketshareData() {
         const data = await call({
-            path: `/get_provider_marketshare?page=${currentPage}`,
+            path: `/get_provider_marketshare`,
             method: 'POST',
             data: {
                 "region": selectedRegion,
@@ -61,8 +71,8 @@ const GameProvideMarketshare = () => {
             }
         })
 
-        setTableData(data.results)
-        setTotalRecords(data.count)
+        console.log(Math.max(...data.data.map(d => parseFloat(d.market_share))))
+        setTableData(data.data)
     }
 
     async function getPageData() {
@@ -79,14 +89,11 @@ const GameProvideMarketshare = () => {
         setLoading(false)
     }
 
-    useEffect(() => {
-        getPageData()
-    }, [selectedRegion, selectedMonthYear, currentPage])
-
     const changeTemplate = (row) => {
         let change = ';'
         if (row != null) {
             change = row?.change.replaceAll('%', '')
+            change = parseFloat(change).toFixed(2)
         }
         return (
             <h6 className="font-normal text-secondary">
@@ -98,7 +105,7 @@ const GameProvideMarketshare = () => {
     }
 
     const marketshareTemplate = (row) => {
-        const share = (row.market_share * 10).toFixed(0)
+        const share = mapToRange(row.market_share, 0, Math.max(...tableData.map(d => parseFloat(d.market_share))))
         let bg = 'bg-info'
 
         if (parseFloat(row.market_share) < 3.0) {
@@ -116,7 +123,7 @@ const GameProvideMarketshare = () => {
                 <div style={{ fontSize: '12px' }}>
                     {share}%
                 </div>
-                <div style={{ flex: 1 }} class="progress">
+                <div style={{ flex: 1 }} className="progress">
                     <div className={`progress-bar ${bg}`} role="progressbar" style={{ width: `${share}%` }} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
                 </div>
             </div>
@@ -144,7 +151,7 @@ const GameProvideMarketshare = () => {
                             </Select>
                         </FormControl>
                     </div>
-                    <div style={{ flex: 1, minWidth: '200px' }}>
+                    {/* <div style={{ flex: 1, minWidth: '200px' }}>
                         <FormControl size="small" fullWidth>
                             <InputLabel id="month-select">Month</InputLabel>
                             <Select
@@ -156,21 +163,20 @@ const GameProvideMarketshare = () => {
                                 { yearMonthList.map((ym) => <MenuItem value={ym}>{ym}</MenuItem> ) }
                             </Select>
                         </FormControl>
-                    </div>
+                    </div> */}
                 </div>
             </div>
             {!loading && <div className="tracker-details-body calibrate-compass-table">
                 <DataTable
-                    lazy
-                    onPage={(e) => {setCurrentPage(e.page); console.log(e)}}
                     paginator 
-                    rows={tableData.length}
                     value={tableData}
-                    totalRecords={totalRecords}
+                    rows={10}
+                    totalRecords={tableData.length}
                     className="tracker-details-table"
                     tableStyle={{ minWidth: '50rem' }}
                     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
+                    rowsPerPageOptions={[10, 20, 30]}
                 >
                     <Column field="game_provider" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Provider</div>}></Column>
                     <Column field="unique_games" style={{ maxWidth: '100px' }} sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Unique Games</div>}></Column>
@@ -188,6 +194,15 @@ const GameProvideMarketshare = () => {
             }
         </div>
     )
+}
+
+function mapToRange(value, oldMin, oldMax) {
+    if (value < oldMin || value > oldMax) {
+        throw new Error("Value out of range");
+    }
+
+    const mappedValue = ((value - oldMin) / (oldMax - oldMin)) * 100;
+    return mappedValue.toFixed(0);
 }
 
 export default GameProvideMarketshare;

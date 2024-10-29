@@ -1,4 +1,4 @@
-import { Button, InputAdornment, Link, TextField } from "@mui/material";
+import { Button, InputAdornment, Link, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
 import { FaGem, FaMagnifyingGlass, FaAngleRight } from "react-icons/fa6";
 import Call from "./../services/Call";
@@ -6,10 +6,15 @@ import Video from "../assets/images/intro.mp4"
 import { Card, CardBody, CardFooter, CardHeader, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
+import Autocomplete from '@mui/material/Autocomplete';
 
 const Home = () => {
   const [profile, setProfile] = useState({})
   const [loading, setLoading] = useState(false)
+  const [operators, setOperators] = useState([])
+  const [searchText, setSearchText] = useState("")
+  const [searchInput, setSearchInput] = useState("")
+  const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(null)
 
   async function getData() {
     setLoading(true)
@@ -26,10 +31,12 @@ const Home = () => {
 
       setProfile(res.data)
 
-      // const operator = await Call({
-      //   path: 'get_operator',
-      //   method: 'GET'
-      // })
+      const _operators = await Call({
+        path: 'get_operator',
+        method: 'GET'
+      })
+      setOperators(_operators.data)
+      console.log(_operators.data)
     } catch (e) {
       console.log(e)
     } finally {
@@ -40,6 +47,11 @@ const Home = () => {
   useEffect(() => {
     getData()
   }, [])
+
+  useEffect(() => {
+    console.log(searchText, searchInput)
+    console.log(isSearchMenuOpen != null, !isSearchMenuOpen, searchText != "", operators.map(op => op.name)?.includes(searchText))
+  }, [searchText])
 
   const navigate = useNavigate()
 
@@ -83,20 +95,31 @@ const Home = () => {
                   we have kept all your reports ready for you
                 </span>
               </div>
-              <TextField
-                label="Search"
-                variant="outlined"
-                size="small"
-                slotProps={{
-                  input: {
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <FaMagnifyingGlass />
-                      </InputAdornment>
-                    ),
-                  },
-                }}
-              />
+              <div style={{ width: '250px'}}>
+                <Autocomplete
+                  options={ operators.map((op, index) => { return { label: op.name, id: index, key: index } }) }
+                  autoComplete
+                  noOptionsText={"Other"}
+                  size="small"
+                  freeSolo
+                  onOpen={(e) => setIsSearchMenuOpen(true)}
+                  onClose={(e) => setIsSearchMenuOpen(false)}
+                  value={searchText}
+                  onChange={(e) => {
+                    console.log(e)
+                    if (e._reactName == 'onClick') setSearchText(e.target.textContent)
+                    else setSearchText(e.target.value)
+                  }}
+                  renderInput={(params) => <TextField {...params} label="Search (type and press enter)" />}
+                />
+              </div>
+              {
+                // Not first time and menu is closed 
+                isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && operators.map(op => op.name)?.includes(searchText) ? 
+                  <div>Show result</div> : 
+                  isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && !operators.map(op => op.name)?.includes(searchText) ? 
+                    <div>Show not found and redirect to request page</div> : ''
+              }
             </CardBody>
           </Card>
         </div>

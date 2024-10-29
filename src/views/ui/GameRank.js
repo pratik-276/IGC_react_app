@@ -24,12 +24,20 @@ const GameRank = () => {
                 "search_term": searchTerm
             }
         }).then((v) => {
-            setTableData(v.results)
-            console.log(v.results[0])
+            setTableData(v.data)
+            console.log(v.data[0])
         }).finally(() => {
             setLoading(false)
         })
-    }, [searchTerm])
+    }, [])
+
+    useEffect(() => {
+        import('../../utils/DatatableBottomFix')
+            .then(({datatableBottomItemFix}) => {
+                console.log(datatableBottomItemFix())
+            })
+    }, [tableData])
+
 
     const gameNameTemplate = (row) => {
         return (
@@ -115,12 +123,13 @@ const GameRank = () => {
             {!loading && <div className="tracker-details-body calibrate-compass-table">
                 <DataTable
                     className="tracker-details-table"
-                    paginator rows={5}
-                    rowsPerPageOptions={[5, 10, 25, 50]}
+                    paginator 
+                    rows={10}
                     value={tableData}
                     tableStyle={{ minWidth: '50rem' }}
-                    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink"
+                    paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
+                    rowsPerPageOptions={[10, 20, 30]}
                 >
                     <Column field="game_name" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Name</div>} body={gameNameTemplate}></Column>
                     <Column field="game_provider" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Provider</div>} body={gameProviderTemplate}></Column>
