@@ -1,6 +1,6 @@
-import { Button, InputAdornment, Link, Select, TextField } from "@mui/material";
+import { Button, ButtonBase, InputAdornment, Link, Select, TextField } from "@mui/material";
 import { useEffect, useState } from "react";
-import { FaGem, FaMagnifyingGlass, FaAngleRight } from "react-icons/fa6";
+import { FaGem, FaPlus, FaAngleRight } from "react-icons/fa6";
 import Call from "./../services/Call";
 import Video from "../assets/images/intro.mp4"
 import { Card, CardBody, CardFooter, CardHeader, Image } from "react-bootstrap";
@@ -95,9 +95,9 @@ const Home = () => {
                   we have kept all your reports ready for you
                 </span>
               </div>
-              <div style={{ width: '250px'}}>
+              <div style={{ width: '250px' }}>
                 <Autocomplete
-                  options={ operators.map((op, index) => { return { label: op.name, id: index, key: index } }) }
+                  options={operators.map((op, index) => { return { label: op.name, id: index, key: index } })}
                   autoComplete
                   noOptionsText={"Other"}
                   size="small"
@@ -115,10 +115,18 @@ const Home = () => {
               </div>
               {
                 // Not first time and menu is closed 
-                isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && operators.map(op => op.name)?.includes(searchText) ? 
-                  <div>Show result</div> : 
-                  isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && !operators.map(op => op.name)?.includes(searchText) ? 
-                    <div>Show not found and redirect to request page</div> : ''
+                isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && operators.map(op => op.name)?.includes(searchText) ?
+                  <div>
+                    <TrackDetail 
+                      name={operators.filter(o => o.name.toLowerCase() == searchText.toLowerCase())[0].name}
+                      url={operators.filter(o => o.name.toLowerCase() == searchText.toLowerCase())[0].site_url}
+                      navigate={navigate}
+                    />
+                  </div> :
+                  isSearchMenuOpen != null && !isSearchMenuOpen && searchText != "" && !operators.map(op => op.name)?.includes(searchText) ?
+                    <div>
+                      <NoTrackerFound navigate={navigate} />
+                    </div> : ''
               }
             </CardBody>
           </Card>
@@ -171,6 +179,41 @@ const ReportCard = ({ title, onButtonPress }) => {
           View Report
         </Button>
       </CardFooter>
+    </Card>
+  )
+}
+
+const TrackDetail = ({ name, url, navigate }) => {
+  return (
+    <Card className="mt-5" style={{ backgroundColor: '#EDF5F0', maxWidth: '600px' }}>
+      <CardBody style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
+        <div>
+          <h5>{name}</h5>
+          <Link>{url}</Link>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+          <Button onClick={() => navigate('game-tracking')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
+            View Tracker
+          </Button>
+        </div>
+      </CardBody>
+    </Card>
+  )
+}
+
+const NoTrackerFound = ({ navigate }) => {
+  return (
+    <Card className="mt-5" style={{ backgroundColor: '#EDF5F0', maxWidth: '600px' }}>
+      <CardBody style={{ display: 'flex', flexDirection: 'column', justifyContent: 'space-between' }}>
+        <div>
+          <h4 style={{ fontWeight: 'bold' }}>No Casino Found</h4>
+        </div>
+        <div>
+          <Button onClick={() => navigate('casino-requests')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
+            Create New Casino Request
+          </Button>
+        </div>
+      </CardBody>
     </Card>
   )
 }
