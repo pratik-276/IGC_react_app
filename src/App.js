@@ -3,7 +3,7 @@ import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import Layout from "./views/Layout";
 import Home from "./views/Home";
-import GameTracking from "./views/ui/GameTracking";
+import GameTracking from "./views/ui/GameTrackingMod";
 import Compass from "./views/ui/Compass";
 import Login from "./views/auth/Login";
 import Verify from "./views/auth/Verify";
