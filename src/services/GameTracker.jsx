@@ -36,11 +36,31 @@ const tracker_dashboard_filter = async (data) => {
   return d;
 };
 
+const provider_summary = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_summary",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const provider_latest_details = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_details",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const exportObject = {
   create_alert,
   tracker_summary,
   tracker_dashboard_filter,
   tracker_detail,
+  provider_summary,
+  provider_latest_details,
 };
 
 export default exportObject;
