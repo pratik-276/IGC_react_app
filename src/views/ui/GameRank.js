@@ -87,11 +87,16 @@ const GameRank = () => {
     }
 
     const stabilityTemplate = (row) => {
+        let stability = 'low'
+        if (row.stability < 5) stability = 'high'
+        else if (row.stability > 5 && row.stability <= 10) stability = 'medium'
+        else stability = 'low'
+
         return (
             <h6 className="font-normal text-secondary">
-                {row?.stability === 'low' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f8d7da', color: '#dc3545' }} className="text-capitalize">low</span> : ''}
-                {row?.stability === 'medium' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#faf3e8', color: '#dc9b00' }} className="text-capitalize">medium</span> : ''}
-                {row?.stability === 'high' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }} className="text-capitalize">high</span> : ''}
+                {stability === 'low' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f8d7da', color: '#dc3545' }} className="text-capitalize">low</span> : ''}
+                {stability === 'medium' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#faf3e8', color: '#dc9b00' }} className="text-capitalize">medium</span> : ''}
+                {stability === 'high' ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }} className="text-capitalize">high</span> : ''}
             </h6>
         )
     }
@@ -99,13 +104,13 @@ const GameRank = () => {
     const changeTemplate = (row) => {
         let change = ';'
         if (row != null) {
-            change = row?.change.replaceAll('%', '')
+            change = row?.change
         }
         return (
             <h6 className="font-normal text-secondary">
-                {change < 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f8d7da', color: '#dc3545' }}>{change}% <FaCaretDown /></span> : ''}
-                {change == 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#faf3e8', color: '#dc9b00' }}>{change}% </span> : ''}
-                {change > 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }}>{change}% <FaCaretUp /></span> : ''}
+                {change < 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f8d7da', color: '#dc3545' }}>{change} <FaCaretDown /></span> : ''}
+                {change == 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#faf3e8', color: '#dc9b00' }}>{change} </span> : ''}
+                {change > 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }}>{change} <FaCaretUp /></span> : ''}
             </h6>
         )
     }
@@ -133,7 +138,7 @@ const GameRank = () => {
                 >
                     <Column field="game_name" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Name</div>} body={gameNameTemplate}></Column>
                     <Column field="game_provider" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Provider</div>} body={gameProviderTemplate}></Column>
-                    <Column field="country_rank" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Country Rank</div>} body={countryRankTemplate}></Column>
+                    <Column field="country_rank" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Rank</div>} body={countryRankTemplate}></Column>
                     <Column field="avg_position" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Avg. Position</div>} body={averagePositionTemplate}></Column>
                     <Column field="casino_present" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Casino Present</div>} body={casinoPresentTemplate}></Column>
                     <Column field="stability" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Stability</div>} body={stabilityTemplate}></Column>
@@ -168,7 +173,7 @@ const ProgressBarRange = ({ values }) => {
             <Range
                 step={1}
                 min={1}
-                max={100}
+                max={10000}
                 values={values}
                 renderTrack={({ props, children }) => (
                     <div
@@ -199,7 +204,7 @@ const ProgressBarRange = ({ values }) => {
             />
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingTop: '10px' }}>
                 <h6>1</h6>
-                <h6>100</h6>
+                <h6>10000</h6>
             </div>
         </div>
     );

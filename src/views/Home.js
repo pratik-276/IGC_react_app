@@ -30,6 +30,7 @@ const Home = () => {
       })
 
       setProfile(res.data)
+      localStorage.setItem('is_admin', res.data.is_admin)
 
       const _operators = await Call({
         path: 'get_operator',
@@ -50,7 +51,7 @@ const Home = () => {
 
   useEffect(() => {
     console.log(searchText, searchInput)
-    console.log(isSearchMenuOpen != null, !isSearchMenuOpen, searchText != "", operators.map(op => op.name)?.includes(searchText))
+    // console.log(isSearchMenuOpen != null, !isSearchMenuOpen, searchText != "", operators.map(op => op.name)?.includes(searchText))
   }, [searchText])
 
   const navigate = useNavigate()
