@@ -4,6 +4,7 @@ import { Column } from 'primereact/column';
 import TextField from '@mui/material/TextField';
 import { Range } from 'react-range';
 import { Tooltip } from 'primereact/tooltip';
+import { FilterMatchMode } from 'primereact/api';
 import { ProgressSpinner } from 'primereact/progressspinner';
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import "./index.css";
@@ -14,6 +15,10 @@ const GameRank = () => {
     const [searchTerm, setSearchTerm] = useState('')
     const [tableData, setTableData] = useState([])
     const [currentAvgPosition, setCurrentAvgPosition] = useState(0)
+    const [filters, setFilters] = useState({
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS }
+    })
+
 
     useEffect(() => {
         setLoading(true)
@@ -58,7 +63,7 @@ const GameRank = () => {
     const countryRankTemplate = (row) => {
         return (
             <h6 className="font-semibold text-capitalize" style={{ color: '#222222' }}>
-                {row?.country_rank}
+                {parseFloat(row?.country_rank)}
             </h6>
         )
     }
@@ -115,22 +120,38 @@ const GameRank = () => {
         )
     }
 
-    return (
-        <div className="container">
+    const renderHeader = () => {
+        return (
             <div className="row align-items-center pb-3 pt-3">
                 <div className="col-md-6">
                     <h3>Game Rank</h3>
                 </div>
                 <div className="col-md-6 text-md-end">
-                    <TextField size="small" label="Search" variant="outlined" value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} />
+                    <TextField size="small" label="Search" variant="outlined" value={filters.global.value} onChange={(e) => setFilters((f) => { return { global: { ...f.global, value: e.target.value } }} )} />
                 </div>
             </div>
+        );
+    };
+
+
+    return (
+        <div className="container">
+            {loading ? 
+                <div className="col-md-6">
+                    <h3>Game Rank</h3>
+                </div> : ''
+            }
             {!loading && <div className="tracker-details-body calibrate-compass-table">
                 <DataTable
                     className="tracker-details-table"
                     paginator 
                     rows={10}
                     value={tableData}
+                    header={renderHeader}
+                    sortField="country_rank"
+                    sortOrder={1}
+                    filterDisplay="row"
+                    filters={filters}
                     tableStyle={{ minWidth: '50rem' }}
                     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
                     currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
@@ -166,9 +187,9 @@ const ProgressBarRange = ({ values }) => {
     return (
         <div style={{ minWidth: '250px', padding: '10px' }}>
             <div style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between', paddingBottom: '10px', color: 'white' }}>
-                <h6>Worse</h6>
-                <h6>Average</h6>
                 <h6>Better</h6>
+                <h6>Average</h6>
+                <h6>Worse</h6>
             </div>
             <Range
                 step={1}

@@ -18,7 +18,7 @@ const GameProvideMarketshare = () => {
     const [tableData, setTableData] = useState([])
     const [regions, setRegions] = useState([])
     const [yearMonthList, setYearMonthList] = useState([])
-    const [selectedRegion, setSelectedRegion] = useState("")
+    const [selectedRegion, setSelectedRegion] = useState("United States")
     const [selectedMonthYear, setSelectedMonthYear] = useState("")
 
     useEffect(() => {

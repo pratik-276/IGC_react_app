@@ -82,7 +82,7 @@ const CasinoRequests = () => {
                 "current_user_id": parseInt(userId),
                 "operator_name": e.newData.operator_name,
                 "status": e.newData.status,
-                "response": e.newData.response
+                "response": e.newData.response ?? ""
             }
         }).then((v) => {
             console.log(v)
@@ -97,6 +97,18 @@ const CasinoRequests = () => {
 
         if (!isValidUrl(url)) {
             setErrors((e) => { return { ...e, url: "Enter valid URL" } })
+            setLoading(false)
+            return
+        }
+
+        if (name == "") {
+            setErrors((e) => { return { ...e, name: "Enter casino name" } })
+            setLoading(false)
+            return
+        }
+
+        if (geography == "") {
+            setErrors((e) => { return { ...e, geography: "Enter geography/country" } })
             setLoading(false)
             return
         }
@@ -230,6 +242,8 @@ const CasinoRequests = () => {
                         size="small"
                         value={casinoRequest.name}
                         onChange={(e) => setCasinoRequest((req) => { return { ...req, name: e.target.value } })}
+                        error={errors.name !== ""}
+                        helperText={errors.name}
                     />
                     <InputLabel variant="standard" className="pt-2">
                         Casino URL
@@ -252,6 +266,8 @@ const CasinoRequests = () => {
                         size="small"
                         value={casinoRequest.geography}
                         onChange={(e) => setCasinoRequest((req) => { return { ...req, geography: e.target.value } })}
+                        error={errors.geography !== ""}
+                        helperText={errors.geography}
                     />
                 </div>
             </Drawer>

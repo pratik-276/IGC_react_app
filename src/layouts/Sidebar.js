@@ -2,9 +2,10 @@ import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
 import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaLocationArrow } from "react-icons/fa6";
+import { FaChevronLeft, FaDatabase, FaHouse, FaLocationArrow, FaUserPlus } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
 import { MdViewKanban } from "react-icons/md";
+import Accordion from 'react-bootstrap/Accordion';
 
 // For Gaming Navigation
 const navigation = [
@@ -35,36 +36,64 @@ const navigation = [
   },
 ];
 
+const iGameTrackerNavigation = [
+  {
+    title: "Calibrate Compass",
+    href: "/calibrate-compass",
+  },
+  {
+    title: "Tracker Details",
+    href: "/game-tracking",
+  },
+  {
+    title: "View Request",
+    href: "/casino-requests",
+  }
+]
+
+const marketIntelligenceNavigation = [
+  {
+    title: "Game Marketshare",
+    href: "/game-provider-marketshare",
+  },
+  {
+    title: "Game Rank",
+    href: "/game-rank-report",
+  },
+  {
+    title: "Game Position",
+    href: "/game-position",
+  }
+]
+
 // For Profile Navigation
 const ProfileMenu = [
   {
-    title: "My Profile",
-    href: "/my-account",
+    title: "Calibrate Compass",
+    href: "/calibrate-compass",
   },
-  // {
-  //   title: "Billing",
-  //   href: "/billing-section",
-  // },
-  // {
-  //   title: "Help & Support",
-  //   href: "/help-support",
-  // },
-  // {
-  //   title: "Refer & Earn",
-  //   href: "/refer-earn",
-  // },
+  {
+    title: "Tracker Details",
+    href: "/game-tracking",
+  },
+  {
+    title: "View Request",
+    href: "/casino-requests",
+  }
 ];
 
 const Sidebar = () => {
   const navigate = useNavigate();
   let location = useLocation();
 
+  const isAdmin = localStorage.getItem('is_admin')
+
   return (
     <>
       {location.pathname === "/my-account" ||
-      location.pathname === "/billing-section" ||
-      location.pathname === "/help-support" ||
-      location.pathname === "/refer-earn" ? (
+        location.pathname === "/billing-section" ||
+        location.pathname === "/help-support" ||
+        location.pathname === "/refer-earn" ? (
         <>
           <div className="profile-sidebar" id="sidebarArea">
             <Nav vertical className="sidebarNav">
@@ -96,25 +125,93 @@ const Sidebar = () => {
       ) : (
         <>
           <div className="sidebar" id="sidebarArea">
-            <div className="p-3">
-              <Nav vertical className="sidebarNav">
-                {navigation.map((navi, index) => (
-                  <NavItem key={index} className="sidenav-bg mb-2">
-                    <Link
-                      to={navi.href}
-                      className={
-                        location.pathname === navi.href
-                          ? "active nav-link py-2"
-                          : "nav-link py-2"
-                      }
-                    >
-                      <navi.icon style={{ fontSize: "23px" }} />
-                      <span className="ms-3 d-inline-block">{navi.title}</span>
-                    </Link>
-                  </NavItem>
-                ))}
-              </Nav>
+            <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/"
+                className={
+                  location.pathname === "/"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaHouse style={{ fontSize: "23px" }} /> 
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Home</span>
+              </Link>
             </div>
+
+            <Accordion defaultActiveKey="0" className="pb-2 mx-2 mt-2">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                    <FaLocationArrow style={{ fontSize: "23px" }} /> 
+                    &nbsp;&nbsp;
+                    <div style={{ fontWeight: 'bold' }}>iGame Tracker</div>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>
+                  {iGameTrackerNavigation.map((navi, index) => (
+                    <div key={index} className="sidenav-bg mb-2">
+                      <Link
+                        to={navi.href}
+                        className={
+                          location.pathname === navi.href
+                            ? "active nav-link mb-2 py-2 px-2"
+                            : "nav-link mb-2 py-2 px-2"
+                        }
+                      >
+                        <span className="ms-3 d-inline-block">{navi.title}</span>
+                      </Link>
+                    </div>
+                  ))}
+                  </div>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+
+            <Accordion defaultActiveKey="0" className="pb-2 mx-2">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                    <FaDatabase style={{ fontSize: "23px" }} /> 
+                    &nbsp;&nbsp;
+                    <div style={{ fontWeight: 'bold' }}>Market Intelligenece</div>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>
+                  {marketIntelligenceNavigation.map((navi, index) => (
+                    <div key={index} className="sidenav-bg mb-2">
+                      <Link
+                        to={navi.href}
+                        className={
+                          location.pathname === navi.href
+                            ? "active nav-link mb-2 py-2 px-2"
+                            : "nav-link mb-2 py-2 px-2"
+                        }
+                      >
+                        <span className="ms-3 d-inline-block">{navi.title}</span>
+                      </Link>
+                    </div>
+                  ))}
+                  </div>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+
+            {
+              isAdmin == 1 &&
+              <div className="sidenav-bg mx-2">
+                <Link
+                  to="/casino-requests"
+                  className={
+                    location.pathname === "/casino-requests"
+                      ? "active nav-link mb-2 py-2 px-2"
+                      : "nav-link mb-2 py-2 px-2"
+                  }
+                >
+                  <FaUserPlus style={{ fontSize: "23px" }} /> 
+                  <span className="ms-3 d-inline-block">Admin Dashboard</span>
+                </Link>
+              </div>
+            }
+
           </div>
         </>
       )}
