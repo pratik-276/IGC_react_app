@@ -1,11 +1,42 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import AveragePositionChart from "../charts/AveragePositionChart";
 import GameSectionChangesChart from "../charts/GameSectionChangesChart";
 import GamePositionChangesChart from "../charts/GamePositionChangesChart";
+import GameData from "../services/GameTracker";
 
-const TrackerDetails = ({ trackingDetails }) => {
-  return (
+const TrackerDetails = ({ trackingDetails2 }) => {
+  const user_company = localStorage.getItem("user_company");
+  const [trackingDetails, setTrackingDetails] = useState(null);
+
+  useEffect(() => {
+    const user_company_2 = localStorage.getItem("user_company");
+    const queryParameters = new URLSearchParams(window.location.search);
+    const operator_site_id = queryParameters.get("operator_site_id");
+    const game_name = queryParameters.get("game_name");
+    GameData.tracker_detail({ operator_site_id: operator_site_id, game_name: game_name, game_provider: user_company_2 })
+      .then((res) => {
+        if (res?.success === true) {
+          setTrackingDetails(res?.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+  return trackingDetails && (
     <>
+    <div className="compass-data">
+          <div className="row align-items-center">
+            <div className="col-md-5 col-lg-5 mb-5">
+              <h3 className="m-md-0">
+                Tracker Details Dashboard
+              </h3>
+              <span>
+                 Dashboard showing tracker details
+              </span>
+            </div>
+          </div>
+        </div>
       <div className="mt-1">
         <div className="tracker-details">
           <div className="tracker-details-head">
