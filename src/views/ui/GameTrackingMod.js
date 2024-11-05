@@ -135,6 +135,7 @@ const GameTracking = () => {
         style={{ fontSize: "24px" }}
         onClick={() => {
           console.log(rowData.game_name, rowData.operator_site_id);
+          window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
         }}
       />
     );

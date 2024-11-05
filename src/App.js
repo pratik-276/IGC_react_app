@@ -23,6 +23,7 @@ import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import CasinoRequests from "./views/ui/CasinoRequests";
+import TrackerDetails from "./GameTrackDetails/TrackerDetails";
 
 const App = () => {
   return (
@@ -103,6 +104,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CasinoRequests />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route 
+                  path="game-track-details"
+                  element={
+                    <ProtectedRoute>
+                      <TrackerDetails trackingDetails={null} />
                     </ProtectedRoute>
                   }
                 />
