@@ -323,12 +323,12 @@ const GameTracking = () => {
                             sortable
                             style={{ minWidth: "10rem" }}
                           ></Column>
-                          <Column
+                          {/* <Column
                             field="last_observed_date"
                             header="Last Observed Date"
                             sortable
                             style={{ minWidth: "10rem" }}
-                          ></Column>
+                          ></Column> */}
                           <Column
                             field="site_url"
                             header="URL"
