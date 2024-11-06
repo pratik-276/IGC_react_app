@@ -8,22 +8,25 @@ const TrackerDetails = ({ trackingDetails2 }) => {
   const user_company = localStorage.getItem("user_company");
   const [trackingDetails, setTrackingDetails] = useState(null);
 
-  useEffect(() => {
-    const user_company_2 = localStorage.getItem("user_company");
-    const queryParameters = new URLSearchParams(window.location.search);
-    const operator_site_id = queryParameters.get("operator_site_id");
-    const game_name = queryParameters.get("game_name");
-    GameData.tracker_detail({ operator_site_id: operator_site_id, game_name: game_name, game_provider: user_company_2 })
-      .then((res) => {
-        if (res?.success === true) {
-          setTrackingDetails(res?.data);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  }, []);
-  return trackingDetails && (
+  // useEffect(() => {
+  //   const user_company_2 = localStorage.getItem("user_company");
+  //   const queryParameters = new URLSearchParams(window.location.search);
+  //   const operator_site_id = queryParameters.get("operator_site_id");
+  //   const game_name = queryParameters.get("game_name");
+  //   GameData.tracker_detail({ operator_site_id: operator_site_id, game_name: game_name, game_provider: user_company_2 })
+  //     .then((res) => {
+  //       if (res?.success === true) {
+  //         setTrackingDetails(res?.data);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // }, []);
+  
+  // return trackingDetails && (
+
+  return (
     <>
     <div className="compass-data">
           <div className="row align-items-center">
