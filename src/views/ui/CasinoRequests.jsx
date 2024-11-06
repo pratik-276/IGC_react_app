@@ -231,8 +231,7 @@ const CasinoRequests = () => {
                             variant="contained"
                             style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }}
                             onClick={() => {
-                                if (isAdmin == 1)
-                                    saveNewCasinoRequest({ ...casinoRequest })
+                                saveNewCasinoRequest({ ...casinoRequest })
                             }}
                         >
                             Request Casino
