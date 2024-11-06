@@ -13,7 +13,7 @@ import dayjs from "dayjs";
 
 const AveragePositionChart = ({ trackingDetails }) => {
   // Extract unique dates from trackingDetails
-  const dates = [...new Set(trackingDetails?.daywise_data.map(row => row.created_date))];
+  const dates = [...new Set(trackingDetails?.daywise_data?.map(row => row.created_date))];
   // console.log(dates);
 
   // Get the maximum game_position for each date
@@ -37,7 +37,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
 
   const data =
     trackingDetails?.daywise_data
-      .map(({ created_date, game_position }) => ({
+      ?.map(({ created_date, game_position }) => ({
         date: dayjs(created_date).format("MMM DD"),
         game_position: game_position,
       }))

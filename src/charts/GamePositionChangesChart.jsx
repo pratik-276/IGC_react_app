@@ -3,16 +3,17 @@ import React, { useEffect, useRef } from "react";
 const MyChart = ({ trackingDetails }) => {
   console.log(trackingDetails)
 
-  const sections = [... new Set(trackingDetails?.daywise_data.map(t => t.section_name))]
-  const dates = [...new Set(trackingDetails?.daywise_data.map(t => t.created_date))]
+  const sections = [... new Set(trackingDetails?.daywise_data?.map(t => t.section_name))]
+  const dates = [...new Set(trackingDetails?.daywise_data?.map(t => t.created_date))]
+
   const minLength = 12;
   if (dates.length < minLength) {
     const additionalElements = dates.length < 12 ? Array(minLength - dates.length).fill('-') : [];
     dates.push(...additionalElements);
   }
 
-  const chartData = sections.map(s => {
-    const sectionWiseData = trackingDetails?.daywise_data.filter(d => d.section_name == s)
+  const chartData = sections?.map(s => {
+    const sectionWiseData = trackingDetails?.daywise_data?.filter(d => d.section_name == s)
 
     const dateWiseData = [
       ...dates.map(d => sectionWiseData
