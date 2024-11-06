@@ -20,7 +20,7 @@ const tracker_summary = async (data) => {
 
 const tracker_detail = async (data) => {
   let d = await Call({
-    path: "tracker_dashboard_details",
+    path: "tracker_dashboard_details_2",
     method: "post",
     data,
   });

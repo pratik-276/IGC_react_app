@@ -115,6 +115,14 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                {/* <Route 
+                  path="game-track-details"
+                  element={
+                    <ProtectedRoute>
+                      <TrackerDetails trackingDetails={null} />
+                    </ProtectedRoute>
+                  }
+                /> */}
                 {/* <Route
                   path="billing-section"
                   element={

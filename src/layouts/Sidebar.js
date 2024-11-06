@@ -140,6 +140,20 @@ const Sidebar = () => {
               </Link>
             </div>
 
+            <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/dashboard"
+                className={
+                  location.pathname === "/dashboard"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaHouse style={{ fontSize: "23px" }} /> 
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Beta Dashboard</span>
+              </Link>
+            </div>
+
             <Accordion defaultActiveKey="0" className="pb-2 mx-2 mt-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>

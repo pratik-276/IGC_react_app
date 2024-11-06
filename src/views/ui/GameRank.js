@@ -23,7 +23,7 @@ const GameRank = () => {
     useEffect(() => {
         setLoading(true)
         call({
-            path: '/get_game_rank',
+            path: 'get_game_rank',
             method: 'POST',
             data: {
                 "search_term": searchTerm
