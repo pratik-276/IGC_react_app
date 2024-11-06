@@ -4,9 +4,9 @@ import GameSectionChangesChart from "../charts/GameSectionChangesChart";
 import GamePositionChangesChart from "../charts/GamePositionChangesChart";
 import GameData from "../services/GameTracker";
 
-const TrackerDetails = ({ trackingDetails2 }) => {
-  const user_company = localStorage.getItem("user_company");
-  const [trackingDetails, setTrackingDetails] = useState(null);
+const TrackerDetails = ({ trackingDetails }) => {
+  // const user_company = localStorage.getItem("user_company");
+  // const [trackingDetails, setTrackingDetails] = useState(null);
 
   // useEffect(() => {
   //   const user_company_2 = localStorage.getItem("user_company");
