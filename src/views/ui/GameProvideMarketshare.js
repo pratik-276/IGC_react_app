@@ -34,7 +34,7 @@ const GameProvideMarketshare = () => {
 
     async function getRegions() {
         const res = await call({
-            path: '/get_regions',
+            path: 'get_regions',
             method: 'GET'
         })
         
@@ -63,7 +63,7 @@ const GameProvideMarketshare = () => {
 
     async function getMarketshareData() {
         const data = await call({
-            path: `/get_provider_marketshare`,
+            path: `get_provider_marketshare`,
             method: 'POST',
             data: {
                 "region": selectedRegion,
