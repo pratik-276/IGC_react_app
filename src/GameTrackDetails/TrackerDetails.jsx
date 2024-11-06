@@ -28,7 +28,7 @@ const TrackerDetails = ({ trackingDetails2 }) => {
 
   return (
     <>
-    <div className="compass-data">
+    {/* <div className="compass-data">
           <div className="row align-items-center">
             <div className="col-md-5 col-lg-5 mb-5">
               <h3 className="m-md-0">
@@ -39,7 +39,7 @@ const TrackerDetails = ({ trackingDetails2 }) => {
               </span>
             </div>
           </div>
-        </div>
+        </div> */}
       <div className="mt-1">
         <div className="tracker-details">
           <div className="tracker-details-head">

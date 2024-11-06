@@ -26,13 +26,14 @@ const GameTrackingDetails = (props) => {
   }, [user_id]);
 
   const getDashboardData = ({ site_id, game_name }) => {
+    const user_company_2 = localStorage.getItem("user_company");
     call({
         path: 'tracker_dashboard_details_2',
         method: 'POST',
         data:  {
             "operator_site_id": site_id,
             "game_name": game_name,
-            "game_provider": ""
+            "game_provider": user_company_2
         }
     }).then((res) => {
         setTrackingDetails(res.data)
