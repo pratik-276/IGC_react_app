@@ -115,14 +115,14 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
+                {/* <Route 
                   path="game-track-details"
                   element={
                     <ProtectedRoute>
                       <TrackerDetails trackingDetails={null} />
                     </ProtectedRoute>
                   }
-                />
+                /> */}
                 {/* <Route
                   path="billing-section"
                   element={

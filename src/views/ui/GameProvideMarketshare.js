@@ -105,7 +105,8 @@ const GameProvideMarketshare = () => {
     }
 
     const marketshareTemplate = (row) => {
-        const share = mapToRange(row.market_share, 0, Math.max(...tableData.map(d => parseFloat(d.market_share))))
+        //const share = mapToRange(row.market_share, 0, Math.max(...tableData.map(d => parseFloat(d.market_share))))
+        const share = mapToRange(row.market_share, 0, 100)
         let bg = 'bg-info'
 
         if (parseFloat(row.market_share) < 3.0) {

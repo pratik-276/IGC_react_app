@@ -138,7 +138,7 @@ const GameTracking = () => {
           console.log(rowData)
           navigate('/game-tracking-details', { state: { operator_site_id: rowData.operator_site_id,  game_name: rowData.game_name } })
           console.log(rowData.game_name, rowData.operator_site_id);
-          window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
+          //window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
         }}
       />
     );
