@@ -21,6 +21,7 @@ import MiniAvgPositionChart from "../../charts/MiniAvgPositionChart";
 import MiniLossPositionChart from "../../charts/MiniLossPositionChart";
 
 import Select from "react-select";
+import { useNavigate } from "react-router-dom";
 
 const TrackingTime = [
   {
@@ -103,13 +104,13 @@ const GameTracking = () => {
       .catch((err) => {
         console.log(err);
       });
-  };
-
-
+  }
 
   useEffect(() => {
     overviewDashboard();
   }, [user_id, user_company]);
+
+  const navigate = useNavigate();
 
   const header = (
     <div className="d-md-flex align-items-center justify-content-between">
@@ -134,6 +135,8 @@ const GameTracking = () => {
       <MdArrowForwardIos
         style={{ fontSize: "24px" }}
         onClick={() => {
+          console.log(rowData)
+          navigate('/game-tracking-details', { state: { operator_site_id: rowData.operator_site_id,  game_name: rowData.game_name } })
           console.log(rowData.game_name, rowData.operator_site_id);
         }}
       />

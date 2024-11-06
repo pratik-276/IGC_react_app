@@ -87,6 +87,7 @@ const Sidebar = () => {
   let location = useLocation();
 
   const isAdmin = localStorage.getItem('is_admin')
+  console.log('isAdmin', isAdmin)
 
   return (
     <>

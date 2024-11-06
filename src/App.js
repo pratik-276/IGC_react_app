@@ -23,6 +23,7 @@ import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import CasinoRequests from "./views/ui/CasinoRequests";
+import GameTrackingDetails from "./views/ui/GameTrackingDetails";
 
 const App = () => {
   return (
@@ -47,6 +48,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <GameTracking />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="/game-tracking-details"
+                  element={
+                    <ProtectedRoute>
+                      <GameTrackingDetails />
                     </ProtectedRoute>
                   }
                 />

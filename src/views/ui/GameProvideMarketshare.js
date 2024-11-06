@@ -121,7 +121,7 @@ const GameProvideMarketshare = () => {
         return (
             <div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
                 <div style={{ fontSize: '12px' }}>
-                    {share}%
+                    {parseFloat(row.market_share).toFixed(2)}%
                 </div>
                 <div style={{ flex: 1 }} className="progress">
                     <div className={`progress-bar ${bg}`} role="progressbar" style={{ width: `${share}%` }} aria-valuenow="50" aria-valuemin="0" aria-valuemax="100"></div>
@@ -181,7 +181,7 @@ const GameProvideMarketshare = () => {
                     <Column field="game_provider" sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Game Provider</div>}></Column>
                     <Column field="unique_games" style={{ maxWidth: '100px' }} sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Unique Games</div>}></Column>
                     <Column field="unique_casinos" style={{ maxWidth: '100px' }} sortable header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Unique Casinos</div>}></Column>
-                    <Column field="market_share" style={{ minWidth: '200px' }} sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Marketshare</div>} body={marketshareTemplate}></Column>
+                    <Column field="market_share" style={{ minWidth: '190px' }} sortable align='center' header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Marketshare</div>} body={marketshareTemplate}></Column>
                     <Column field="major_market" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Market</div>}></Column>
                     <Column field="change" sortable header={<div style={{ color: '#392F6C', fontWeight: 500 }}>Change</div>} body={changeTemplate}></Column>
                 </DataTable>

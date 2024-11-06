@@ -164,6 +164,14 @@ const CasinoRequests = () => {
                         updateRequest(e)
                     }}
                 >
+                    {
+                        isAdmin == 1 &&
+                        <Column
+                            header={<div style={{ color: '#392F6C', fontWeight: 700 }}>User ID</div>}
+                            field="user_id"
+                            sortable
+                        />
+                    }
                     <Column
                         header={<div style={{ color: '#392F6C', fontWeight: 700 }}>Casino</div>}
                         field="operator_name"

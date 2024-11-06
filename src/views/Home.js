@@ -31,6 +31,8 @@ const Home = () => {
 
       setProfile(res.data)
       localStorage.setItem('is_admin', res.data.is_admin)
+      // Patch for Admin Dashboard siderbar button visibility on first open 
+      navigate('/')
 
       const _operators = await Call({
         path: 'get_operator',
