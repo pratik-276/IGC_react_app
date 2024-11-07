@@ -38,32 +38,32 @@ const navigation = [
 
 const iGameTrackerNavigation = [
   {
-    title: "Calibrate Compass",
-    href: "/calibrate-compass",
-  },
-  {
     title: "Tracker Details",
     href: "/game-tracking",
   },
   {
-    title: "View Request",
-    href: "/casino-requests",
-  }
+    title: "Calibrate Compass",
+    href: "/calibrate-compass",
+  },
+  // {
+  //   title: "View Request",
+  //   href: "/casino-requests",
+  // }
 ]
 
 const marketIntelligenceNavigation = [
   {
-    title: "Game Marketshare",
+    title: "Game Provider Marketshare",
     href: "/game-provider-marketshare",
   },
   {
     title: "Game Rank",
     href: "/game-rank-report",
   },
-  {
-    title: "Game Position",
-    href: "/game-position",
-  }
+  // {
+  //   title: "Game Position",
+  //   href: "/game-position",
+  // }
 ]
 
 // For Profile Navigation
@@ -177,6 +177,20 @@ const Sidebar = () => {
                       </Link>
                     </div>
                   ))}
+                  {isAdmin != 1 && (
+                    <div key={2} className="sidenav-bg mb-2">
+                      <Link
+                        to="/casino-requests"
+                        className={
+                          location.pathname === "/casino-requests"
+                            ? "active nav-link mb-2 py-2 px-2"
+                            : "nav-link mb-2 py-2 px-2"
+                        }
+                      >
+                        <span className="ms-3 d-inline-block">Casino Requests</span>
+                      </Link>
+                    </div>
+                  )}
                   </div>
                 </Accordion.Body>
               </Accordion.Item>

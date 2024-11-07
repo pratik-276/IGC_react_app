@@ -150,7 +150,7 @@ const Home = () => {
           </div>
         </div>
 
-        <div className="pt-4">
+        {/* <div className="pt-4">
           <h5 style={{ fontSize: '20px', fontWeight: "500", marginBottom: '0px' }}>
             Premium Reports
           </h5>
@@ -164,7 +164,7 @@ const Home = () => {
             <ReportCard onButtonPress={() => { }} title="Game Rank" />
             <ReportCard onButtonPress={() => { }} title="Game Provide Marketshare" />
           </div>
-        </div>
+        </div> */}
       </div>}
     </>
   );
