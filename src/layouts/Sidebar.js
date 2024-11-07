@@ -45,6 +45,10 @@ const iGameTrackerNavigation = [
     title: "Calibrate Compass",
     href: "/calibrate-compass",
   },
+  {
+    title: "Beta Dashboard",
+    href: "/dashboard",
+  },
   // {
   //   title: "View Request",
   //   href: "/casino-requests",
@@ -140,20 +144,6 @@ const Sidebar = () => {
               </Link>
             </div>
 
-            <div className="sidenav-bg mt-2 mx-2">
-              <Link
-                to="/dashboard"
-                className={
-                  location.pathname === "/dashboard"
-                    ? "active nav-link mb-2 py-2 px-2"
-                    : "nav-link mb-2 py-2 px-2"
-                }
-              >
-                <FaHouse style={{ fontSize: "23px" }} /> 
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Beta Dashboard</span>
-              </Link>
-            </div>
-
             <Accordion defaultActiveKey="0" className="pb-2 mx-2 mt-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
@@ -226,19 +216,31 @@ const Sidebar = () => {
 
             {
               isAdmin == 1 &&
-              <div className="sidenav-bg mx-2">
-                <Link
-                  to="/casino-requests"
-                  className={
-                    location.pathname === "/casino-requests"
-                      ? "active nav-link mb-2 py-2 px-2"
-                      : "nav-link mb-2 py-2 px-2"
-                  }
-                >
-                  <FaUserPlus style={{ fontSize: "23px" }} /> 
-                  <span className="ms-3 d-inline-block">Admin Dashboard</span>
-                </Link>
-              </div>
+              <Accordion defaultActiveKey="0" className="pb-2 mx-2">
+                <Accordion.Item eventKey="0">
+                  <Accordion.Header>
+                      <FaDatabase style={{ fontSize: "23px" }} /> 
+                      &nbsp;&nbsp;
+                      <div style={{ fontWeight: 'bold' }}>Admin Dashboards</div>
+                  </Accordion.Header>
+                  <Accordion.Body>
+                    <div>
+                    <div className="sidenav-bg mb-2">
+                        <Link
+                          to="/casino-requests"
+                          className={
+                            location.pathname === "/casino-requests"
+                              ? "active nav-link mb-2 py-2 px-2"
+                              : "nav-link mb-2 py-2 px-2"
+                          }
+                        >
+                          <span className="ms-3 d-inline-block">Casino Requests</span>
+                        </Link>
+                      </div>
+                    </div>
+                  </Accordion.Body>
+                </Accordion.Item>
+              </Accordion>
             }
 
           </div>

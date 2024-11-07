@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
@@ -143,6 +144,21 @@ const GameTracking = () => {
       />
     );
   };
+
+  const changeTemplate = (row) => {
+      let growth = ';'
+      if (row != null) {
+          growth = row?.growth
+          growth = parseFloat(growth).toFixed(2)
+      }
+      return (
+          <h6 className="font-normal text-secondary">
+              {growth < 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#f8d7da', color: '#dc3545' }}>{growth}% <FaCaretDown /></span> : ''}
+              {growth == 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#faf3e8', color: '#dc9b00' }}>{growth}% </span> : ''}
+              {growth > 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }}>{growth}% <FaCaretUp /></span> : ''}
+          </h6>
+      )
+  }
 
   return (
     <>
@@ -290,12 +306,12 @@ const GameTracking = () => {
                             sortable
                             style={{ minWidth: "10rem" }}
                           ></Column>
-                          <Column
+                          {/* <Column
                             field="state"
                             header="State"
                             sortable
                             style={{ minWidth: "10rem" }}
-                          ></Column>
+                          ></Column> */}
                           <Column
                             field="section_name"
                             header="Section Name"
@@ -325,6 +341,7 @@ const GameTracking = () => {
                             header="Growth"
                             sortable
                             style={{ minWidth: "10rem" }}
+                            body={changeTemplate}
                           ></Column>
                           {/* <Column
                             field="last_observed_date"
@@ -332,12 +349,12 @@ const GameTracking = () => {
                             sortable
                             style={{ minWidth: "10rem" }}
                           ></Column> */}
-                          <Column
+                          {/* <Column
                             field="site_url"
                             header="URL"
                             sortable
                             style={{ minWidth: "10rem" }}
-                          ></Column>
+                          ></Column> */}
                           {/* // <Column
                           //   field="status"
                           //   header="Status"
