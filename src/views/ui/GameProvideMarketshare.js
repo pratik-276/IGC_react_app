@@ -121,7 +121,7 @@ const GameProvideMarketshare = () => {
 
         return (
             <div style={{ display: 'flex', flexDirection: 'row', gap: 4 }}>
-                <div style={{ fontSize: '12px' }}>
+                <div style={{ fontSize: '12px', flex: 0.3 }}>
                     {parseFloat(row.market_share).toFixed(2)}%
                 </div>
                 <div style={{ flex: 1 }} className="progress">
@@ -173,6 +173,8 @@ const GameProvideMarketshare = () => {
                     value={tableData}
                     rows={10}
                     totalRecords={tableData.length}
+                    sortField="market_share"
+                    sortOrder={0}
                     className="tracker-details-table"
                     tableStyle={{ minWidth: '50rem' }}
                     paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"

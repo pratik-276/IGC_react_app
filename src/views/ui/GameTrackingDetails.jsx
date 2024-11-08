@@ -11,7 +11,6 @@ import TrackerDetails from "../../GameTrackDetails/TrackerDetails";
 import call from "../../services/Call";
 import { useLocation } from "react-router-dom";
 
-
 const GameTrackingDetails = (props) => {
   const user_id = localStorage.getItem("user_id");
   const [loader, setLoader] = useState(true);
@@ -19,7 +18,7 @@ const GameTrackingDetails = (props) => {
 
   const location = useLocation();
   console.log(location.state)
-  const { operator_site_id, game_name } = location.state || {};  // Safe access in case state is undefined
+  const { operator_site_id, game_name, casino_name } = location.state || {};  // Safe access in case state is undefined
 
   useEffect(() => {
     getDashboardData({ site_id: operator_site_id, game_name: game_name })
@@ -36,6 +35,7 @@ const GameTrackingDetails = (props) => {
             "game_provider": user_company_2
         }
     }).then((res) => {
+        console.log(res)
         setTrackingDetails(res.data)
         setLoader(false)
     })
@@ -76,7 +76,7 @@ const GameTrackingDetails = (props) => {
           <>
             {trackingDetails ?? 0 ? (
               <>
-                <TrackerDetails trackingDetails={trackingDetails} />
+                <TrackerDetails trackingDetails={trackingDetails} gameName={game_name} casinoName={casino_name} />
               </>
             ) : (
               <>
