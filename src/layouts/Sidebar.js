@@ -144,7 +144,7 @@ const Sidebar = () => {
               </Link>
             </div>
 
-            <Accordion defaultActiveKey="0" className="pb-2 mx-2 mt-2">
+            <Accordion className="pb-2 mx-2 mt-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
                     <FaLocationArrow style={{ fontSize: "23px" }} /> 
@@ -186,7 +186,7 @@ const Sidebar = () => {
               </Accordion.Item>
             </Accordion>
 
-            <Accordion defaultActiveKey="0" className="pb-2 mx-2">
+            <Accordion className="pb-2 mx-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
                     <FaDatabase style={{ fontSize: "23px" }} /> 
@@ -216,7 +216,7 @@ const Sidebar = () => {
 
             {
               isAdmin == 1 &&
-              <Accordion defaultActiveKey="0" className="pb-2 mx-2">
+              <Accordion className="pb-2 mx-2">
                 <Accordion.Item eventKey="0">
                   <Accordion.Header>
                       <FaDatabase style={{ fontSize: "23px" }} /> 
