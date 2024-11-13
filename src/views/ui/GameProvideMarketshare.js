@@ -72,7 +72,7 @@ const GameProvideMarketshare = () => {
         })
 
         console.log(Math.max(...data.data.map(d => parseFloat(d.market_share))))
-        setTableData(data.data)
+        setTableData(data.data.sort((a, b) => b.market_share - a.market_share))
     }
 
     async function getPageData() {
