@@ -38,7 +38,7 @@ const navigation = [
 
 const iGameTrackerNavigation = [
   {
-    title: "Tracker Details",
+    title: "All Games",
     href: "/game-tracking",
   },
   {
@@ -46,8 +46,12 @@ const iGameTrackerNavigation = [
     href: "/calibrate-compass",
   },
   {
-    title: "Beta Dashboard",
+    title: "Positions Dashboard",
     href: "/dashboard",
+  },
+  {
+    title: "Competitor Dashboard",
+    href: "/competitor-dashboard",
   },
   // {
   //   title: "View Request",
@@ -72,18 +76,18 @@ const marketIntelligenceNavigation = [
 
 // For Profile Navigation
 const ProfileMenu = [
-  {
-    title: "Calibrate Compass",
-    href: "/calibrate-compass",
-  },
-  {
-    title: "Tracker Details",
-    href: "/game-tracking",
-  },
-  {
-    title: "View Request",
-    href: "/casino-requests",
-  }
+  // {
+  //   title: "Calibrate Compass",
+  //   href: "/calibrate-compass",
+  // },
+  // {
+  //   title: "Tracker Details",
+  //   href: "/game-tracking",
+  // },
+  // {
+  //   title: "View Request",
+  //   href: "/casino-requests",
+  // }
 ];
 
 const Sidebar = () => {
@@ -144,6 +148,34 @@ const Sidebar = () => {
               </Link>
             </div>
 
+            {/* <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/dashboard"
+                className={
+                  location.pathname === "/dashboard"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaLocationArrow style={{ fontSize: "23px" }} />  
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Positions Dashboard</span>
+              </Link>
+            </div>
+
+            <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/competitor-dashboard"
+                className={
+                  location.pathname === "/competitor-dashboard"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaDatabase style={{ fontSize: "23px" }} /> 
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Competitor Dashboard</span>
+              </Link>
+            </div> */}
+
             <Accordion className="pb-2 mx-2 mt-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
@@ -162,6 +194,7 @@ const Sidebar = () => {
                             ? "active nav-link mb-2 py-2 px-2"
                             : "nav-link mb-2 py-2 px-2"
                         }
+                        style={{fontWeight: '500'}}
                       >
                         <span className="ms-3 d-inline-block">{navi.title}</span>
                       </Link>
@@ -176,6 +209,7 @@ const Sidebar = () => {
                             ? "active nav-link mb-2 py-2 px-2"
                             : "nav-link mb-2 py-2 px-2"
                         }
+                        style={{fontWeight: '500'}}
                       >
                         <span className="ms-3 d-inline-block">Casino Requests</span>
                       </Link>
@@ -191,7 +225,7 @@ const Sidebar = () => {
                 <Accordion.Header>
                     <FaDatabase style={{ fontSize: "23px" }} /> 
                     &nbsp;&nbsp;
-                    <div style={{ fontWeight: 'bold' }}>Market Intelligenece</div>
+                    <div style={{ fontWeight: 'bold' }}>Market Intelligence</div>
                 </Accordion.Header>
                 <Accordion.Body>
                   <div>
@@ -204,6 +238,7 @@ const Sidebar = () => {
                             ? "active nav-link mb-2 py-2 px-2"
                             : "nav-link mb-2 py-2 px-2"
                         }
+                        style={{fontWeight: '500'}}
                       >
                         <span className="ms-3 d-inline-block">{navi.title}</span>
                       </Link>
@@ -233,6 +268,7 @@ const Sidebar = () => {
                               ? "active nav-link mb-2 py-2 px-2"
                               : "nav-link mb-2 py-2 px-2"
                           }
+                          style={{fontWeight: '500'}}
                         >
                           <span className="ms-3 d-inline-block">Casino Requests</span>
                         </Link>

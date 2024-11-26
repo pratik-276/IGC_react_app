@@ -7,6 +7,7 @@ import { Card, CardBody, CardFooter, CardHeader, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 import Autocomplete from '@mui/material/Autocomplete';
+import toast from "react-hot-toast";
 
 const Home = () => {
   const [profile, setProfile] = useState({})
@@ -75,19 +76,19 @@ const Home = () => {
               </span>
             </div>
           </div>
-          <div>
-            <Button variant="contained" style={{ backgroundColor: '#392f6c', marginBottom: '0.5rem' }} startIcon={<FaGem />}>
+          <div className="d-flex flex-column align-items-end">
+            <Button variant="contained" style={{ backgroundColor: '#392f6c', marginBottom: '0.5rem' }} startIcon={<FaGem />}  onClick={() => toast.error("Coming Soon")}>
               Upgrade Plan
             </Button>
             <div className="compass-data">
               <span>
-                Your trial Plan ends on Dec 4, 2024
+                {profile?.plan_text_show}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="pt-5">
+        {/* <div className="pt-5">
           <Card className="p-3">
             <CardBody>
               <h5 style={{ fontWeight: "600", marginBottom: '0px' }}>
@@ -133,20 +134,22 @@ const Home = () => {
               }
             </CardBody>
           </Card>
-        </div>
+        </div> */}
 
         <div className="pt-4">
-          <h5 style={{ fontSize: '20px', fontWeight: "500", marginBottom: '0px' }}>
+          {/* <h5 style={{ fontSize: '20px', fontWeight: "500", marginBottom: '0px' }}>
             Free Reports
           </h5>
           <div className="compass-data pb-3">
             <span>
               Recommended based on your profile
             </span>
-          </div>
+          </div> */}
           <div className="d-flex flex-row gap-3">
             <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
             <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
+            {/* <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" /> */}
           </div>
         </div>
 

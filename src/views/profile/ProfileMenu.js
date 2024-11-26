@@ -334,7 +334,7 @@ const ProfileMenu = () => {
                               value={profileData?.email}
                               readOnly
                             />
-                            <span className="email_verify_btn">Verify</span>
+                            {/* <span className="email_verify_btn">Verify</span> */}
                           </div>
                         </div>
                       </div>

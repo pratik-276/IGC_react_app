@@ -14,6 +14,8 @@ import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
 import { Pagination } from "react-bootstrap";
 import Select from "react-select";
 import { Link } from "react-router-dom";
+import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 const CompassDataPage = ({
   setOpen,
@@ -24,6 +26,7 @@ const CompassDataPage = ({
   const options4 = [5, 10, 15, 20];
 
   const dt = useRef(null);
+  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
@@ -126,11 +129,57 @@ const CompassDataPage = ({
     );
   };
 
-  const statusActionTemplate = () => (
+  const sectionNameTemplate = (row) => {
+    return (
+      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
+        {row?.section_name}
+      </h5>
+    );
+  };
+
+  const minPositionTemplate = (row) => {
+    return (
+      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
+        {row?.min_position}
+      </h5>
+    );
+  };
+
+  const maxPositionTemplate = (row) => {
+    return (
+      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
+        {row?.max_position}
+      </h5>
+    );
+  };
+
+  const statusActionTemplate = (row) => (
     <td className="text-center">
-      <span className="action-btn"></span>
+      {
+        row.status === 'fail' ? (
+          <span className="action-btn"></span>
+        ) : (row.status === 'pass' ? (
+          <span className="action-btn-green"></span>
+        ) : (
+          <span className="action-btn-yellow"></span>
+        ))
+      }
     </td>
   );
+
+  const checkDataTemplate = (rowData) => {
+    return (
+      <MdArrowForwardIos
+        style={{ fontSize: "24px" }}
+        onClick={() => {
+          console.log(rowData);
+          navigate('/game-tracking-details', { state: { operator_site_id: rowData.operator_site_id,  game_name: rowData.game_original_name, casino_name: rowData.name } });
+          //console.log(rowData.game_name, rowData.operator_site_id);
+          //window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
+        }}
+      />
+    );
+  };
 
   const filteredData = filterData();
   const totalRecords = filteredData.length;
@@ -235,10 +284,10 @@ const CompassDataPage = ({
                   </button>
                 </div>
               </div>
-              <div className="compass-data-border mb-3">
+              {/* <div className="compass-data-border mb-3">
                 <span></span>
-              </div>
-              <div className="d-md-flex d-lg-flex justify-content-between">
+              </div> */}
+              <div className="d-md-flex d-lg-flex justify-content-between mt-5">
                 <div className="calibrate-dropdown">
                   {/* <div className="all-time-status-dropdown">
                     <Select
@@ -294,11 +343,11 @@ const CompassDataPage = ({
                   </div> */}
                 </div>
                 <div className="compass-right-icon">
-                  <div className="compass-search">
+                  {/* <div className="compass-search">
                     <Link to="/game-tracking">
                       <FaChartLine />
                     </Link>
-                  </div>
+                  </div> */}
                   {deleteLoader ? (
                     <div className="compass-search">
                       <Spin />
@@ -344,32 +393,51 @@ const CompassDataPage = ({
                       selectionMode="multiple"
                       exportable={false}
                     ></Column>
-                    <Column
+                    {/* <Column
                       field="operator_name"
                       header="Created On"
                       body={createdBodyTemplate}
-                    ></Column>
+                    ></Column> */}
                     <Column
                       field="name"
                       header="Operator Name"
-                      style={{ minWidth: "15rem" }}
+                      style={{ minWidth: "12rem" }}
                       body={operatorNameBodyTemplate}
                     ></Column>
                     <Column
                       field="game_original_name"
                       header="Game Name"
-                      style={{ minWidth: "15rem" }}
+                      style={{ minWidth: "12rem" }}
                       body={gameNameBodyTemplate}
                     ></Column>
                     <Column
                       field="game_provider"
                       header="Provider"
-                      style={{ minWidth: "15rem" }}
+                      style={{ minWidth: "12rem" }}
                       body={gameProviderBodyTemplate}
+                    ></Column>
+                    
+                    <Column
+                      field="section_name"
+                      header="Section Title"
+                      style={{ minWidth: "12rem" }}
+                    ></Column>
+                    
+                    <Column
+                      field="min_position"
+                      header="Minimum Position"
+                      style={{ minWidth: "12rem" }}
+                    ></Column>
+                    
+                    <Column
+                      field="max_position"
+                      header="Maximum Position"
+                      style={{ minWidth: "12rem" }}
                     ></Column>
                     <Column
                       field="start_date"
                       header="Tracking Timeline"
+                      style={{ minWidth: "15rem" }}
                       body={StatusBodyTemplate}
                     ></Column>
                     {/* <Column
@@ -381,6 +449,13 @@ const CompassDataPage = ({
                       field="status"
                       header="Status"
                       body={statusActionTemplate}
+                      style={{ minWidth: "5rem" }}
+                    ></Column>
+                    <Column
+                      field="checkdata"
+                      header="Action"
+                      body={checkDataTemplate}
+                      style={{ minWidth: "5rem" }}
                     ></Column>
                   </DataTable>
                 </div>

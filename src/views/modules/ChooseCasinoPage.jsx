@@ -153,7 +153,8 @@ const ChooseCasinoPage = ({
                       onChange={() => handleCheckboxChange(data)}
                     />
                     <div className="casino-data-bar">
-                      <label htmlFor={data.id}>{data.name} ({data.state === "" ? "" : data.state + ", "}{data.country})</label>
+                      {/* <label htmlFor={data.id}>{data.name} ({data.state === "" ? "" : data.state + ", "}{data.country})</label> */}
+                      <label htmlFor={data.id}>{data.name}</label>
                       <Link to={data.site_url} target="_blank">
                         {data.site_url}
                       </Link>

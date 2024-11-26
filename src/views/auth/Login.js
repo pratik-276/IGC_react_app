@@ -133,6 +133,12 @@ const Login = () => {
 
   useEffect(() => {
     setValue(localStorage.getItem("email"));
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refreesh_token");
+    localStorage.removeItem("user_company");
+    localStorage.removeItem("user_id");
   }, []);
 
   return (

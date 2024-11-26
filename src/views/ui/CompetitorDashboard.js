@@ -5,9 +5,7 @@ import { Link } from "@mui/material";
 const Dashboard = () => {
   const [user_company_name, setUserCompanyName] = useState("");
   let company_to_dashboard = {
-    "Pixiu Gaming": "https://app.powerbi.com/view?r=eyJrIjoiZGY4ZTNiODEtM2I1My00MzRjLWE1MTAtMzM0OTM3Mjk2ZGE1IiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9",
-    "Fazi": "https://app.powerbi.com/view?r=eyJrIjoiMzU5ZDFkNzQtZDk4My00MzJkLWI0ZDUtMDVhZWMxMTIzOTlmIiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9",
-    "Split The Pot": "https://app.powerbi.com/view?r=eyJrIjoiMWQ4YzI1MjAtZTA3Yy00OTQxLTg4OWItOGIxM2QxZDI5ZGU2IiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9"
+    "Split The Pot": "https://app.powerbi.com/view?r=eyJrIjoiOWM4NzAzYzEtYTczMi00NGRiLTg4ZWEtOGZmN2U2MWYwOTkwIiwidCI6IjA4Njc0NDdmLTkwYjItNGFjYS05OTczLTk3NmJiZmJjNTNiYiJ9"
   }
 
   const [dashboardLink, setDashboardLink] = useState("");
@@ -33,7 +31,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <div style={{ height: "90vh" }}>
-          <iframe title="Tracker Dashboard"
+          <iframe title="Competitor Dashboard"
             style={{
               width: "100%",
               height: "100%",

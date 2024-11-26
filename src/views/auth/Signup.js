@@ -12,7 +12,7 @@ import Cookies from "universal-cookie";
 import toast from "react-hot-toast";
 
 
-const cookies = new Cookies();
+// const cookies = new Cookies();
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -30,6 +30,12 @@ const Signup = () => {
   });
 
   useEffect(() => {
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refreesh_token");
+    localStorage.removeItem("user_company");
+    localStorage.removeItem("user_id");
     getProviderData();
   }, []);
 

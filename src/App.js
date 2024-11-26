@@ -24,6 +24,7 @@ import GameRank from "./views/ui/GameRank";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import CasinoRequests from "./views/ui/CasinoRequests";
 import GameTrackingDetails from "./views/ui/GameTrackingDetails";
+import CompetitorDashboard from "./views/ui/CompetitorDashboard";
 
 const App = () => {
   return (
@@ -72,6 +73,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="competitor-dashboard"
+                  element={
+                    <ProtectedRoute>
+                      <CompetitorDashboard />
                     </ProtectedRoute>
                   }
                 />

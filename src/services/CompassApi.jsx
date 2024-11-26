@@ -53,6 +53,15 @@ const get_game = async (currPage, data) => {
   return d;
 };
 
+const get_game_by_provider = async (currPage, data) => {
+  let d = await Call({
+    path: `get_game_by_provider?page=${currPage}`,
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
 const request_new_casino = async (data) => {
   let d = await Call({
     path: "request_new_casino",
@@ -69,6 +78,7 @@ const exportObject = {
   get_provider,
   get_operator,
   get_game,
+  get_game_by_provider,
   request_new_casino,
 };
 

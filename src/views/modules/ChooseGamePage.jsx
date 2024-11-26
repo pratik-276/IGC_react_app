@@ -7,6 +7,7 @@ import { Drawer } from "antd";
 import { useGameContext } from "../../context/gameContext";
 import toast from "react-hot-toast";
 import { debounce } from "lodash";
+import { provider } from "../auth/config";
 
 const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -23,9 +24,10 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const fetchData = useCallback(async (query, page) => {
     setLoader(true);
     setNoGamesFound(false);
+    const user_company = localStorage.getItem("user_company");
     try {
-      const data = { search_term: query ?? "" };
-      const res = await CompassData.get_game(page, data);
+      const data = { search_term: query ?? "", provider: user_company };
+      const res = await CompassData.get_game_by_provider(page, data);
       if (res) {
         if (res.results.length === 0) {
           setNoGamesFound(true);

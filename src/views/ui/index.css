@@ -222,6 +222,26 @@ input[type="checkbox"] {
   line-height: 20px;
 }
 
+.action-btn-yellow {
+  width: 20px;
+  height: 20px;
+  display: inline-block !important;
+  background-color: yellow !important;
+  border-radius: 50% !important;
+  margin: auto;
+  line-height: 20px;
+}
+
+.action-btn-green {
+  width: 20px;
+  height: 20px;
+  display: inline-block !important;
+  background-color: green !important;
+  border-radius: 50% !important;
+  margin: auto;
+  line-height: 20px;
+}
+
 .select-casino-game-body {
   padding: 30px !important;
 }

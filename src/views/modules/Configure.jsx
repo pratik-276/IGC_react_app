@@ -7,6 +7,7 @@ import { CloseOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
 import toast from "react-hot-toast";
+import { min } from "d3";
 
 const Configure = ({
   configure,
@@ -31,6 +32,9 @@ const Configure = ({
 
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [section_title, setSectionTitle] = useState("");
+  const [minimum_position, setMinPosition] = useState(1);
+  const [maximum_position, setMaxPosition] = useState(50);
 
   useEffect(() => {
     if (casinoJSON) {
@@ -80,9 +84,9 @@ const Configure = ({
                 <Link to="/">{gameItem.game_provider_name}</Link>
               </td>
               <td className="text-end">
-                <span className="badge rounded-pill me-5">
+                {/* <span className="badge rounded-pill me-5">
                   Combination already exists
-                </span>
+                </span> */}
                 <FiMinusCircle
                   style={{
                     fontSize: "25px",
@@ -177,6 +181,9 @@ const Configure = ({
           end_date: trackTime === "custom" ? endDate : finalDate,
           game_name: g.game_original_name,
           game_provider: g.game_provider_name,
+          section_name: section_title,
+          min_position: minimum_position,
+          max_position: maximum_position,
         });
       });
     });
@@ -205,7 +212,7 @@ const Configure = ({
   return (
     <>
       <Drawer
-        title="Choose Casino"
+        title="Enter Tracker Details"
         width="75%"
         className="bg-white configure_add_drawer"
         closable={true}
@@ -263,7 +270,7 @@ const Configure = ({
                     Game Name{" "}
                   </th>
                   <th scope="col" style={{ width: "40%" }} className="text-end">
-                    ACTION
+                    Action
                   </th>
                 </tr>
               </thead>
@@ -354,25 +361,36 @@ const Configure = ({
                 </div>
                 <div className="col-md-6">
                   <div className="row">
-                    <div className="col-md-6 col-6">
+                    <div className="col-md-4 col-4">
                       <div className="form-group credit-field">
-                        <label>Expected credits usage</label>
+                        <label>Section Title</label>
                         <input
                           type="text"
                           className="form-control"
-                          value={356}
-                          disabled
+                          value={section_title}
+                          onChange={(e) => setSectionTitle(e.target.value)}
                         />
                       </div>
                     </div>
-                    <div className="col-md-6 col-6">
+                    <div className="col-md-4 col-4">
                       <div className="form-group credit-field">
-                        <label>Credit Balance</label>
+                        <label>Min Position</label>
                         <input
                           type="text"
                           className="form-control"
-                          value={356}
-                          disabled
+                          value={minimum_position}
+                          onChange={(e) => setMinPosition(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="col-md-4 col-4">
+                      <div className="form-group credit-field">
+                        <label>Max Position</label>
+                        <input
+                          type="text"
+                          className="form-control"
+                          value={maximum_position}
+                          onChange={(e) => setMaxPosition(e.target.value)}
                         />
                       </div>
                     </div>
