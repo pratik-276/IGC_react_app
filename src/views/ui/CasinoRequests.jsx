@@ -35,7 +35,7 @@ const CasinoRequests = () => {
 
     async function getRegions() {
         const res = await call({
-            path: '/get_regions',
+            path: 'get_regions',
             method: 'GET'
         })
 
@@ -57,11 +57,13 @@ const CasinoRequests = () => {
     const getCasinos = () => {
         setLoading(true)
         const userId = localStorage.getItem('user_id')
+        const isAdmin = localStorage.getItem('is_admin')
         call({
-            path: '/get_casino_requests',
+            path: 'get_casino_requests',
             method: 'POST',
             data: {
-                "user_id": userId
+                "user_id": userId,
+                "is_admin": isAdmin
             }
         }).then((v) => {
             console.log(v.data)

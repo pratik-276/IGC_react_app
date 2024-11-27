@@ -88,7 +88,7 @@ const Home = () => {
           </div>
         </div>
 
-        {/* <div className="pt-5">
+        <div className="pt-5">
           <Card className="p-3">
             <CardBody>
               <h5 style={{ fontWeight: "600", marginBottom: '0px' }}>
@@ -134,7 +134,7 @@ const Home = () => {
               }
             </CardBody>
           </Card>
-        </div> */}
+        </div>
 
         <div className="pt-4">
           {/* <h5 style={{ fontSize: '20px', fontWeight: "500", marginBottom: '0px' }}>
