@@ -1,7 +1,8 @@
 import Axios from "axios";
 // import Cookies from "universal-cookie";
 //const api = process.env.REACT_APP_API_KEY;
-const api = "https://13.127.147.33/";
+//const api = "https://13.127.147.33/";
+const api = "https://backend.igamingcompass.io/";
 //const api = "http://localhost:8000/";
 //const api = "https://backend.igamingcompass.com/";
 
@@ -26,11 +27,13 @@ export default function call({ path, method, data }) {
         resolve(response.data);
       })
       .catch((error) => {
-        let status = error?.response?.data?.status;
+        let status = error?.status;
         let errorMessage =
           error?.response?.data?.message || "An error occurred.";
-
+        //console.log(error);
         if ([401, 403, 404].includes(status)) {
+          //console.log(status);
+          window.location.href = "/login";
           reject(errorMessage);
         } else {
           reject(errorMessage);

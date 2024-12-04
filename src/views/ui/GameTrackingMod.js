@@ -129,6 +129,9 @@ const GameTracking = () => {
           className="w-100"
         />
       </IconField> */}
+      <button className="compass-sidebar-next" onClick={() => exportCSV(false)}>
+          Export Data
+        </button>
     </div>
   );
   const actionBodyTemplate = (rowData) => {
@@ -158,7 +161,12 @@ const GameTracking = () => {
               {growth > 0 ? <span style={{ display: 'inline-block', padding: '0.5em 0.75em', fontSize: '0.875em', borderRadius: '0.25em', fontWeight: 'bold', textAlign: 'center', backgroundColor: '#e6f9e6', color: '#28a745' }}>{growth}% <FaCaretUp /></span> : ''}
           </h6>
       )
-  }
+  };
+
+  
+  const exportCSV = (selectionOnly) => {
+      dt.current.exportCSV({ selectionOnly }, 'test.csv');
+  };
 
   return (
     <>
