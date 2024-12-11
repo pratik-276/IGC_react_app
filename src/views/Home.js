@@ -201,6 +201,9 @@ const TrackDetail = ({ name, url, navigate }) => {
           <Button onClick={() => navigate('game-tracking')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
             View Tracker
           </Button>
+          {/* <Button onClick={() => toast.error("Coming Soon")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
+            View Tracker
+          </Button> */}
         </div>
       </CardBody>
     </Card>
@@ -218,6 +221,9 @@ const NoTrackerFound = ({ navigate }) => {
           <Button onClick={() => navigate('casino-requests')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
             Create New Casino Request
           </Button>
+          {/* <Button onClick={() => toast.error("Coming")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
+            Create New Casino Request
+          </Button> */}
         </div>
       </CardBody>
     </Card>
