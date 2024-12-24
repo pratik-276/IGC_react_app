@@ -21,6 +21,11 @@ const GameProvideMarketshare = () => {
   const [selectedRegion, setSelectedRegion] = useState("United States");
   const [selectedMonthYear, setSelectedMonthYear] = useState("");
 
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filters, setFilters] = useState({
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+  });
+
   useEffect(() => {
     getPageData();
   }, [selectedRegion, selectedMonthYear]);
@@ -72,6 +77,7 @@ const GameProvideMarketshare = () => {
       data: {
         region: selectedRegion,
         month: selectedMonthYear,
+        search_term: searchTerm,
       },
     });
 
@@ -219,8 +225,15 @@ const GameProvideMarketshare = () => {
             gap: 5,
           }}
         >
-          <div style={{ flex: 1, minWidth: "200px" }}>
-            <FormControl size="small" fullWidth>
+          <div
+            style={{
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
+              minWidth: "200px",
+            }}
+          >
+            <FormControl size="small" style={{ flex: 1 }}>
               <InputLabel id="region-select">Region</InputLabel>
               <Select
                 labelId="region-select"
@@ -229,10 +242,25 @@ const GameProvideMarketshare = () => {
                 onChange={(e) => setSelectedRegion(e.target.value)}
               >
                 {regions.map((region) => (
-                  <MenuItem value={region}>{region}</MenuItem>
+                  <MenuItem value={region} key={region}>
+                    {region}
+                  </MenuItem>
                 ))}
               </Select>
             </FormControl>
+
+            <TextField
+              size="small"
+              label="Search"
+              variant="outlined"
+              value={filters.global.value}
+              onChange={(e) =>
+                setFilters((f) => ({
+                  global: { ...f.global, value: e.target.value },
+                }))
+              }
+              style={{ flex: 2 }}
+            />
           </div>
           {/* <div style={{ flex: 1, minWidth: '200px' }}>
                         <FormControl size="small" fullWidth>
@@ -264,6 +292,8 @@ const GameProvideMarketshare = () => {
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
             rowsPerPageOptions={[10, 20, 30]}
+            filters={filters}
+            globalFilterFields={["game_provider"]}
           >
             <Column
               field="game_provider"

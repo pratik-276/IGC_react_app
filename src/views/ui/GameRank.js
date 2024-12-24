@@ -1,11 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import TextField from "@mui/material/TextField";
+import {
+  FormControl,
+  TextField,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import { Range } from "react-range";
 import { Tooltip } from "primereact/tooltip";
 import { FilterMatchMode } from "primereact/api";
 import { ProgressSpinner } from "primereact/progressspinner";
+import { ProgressBar } from "primereact/progressbar";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import "./index.css";
 
@@ -19,12 +26,17 @@ const GameRank = () => {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
 
+  const [regions, setRegions] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState("United States");
+
   useEffect(() => {
     setLoading(true);
+    getRegions();
     call({
       path: "get_game_rank",
       method: "POST",
       data: {
+        region: selectedRegion,
         search_term: searchTerm,
       },
     })
@@ -35,7 +47,7 @@ const GameRank = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, []);
+  }, [selectedRegion]);
 
   useEffect(() => {
     import("../../utils/DatatableBottomFix").then(
@@ -44,6 +56,15 @@ const GameRank = () => {
       }
     );
   }, [tableData]);
+
+  async function getRegions() {
+    const res = await call({
+      path: "get_regions",
+      method: "GET",
+    });
+
+    setRegions(res.data);
+  }
 
   const gameNameTemplate = (row) => {
     return (
@@ -235,23 +256,77 @@ const GameRank = () => {
 
   const renderHeader = () => {
     return (
-      <div className="row align-items-center pb-3 pt-3">
-        <div className="col-md-6">
+      <div
+        className="pb-3 pt-3"
+        style={{
+          display: "flex",
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <div style={{ flex: 1 }}>
           <h3>Game Rank</h3>
           <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
         </div>
-        <div className="col-md-6 text-md-end">
-          <TextField
-            size="small"
-            label="Search"
-            variant="outlined"
-            value={filters.global.value}
-            onChange={(e) =>
-              setFilters((f) => {
-                return { global: { ...f.global, value: e.target.value } };
-              })
-            }
-          />
+        <ProgressBar value={12}></ProgressBar>
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            justifyItems: "flex-end",
+            gap: 5,
+          }}
+        >
+          <div
+            style={{
+              display: "flex",
+              gap: "16px",
+              alignItems: "center",
+              minWidth: "200px",
+            }}
+          >
+            <FormControl size="small" style={{ flex: 1 }}>
+              <InputLabel id="region-select">Region</InputLabel>
+              <Select
+                labelId="region-select"
+                value={selectedRegion}
+                label="Region"
+                onChange={(e) => setSelectedRegion(e.target.value)}
+              >
+                {regions.map((region) => (
+                  <MenuItem value={region} key={region}>
+                    {region}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+
+            <TextField
+              size="small"
+              label="Search"
+              variant="outlined"
+              value={filters.global.value}
+              onChange={(e) =>
+                setFilters((f) => ({
+                  global: { ...f.global, value: e.target.value },
+                }))
+              }
+              style={{ flex: 2 }}
+            />
+          </div>
+          {/* <div style={{ flex: 1, minWidth: '200px' }}>
+                        <FormControl size="small" fullWidth>
+                            <InputLabel id="month-select">Month</InputLabel>
+                            <Select
+                                labelId="month-select"
+                                value={selectedMonthYear}
+                                label="Month"
+                                onChange={(e) => setSelectedMonthYear(e.target.value)}
+                            >
+                                { yearMonthList.map((ym) => <MenuItem value={ym}>{ym}</MenuItem> ) }
+                            </Select>
+                        </FormControl>
+                    </div> */}
         </div>
       </div>
     );
@@ -283,6 +358,7 @@ const GameRank = () => {
             paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
             currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
             rowsPerPageOptions={[10, 20, 30]}
+            globalFilterFields={["game_name", "game_provider"]}
             rowHover
           >
             <Column
