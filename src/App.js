@@ -25,6 +25,9 @@ import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import CasinoRequests from "./views/ui/CasinoRequests";
 import GameTrackingDetails from "./views/ui/GameTrackingDetails";
 import CompetitorDashboard from "./views/ui/CompetitorDashboard";
+import "primereact/resources/themes/lara-light-indigo/theme.css";
+import "primereact/resources/primereact.min.css";
+import "primeicons/primeicons.css";
 
 const App = () => {
   return (
@@ -100,7 +103,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
+                <Route
                   path="game-rank-report"
                   element={
                     <ProtectedRoute>
@@ -108,7 +111,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
+                <Route
                   path="game-provider-marketshare"
                   element={
                     <ProtectedRoute>
@@ -116,7 +119,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
-                <Route 
+                <Route
                   path="casino-requests"
                   element={
                     <ProtectedRoute>

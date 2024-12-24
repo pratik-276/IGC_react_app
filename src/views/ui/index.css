@@ -376,10 +376,7 @@ input[type="checkbox"] {
   height: 18px;
 }
 
-.casino-data-display
-  input[type="checkbox"]:checked
-  + .casino-data-bar
-  label:before {
+.casino-data-display input[type="checkbox"]:checked+.casino-data-bar label:before {
   background-color: #8a92a6;
 }
 
@@ -597,9 +594,9 @@ input[type="checkbox"] {
   color: #dc9b00 !important;
 }
 
-.badge-success { 
-  background-color: #e6f9e6 !important; 
-  color: #28a745 !important; 
+.badge-success {
+  background-color: #e6f9e6 !important;
+  color: #28a745 !important;
 }
 
 .badge-warning {
@@ -607,9 +604,9 @@ input[type="checkbox"] {
   color: #dc9b00 !important;
 }
 
-.badge-danger { 
-  background-color: #f8d7da !important; 
-  color: #dc3545 !important; 
+.badge-danger {
+  background-color: #f8d7da !important;
+  color: #dc3545 !important;
 }
 
 .tracking-game-time .tracking_time_dropdown label {
@@ -756,12 +753,21 @@ input[type="checkbox"] {
   margin-bottom: 20px;
 }
 
-.tracker-details-body .p-datatable .p-datatable-tbody > tr > td {
+.tracker-details-body .p-datatable .p-datatable-tbody>tr>td {
   border-bottom: 1px solid #cccee5;
 }
 
 .tracker-details-table .p-paginator-bottom {
   border: none !important;
+}
+
+.tracker-details-table .p-datatable-tbody>tr:hover>td {
+  background-color: #eeeefa !important;
+}
+
+.tracker-details-table .p-datatable-tbody>tr>td {
+  height: 10px !important;
+  line-height: 5px;
 }
 
 .trend-details-badge-neutral {
@@ -771,6 +777,7 @@ input[type="checkbox"] {
   color: #e9de14;
   font-weight: 600;
 }
+
 .trend-details-badge-red {
   padding: 5px 10px;
   background: #edf5f0;
@@ -778,6 +785,7 @@ input[type="checkbox"] {
   color: #f01233;
   font-weight: 600;
 }
+
 .trend-details-badge {
   padding: 5px 10px;
   background: #edf5f0;
@@ -806,11 +814,9 @@ input[type="checkbox"] {
   padding: 15px 15px 25px;
   border-width: 1px;
   border-style: solid;
-  border-image: linear-gradient(
-    90deg,
-    rgba(255, 194, 70, 1) 35%,
-    rgba(153, 116, 42, 1) 100%
-  );
+  border-image: linear-gradient(90deg,
+      rgba(255, 194, 70, 1) 35%,
+      rgba(153, 116, 42, 1) 100%);
   border-image-slice: 1;
 }
 
@@ -854,16 +860,12 @@ input[type="checkbox"] {
 }
 
 .tracker-details .best_position_box {
-  background: linear-gradient(
-    90deg,
-    rgba(84, 112, 222, 8%) 35%,
-    rgba(84, 112, 222, 12%) 100%
-  ) !important;
-  border-image: linear-gradient(
-    90deg,
-    rgb(84, 112, 222) 35%,
-    rgb(15, 64, 255) 100%
-  ) !important;
+  background: linear-gradient(90deg,
+      rgba(84, 112, 222, 8%) 35%,
+      rgba(84, 112, 222, 12%) 100%) !important;
+  border-image: linear-gradient(90deg,
+      rgb(84, 112, 222) 35%,
+      rgb(15, 64, 255) 100%) !important;
   border-image-slice: 1 !important;
 }
 
@@ -872,16 +874,12 @@ input[type="checkbox"] {
 }
 
 .tracker-details .worst_position_box {
-  background: linear-gradient(
-    90deg,
-    rgba(7, 190, 170, 8%) 35%,
-    rgba(7, 190, 170, 12%) 100%
-  ) !important;
-  border-image: linear-gradient(
-    90deg,
-    rgb(7, 190, 170) 35%,
-    rgb(6, 135, 121) 100%
-  ) !important;
+  background: linear-gradient(90deg,
+      rgba(7, 190, 170, 8%) 35%,
+      rgba(7, 190, 170, 12%) 100%) !important;
+  border-image: linear-gradient(90deg,
+      rgb(7, 190, 170) 35%,
+      rgb(6, 135, 121) 100%) !important;
   border-image-slice: 1 !important;
 }
 
@@ -922,14 +920,12 @@ input[type="checkbox"] {
   height: 200px !important;
 }
 
-.tracker-details-table
-  .p-paginator
-  .p-paginator-pages
-  .p-paginator-page.p-highlight {
+.tracker-details-table .p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
   background: #392f6c;
   color: #fff;
   border: none !important;
 }
+
 .anychart-credits {
   display: none !important;
 }
@@ -1005,6 +1001,7 @@ input[type="checkbox"] {
   .drawer-mobile .ant-drawer-body {
     padding: 13px 10px !important;
   }
+
   .add_new_casino_drawer .ant-drawer-footer {
     display: flex !important;
     justify-content: space-between !important;
@@ -1025,6 +1022,7 @@ input[type="checkbox"] {
   .start-end-date-selection {
     width: 100% !important;
   }
+
   .date-input-wrapper {
     position: relative;
   }
