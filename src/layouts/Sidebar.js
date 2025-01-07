@@ -2,7 +2,7 @@ import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
 import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaDatabase, FaHouse, FaLocationArrow, FaUserPlus } from "react-icons/fa6";
+import { FaChevronLeft, FaDatabase, FaHouse, FaLocationArrow, FaUserPlus, FaLightbulb } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
 import { MdViewKanban } from "react-icons/md";
 import Accordion from 'react-bootstrap/Accordion';
@@ -223,7 +223,7 @@ const Sidebar = () => {
             <Accordion className="pb-2 mx-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
-                    <FaDatabase style={{ fontSize: "23px" }} /> 
+                    <FaLightbulb style={{ fontSize: "23px" }} /> 
                     &nbsp;&nbsp;
                     <div style={{ fontWeight: 'bold' }}>Market Intelligence</div>
                 </Accordion.Header>

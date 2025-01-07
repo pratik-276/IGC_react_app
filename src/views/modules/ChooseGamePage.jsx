@@ -26,13 +26,21 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     setNoGamesFound(false);
     const user_company = localStorage.getItem("user_company");
     try {
-      const data = { search_term: query ?? "", provider: user_company };
+      const data = { search_term: query ?? "" };
       const res = await CompassData.get_game_by_provider(page, data);
       if (res) {
         if (res.results.length === 0) {
           setNoGamesFound(true);
         }
-        setGameData((prevData) => [...prevData, ...res.results]);
+        // console.log("Game Data");
+        // console.log(gameData);
+        // const finalData = [...gameData, ...res.results];
+        // const updatedResults = finalData.map((item, index) => ({
+        //   ...item,
+        //   id: index + 1,
+        // }));
+        // console.log(updatedResults);
+        setGameData((prevResults) => [...prevResults, ...res.results]);
       }
     } catch (err) {
       console.log(err);
@@ -117,8 +125,8 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     setLocalSelectedGames(selectedGame);
   }, [selectedGame]);
 
-  const isChecked = (casino) => {
-    return localSelectedGames.some((selected) => selected.id === casino.id);
+  const isChecked = (game) => {
+    return localSelectedGames.some((selected) => selected.id === game.id);
   };
 
   const handleCheckboxChange = (data) => {
@@ -207,7 +215,10 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
             </div>
           ) : (
             <>
-              {gameData.map((data) => (
+              {gameData.map((item, index) => ({
+                ...item,
+                id: index + 1,
+              })).map((data) => (
                 <div className="casino-data-display" key={data?.id}>
                   <input
                     type="checkbox"

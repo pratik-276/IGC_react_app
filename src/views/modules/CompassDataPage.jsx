@@ -416,6 +416,24 @@ const CompassDataPage = ({
                       style={{ minWidth: "12rem" }}
                       body={gameProviderBodyTemplate}
                     ></Column>
+                    <Column
+                      field="start_date"
+                      header="Tracking Timeline"
+                      style={{ minWidth: "15rem" }}
+                      body={StatusBodyTemplate}
+                    ></Column>
+                    <Column
+                      field="status"
+                      header="Status"
+                      body={statusActionTemplate}
+                      style={{ minWidth: "5rem" }}
+                    ></Column>
+                    <Column
+                      field="checkdata"
+                      header="Check Data"
+                      body={checkDataTemplate}
+                      style={{ minWidth: "8rem" }}
+                    ></Column>
                     
                     <Column
                       field="section_name"
@@ -434,29 +452,11 @@ const CompassDataPage = ({
                       header="Maximum Position"
                       style={{ minWidth: "12rem" }}
                     ></Column>
-                    <Column
-                      field="start_date"
-                      header="Tracking Timeline"
-                      style={{ minWidth: "15rem" }}
-                      body={StatusBodyTemplate}
-                    ></Column>
                     {/* <Column
                       field="credit"
                       header="Credits consumed"
                       body={createdBodyTemplate}
                     ></Column> */}
-                    <Column
-                      field="status"
-                      header="Status"
-                      body={statusActionTemplate}
-                      style={{ minWidth: "5rem" }}
-                    ></Column>
-                    <Column
-                      field="checkdata"
-                      header="Action"
-                      body={checkDataTemplate}
-                      style={{ minWidth: "5rem" }}
-                    ></Column>
                   </DataTable>
                 </div>
               </div>

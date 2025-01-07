@@ -266,7 +266,7 @@ const GameRank = () => {
       >
         <div style={{ flex: 1 }}>
           <h3>Game Rank</h3>
-          <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit</span>
+          <span style={{fontWeight: 400}}>Track top games in every market.</span>
         </div>
         <ProgressBar value={12}></ProgressBar>
         <div
@@ -337,7 +337,7 @@ const GameRank = () => {
       {loading ? (
         <div className="col-md-6">
           <h3>Game Rank</h3>
-          <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+          <span style={{fontWeight: 400}}>Track top games in every market.</span>
         </div>
       ) : (
         ""
@@ -466,7 +466,7 @@ const ProgressBarRange = ({ values }) => {
       <Range
         step={1}
         min={1}
-        max={10000}
+        max={2000}
         values={values}
         renderTrack={({ props, children }) => (
           <div
@@ -505,7 +505,7 @@ const ProgressBarRange = ({ values }) => {
         }}
       >
         <h6>1</h6>
-        <h6>10000</h6>
+        <h6>2000</h6>
       </div>
     </div>
   );

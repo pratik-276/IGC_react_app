@@ -213,8 +213,8 @@ const GameProvideMarketshare = () => {
         }}
       >
         <div style={{ flex: 1 }}>
-          <h3>Game Provide Marketshare</h3>
-          <span>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</span>
+          <h3>Game Provider Marketshare</h3>
+          <span>Understand provider dominance across global casinos.</span>
         </div>
         <ProgressBar value={12}></ProgressBar>
         <div
@@ -295,6 +295,15 @@ const GameProvideMarketshare = () => {
             filters={filters}
             globalFilterFields={["game_provider"]}
           >
+          <Column
+            field="provider_rank"
+            sortable
+            header={
+              <div style={{ color: "#392F6C", fontWeight: 700 }}>
+                Rank
+              </div>
+            }
+          ></Column>
             <Column
               field="game_provider"
               sortable
@@ -347,7 +356,7 @@ const GameProvideMarketshare = () => {
               field="change"
               sortable
               header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>Change</div>
+                <div style={{ color: "#392F6C", fontWeight: 500 }}>Change (MoM)</div>
               }
               body={changeTemplate}
             ></Column>

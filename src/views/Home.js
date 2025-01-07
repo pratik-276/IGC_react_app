@@ -163,9 +163,9 @@ const Home = () => {
             </span>
           </div>
           <div className="d-flex flex-row gap-3 flex-wrap">
-            <ReportCard onButtonPress={() => { }} title="Game Provide Marketshare" />
+            <ReportCard onButtonPress={() => { }} title="Game Provider Marketshare" />
             <ReportCard onButtonPress={() => { }} title="Game Rank" />
-            <ReportCard onButtonPress={() => { }} title="Game Provide Marketshare" />
+            <ReportCard onButtonPress={() => { }} title="Game Provider Marketshare" />
           </div>
         </div> */}
       </div>}
