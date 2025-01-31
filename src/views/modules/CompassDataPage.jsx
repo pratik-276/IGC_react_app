@@ -428,12 +428,12 @@ const CompassDataPage = ({
                       body={statusActionTemplate}
                       style={{ minWidth: "5rem" }}
                     ></Column>
-                    <Column
+                    {/* <Column
                       field="checkdata"
                       header="Check Data"
                       body={checkDataTemplate}
                       style={{ minWidth: "8rem" }}
-                    ></Column>
+                    ></Column> */}
                     
                     <Column
                       field="section_name"

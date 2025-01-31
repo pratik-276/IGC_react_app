@@ -28,6 +28,7 @@ import CompetitorDashboard from "./views/ui/CompetitorDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import DailyDashboard from "./views/ui/DailyDashboard";
 
 const App = () => {
   return (
@@ -68,6 +69,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Compass />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="priority-casinos"
+                  element={
+                    <ProtectedRoute>
+                      <DailyDashboard />
                     </ProtectedRoute>
                   }
                 />

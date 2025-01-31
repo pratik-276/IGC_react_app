@@ -37,16 +37,20 @@ const navigation = [
 ];
 
 const iGameTrackerNavigation = [
+  // {
+  //   title: "All Games",
+  //   href: "/game-tracking",
+  // },
+  // {
+  //   title: "Calibrate Compass",
+  //   href: "/calibrate-compass",
+  // },
   {
-    title: "All Games",
-    href: "/game-tracking",
+    title: "Priority Casinos",
+    href: "/priority-casinos",
   },
   {
-    title: "Calibrate Compass",
-    href: "/calibrate-compass",
-  },
-  {
-    title: "Positions Dashboard",
+    title: "Global Dashboard",
     href: "/dashboard",
   },
   {
@@ -176,8 +180,8 @@ const Sidebar = () => {
               </Link>
             </div> */}
 
-            <Accordion className="pb-2 mx-2 mt-2">
-              <Accordion.Item eventKey="0">
+            <Accordion className="pb-2 mx-2 mt-2" defaultActiveKey="1">
+              <Accordion.Item eventKey="1">
                 <Accordion.Header>
                     <FaLocationArrow style={{ fontSize: "23px" }} /> 
                     &nbsp;&nbsp;
@@ -200,7 +204,7 @@ const Sidebar = () => {
                       </Link>
                     </div>
                   ))}
-                  {isAdmin != 1 && (
+                  {/* {isAdmin != 1 && (
                     <div key={2} className="sidenav-bg mb-2">
                       <Link
                         to="/casino-requests"
@@ -214,13 +218,13 @@ const Sidebar = () => {
                         <span className="ms-3 d-inline-block">Casino Requests</span>
                       </Link>
                     </div>
-                  )}
+                  )} */}
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
 
-            <Accordion className="pb-2 mx-2">
+            {/* <Accordion className="pb-2 mx-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
                     <FaLightbulb style={{ fontSize: "23px" }} /> 
@@ -247,9 +251,9 @@ const Sidebar = () => {
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
-            </Accordion>
+            </Accordion> */}
 
-            {
+            {/* {
               isAdmin == 1 &&
               <Accordion className="pb-2 mx-2">
                 <Accordion.Item eventKey="0">
@@ -277,7 +281,7 @@ const Sidebar = () => {
                   </Accordion.Body>
                 </Accordion.Item>
               </Accordion>
-            }
+            } */}
 
           </div>
         </>

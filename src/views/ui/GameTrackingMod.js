@@ -300,7 +300,7 @@ const GameTracking = () => {
                             field="game_name"
                             header="Game"
                             sortable
-                            style={{ minWidth: "10rem" }}
+                            style={{ minWidth: "15rem" }}
                           ></Column>
                           <Column
                             field="casino_name"

@@ -54,6 +54,15 @@ const provider_latest_details = async (data) => {
   return d;
 };
 
+const provider_dashboard_mapper = async (data) => {
+  let d = await Call({
+    path: "get_dashboard_links",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const exportObject = {
   create_alert,
   tracker_summary,
@@ -61,6 +70,7 @@ const exportObject = {
   tracker_detail,
   provider_summary,
   provider_latest_details,
+  provider_dashboard_mapper,
 };
 
 export default exportObject;

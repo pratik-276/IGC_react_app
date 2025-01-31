@@ -4,7 +4,7 @@ import { Link } from "@mui/material";
 import GameData from "../../services/GameTracker";
 import { ProgressSpinner } from "primereact/progressspinner";
 
-const Dashboard = () => {
+const DailyDashboard = () => {
   const [user_company_name, setUserCompanyName] = useState("");
   const [dashboardLink, setDashboardLink] = useState("");
 
@@ -13,7 +13,7 @@ const Dashboard = () => {
 
     const data = {
       game_provider: user_company,
-      priority: 0
+      priority: 1
     };
 
     GameData.provider_dashboard_mapper(data)
@@ -37,7 +37,7 @@ const Dashboard = () => {
       {dashboardLink === "" ? (
         <div className="d-flex flex-column justify-content-center align-items-center" style={{ height: "100vh" }}>
           <div className="d-flex flex-column justify-content-center align-items-center">
-            <ProgressSpinner />
+                      <ProgressSpinner />
             <p>Please connect with administrator</p>
           </div>
         </div>
@@ -59,4 +59,4 @@ const Dashboard = () => {
   );
 };
 
-export default Dashboard;
+export default DailyDashboard;

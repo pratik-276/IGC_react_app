@@ -146,10 +146,10 @@ const Home = () => {
             </span>
           </div> */}
           <div className="d-flex flex-row gap-3">
-            <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
-            <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
-            {/* <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
-            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" /> */}
+            {/* <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" /> */}
+            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" />
           </div>
         </div>
 
@@ -198,12 +198,12 @@ const TrackDetail = ({ name, url, navigate }) => {
           <Link>{url}</Link>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-          <Button onClick={() => navigate('game-tracking')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
-            View Tracker
-          </Button>
-          {/* <Button onClick={() => toast.error("Coming Soon")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
+          {/* <Button onClick={() => navigate('game-tracking')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
             View Tracker
           </Button> */}
+          <Button onClick={() => toast.error("Coming Soon")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
+            View Tracker
+          </Button>
         </div>
       </CardBody>
     </Card>
@@ -218,12 +218,12 @@ const NoTrackerFound = ({ navigate }) => {
           <h4 style={{ fontWeight: 'bold' }}>No Casino Found</h4>
         </div>
         <div>
-          <Button onClick={() => navigate('casino-requests')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
-            Create New Casino Request
-          </Button>
-          {/* <Button onClick={() => toast.error("Coming")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
+          {/* <Button onClick={() => navigate('casino-requests')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
             Create New Casino Request
           </Button> */}
+          <Button onClick={() => toast.error("Coming Soon")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaPlus size={14} />}>
+            Create New Casino Request
+          </Button>
         </div>
       </CardBody>
     </Card>
