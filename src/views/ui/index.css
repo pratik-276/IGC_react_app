@@ -717,6 +717,42 @@ input[type="checkbox"] {
   border-top: 1px solid #dee2e6 !important;
 }
 
+/* Modified Styles */
+.compass-mod-data h3 {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 32px;
+  color: #222222;
+  margin: 0;
+}
+
+.compass-mod-data span {
+  color: #8a92a6;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.p-datatable .p-datatable-tbody>tr>td,
+.p-datatable .p-datatable-thead>tr>th {
+  border: 1px solid #dee2e6;
+  /* Set border color for gridlines */
+}
+
+.tracker-details-mod {
+  background-color: #fff;
+  padding: 15px;
+  border: 1px solid #cccee5;
+  border-radius: 5px;
+}
+
+.tracker-details-head-mod h5 {
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+  font-size: 20px;
+  color: #000;
+}
+
 /* GAME TRACKING ROUTE STYLES */
 
 .tracker-details {

@@ -28,6 +28,7 @@ import CompetitorDashboard from "./views/ui/CompetitorDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import DashboardMod from "./views/ui/DashboardMod";
 
 const App = () => {
   return (
@@ -76,6 +77,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="dashboard-mod"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardMod />
                     </ProtectedRoute>
                   }
                 />
