@@ -19,6 +19,7 @@ import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
 import Dashboard from "./views/ui/Dashboard";
+import DashboardMod from "./views/ui/DashboardMod";
 import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
@@ -85,6 +86,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <Dashboard />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="dashboard-mod"
+                  element={
+                    <ProtectedRoute>
+                      <DashboardMod />
                     </ProtectedRoute>
                   }
                 />
