@@ -151,7 +151,7 @@ const DashboardMod = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#f8d7da",
+              //backgroundColor: "#f8d7da",
               color: "#dc3545",
             }}
           >
@@ -169,7 +169,7 @@ const DashboardMod = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#faf3e8",
+              //backgroundColor: "#faf3e8",
               color: "#dc9b00",
             }}
           >
@@ -187,7 +187,7 @@ const DashboardMod = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#e6f9e6",
+              //backgroundColor: "#e6f9e6",
               color: "#28a745",
             }}
           >
@@ -331,7 +331,7 @@ const DashboardMod = () => {
                               field="growth"
                               header="Growth"
                               sortable
-                              //body={changeTemplate}
+                              body={changeTemplate}
                             ></Column>
                             {/* <Column
                               field=""
