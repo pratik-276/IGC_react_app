@@ -192,7 +192,9 @@ input[type="checkbox"] {
 }
 
 .table-body-items .table-body-items-table:hover td {
-  background-color: #f5f5f5 !important;
+  background-color: #a48c8c;
+  /* Example hover background color */
+  cursor: pointer;
 }
 
 .table-body-items p {

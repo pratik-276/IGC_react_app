@@ -3,6 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import { Tooltip } from "primereact/tooltip";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
@@ -138,10 +139,10 @@ const DashboardMod = () => {
     let growth = ";";
     if (row != null) {
       growth = row?.growth;
-      growth = parseFloat(growth).toFixed(2);
+      growth = parseFloat(growth).toFixed(1);
     }
     return (
-      <h6 className="font-normal text-secondary">
+      <h6 className="font-normal text-secondary" style={{ fontSize: "1rem" }}>
         {growth < 0 ? (
           <span
             style={{
@@ -200,6 +201,29 @@ const DashboardMod = () => {
     );
   };
 
+  const headerWithTooltip = (headerText, tooltipText) => (
+    <div className="d-flex align-items-center">
+      <h5>{headerText}</h5>
+      <Tooltip target=".info-icon" content={tooltipText} position="top" />
+      <MdInfoOutline
+        className="ms-2 info-icon"
+        style={{ fontSize: "18px", cursor: "pointer" }}
+      />
+    </div>
+  );
+
+  const sortIconTemplate = (field, sortOrder) => {
+    if (sortOrder === 1) {
+      return <i className="pi pi-sort-up-fill" style={{ fontSize: "16px" }} />;
+    }
+    if (sortOrder === -1) {
+      return (
+        <i className="pi pi-sort-down-fill" style={{ fontSize: "16px" }} />
+      );
+    }
+    return <i className="pi pi-sort" style={{ fontSize: "16px" }} />;
+  };
+
   const exportCSV = (selectionOnly) => {
     dt.current.exportCSV({ selectionOnly }, "test.csv");
   };
@@ -242,7 +266,15 @@ const DashboardMod = () => {
                         <h5 className="pl-2 font-semibold">Summary</h5>
                         <div className="flex gap-3 mt-2">
                           <div className="flex-1">
-                            <div className="d-flex border border-secondary border-left-3 justify-content-between align-items-center w-100 p-2">
+                            <div
+                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              style={{
+                                borderTop: "1px solid #003366",
+                                borderRight: "1px solid #003366",
+                                borderBottom: "1px solid #003366",
+                                borderLeft: "6px solid #003366",
+                              }}
+                            >
                               <h5>Game Count</h5>
                               <h5 className="font-semibold">
                                 {providerSummary.game_count}
@@ -251,7 +283,16 @@ const DashboardMod = () => {
                           </div>
 
                           <div className="flex-1">
-                            <div className="d-flex border border-secondary border-left-3 justify-content-between align-items-center w-100 p-2">
+                            <div
+                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              style={{
+                                borderTop: "1px solid #003366",
+                                borderRight: "1px solid #003366",
+                                borderBottom: "1px solid #003366",
+                                borderLeft: "6px solid #003366",
+                              }}
+                            >
+                              {" "}
                               <h5>Casino Count</h5>
                               <h5 className="font-semibold">
                                 {providerSummary.casino_count}
@@ -260,7 +301,16 @@ const DashboardMod = () => {
                           </div>
 
                           <div className="flex-1">
-                            <div className="d-flex border border-secondary border-left-3 justify-content-between align-items-center w-100 p-2">
+                            <div
+                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              style={{
+                                borderTop: "1px solid #003366",
+                                borderRight: "1px solid #003366",
+                                borderBottom: "1px solid #003366",
+                                borderLeft: "6px solid #003366",
+                              }}
+                            >
+                              {" "}
                               <h5>Casino-Game Combinations</h5>
                               <h5 className="font-semibold">
                                 {providerSummary.combination_count}
@@ -294,43 +344,76 @@ const DashboardMod = () => {
                           >
                             <Column
                               field="game_name"
-                              header="Game"
+                              //header="Game"
+                              header={headerWithTooltip(
+                                "Game",
+                                "This column shows the game name"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="casino_name"
-                              header="Casino"
+                              header={headerWithTooltip(
+                                "Casino",
+                                "This column shows the casino name"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="country_name"
-                              header="Country"
+                              header={headerWithTooltip(
+                                "Country",
+                                "This column shows the country name"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="section_name"
-                              header="Section Name"
+                              header={headerWithTooltip(
+                                "Section Name",
+                                "This column shows the section name"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="section_position"
-                              header="Section Position"
+                              header={headerWithTooltip(
+                                "Section Position",
+                                "This column shows the section position"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="sectional_game_position"
-                              header="Sectional Game Position"
+                              header={headerWithTooltip(
+                                "Sectional Game Position",
+                                "This column shows the sectional game position"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="overall_position"
-                              header="Overall Position"
+                              header={headerWithTooltip(
+                                "Overall Position",
+                                "This column shows the overall position"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="growth"
-                              header="Growth"
+                              header={headerWithTooltip(
+                                "Growth",
+                                "This column shows the growth of the game"
+                              )}
                               sortable
+                              sortIcon={sortIconTemplate}
                               body={changeTemplate}
                             ></Column>
                             {/* <Column
