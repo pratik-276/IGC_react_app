@@ -1,4 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Button } from "primereact/button";
+import { MultiSelect } from "primereact/multiselect";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
@@ -59,6 +61,9 @@ const DashboardMod = () => {
   const [trackingFilters, setTrackingFilters] = useState([]);
   const [loader2, setLoader2] = useState(true);
 
+  const [selectedGames, setSelectedGames] = useState(null);
+  const [selectedCasinos, setSelectedCasinos] = useState(null);
+
   const arrayFromValues = Object.values(providerLatestDetails);
 
   const latest_details_fetch = () => {
@@ -77,6 +82,22 @@ const DashboardMod = () => {
         console.log(err);
       });
   };
+
+  const gamesList =
+    providerLatestDetails.length > 0
+      ? Array.from(new Set(providerLatestDetails.map((item) => item.game_name)))
+          .sort() // Sort the game names alphabetically
+          .map((gameName) => ({ name: gameName, code: gameName }))
+      : [];
+
+  const casinosList =
+    providerLatestDetails.length > 0
+      ? Array.from(
+          new Set(providerLatestDetails.map((item) => item.casino_name))
+        )
+          .sort() // Sort the casino names alphabetically
+          .map((casinoName) => ({ name: casinoName, code: casinoName }))
+      : [];
 
   const overviewDashboard = () => {
     const data = {
@@ -116,6 +137,7 @@ const DashboardMod = () => {
       </button>
     </div>
   );
+
   const actionBodyTemplate = (rowData) => {
     return (
       <MdArrowForwardIos
@@ -203,25 +225,27 @@ const DashboardMod = () => {
   };
 
   const headerWithTooltip = (headerText, tooltipText) => (
-    <div className="d-flex align-items-center">
-      <h5>{headerText}</h5>
-      <Tooltip target=".info-icon" content={tooltipText} position="top" />
-      <MdInfoOutline
-        className="ms-2 info-icon"
-        style={{ fontSize: "18px", cursor: "pointer" }}
-      />
+    <div className="d-flex justify-content-between align-items-center">
+      <div className="d-flex align-items-center m-1">
+        <h5 style={{ margin: 0 }}>{headerText}</h5>
+        <Tooltip target=".info-icon" content={tooltipText} position="top" />
+        <MdInfoOutline
+          className="ms-2 info-icon"
+          style={{ fontSize: "16px", cursor: "pointer" }}
+        />
+      </div>
     </div>
   );
 
   const sortIconTemplate = (options) => {
     let icon = options.sorted ? (
       options.sortOrder < 0 ? (
-        <i className="pi pi-sort-up" style={{ fontSize: "16px" }} />
+        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
       ) : (
-        <i className="pi pi-sort-down" style={{ fontSize: "16px" }} />
+        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
       )
     ) : (
-      <i className="pi pi-sort" style={{ fontSize: "16px" }} />
+      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
     );
     return icon;
   };
@@ -234,7 +258,7 @@ const DashboardMod = () => {
     <>
       <div>
         <div>
-          <div>
+          <div className="d-flex justify-content-between align-items-center">
             <div>
               <h4 className="font-semibold" style={{ color: "#392f6c" }}>
                 {trackingDetails?.operator_name != undefined
@@ -242,7 +266,26 @@ const DashboardMod = () => {
                   : `Dashboard`}
               </h4>
               <span>View details related to all the compass configured</span>
-              <i className="pi pi-sort" style={{ fontSize: "16px" }} />
+            </div>
+            <div className="d-flex gap-2">
+              <MultiSelect
+                value={selectedGames}
+                onChange={(e) => setSelectedGames(e.value)}
+                options={gamesList}
+                optionLabel="name"
+                filter
+                placeholder="Select Games"
+                maxSelectedLabels={3}
+              />
+              <MultiSelect
+                value={selectedCasinos}
+                onChange={(e) => setSelectedCasinos(e.value)}
+                options={casinosList}
+                optionLabel="name"
+                filter
+                placeholder="Select Casinos"
+                maxSelectedLabels={3}
+              />
             </div>
           </div>
         </div>
@@ -272,10 +315,10 @@ const DashboardMod = () => {
                             <div
                               className="d-flex flex-column w-100 pt-2 pl-3"
                               style={{
-                                borderTop: "1px solid #003366",
-                                borderRight: "1px solid #003366",
-                                borderBottom: "1px solid #003366",
-                                borderLeft: "6px solid #003366",
+                                borderTop: "1px solid #392f6c",
+                                borderRight: "1px solid #392f6c",
+                                borderBottom: "1px solid #392f6c",
+                                borderLeft: "6px solid #392f6c",
                               }}
                             >
                               <h5>Game Count</h5>
@@ -289,10 +332,10 @@ const DashboardMod = () => {
                             <div
                               className="d-flex flex-column w-100 pt-2 pl-3"
                               style={{
-                                borderTop: "1px solid #003366",
-                                borderRight: "1px solid #003366",
-                                borderBottom: "1px solid #003366",
-                                borderLeft: "6px solid #003366",
+                                borderTop: "1px solid #392f6c",
+                                borderRight: "1px solid #392f6c",
+                                borderBottom: "1px solid #392f6c",
+                                borderLeft: "6px solid #392f6c",
                               }}
                             >
                               {" "}
@@ -307,10 +350,10 @@ const DashboardMod = () => {
                             <div
                               className="d-flex flex-column w-100 pt-2 pl-3"
                               style={{
-                                borderTop: "1px solid #003366",
-                                borderRight: "1px solid #003366",
-                                borderBottom: "1px solid #003366",
-                                borderLeft: "6px solid #003366",
+                                borderTop: "1px solid #392f6c",
+                                borderRight: "1px solid #392f6c",
+                                borderBottom: "1px solid #392f6c",
+                                borderLeft: "6px solid #392f6c",
                               }}
                             >
                               {" "}
@@ -338,9 +381,8 @@ const DashboardMod = () => {
                             rows={10}
                             rowsPerPageOptions={[5, 10, 25]}
                             paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
+                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                             globalFilter={globalFilter}
-                            //header={header}
                             size="small"
                             className="custom-table p-datatable p-component small table-bordered"
                             scrollable
@@ -348,76 +390,71 @@ const DashboardMod = () => {
                           >
                             <Column
                               field="game_name"
-                              //header="Game"
                               header={headerWithTooltip(
                                 "Game",
-                                "This column shows the game name"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="casino_name"
                               header={headerWithTooltip(
                                 "Casino",
-                                "This column shows the casino name"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="country_name"
                               header={headerWithTooltip(
                                 "Country",
-                                "This column shows the country name"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="section_name"
                               header={headerWithTooltip(
                                 "Section Name",
-                                "This column shows the section name"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
                             ></Column>
                             <Column
                               field="section_position"
                               header={headerWithTooltip(
                                 "Section Position",
-                                "This column shows the section position"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
+                              style={{ maxWidth: "8rem" }}
                             ></Column>
                             <Column
                               field="sectional_game_position"
                               header={headerWithTooltip(
                                 "Sectional Game Position",
-                                "This column shows the sectional game position"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
+                              style={{ maxWidth: "8rem" }}
                             ></Column>
                             <Column
                               field="overall_position"
                               header={headerWithTooltip(
                                 "Overall Position",
-                                "This column shows the overall position"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
+                              style={{ maxWidth: "8rem" }}
                             ></Column>
                             <Column
                               field="growth"
                               header={headerWithTooltip(
                                 "Growth",
-                                "This column shows the growth of the game"
+                                "This is tooltip"
                               )}
                               sortable
-                              sortIcon={sortIconTemplate}
+                              style={{ maxWidth: "8rem" }}
                               body={changeTemplate}
                             ></Column>
                             {/* <Column
