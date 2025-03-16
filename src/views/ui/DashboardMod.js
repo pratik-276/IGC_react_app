@@ -63,6 +63,7 @@ const DashboardMod = () => {
 
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
+  const [filteredData, setFilteredData] = useState([]);
 
   const arrayFromValues = Object.values(providerLatestDetails);
 
@@ -74,7 +75,7 @@ const DashboardMod = () => {
     GameData.provider_latest_details(data)
       .then((res) => {
         if (res?.success === true) {
-          console.log(res?.data);
+          //console.log(res?.data);
           setProviderLatestDetails(res?.data || []);
         }
       })
@@ -86,7 +87,7 @@ const DashboardMod = () => {
   const gamesList =
     providerLatestDetails.length > 0
       ? Array.from(new Set(providerLatestDetails.map((item) => item.game_name)))
-          .sort() // Sort the game names alphabetically
+          .sort()
           .map((gameName) => ({ name: gameName, code: gameName }))
       : [];
 
@@ -95,9 +96,31 @@ const DashboardMod = () => {
       ? Array.from(
           new Set(providerLatestDetails.map((item) => item.casino_name))
         )
-          .sort() // Sort the casino names alphabetically
+          .sort()
           .map((casinoName) => ({ name: casinoName, code: casinoName }))
       : [];
+
+  useEffect(() => {
+    let filtered = [...providerLatestDetails];
+
+    //console.log("selectedGames", selectedGames);
+    //console.log("selectedCasinos", selectedCasinos);
+
+    if (selectedGames && selectedGames.length > 0) {
+      filtered = filtered.filter((item) =>
+        selectedGames.some((game) => game.name === item.game_name)
+      );
+    }
+
+    if (selectedCasinos && selectedCasinos.length > 0) {
+      filtered = filtered.filter((item) =>
+        selectedCasinos.some((casino) => casino.name === item.casino_name)
+      );
+    }
+
+    //console.log("filtered", filtered);
+    setFilteredData(filtered);
+  }, [providerLatestDetails, selectedGames, selectedCasinos]);
 
   const overviewDashboard = () => {
     const data = {
@@ -372,7 +395,7 @@ const DashboardMod = () => {
                         <div>
                           <DataTable
                             ref={dt}
-                            value={providerLatestDetails}
+                            value={filteredData}
                             selection={selectedRows}
                             onSelectionChange={(e) => setSelectedRows(e.value)}
                             dataKey="comb_id"
