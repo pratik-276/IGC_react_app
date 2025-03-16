@@ -1,0 +1,9 @@
+.custom-table .p-datatable-tbody>tr:hover {
+    background-color: #ebebeb;
+    /* You can change this to any color you prefer */
+}
+
+.custom-table .p-datatable-tbody>td {
+    background-color: transparent !important;
+    /* You can change this to any color you prefer */
+}

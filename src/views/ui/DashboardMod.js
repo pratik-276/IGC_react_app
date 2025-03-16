@@ -8,6 +8,7 @@ import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
+import "./DashboardMod.css";
 
 import GameData from "../../services/GameTracker";
 import { Spin } from "antd";
@@ -212,16 +213,17 @@ const DashboardMod = () => {
     </div>
   );
 
-  const sortIconTemplate = (field, sortOrder) => {
-    if (sortOrder === 1) {
-      return <i className="pi pi-sort-up-fill" style={{ fontSize: "16px" }} />;
-    }
-    if (sortOrder === -1) {
-      return (
-        <i className="pi pi-sort-down-fill" style={{ fontSize: "16px" }} />
-      );
-    }
-    return <i className="pi pi-sort" style={{ fontSize: "16px" }} />;
+  const sortIconTemplate = (options) => {
+    let icon = options.sorted ? (
+      options.sortOrder < 0 ? (
+        <i className="pi pi-sort-up" style={{ fontSize: "16px" }} />
+      ) : (
+        <i className="pi pi-sort-down" style={{ fontSize: "16px" }} />
+      )
+    ) : (
+      <i className="pi pi-sort" style={{ fontSize: "16px" }} />
+    );
+    return icon;
   };
 
   const exportCSV = (selectionOnly) => {
@@ -240,6 +242,7 @@ const DashboardMod = () => {
                   : `Dashboard`}
               </h4>
               <span>View details related to all the compass configured</span>
+              <i className="pi pi-sort" style={{ fontSize: "16px" }} />
             </div>
           </div>
         </div>
@@ -339,8 +342,9 @@ const DashboardMod = () => {
                             globalFilter={globalFilter}
                             //header={header}
                             size="small"
-                            className="p-datatable p-component small table-bordered table-hover"
+                            className="custom-table p-datatable p-component small table-bordered"
                             scrollable
+                            sortIcon={sortIconTemplate}
                           >
                             <Column
                               field="game_name"

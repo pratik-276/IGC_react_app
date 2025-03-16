@@ -193,7 +193,6 @@ input[type="checkbox"] {
 
 .table-body-items .table-body-items-table:hover td {
   background-color: #a48c8c;
-  /* Example hover background color */
   cursor: pointer;
 }
 
