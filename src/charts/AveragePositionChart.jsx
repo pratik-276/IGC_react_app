@@ -17,7 +17,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
   // console.log(dates);
 
   // Get the maximum game_position for each date
-  const dateWiseData = dates.map(date => 
+  const dateWiseData = dates.map(date =>
     Math.min(
       ...trackingDetails?.daywise_data
         .filter(d => d.created_date === date)
@@ -69,8 +69,9 @@ const AveragePositionChart = ({ trackingDetails }) => {
 
   return (
     <>
-      <div className="tracker-details-head mb-5">
-        <h5 className="m-0">Average Position Changes</h5>
+      <div className="mb-5">
+        {/* <h5 className="m-0">Average Position Changes</h5> */}
+        <h5 className="font-semibold pl-2">Daily Treand</h5>
       </div>
       <div
         style={{ width: "100%", height: 300, backgroundColor: "transparent" }}

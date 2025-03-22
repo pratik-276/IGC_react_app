@@ -20,6 +20,7 @@ import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
 import Dashboard from "./views/ui/Dashboard";
 import DashboardMod from "./views/ui/DashboardMod";
+import GameDetailsMod from "./views/ui/GameDetailsMod";
 import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
@@ -89,6 +90,15 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+                {/* added by akshay */}
+                <Route
+                  path="game-details-mod"
+                  element={
+                    <ProtectedRoute>
+                      <GameDetailsMod />
+                    </ProtectedRoute>
+                  }
+                />
                 <Route
                   path="dashboard-mod"
                   element={
@@ -97,6 +107,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 />
+
                 <Route
                   path="competitor-dashboard"
                   element={

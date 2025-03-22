@@ -167,15 +167,16 @@ const DashboardMod = () => {
         style={{ fontSize: "24px" }}
         onClick={() => {
           console.log(rowData);
-          navigate("/game-tracking-details", {
+          navigate("/game-details-mod", {
             state: {
               operator_site_id: rowData.operator_site_id,
               game_name: rowData.game_name,
               casino_name: rowData.casino_name,
+              country_name: rowData.country_name,
+              state_name: rowData.state,
             },
           });
           console.log(rowData.game_name, rowData.operator_site_id);
-          //window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
         }}
       />
     );
@@ -188,7 +189,7 @@ const DashboardMod = () => {
       growth = parseFloat(growth).toFixed(1);
     }
     return (
-      <h6 className="font-normal text-secondary" style={{ fontSize: "1rem" }}>
+      <h6 className="text-secondary font-normal" style={{ fontSize: "1rem" }}>
         {growth < 0 ? (
           <span
             style={{
@@ -248,12 +249,12 @@ const DashboardMod = () => {
   };
 
   const headerWithTooltip = (headerText, tooltipText) => (
-    <div className="d-flex justify-content-between align-items-center">
+    <div className="d-flex align-items-center justify-content-between">
       <div className="d-flex align-items-center m-1">
         <h5 style={{ margin: 0 }}>{headerText}</h5>
         <Tooltip target=".info-icon" content={tooltipText} position="top" />
         <MdInfoOutline
-          className="ms-2 info-icon"
+          className="info-icon ms-2"
           style={{ fontSize: "16px", cursor: "pointer" }}
         />
       </div>
@@ -281,7 +282,7 @@ const DashboardMod = () => {
     <>
       <div>
         <div>
-          <div className="d-flex justify-content-between align-items-center">
+          <div className="d-flex align-items-center justify-content-between">
             <div>
               <h4 className="font-semibold" style={{ color: "#392f6c" }}>
                 {trackingDetails?.operator_name != undefined
@@ -330,13 +331,13 @@ const DashboardMod = () => {
               <>
                 {show === false && providerSummary && (
                   <>
-                    <div className="mt-3 border border-secondary rounded-3 p-3">
+                    <div className="border border-secondary p-3 rounded-3 mt-3">
                       <div>
-                        <h5 className="pl-2 font-semibold">Summary</h5>
+                        <h5 className="font-semibold pl-2">Summary</h5>
                         <div className="flex gap-3 mt-2">
                           <div className="flex-1">
                             <div
-                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              className="d-flex flex-column w-100 pl-3 pt-2"
                               style={{
                                 borderTop: "1px solid #392f6c",
                                 borderRight: "1px solid #392f6c",
@@ -353,7 +354,7 @@ const DashboardMod = () => {
 
                           <div className="flex-1">
                             <div
-                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              className="d-flex flex-column w-100 pl-3 pt-2"
                               style={{
                                 borderTop: "1px solid #392f6c",
                                 borderRight: "1px solid #392f6c",
@@ -371,7 +372,7 @@ const DashboardMod = () => {
 
                           <div className="flex-1">
                             <div
-                              className="d-flex flex-column w-100 pt-2 pl-3"
+                              className="d-flex flex-column w-100 pl-3 pt-2"
                               style={{
                                 borderTop: "1px solid #392f6c",
                                 borderRight: "1px solid #392f6c",
@@ -391,7 +392,7 @@ const DashboardMod = () => {
 
                       {/* Tracker Details Table */}
                       <div className="mt-3">
-                        <h5 className="pl-2 font-semibold">Latest Details</h5>
+                        <h5 className="font-semibold pl-2">Latest Details</h5>
                         <div>
                           <DataTable
                             ref={dt}
@@ -407,7 +408,7 @@ const DashboardMod = () => {
                             currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                             globalFilter={globalFilter}
                             size="small"
-                            className="custom-table p-datatable p-component small table-bordered"
+                            className="table-bordered p-component p-datatable custom-table small"
                             scrollable
                             sortIcon={sortIconTemplate}
                           >
@@ -480,12 +481,15 @@ const DashboardMod = () => {
                               style={{ maxWidth: "8rem" }}
                               body={changeTemplate}
                             ></Column>
-                            {/* <Column
+                            <Column
                               field=""
-                              header=""
+                              header={headerWithTooltip(
+                                "Details",
+                                "This is tooltip"
+                              )}
                               className="text-center"
-                              //body={actionBodyTemplate}
-                            ></Column> */}
+                              body={actionBodyTemplate}
+                            ></Column>
                           </DataTable>
                         </div>
                       </div>

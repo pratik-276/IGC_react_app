@@ -37,8 +37,9 @@ const MyChart = ({ trackingDetails }) => {
 
   return (
     <div>
-      <div className="tracker-details-head mb-5">
-        <h5 className="m-0">Game Position Changes</h5>
+      <div className="mb-5">
+        {/* <h5 className="m-0">Game Position Changes</h5> */}
+        <h5 className="font-semibold pl-2">Daily Sectional Analytics</h5>
       </div>
       <div style={{ overflowX: 'scroll', overflowY: 'clip' }}>
         {
@@ -85,7 +86,7 @@ const MyChart = ({ trackingDetails }) => {
                           color: '#607D8B',
                         }}>
                           {
-                            isValidDate(v) ? 
+                            isValidDate(v) ?
                               new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(new Date(v)) :
                               v
                           }
@@ -97,14 +98,14 @@ const MyChart = ({ trackingDetails }) => {
                           height: 110,
                           minWidth: 110,
                           margin: '0px',
-                          color: '#B730C3',
+                          color: '#392f6c',
                           fontSize: 22,
                           fontWeight: '600',
                           display: 'flex',
                           justifyContent: 'center',
                           alignItems: 'center',
                           border: '1px dashed #0000004D',
-                          background: '#E658F24D',
+                          background: '#dff0f7',
                         }}>
                           {v}
                         </div>
