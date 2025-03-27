@@ -7,6 +7,7 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
+  ReferenceLine,
   Text,
 } from "recharts";
 import dayjs from "dayjs";
@@ -28,12 +29,33 @@ const AveragePositionChart = ({ trackingDetails }) => {
 
   // Prepare the chart data
   const chartData = dates.map((d, index) => {
+    const dayData = trackingDetails?.daywise_data?.find(data => data.created_date === d);
     return {
       date: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(new Date(d)),
-      game_position: dateWiseData[index]
+      game_position: dateWiseData[index],
+      section_name: dayData?.section_name,
+      sectional_game_position: dayData?.overall_game_nonvisible_position,  // Example for sectional_game_position
+      sectional_position: dayData?.section_position,
     };
   }).reverse();
-  // console.log(chartData);
+  // console.log("chartData", chartData);
+
+  const CustomTooltip = ({ active, payload, label }) => {
+    if (active && payload && payload.length) {
+      const { game_position, section_name, sectional_game_position, sectional_position } = payload[0].payload;
+
+      return (
+        <div className="custom-tooltip " style={{ backgroundColor: "#fff", border: "1px solid #ccc", padding: "6px" }}>
+          <h5 style={{ fontSize: "16px", margin: "0" }}>{label}</h5>
+          <p style={{ fontSize: "14px", margin: "2px 0" }}><strong>Overall Position:</strong> {game_position}</p>
+          <p style={{ fontSize: "14px", margin: "2px 0" }}><strong>Section Name:</strong> {section_name || "N/A"}</p>
+          <p style={{ fontSize: "14px", margin: "2px 0" }}><strong>Sectional Game Position:</strong> {sectional_game_position || "N/A"}</p>
+          <p style={{ fontSize: "14px", margin: "2px 0" }}><strong>Sectional Position:</strong> {sectional_position || "N/A"}</p>
+        </div>
+      );
+    }
+    return null;
+  };
 
   const data =
     trackingDetails?.daywise_data
@@ -42,6 +64,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
         game_position: game_position,
       }))
       .reverse() || [];
+
 
   const maxPosition = Math.max(
     ...(data.map((item) => item.game_position) || [0])
@@ -53,6 +76,11 @@ const AveragePositionChart = ({ trackingDetails }) => {
     (_, i) => i * 10
   );
 
+
+  const minPos = Math.min(...chartData.map(item => item.game_position));
+  const maxPos = Math.max(...chartData.map(item => item.game_position));
+  // console.log(minPos, maxPos);
+
   const CustomTick = ({ x, y, payload }) => (
     <Text
       x={x}
@@ -60,8 +88,8 @@ const AveragePositionChart = ({ trackingDetails }) => {
       dy={15}
       textAnchor="middle"
       fill="#666"
-      angle={-20}
-      fontSize={13}
+      angle={0}
+      fontSize={12}
     >
       {payload?.value}
     </Text>
@@ -74,7 +102,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
         <h5 className="font-semibold pl-2">Daily Treand</h5>
       </div>
       <div
-        style={{ width: "100%", height: 300, backgroundColor: "transparent" }}
+        style={{ width: "100%", height: 180, backgroundColor: "transparent" }}
       >
         <ResponsiveContainer>
           <AreaChart
@@ -87,21 +115,24 @@ const AveragePositionChart = ({ trackingDetails }) => {
             }}
           >
             <CartesianGrid strokeDasharray="5 5" vertical={false} />
-            <XAxis dataKey="date" interval={0} tick={<CustomTick />} />
+            <XAxis dataKey="date" interval={3} tick={<CustomTick />} />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
               axisLine={false}
               tickLine={false}
               interval={0}
+              domain={[minPos, maxPos]}
             />
-            <Tooltip />
+            <Tooltip content={<CustomTooltip />} />
             <Area
-              type="monotone"
+              type="linear"
               dataKey="game_position"
               stroke="#5865F2"
               fill="none"
               strokeWidth={2}
             />
+            <ReferenceLine y={minPos} stroke="blue" strokeDasharray="5 5" />
+            <ReferenceLine y={maxPos} stroke="purple" strokeDasharray="5 5" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

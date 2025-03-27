@@ -9,6 +9,7 @@ import call from "../../services/Call";
 import { useLocation } from "react-router-dom";
 import AveragePositionChart from "../../charts/AveragePositionChart";
 import GamePositionChangesChart from "../../charts/GamePositionChangesChart";
+import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
 
 import { Spin } from "antd";
 
@@ -37,7 +38,8 @@ const GameDetailsMod = () => {
         game_provider: user_company_2,
       },
     }).then((res) => {
-      console.log(res);
+      console.log("res : ", res);
+      console.log("res data : ", res.data);
       setTrackingDetails(res.data);
       setLoader(false);
     });
@@ -70,7 +72,9 @@ const GameDetailsMod = () => {
           </div>
         ) : (
           <>
-            {trackingDetails ?? 0 ? (
+            {trackingDetails &&
+            Object.keys(trackingDetails).length > 0 &&
+            trackingDetails.latest_position ? (
               <>
                 <div className="mt-3">
                   <h5 className="font-semibold pl-2">Indicators</h5>
@@ -253,7 +257,7 @@ const GameDetailsMod = () => {
 
                 <div className="border border-secondary p-3 rounded-3 mt-3">
                   <div>
-                    <GamePositionChangesChart
+                    <DailySectionalAnalyticshart
                       trackingDetails={trackingDetails}
                     />
                   </div>
@@ -265,7 +269,11 @@ const GameDetailsMod = () => {
                   className="d-flex justify-content-center"
                   style={{ marginTop: "15%" }}
                 >
-                  <h4>No trackers configured</h4>
+                  <h4>
+                    {trackingDetails
+                      ? "Tracking data is unavailable"
+                      : "No trackers configured"}
+                  </h4>
                 </div>
               </>
             )}
