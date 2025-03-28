@@ -11,17 +11,16 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
         const sectionData = trackingDetails?.daywise_data?.filter(d => d.section_name === section);
         const gamePositions = dates.map(date => {
             const dataForDate = sectionData.find(d => d.created_date === date);
-            return dataForDate ? dataForDate.game_position : '';  // Return game_position or empty string if not found
+            return dataForDate ? dataForDate.game_position : '';
         });
 
         return {
             section_name: section,
-            section_position: sectionData.length > 0 ? sectionData[0].section_position : '', // Assuming section_position is the same for all dates
+            section_position: sectionData.length > 0 ? sectionData[0].section_position : '', // Assuming section position is same for all dates
             game_positions: gamePositions
         };
     });
 
-    // Add "Date" row for headers
     const dateHeaders = dates.map(date => (
         <th
             key={date}
@@ -40,7 +39,6 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
     return (
         <div>
             <div >
-                {/* Tracker Details Table */}
                 <h5 className="font-semibold pl-2">Daily Sectional Analytics</h5>
 
                 <div className="mt-2" style={{ overflowX: 'auto' }}>
