@@ -115,7 +115,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
             }}
           >
             <CartesianGrid strokeDasharray="5 5" vertical={false} />
-            <XAxis dataKey="date" interval={3} tick={<CustomTick />} />
+            <XAxis dataKey="date" axisLine={false} interval={3} tick={<CustomTick />} />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
               axisLine={false}
@@ -131,8 +131,8 @@ const AveragePositionChart = ({ trackingDetails }) => {
               fill="none"
               strokeWidth={2}
             />
-            <ReferenceLine y={minPos} stroke="blue" strokeDasharray="5 5" />
-            <ReferenceLine y={maxPos} stroke="purple" strokeDasharray="5 5" />
+            <ReferenceLine y={minPos} stroke="#00FFFF" strokeWidth={2} strokeDasharray="5 5" />
+            <ReferenceLine y={maxPos} stroke="#DA70D6" strokeWidth={2} strokeDasharray="5 5" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
