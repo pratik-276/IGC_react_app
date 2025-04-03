@@ -115,13 +115,13 @@ const AveragePositionChart = ({ trackingDetails }) => {
             }}
           >
             <CartesianGrid strokeDasharray="5 5" vertical={false} />
-            <XAxis dataKey="date" axisLine={false} interval={3} tick={<CustomTick />} />
+            <XAxis dataKey="date" axisLine={false} interval={3} tick={<CustomTick />} reversed />
             <YAxis
               tickFormatter={(tick) => `${tick}`}
               axisLine={false}
               tickLine={false}
               interval={0}
-              domain={[minPos, maxPos]}
+              domain={[maxPos, minPos]}
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
