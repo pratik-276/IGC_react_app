@@ -121,7 +121,8 @@ const AveragePositionChart = ({ trackingDetails }) => {
               axisLine={false}
               tickLine={false}
               interval={0}
-              domain={[maxPos, minPos]}
+              domain={[minPos, maxPos]}
+              reversed
             />
             <Tooltip content={<CustomTooltip />} />
             <Area
@@ -131,8 +132,8 @@ const AveragePositionChart = ({ trackingDetails }) => {
               fill="none"
               strokeWidth={2}
             />
-            <ReferenceLine y={minPos} stroke="#00FFFF" strokeWidth={2} strokeDasharray="5 5" />
-            <ReferenceLine y={maxPos} stroke="#DA70D6" strokeWidth={2} strokeDasharray="5 5" />
+            <ReferenceLine y={minPos} stroke="#DA70D6" strokeWidth={2} strokeDasharray="5 5" />
+            <ReferenceLine y={maxPos} stroke="#00FFFF" strokeWidth={2} strokeDasharray="5 5" />
           </AreaChart>
         </ResponsiveContainer>
       </div>

@@ -6,6 +6,7 @@ import { Column } from "primereact/column";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { Tooltip } from "primereact/tooltip";
+import dayjs from "dayjs";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
@@ -132,12 +133,15 @@ const DashboardMod = () => {
         if (res?.success === true) {
           setProviderSummary(res?.data || null);
           setLoader(false);
-
           latest_details_fetch();
+        } else {
+          console.log("Failed to fetch provider summary");
+          setLoader(false);
         }
       })
       .catch((err) => {
         console.log(err);
+        setLoader(false);
       });
   };
 
@@ -249,13 +253,16 @@ const DashboardMod = () => {
   };
 
   const headerWithTooltip = (headerText, tooltipText) => (
-    <div className="d-flex align-items-center justify-content-between">
+    <div
+      className="d-flex align-items-center justify-content-between"
+      style={{ width: "100%" }}
+    >
       <div className="d-flex align-items-center m-1">
         <h5 style={{ margin: 0 }}>{headerText}</h5>
         <Tooltip target=".info-icon" content={tooltipText} position="top" />
         <MdInfoOutline
           className="info-icon ms-2"
-          style={{ fontSize: "16px", cursor: "pointer" }}
+          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
         />
       </div>
     </div>
@@ -411,6 +418,8 @@ const DashboardMod = () => {
                             className="table-bordered p-component p-datatable custom-table small"
                             scrollable
                             sortIcon={sortIconTemplate}
+                            sortField="last_observed_date" // Sort by last_observed_date field
+                            sortOrder={-1} // Sort in descending order by default
                           >
                             <Column
                               field="game_name"
@@ -482,6 +491,40 @@ const DashboardMod = () => {
                               body={changeTemplate}
                             ></Column>
                             <Column
+                              field="site_url"
+                              header={headerWithTooltip(
+                                "Site URL",
+                                "This is tooltip"
+                              )}
+                              body={(rowData) => (
+                                <a
+                                  href={rowData.site_url}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  style={{
+                                    color: "#0066cc",
+                                  }}
+                                >
+                                  {rowData.site_url}
+                                </a>
+                              )}
+                            ></Column>
+                            <Column
+                              field="last_observed_date"
+                              header={headerWithTooltip(
+                                "Last Observed Date",
+                                "This is tooltip"
+                              )}
+                              sortable
+                              body={(rowData) => {
+                                return dayjs(rowData.last_observed_date).format(
+                                  "MMM D, YYYY"
+                                );
+                              }}
+                              style={{ maxWidth: "9rem" }}
+                            ></Column>
+
+                            <Column
                               field=""
                               header={headerWithTooltip(
                                 "Details",
@@ -496,26 +539,6 @@ const DashboardMod = () => {
                     </div>
                   </>
                 )}
-                {/* {show === true && (
-                  <>
-                    {loader2 ? (
-                      <div
-                        className="row align-items-center justify-content-center"
-                        style={{ height: "500px" }}
-                      >
-                        <div className="col-md-5">
-                          <div className="text-center">
-                            <Spin size="large" />
-                          </div>
-                        </div>
-                      </div>
-                    ) : (
-                      <>
-                        <TrackerDetails trackingDetails={trackingDetails} />
-                      </>
-                    )}
-                  </>
-                )} */}
               </>
             ) : (
               <>

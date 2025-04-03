@@ -8,7 +8,6 @@ import "./DashboardMod.css";
 import call from "../../services/Call";
 import { useLocation } from "react-router-dom";
 import AveragePositionChart from "../../charts/AveragePositionChart";
-import GamePositionChangesChart from "../../charts/GamePositionChangesChart";
 import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
 
 import { Spin } from "antd";
