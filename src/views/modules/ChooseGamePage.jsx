@@ -26,7 +26,7 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
     setNoGamesFound(false);
     const user_company = localStorage.getItem("user_company");
     try {
-      const data = { search_term: query ?? "" };
+      const data = { search_term: query ?? "", provider: user_company };
       const res = await CompassData.get_game_by_provider(page, data);
       if (res) {
         if (res.results.length === 0) {
