@@ -47,7 +47,7 @@ const GameDetailsMod = () => {
   return (
     <>
       <div>
-        <div>
+        {/* <div>
           <div className="d-flex align-items-center justify-content-between">
             <div>
               <h4 className="font-semibold" style={{ color: "#392f6c" }}>
@@ -56,7 +56,7 @@ const GameDetailsMod = () => {
               <span>View details related to game</span>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {loader ? (
           <div

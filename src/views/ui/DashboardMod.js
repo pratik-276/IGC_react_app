@@ -294,9 +294,9 @@ const DashboardMod = () => {
               <h4 className="font-semibold" style={{ color: "#392f6c" }}>
                 {trackingDetails?.operator_name != undefined
                   ? `${trackingDetails?.operator_name} Dashboard`
-                  : `Dashboard`}
+                  : `Tracker Dashboard`}
               </h4>
-              <span>View details related to all the compass configured</span>
+              <span>Track latest positions of all your games across all casinos</span>
             </div>
             <div className="d-flex gap-2">
               <MultiSelect
@@ -448,7 +448,7 @@ const DashboardMod = () => {
                             <Column
                               field="section_name"
                               header={headerWithTooltip(
-                                "Section Name",
+                                "Sec Name",
                                 "Section within casino where game was found"
                               )}
                               sortable
@@ -456,7 +456,7 @@ const DashboardMod = () => {
                             <Column
                               field="section_position"
                               header={headerWithTooltip(
-                                "Section Position",
+                                "Sec Position",
                                 "Position of the section within casino page"
                               )}
                               sortable
@@ -465,7 +465,7 @@ const DashboardMod = () => {
                             <Column
                               field="sectional_game_position"
                               header={headerWithTooltip(
-                                "Sectional Game Position",
+                                "Game Position",
                                 "Position of game within the section"
                               )}
                               sortable
