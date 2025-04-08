@@ -12,6 +12,7 @@ import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
+import Papa from "papaparse";
 
 import GameData from "../../services/GameTracker";
 import { Spin } from "antd";
@@ -142,20 +143,6 @@ const DashboardMod = () => {
 
   const navigate = useNavigate();
 
-  const header = (
-    <div className="d-flex align-items-center justify-content-between">
-      <h4 className="pl-2">Latest Details</h4>
-
-      <button
-        type="button"
-        class="btn btn-primary"
-        onClick={() => exportCSV(false)}
-      >
-        Export Data
-      </button>
-    </div>
-  );
-
   const actionBodyTemplate = (rowData) => {
     return (
       <MdArrowForwardIos
@@ -277,8 +264,14 @@ const DashboardMod = () => {
     return icon;
   };
 
-  const exportCSV = (selectionOnly) => {
-    dt.current.exportCSV({ selectionOnly }, "test.csv");
+  const exportCSV = (filteredData) => {
+    const csv = Papa.unparse(filteredData);
+    const link = document.createElement("a");
+    link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    link.download = "game_tracker_data.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   return (
@@ -540,6 +533,15 @@ const DashboardMod = () => {
                           body={actionBodyTemplate}
                         ></Column>
                       </DataTable>
+                      <div className="w-100 d-flex justify-content-end align-items-center mt-2">
+                        <Button
+                          type="button"
+                          icon="pi pi-file"
+                          rounded
+                          onClick={() => exportCSV(filteredData)}
+                          data-pr-tooltip="CSV"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
