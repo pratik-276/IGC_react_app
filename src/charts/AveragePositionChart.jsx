@@ -13,11 +13,9 @@ import {
 import dayjs from "dayjs";
 
 const AveragePositionChart = ({ trackingDetails }) => {
-  // Extract unique dates from trackingDetails
   const dates = [...new Set(trackingDetails?.daywise_data?.map(row => row.created_date))];
   // console.log(dates);
 
-  // Get the maximum game_position for each date
   const dateWiseData = dates.map(date =>
     Math.min(
       ...trackingDetails?.daywise_data
@@ -27,14 +25,13 @@ const AveragePositionChart = ({ trackingDetails }) => {
   );
   // console.log(dateWiseData);
 
-  // Prepare the chart data
   const chartData = dates.map((d, index) => {
     const dayData = trackingDetails?.daywise_data?.find(data => data.created_date === d);
     return {
       date: new Intl.DateTimeFormat('en-US', { day: 'numeric', month: 'short' }).format(new Date(d)),
       game_position: dateWiseData[index],
       section_name: dayData?.section_name,
-      sectional_game_position: dayData?.overall_game_nonvisible_position,  // Example for sectional_game_position
+      sectional_game_position: dayData?.game_position,
       sectional_position: dayData?.section_position,
     };
   }).reverse();

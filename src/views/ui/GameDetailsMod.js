@@ -5,6 +5,7 @@ import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
+import { Calendar } from "primereact/calendar";
 import call from "../../services/Call";
 import { useLocation } from "react-router-dom";
 import AveragePositionChart from "../../charts/AveragePositionChart";
@@ -16,17 +17,51 @@ const GameDetailsMod = () => {
   const user_id = localStorage.getItem("user_id");
   const [loader, setLoader] = useState(true);
   const [trackingDetails, setTrackingDetails] = useState([]);
+  const [startDate, setStartDate] = useState(null);
+  const [endDate, setEndDate] = useState(null);
 
   const location = useLocation();
   console.log("location.state", location.state);
   const { operator_site_id, game_name, casino_name, country_name, state_name } =
     location.state || {};
 
-  useEffect(() => {
-    getDashboardData({ site_id: operator_site_id, game_name: game_name });
-  }, [user_id]);
+  const getStartEndDate = () => {
+    const currentDate = new Date();
+    const endDate = currentDate.toISOString().split("T")[0]; // yyyy-mm-dd format
 
-  const getDashboardData = ({ site_id, game_name }) => {
+    // Calculate the start date (first day of last month)
+    const startDate = new Date(
+      currentDate.getFullYear(),
+      currentDate.getMonth() - 1,
+      1
+    );
+    const startDateFormatted = startDate.toISOString().split("T")[0]; // yyyy-mm-dd format
+
+    console.log("startDateFormatted", startDateFormatted);
+    console.log("endDate", endDate);
+
+    return { startDate: startDateFormatted, endDate };
+  };
+
+  const { startDate: defaultStartDate, endDate: defaultEndDate } =
+    getStartEndDate();
+
+  // Set the default values for start and end date
+  useEffect(() => {
+    setStartDate(defaultStartDate);
+    setEndDate(defaultEndDate);
+  }, []);
+
+  useEffect(() => {
+    getDashboardData({
+      site_id: operator_site_id,
+      game_name: game_name,
+      start_date: startDate,
+      end_date: endDate,
+    });
+  }, [user_id, startDate, endDate]);
+
+  const getDashboardData = ({ site_id, game_name, start_date, end_date }) => {
     const user_company_2 = localStorage.getItem("user_company");
     call({
       path: "tracker_dashboard_details_2",
@@ -35,6 +70,8 @@ const GameDetailsMod = () => {
         operator_site_id: site_id,
         game_name: game_name,
         game_provider: user_company_2,
+        start_date: start_date,
+        end_date: end_date,
       },
     }).then((res) => {
       console.log("res : ", res);
@@ -54,6 +91,30 @@ const GameDetailsMod = () => {
                 Tracker Dashboard
               </h4>
               <span>View details related to game</span>
+            </div>
+          </div>
+
+          <div className="d-flex gap-2">
+            <div>
+              <h6>Start Date</h6>
+              <Calendar
+                value={startDate}
+                onChange={(e) => setStartDate(e.value)}
+                dateFormat="yyyy-mm-dd"
+                showIcon
+                placeholder="Select Start Date"
+              />
+            </div>
+
+            <div>
+              <h6>End Date</h6>
+              <Calendar
+                value={endDate}
+                onChange={(e) => setEndDate(e.value)}
+                dateFormat="yyyy-mm-dd"
+                showIcon
+                placeholder="Select End Date"
+              />
             </div>
           </div>
         </div>

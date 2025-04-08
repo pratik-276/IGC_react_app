@@ -46,7 +46,7 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
                             <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Section Position</th>
                             {dates.map(date => (
                                 <th key={date} style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center', minWidth: '80px' }}>
-                                    {format(new Date(date), 'MMM dd, yyyy')}
+                                    {format(new Date(date), 'MMM dd')}
                                 </th>
                             ))}
                         </tr>
