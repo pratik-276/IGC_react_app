@@ -341,222 +341,218 @@ const DashboardMod = () => {
           </div>
         ) : (
           <>
-            {arrayFromValues?.length > 0 ? (
+            {show === false && providerSummary ? (
               <>
-                {show === false && providerSummary && (
-                  <>
-                    <div className="border border-secondary p-3 rounded-3 mt-3">
-                      <div>
-                        <h5 className="font-semibold pl-2">Summary</h5>
-                        <div className="flex gap-3 mt-2">
-                          <div className="flex-1">
-                            <div
-                              className="d-flex flex-column w-100 pl-3 pt-2"
-                              style={{
-                                borderTop: "1px solid #392f6c",
-                                borderRight: "1px solid #392f6c",
-                                borderBottom: "1px solid #392f6c",
-                                borderLeft: "6px solid #392f6c",
-                              }}
-                            >
-                              <h5>Game Count</h5>
-                              <h5 className="font-semibold">
-                                {providerSummary.game_count}
-                              </h5>
-                            </div>
-                          </div>
-
-                          <div className="flex-1">
-                            <div
-                              className="d-flex flex-column w-100 pl-3 pt-2"
-                              style={{
-                                borderTop: "1px solid #392f6c",
-                                borderRight: "1px solid #392f6c",
-                                borderBottom: "1px solid #392f6c",
-                                borderLeft: "6px solid #392f6c",
-                              }}
-                            >
-                              {" "}
-                              <h5>Casino Count</h5>
-                              <h5 className="font-semibold">
-                                {providerSummary.casino_count}
-                              </h5>
-                            </div>
-                          </div>
-
-                          <div className="flex-1">
-                            <div
-                              className="d-flex flex-column w-100 pl-3 pt-2"
-                              style={{
-                                borderTop: "1px solid #392f6c",
-                                borderRight: "1px solid #392f6c",
-                                borderBottom: "1px solid #392f6c",
-                                borderLeft: "6px solid #392f6c",
-                              }}
-                            >
-                              {" "}
-                              <h5>Casino-Game Combinations</h5>
-                              <h5 className="font-semibold">
-                                {providerSummary.combination_count}
-                              </h5>
-                            </div>
-                          </div>
+                <div className="border border-secondary p-3 rounded-3 mt-3">
+                  <div>
+                    <h5 className="font-semibold pl-2">Summary</h5>
+                    <div className="flex gap-3 mt-2">
+                      <div className="flex-1">
+                        <div
+                          className="d-flex flex-column w-100 pl-3 pt-2"
+                          style={{
+                            borderTop: "1px solid #392f6c",
+                            borderRight: "1px solid #392f6c",
+                            borderBottom: "1px solid #392f6c",
+                            borderLeft: "6px solid #392f6c",
+                          }}
+                        >
+                          <h5>Game Count</h5>
+                          <h5 className="font-semibold">
+                            {providerSummary.game_count}
+                          </h5>
                         </div>
                       </div>
 
-                      {/* Tracker Details Table */}
-                      <div className="mt-3">
-                        <h5 className="font-semibold pl-2">Latest Details</h5>
-                        <div>
-                          <DataTable
-                            ref={dt}
-                            value={filteredData}
-                            selection={selectedRows}
-                            onSelectionChange={(e) => setSelectedRows(e.value)}
-                            dataKey="comb_id"
-                            removableSort
-                            paginator
-                            rows={10}
-                            rowsPerPageOptions={[5, 10, 25]}
-                            paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                            currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                            globalFilter={globalFilter}
-                            size="small"
-                            className="table-bordered p-component p-datatable custom-table small"
-                            scrollable
-                            sortIcon={sortIconTemplate}
-                            sortField="last_observed_date" // Sort by last_observed_date field
-                            sortOrder={-1} // Sort in descending order by default
-                          >
-                            <Column
-                              field="game_name"
-                              header={headerWithTooltip(
-                                "Game",
-                                "Name of Game",
-                                "game_name"
-                              )}
-                              sortable
-                            ></Column>
-                            <Column
-                              field="casino_name"
-                              header={headerWithTooltip(
-                                "Casino",
-                                "Name of casino",
-                                "casino_name"
-                              )}
-                              sortable
-                            ></Column>
-                            <Column
-                              field="country_name"
-                              header={headerWithTooltip(
-                                "Country",
-                                "Country of Casino",
-                                "country_name"
-                              )}
-                              sortable
-                            ></Column>
-                            <Column
-                              field="section_name"
-                              header={headerWithTooltip(
-                                "Sec Name",
-                                "Section within casino where game was found",
-                                "section_name"
-                              )}
-                              sortable
-                            ></Column>
-                            <Column
-                              field="section_position"
-                              header={headerWithTooltip(
-                                "Sec Position",
-                                "Position of the section within casino page",
-                                "section_position"
-                              )}
-                              sortable
-                              style={{ maxWidth: "8rem" }}
-                            ></Column>
-                            <Column
-                              field="sectional_game_position"
-                              header={headerWithTooltip(
-                                "Game Position",
-                                "Position of game within the section",
-                                "sectional_game_position"
-                              )}
-                              sortable
-                              style={{ maxWidth: "8rem" }}
-                            ></Column>
-                            <Column
-                              field="overall_position"
-                              header={headerWithTooltip(
-                                "Overall Position",
-                                "Overall position of the game on the casino page",
-                                "overall_position"
-                              )}
-                              sortable
-                              style={{ maxWidth: "8rem" }}
-                            ></Column>
-                            <Column
-                              field="growth"
-                              header={headerWithTooltip(
-                                "Growth",
-                                "WoW Growth in overall position of the game on casino page",
-                                "growth"
-                              )}
-                              sortable
-                              style={{ maxWidth: "8rem" }}
-                              body={changeTemplate}
-                            ></Column>
-                            <Column
-                              field="site_url"
-                              header={headerWithTooltip(
-                                "Site URL",
-                                "URL for the casino page",
-                                "site_url"
-                              )}
-                              body={(rowData) => (
-                                <a
-                                  href={rowData.site_url}
-                                  target="_blank"
-                                  rel="noopener noreferrer"
-                                  style={{
-                                    color: "#0066cc",
-                                  }}
-                                >
-                                  {rowData.site_url}
-                                </a>
-                              )}
-                            ></Column>
-                            <Column
-                              field="last_observed_date"
-                              header={headerWithTooltip(
-                                "Last Observed Date",
-                                "Date when the game was last observed on the casino",
-                                "last_observed_date"
-                              )}
-                              sortable
-                              body={(rowData) => {
-                                return dayjs(rowData.last_observed_date).format(
-                                  "MMM D, YYYY"
-                                );
-                              }}
-                              style={{ maxWidth: "9rem" }}
-                            ></Column>
+                      <div className="flex-1">
+                        <div
+                          className="d-flex flex-column w-100 pl-3 pt-2"
+                          style={{
+                            borderTop: "1px solid #392f6c",
+                            borderRight: "1px solid #392f6c",
+                            borderBottom: "1px solid #392f6c",
+                            borderLeft: "6px solid #392f6c",
+                          }}
+                        >
+                          {" "}
+                          <h5>Casino Count</h5>
+                          <h5 className="font-semibold">
+                            {providerSummary.casino_count}
+                          </h5>
+                        </div>
+                      </div>
 
-                            <Column
-                              field="details"
-                              header={headerWithTooltip(
-                                "Details",
-                                "Check historical momentum of the game",
-                                "details"
-                              )}
-                              className="text-center"
-                              body={actionBodyTemplate}
-                            ></Column>
-                          </DataTable>
+                      <div className="flex-1">
+                        <div
+                          className="d-flex flex-column w-100 pl-3 pt-2"
+                          style={{
+                            borderTop: "1px solid #392f6c",
+                            borderRight: "1px solid #392f6c",
+                            borderBottom: "1px solid #392f6c",
+                            borderLeft: "6px solid #392f6c",
+                          }}
+                        >
+                          {" "}
+                          <h5>Casino-Game Combinations</h5>
+                          <h5 className="font-semibold">
+                            {providerSummary.combination_count}
+                          </h5>
                         </div>
                       </div>
                     </div>
-                  </>
-                )}
+                  </div>
+
+                  {/* Tracker Details Table */}
+                  <div className="mt-3">
+                    <h5 className="font-semibold pl-2">Latest Details</h5>
+                    <div>
+                      <DataTable
+                        ref={dt}
+                        value={filteredData}
+                        selection={selectedRows}
+                        onSelectionChange={(e) => setSelectedRows(e.value)}
+                        dataKey="comb_id"
+                        removableSort
+                        paginator
+                        rows={10}
+                        rowsPerPageOptions={[5, 10, 25]}
+                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                        globalFilter={globalFilter}
+                        size="small"
+                        className="table-bordered p-component p-datatable custom-table small"
+                        scrollable
+                        sortIcon={sortIconTemplate}
+                        sortField="last_observed_date" // Sort by last_observed_date field
+                        sortOrder={-1} // Sort in descending order by default
+                      >
+                        <Column
+                          field="game_name"
+                          header={headerWithTooltip(
+                            "Game",
+                            "Name of Game",
+                            "game_name"
+                          )}
+                          sortable
+                        ></Column>
+                        <Column
+                          field="casino_name"
+                          header={headerWithTooltip(
+                            "Casino",
+                            "Name of casino",
+                            "casino_name"
+                          )}
+                          sortable
+                        ></Column>
+                        <Column
+                          field="country_name"
+                          header={headerWithTooltip(
+                            "Country",
+                            "Country of Casino",
+                            "country_name"
+                          )}
+                          sortable
+                        ></Column>
+                        <Column
+                          field="section_name"
+                          header={headerWithTooltip(
+                            "Sec Name",
+                            "Section within casino where game was found",
+                            "section_name"
+                          )}
+                          sortable
+                        ></Column>
+                        <Column
+                          field="section_position"
+                          header={headerWithTooltip(
+                            "Sec Position",
+                            "Position of the section within casino page",
+                            "section_position"
+                          )}
+                          sortable
+                          style={{ maxWidth: "8rem" }}
+                        ></Column>
+                        <Column
+                          field="sectional_game_position"
+                          header={headerWithTooltip(
+                            "Game Position",
+                            "Position of game within the section",
+                            "sectional_game_position"
+                          )}
+                          sortable
+                          style={{ maxWidth: "8rem" }}
+                        ></Column>
+                        <Column
+                          field="overall_position"
+                          header={headerWithTooltip(
+                            "Overall Position",
+                            "Overall position of the game on the casino page",
+                            "overall_position"
+                          )}
+                          sortable
+                          style={{ maxWidth: "8rem" }}
+                        ></Column>
+                        <Column
+                          field="growth"
+                          header={headerWithTooltip(
+                            "Growth",
+                            "WoW Growth in overall position of the game on casino page",
+                            "growth"
+                          )}
+                          sortable
+                          style={{ maxWidth: "8rem" }}
+                          body={changeTemplate}
+                        ></Column>
+                        <Column
+                          field="site_url"
+                          header={headerWithTooltip(
+                            "Site URL",
+                            "URL for the casino page",
+                            "site_url"
+                          )}
+                          body={(rowData) => (
+                            <a
+                              href={rowData.site_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{
+                                color: "#0066cc",
+                              }}
+                            >
+                              {rowData.site_url}
+                            </a>
+                          )}
+                        ></Column>
+                        <Column
+                          field="last_observed_date"
+                          header={headerWithTooltip(
+                            "Last Observed Date",
+                            "Date when the game was last observed on the casino",
+                            "last_observed_date"
+                          )}
+                          sortable
+                          body={(rowData) => {
+                            return dayjs(rowData.last_observed_date).format(
+                              "MMM D, YYYY"
+                            );
+                          }}
+                          style={{ maxWidth: "9rem" }}
+                        ></Column>
+
+                        <Column
+                          field="details"
+                          header={headerWithTooltip(
+                            "Details",
+                            "Check historical momentum of the game",
+                            "details"
+                          )}
+                          className="text-center"
+                          body={actionBodyTemplate}
+                        ></Column>
+                      </DataTable>
+                    </div>
+                  </div>
+                </div>
               </>
             ) : (
               <>
@@ -564,7 +560,11 @@ const DashboardMod = () => {
                   className="d-flex justify-content-center"
                   style={{ marginTop: "15%" }}
                 >
-                  <h4>No trackers configured</h4>
+                  <h4>
+                    {arrayFromValues?.length > 0
+                      ? "No trackers configured"
+                      : ""}
+                  </h4>
                 </div>
               </>
             )}
