@@ -18,49 +18,19 @@ import { Spin } from "antd";
 
 import { useNavigate } from "react-router-dom";
 
-const TrackingTime = [
-  {
-    value: "7 days",
-    label: "7 days",
-  },
-  {
-    value: "1 month",
-    label: "1 month",
-  },
-  {
-    value: "3 months",
-    label: "3 months",
-  },
-  {
-    value: "custom",
-    label: "custom",
-  },
-];
-
-const TrackingStatus = [
-  { value: "live", label: "Live" },
-  { value: "old", label: "Old" },
-];
-
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
   console.log(user_company);
   const dt = useRef(null);
-  const [globalFilter, setGlobalFilter] = useState(null);
   const [selectedRows, setSelectedRows] = useState(null);
 
   const [show, setShow] = useState(false);
   const [loader, setLoader] = useState(true);
 
-  const [trackTime, setTrackTime] = useState(null);
-  const [status, setStatus] = useState(null);
-
   const [providerSummary, setProviderSummary] = useState(null);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
   const [trackingDetails, setTrackingDetails] = useState([]);
-  const [trackingFilters, setTrackingFilters] = useState([]);
-  const [loader2, setLoader2] = useState(true);
 
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
@@ -100,6 +70,27 @@ const DashboardMod = () => {
           .sort()
           .map((casinoName) => ({ name: casinoName, code: casinoName }))
       : [];
+
+  useEffect(() => {
+    const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
+    const savedCasinos = JSON.parse(localStorage.getItem("selectedCasinos"));
+
+    if (savedGames) {
+      setSelectedGames(savedGames);
+    }
+    if (savedCasinos) {
+      setSelectedCasinos(savedCasinos);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (selectedGames !== null) {
+      localStorage.setItem("selectedGames", JSON.stringify(selectedGames));
+    }
+    if (selectedCasinos !== null) {
+      localStorage.setItem("selectedCasinos", JSON.stringify(selectedCasinos));
+    }
+  }, [selectedGames, selectedCasinos]);
 
   useEffect(() => {
     let filtered = [...providerLatestDetails];
@@ -266,7 +257,7 @@ const DashboardMod = () => {
           className="custom-tooltip"
         />
         <MdInfoOutline
-          className={`info-icon-${id} ms-2`} // Unique class for each tooltip
+          className={`info-icon-${id} ms-2`}
           style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
         />
       </div>
@@ -418,7 +409,6 @@ const DashboardMod = () => {
                         rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                        globalFilter={globalFilter}
                         size="small"
                         className="table-bordered p-component p-datatable custom-table small"
                         scrollable

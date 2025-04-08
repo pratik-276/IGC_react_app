@@ -7,13 +7,15 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import { Calendar } from "primereact/calendar";
 import call from "../../services/Call";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { MdArrowBackIos } from "react-icons/md";
 import AveragePositionChart from "../../charts/AveragePositionChart";
 import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
 
 import { Spin } from "antd";
 
 const GameDetailsMod = () => {
+  const navigate = useNavigate();
   const user_id = localStorage.getItem("user_id");
   const [loader, setLoader] = useState(true);
   const [trackingDetails, setTrackingDetails] = useState([]);
@@ -86,35 +88,42 @@ const GameDetailsMod = () => {
       <div>
         <div>
           <div className="d-flex align-items-center justify-content-between">
-            <div>
-              <h4 className="font-semibold" style={{ color: "#392f6c" }}>
-                Tracker Dashboard
-              </h4>
-              <span>View details related to game</span>
-            </div>
-          </div>
-
-          <div className="d-flex gap-2">
-            <div>
-              <h6>Start Date</h6>
-              <Calendar
-                value={startDate}
-                onChange={(e) => setStartDate(e.value)}
-                dateFormat="yyyy-mm-dd"
-                showIcon
-                placeholder="Select Start Date"
+            <div className="d-flex gap-2 align-items-center">
+              <MdArrowBackIos
+                style={{
+                  fontSize: "30px",
+                  cursor: "pointer",
+                }}
+                onClick={() => navigate("/dashboard-mod")} // Navigate to /dashboard-mod when clicked
               />
+              <div>
+                <h4 className="font-semibold" style={{ color: "#392f6c" }}>
+                  Tracker Dashboard
+                </h4>
+                <span>View details related to game</span>
+              </div>
             </div>
 
-            <div>
-              <h6>End Date</h6>
-              <Calendar
-                value={endDate}
-                onChange={(e) => setEndDate(e.value)}
-                dateFormat="yyyy-mm-dd"
-                showIcon
-                placeholder="Select End Date"
-              />
+            <div className="d-flex gap-2">
+              <div>
+                <Calendar
+                  value={startDate}
+                  onChange={(e) => setStartDate(e.value)}
+                  dateFormat="yy-mm-dd"
+                  showIcon
+                  placeholder="Select Start Date"
+                />
+              </div>
+
+              <div>
+                <Calendar
+                  value={endDate}
+                  onChange={(e) => setEndDate(e.value)}
+                  dateFormat="yy-mm-dd"
+                  showIcon
+                  placeholder="Select End Date"
+                />
+              </div>
             </div>
           </div>
         </div>
