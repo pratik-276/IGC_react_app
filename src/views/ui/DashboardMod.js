@@ -252,16 +252,21 @@ const DashboardMod = () => {
     );
   };
 
-  const headerWithTooltip = (headerText, tooltipText) => (
+  const headerWithTooltip = (headerText, tooltipText, id) => (
     <div
       className="d-flex align-items-center justify-content-between"
       style={{ width: "100%" }}
     >
       <div className="d-flex align-items-center m-1">
         <h5 style={{ margin: 0 }}>{headerText}</h5>
-        <Tooltip target=".info-icon" content={tooltipText} position="top" />
+        <Tooltip
+          target={`.info-icon-${id}`}
+          content={tooltipText}
+          position="top"
+          className="custom-tooltip"
+        />
         <MdInfoOutline
-          className="info-icon ms-2"
+          className={`info-icon-${id} ms-2`} // Unique class for each tooltip
           style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
         />
       </div>
@@ -296,7 +301,9 @@ const DashboardMod = () => {
                   ? `${trackingDetails?.operator_name} Dashboard`
                   : `Tracker Dashboard`}
               </h4>
-              <span>Track latest positions of all your games across all casinos</span>
+              <span>
+                Track latest positions of all your games across all casinos
+              </span>
             </div>
             <div className="d-flex gap-2">
               <MultiSelect
@@ -425,7 +432,8 @@ const DashboardMod = () => {
                               field="game_name"
                               header={headerWithTooltip(
                                 "Game",
-                                "Name of Game"
+                                "Name of Game",
+                                "game_name"
                               )}
                               sortable
                             ></Column>
@@ -433,7 +441,8 @@ const DashboardMod = () => {
                               field="casino_name"
                               header={headerWithTooltip(
                                 "Casino",
-                                "Name of casino"
+                                "Name of casino",
+                                "casino_name"
                               )}
                               sortable
                             ></Column>
@@ -441,7 +450,8 @@ const DashboardMod = () => {
                               field="country_name"
                               header={headerWithTooltip(
                                 "Country",
-                                "Country of Casino"
+                                "Country of Casino",
+                                "country_name"
                               )}
                               sortable
                             ></Column>
@@ -449,7 +459,8 @@ const DashboardMod = () => {
                               field="section_name"
                               header={headerWithTooltip(
                                 "Sec Name",
-                                "Section within casino where game was found"
+                                "Section within casino where game was found",
+                                "section_name"
                               )}
                               sortable
                             ></Column>
@@ -457,7 +468,8 @@ const DashboardMod = () => {
                               field="section_position"
                               header={headerWithTooltip(
                                 "Sec Position",
-                                "Position of the section within casino page"
+                                "Position of the section within casino page",
+                                "section_position"
                               )}
                               sortable
                               style={{ maxWidth: "8rem" }}
@@ -466,7 +478,8 @@ const DashboardMod = () => {
                               field="sectional_game_position"
                               header={headerWithTooltip(
                                 "Game Position",
-                                "Position of game within the section"
+                                "Position of game within the section",
+                                "sectional_game_position"
                               )}
                               sortable
                               style={{ maxWidth: "8rem" }}
@@ -475,7 +488,8 @@ const DashboardMod = () => {
                               field="overall_position"
                               header={headerWithTooltip(
                                 "Overall Position",
-                                "Overall position of the game on the casino page"
+                                "Overall position of the game on the casino page",
+                                "overall_position"
                               )}
                               sortable
                               style={{ maxWidth: "8rem" }}
@@ -484,7 +498,8 @@ const DashboardMod = () => {
                               field="growth"
                               header={headerWithTooltip(
                                 "Growth",
-                                "WoW Growth in overall position of the game on casino page"
+                                "WoW Growth in overall position of the game on casino page",
+                                "growth"
                               )}
                               sortable
                               style={{ maxWidth: "8rem" }}
@@ -494,7 +509,8 @@ const DashboardMod = () => {
                               field="site_url"
                               header={headerWithTooltip(
                                 "Site URL",
-                                "URL for the casino page"
+                                "URL for the casino page",
+                                "site_url"
                               )}
                               body={(rowData) => (
                                 <a
@@ -513,7 +529,8 @@ const DashboardMod = () => {
                               field="last_observed_date"
                               header={headerWithTooltip(
                                 "Last Observed Date",
-                                "Date when the game was last observed on the casino"
+                                "Date when the game was last observed on the casino",
+                                "last_observed_date"
                               )}
                               sortable
                               body={(rowData) => {
@@ -525,10 +542,11 @@ const DashboardMod = () => {
                             ></Column>
 
                             <Column
-                              field=""
+                              field="details"
                               header={headerWithTooltip(
                                 "Details",
-                                "Check historical movements of this game on the casino page"
+                                "Check historical momentum of the game",
+                                "details"
                               )}
                               className="text-center"
                               body={actionBodyTemplate}
