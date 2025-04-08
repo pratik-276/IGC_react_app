@@ -22,36 +22,26 @@ const GameDetailsMod = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
+  const [maxDate, setMaxDate] = useState(null);
+  const [minDate, setMinDate] = useState(null);
+
   const location = useLocation();
   console.log("location.state", location.state);
   const { operator_site_id, game_name, casino_name, country_name, state_name } =
     location.state || {};
 
-  const getStartEndDate = () => {
-    const currentDate = new Date();
-    const endDate = currentDate.toISOString().split("T")[0]; // yyyy-mm-dd format
-
-    // Calculate the start date (first day of last month)
-    const startDate = new Date(
-      currentDate.getFullYear(),
-      currentDate.getMonth() - 1,
-      1
-    );
-    const startDateFormatted = startDate.toISOString().split("T")[0]; // yyyy-mm-dd format
-
-    console.log("startDateFormatted", startDateFormatted);
-    console.log("endDate", endDate);
-
-    return { startDate: startDateFormatted, endDate };
-  };
-
-  const { startDate: defaultStartDate, endDate: defaultEndDate } =
-    getStartEndDate();
-
   // Set the default values for start and end date
   useEffect(() => {
-    setStartDate(defaultStartDate);
-    setEndDate(defaultEndDate);
+    const currentDate = new Date();
+
+    const previousMonth = new Date(currentDate);
+    previousMonth.setMonth(currentDate.getMonth() - 1);
+    previousMonth.setDate(1);
+
+    setMinDate(previousMonth);
+
+    setStartDate(previousMonth);
+    setEndDate(currentDate);
   }, []);
 
   useEffect(() => {
@@ -112,6 +102,8 @@ const GameDetailsMod = () => {
                   dateFormat="yy-mm-dd"
                   showIcon
                   placeholder="Select Start Date"
+                  minDate={minDate}
+                  maxDate={new Date()}
                 />
               </div>
 
@@ -122,6 +114,8 @@ const GameDetailsMod = () => {
                   dateFormat="yy-mm-dd"
                   showIcon
                   placeholder="Select End Date"
+                  minDate={minDate}
+                  maxDate={new Date()}
                 />
               </div>
             </div>
