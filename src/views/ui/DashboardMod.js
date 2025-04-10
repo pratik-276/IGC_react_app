@@ -526,7 +526,7 @@ const DashboardMod = () => {
                           field="details"
                           header={headerWithTooltip(
                             "Details",
-                            "Check historical momentum of the game",
+                            "Check historical movement of the game",
                             "details"
                           )}
                           className="text-center"
