@@ -238,56 +238,57 @@ const CompetitorDashboardMod = () => {
                   <div title={option.label}>{option.label}</div>
                 )}
                 className="flex-1"
+                style={{ maxWidth: "300px" }}
               />
 
-              {siteId && (
-                <>
-                  <MultiSelect
-                    value={providersName}
-                    onChange={(e) => setProvidersName(e.value)}
-                    options={providerData}
-                    loading={providerDataLoader}
-                    placeholder="Select Providers"
-                    filter
-                    maxSelectedLabels={1}
-                    className="flex-1"
-                  />
+              <MultiSelect
+                value={providersName}
+                onChange={(e) => setProvidersName(e.value)}
+                options={providerData}
+                loading={providerDataLoader}
+                placeholder="Select Providers"
+                filter
+                disabled={!siteId}
+                maxSelectedLabels={1}
+                className="flex-1"
+              />
 
-                  <MultiSelect
-                    value={gamesName}
-                    onChange={(e) => setGamesName(e.value)}
-                    options={gameData}
-                    loading={gameDataLoader}
-                    placeholder="Select Games"
-                    filter
-                    maxSelectedLabels={1}
-                    className="flex-1"
-                  />
+              <MultiSelect
+                value={gamesName}
+                onChange={(e) => setGamesName(e.value)}
+                options={gameData}
+                loading={gameDataLoader}
+                placeholder="Select Games"
+                filter
+                disabled={!siteId}
+                maxSelectedLabels={1}
+                className="flex-1"
+              />
 
-                  <Button
-                    type="button"
-                    label="Apply"
-                    loading={loader}
-                    icon="pi pi-filter"
-                    onClick={getCompitatorData}
-                    className="btn-filter"
-                    style={{ minWidth: "100px" }}
-                  />
+              <Button
+                type="button"
+                label="Apply"
+                loading={loader}
+                icon="pi pi-filter"
+                disabled={!siteId}
+                onClick={getCompitatorData}
+                className="btn-filter"
+                style={{ minWidth: "100px" }}
+              />
 
-                  <Button
-                    type="button"
-                    label="Reset"
-                    icon="pi pi-refresh"
-                    onClick={() => {
-                      setSiteId(null);
-                      setProvidersName(null);
-                      setGamesName(null);
-                    }}
-                    className="btn-filter"
-                    style={{ minWidth: "100px" }}
-                  />
-                </>
-              )}
+              <Button
+                type="button"
+                label="Reset"
+                icon="pi pi-refresh"
+                disabled={!siteId}
+                onClick={() => {
+                  setSiteId(null);
+                  setProvidersName(null);
+                  setGamesName(null);
+                }}
+                className="btn-filter"
+                style={{ minWidth: "100px" }}
+              />
             </div>
           </div>
         </div>
