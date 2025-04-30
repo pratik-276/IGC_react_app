@@ -285,6 +285,9 @@ const CompetitorDashboardMod = () => {
                   setSiteId(null);
                   setProvidersName(null);
                   setGamesName(null);
+                  setData([]);
+                  setTableData([]);
+                  setUniquePositions([]);
                 }}
                 className="btn-filter"
                 style={{ minWidth: "100px" }}
@@ -293,8 +296,8 @@ const CompetitorDashboardMod = () => {
           </div>
         </div>
 
-        {data?.length > 0 &&
-          (loader ? (
+        {data?.length > 0 ? (
+          loader ? (
             <div
               className="row align-items-center justify-content-center"
               style={{ height: "500px" }}
@@ -345,7 +348,17 @@ const CompetitorDashboardMod = () => {
                 </DataTable>
               </div>
             </>
-          ))}
+          )
+        ) : (
+          <>
+            <div
+              className="d-flex justify-content-center"
+              style={{ marginTop: "15%" }}
+            >
+              <h4>No competitor configured</h4>
+            </div>
+          </>
+        )}
       </div>
     </>
   );
