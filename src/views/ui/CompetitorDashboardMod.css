@@ -1,0 +1,60 @@
+.btn-filter {
+    font-weight: 600 !important;
+    color: #fff !important;
+    background-color: #6610f2;
+    border-color: #6610f2;
+    border-radius: 0.25rem;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-filter span {
+    color: white !important;
+}
+
+.btn-filter:hover {
+    background-color: #392f6c;
+    border-color: #392f6c;
+    color: #fff;
+}
+
+.btn-filter:focus,
+.btn-filter:active {
+    background-color: #440aa0;
+    border-color: #440aa0;
+    color: #fff;
+    box-shadow: 0 0 0 0.2rem rgba(102, 16, 242, 0.5);
+    /* focus shadow */
+}
+
+.p-dropdown-item {
+    max-width: 220px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    display: block;
+}
+
+.custom-table .p-datatable-tbody>tr:hover {
+    background-color: transparent !important;
+}
+
+.custom-table .p-datatable-tbody td:hover {
+    background-color: #f0f0f0 !important;
+    cursor: pointer;
+}
+
+.custom-table .p-datatable-tbody td {
+    background-color: transparent !important;
+    transition: background-color 0.2s ease-in-out;
+}
+
+.custom-tooltip .p-tooltip {
+    z-index: 9999 !important;
+    position: absolute;
+    top: -5px !important;
+}
+
+.info-icon {
+    position: relative;
+    z-index: 10;
+}

@@ -1,24 +1,18 @@
 .custom-table .p-datatable-tbody>tr:hover {
     background-color: #ebebeb;
-    /* You can change this to any color you prefer */
 }
 
 .custom-table .p-datatable-tbody>td {
     background-color: transparent !important;
-    /* You can change this to any color you prefer */
 }
 
 .custom-tooltip .p-tooltip {
     z-index: 9999 !important;
-    /* Ensure the tooltip appears on top of other elements */
     position: absolute;
-    /* Ensure absolute positioning */
     top: -5px !important;
-    /* Adjust positioning if needed */
 }
 
 .info-icon {
     position: relative;
     z-index: 10;
-    /* Ensure icon is above the tooltip */
 }
