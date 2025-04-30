@@ -318,7 +318,7 @@ const CompetitorDashboardMod = () => {
                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                   sortIcon={sortIconTemplate}
                   size="small"
-                  className="table-bordered p-component p-datatable custom-table small"
+                  className="table-bordered p-component p-datatable custom-competitor-table small"
                 >
                   <Column
                     frozen

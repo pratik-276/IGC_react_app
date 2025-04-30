@@ -65,12 +65,20 @@ const GameDetailsMod = () => {
         start_date: start_date,
         end_date: end_date,
       },
-    }).then((res) => {
-      console.log("res : ", res);
-      console.log("res data : ", res.data);
-      setTrackingDetails(res.data);
-      setLoader(false);
-    });
+    })
+      .then((res) => {
+        console.log("res : ", res);
+        console.log("res data : ", res.data);
+        setTrackingDetails(res.data);
+        setLoader(false);
+      })
+      .catch((err) => {
+        console.log("Error fetching data: ", err);
+        setLoader(false);
+      })
+      .finally(() => {
+        setLoader(false);
+      });
   };
 
   return (

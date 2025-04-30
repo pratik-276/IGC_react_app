@@ -34,16 +34,16 @@
     display: block;
 }
 
-.custom-table .p-datatable-tbody>tr:hover {
+.custom-competitor-table .p-datatable-tbody>tr:hover {
     background-color: transparent !important;
 }
 
-.custom-table .p-datatable-tbody td:hover {
+.custom-competitor-table .p-datatable-tbody td:hover {
     background-color: #f0f0f0 !important;
     cursor: pointer;
 }
 
-.custom-table .p-datatable-tbody td {
+.custom-competitor-table .p-datatable-tbody td {
     background-color: transparent !important;
     transition: background-color 0.2s ease-in-out;
 }
