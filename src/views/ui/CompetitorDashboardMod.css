@@ -44,7 +44,6 @@
 }
 
 .custom-competitor-table .p-datatable-tbody td {
-    background-color: transparent !important;
     transition: background-color 0.2s ease-in-out;
 }
 

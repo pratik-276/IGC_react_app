@@ -334,6 +334,10 @@ const CompetitorDashboardMod = () => {
                     field="section_title"
                     sortable
                     body={(rowData) => <strong>{rowData.section_title}</strong>}
+                    style={{
+                      minWidth: "200px",
+                      whiteSpace: "normal",
+                    }}
                   />
 
                   {uniquePositions.map((pos) => (
