@@ -95,10 +95,15 @@ const GameDetailsMod = () => {
                 onClick={() => navigate("/dashboard-mod")} // Navigate to /dashboard-mod when clicked
               />
               <div>
-                <h4 className="font-semibold" style={{ color: "#392f6c" }}>
+                <h4
+                  className="m-md-0 font-semibold"
+                  style={{ color: "#392f6c" }}
+                >
                   Tracker Dashboard
                 </h4>
-                <span>View details related to game</span>
+                <span className="text-black" style={{ fontSize: "1rem" }}>
+                  View details related to game
+                </span>
               </div>
             </div>
 

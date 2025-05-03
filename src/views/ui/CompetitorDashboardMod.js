@@ -219,9 +219,13 @@ const CompetitorDashboardMod = () => {
       <div className="compass">
         <div className="compass-data">
           <div className="d-flex flex-column gap-3 justify-content-between">
-            <div className="col-md-5 col-lg-5">
-              <h3 className="m-md-0">Competitor Dashboard</h3>
-              <span>View details related to all the competitors</span>
+            <div>
+              <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
+                Competitor Dashboard
+              </h4>
+              <span className="text-black" style={{ fontSize: "1rem" }}>
+                View details related to all the competitors
+              </span>
             </div>
 
             <div className="d-flex flex-wrap gap-2">

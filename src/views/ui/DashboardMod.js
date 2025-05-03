@@ -280,7 +280,7 @@ const DashboardMod = () => {
         <div>
           <div className="d-flex align-items-center justify-content-between">
             <div>
-              <h4 className="font-semibold" style={{ color: "#392f6c" }}>
+              <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
                 {trackingDetails?.operator_name != undefined
                   ? `${trackingDetails?.operator_name} Dashboard`
                   : `Tracker Dashboard`}
@@ -289,6 +289,7 @@ const DashboardMod = () => {
                 Track latest positions of all your games across all casinos
               </span>
             </div>
+
             <div className="d-flex gap-2">
               <MultiSelect
                 value={selectedGames}

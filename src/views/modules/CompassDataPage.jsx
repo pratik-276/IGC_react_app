@@ -221,9 +221,12 @@ const CompassDataPage = ({
               <div className="compass-data">
                 <div className="d-flex flex-column gap-3 justify-content-between">
                   <div className="d-flex align-items-center justify-content-between">
-                    <div className="col-md-5 col-lg-5">
-                      <h3 className="m-md-0">Calibrate Compass</h3>
-                      <span>Track, add, delete all your games and operators</span>
+
+                    <div>
+                      <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
+                        Calibrate Compass
+                      </h4>
+                      <span className="text-black" style={{ fontSize: "1rem" }}>Track, add, delete all your games and operators</span>
                     </div>
 
                     <Button
@@ -262,25 +265,6 @@ const CompassDataPage = ({
                       />
                     </div>
 
-                    {/* <div className="compass-right-icon">
-                      {deleteLoader ? (
-                        <div className="compass-search">
-                          <Spin />
-                        </div>
-                      ) : (
-                        <div
-                          className="compass-search"
-                          onClick={selectedRows.length > 0 ? handleDelete : null}
-                          style={{
-                            cursor:
-                              selectedRows.length > 0 ? "pointer" : "not-allowed",
-                            opacity: selectedRows.length > 0 ? 1 : 0.5,
-                          }}
-                        >
-                          <i className="bi bi-trash3"></i>
-                        </div>
-                      )}
-                    </div> */}
                     <Button
                       icon="pi pi-trash"
                       className="btn-filter"
@@ -370,6 +354,7 @@ const CompassDataPage = ({
                       "Status",
                       "status"
                     )}
+                    sortable
                     style={{ minWidth: "8rem" }}
                     body={statusActionTemplate}
 
@@ -382,6 +367,7 @@ const CompassDataPage = ({
                       "Section Name",
                       "section_name"
                     )}
+                    sortable
                     style={{ minWidth: "12rem" }}
                   ></Column>
 
@@ -392,6 +378,7 @@ const CompassDataPage = ({
                       "Minimum Position of Game",
                       "min_position"
                     )}
+                    sortable
                     style={{ minWidth: "8rem" }}
                   ></Column>
 
@@ -402,6 +389,7 @@ const CompassDataPage = ({
                       "Maximum Position of Game",
                       "max_position"
                     )}
+                    sortable
                     style={{ minWidth: "8rem" }}
                   ></Column>
 

@@ -194,12 +194,14 @@ const GameTrackingMod = () => {
         <div className="compass-data">
           <div className="row align-items-center">
             <div className="col-md-5 col-lg-5">
-              <h3 className="m-md-0">
+              <h3 className="m-md-0" style={{ color: "#392f6c" }}>
                 {trackingDetails?.operator_name != undefined
                   ? `${trackingDetails?.operator_name} Dashboard`
                   : `Dashboard`}
               </h3>
-              <span>View details related to all the compass configured</span>
+              <span className="text-black" style={{ fontSize: "1rem" }}>
+                View details related to all the compass configured
+              </span>
             </div>
           </div>
         </div>

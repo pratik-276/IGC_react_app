@@ -1,27 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { MdInfoOutline } from "react-icons/md";
+
 import { DataTable } from "primereact/datatable";
-import { Column } from "primereact/column";
-import {
-  FormControl,
-  TextField,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import { Range } from "react-range";
 import { Tooltip } from "primereact/tooltip";
+import { Dropdown } from "primereact/dropdown";
+import { Column } from "primereact/column";
+import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+
+import { Spin } from "antd";
 import { FilterMatchMode } from "primereact/api";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { ProgressBar } from "primereact/progressbar";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
-import "./index.css";
+import "./DashboardMod.css";
 
 import call from "../../services/Call";
 const GameRank = () => {
   const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState("");
   const [tableData, setTableData] = useState([]);
-  const [currentAvgPosition, setCurrentAvgPosition] = useState(0);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -37,7 +33,7 @@ const GameRank = () => {
       method: "POST",
       data: {
         region: selectedRegion,
-        search_term: searchTerm,
+        search_term: "",
       },
     })
       .then((v) => {
@@ -63,62 +59,16 @@ const GameRank = () => {
       method: "GET",
     });
 
-    setRegions(res.data);
+    if (res?.data && Array.isArray(res.data)) {
+      const cleaned = res.data
+        .filter((region) => region !== null && typeof region === "string")
+        .map((region) => ({ label: region, value: region }));
+
+      setRegions(cleaned);
+    } else {
+      setRegions([]);
+    }
   }
-
-  const gameNameTemplate = (row) => {
-    return (
-      <h6
-        className="font-semibold text-capitalize"
-        style={{ color: "#222222" }}
-      >
-        {row?.game_name}
-      </h6>
-    );
-  };
-
-  const gameProviderTemplate = (row) => {
-    return (
-      <h6
-        className="font-semibold text-capitalize"
-        style={{ color: "#222222" }}
-      >
-        {row?.game_provider}
-      </h6>
-    );
-  };
-
-  const countryRankTemplate = (row) => {
-    return (
-      <h6
-        className="font-semibold text-capitalize"
-        style={{ color: "#222222" }}
-      >
-        {parseFloat(row?.country_rank)}
-      </h6>
-    );
-  };
-
-  const averagePositionTemplate = (row) => {
-    return (
-      <h6
-        onMouseEnter={() => setCurrentAvgPosition(row?.avg_position)}
-        onMouseLeave={() => setCurrentAvgPosition(0)}
-        className="font-normal text-secondary"
-        style={{ color: "#8A92A6" }}
-      >
-        <span className="custom-tooltip-btn">{row?.avg_position}</span>
-      </h6>
-    );
-  };
-
-  const casinoPresentTemplate = (row) => {
-    return (
-      <h6 className="font-normal text-secondary" style={{ color: "#8A92A6" }}>
-        {row?.casino_present}
-      </h6>
-    );
-  };
 
   const stabilityTemplate = (row) => {
     let stability = "low";
@@ -205,7 +155,6 @@ const GameRank = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#f8d7da",
               color: "#dc3545",
             }}
           >
@@ -223,7 +172,6 @@ const GameRank = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#faf3e8",
               color: "#dc9b00",
             }}
           >
@@ -241,7 +189,6 @@ const GameRank = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#e6f9e6",
               color: "#28a745",
             }}
           >
@@ -254,260 +201,199 @@ const GameRank = () => {
     );
   };
 
-  const renderHeader = () => {
-    return (
-      <div
-        className="pb-3 pt-3"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <h3>Game Rank</h3>
-          <span style={{fontWeight: 400}}>Track top games in every market.</span>
-        </div>
-        <ProgressBar value={12}></ProgressBar>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyItems: "flex-end",
-            gap: 5,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "16px",
-              alignItems: "center",
-              minWidth: "200px",
-            }}
-          >
-            <FormControl size="small" style={{ flex: 1 }}>
-              <InputLabel id="region-select">Region</InputLabel>
-              <Select
-                labelId="region-select"
-                value={selectedRegion}
-                label="Region"
-                onChange={(e) => setSelectedRegion(e.target.value)}
-              >
-                {regions.map((region) => (
-                  <MenuItem value={region} key={region}>
-                    {region}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              size="small"
-              label="Search"
-              variant="outlined"
-              value={filters.global.value}
-              onChange={(e) =>
-                setFilters((f) => ({
-                  global: { ...f.global, value: e.target.value },
-                }))
-              }
-              style={{ flex: 2 }}
-            />
-          </div>
-          {/* <div style={{ flex: 1, minWidth: '200px' }}>
-                        <FormControl size="small" fullWidth>
-                            <InputLabel id="month-select">Month</InputLabel>
-                            <Select
-                                labelId="month-select"
-                                value={selectedMonthYear}
-                                label="Month"
-                                onChange={(e) => setSelectedMonthYear(e.target.value)}
-                            >
-                                { yearMonthList.map((ym) => <MenuItem value={ym}>{ym}</MenuItem> ) }
-                            </Select>
-                        </FormControl>
-                    </div> */}
-        </div>
+  const headerWithTooltip = (headerText, tooltipText, id) => (
+    <div
+      className="d-flex align-items-center justify-content-between"
+      style={{ width: "100%" }}
+    >
+      <div className="d-flex align-items-center m-1">
+        <h5 style={{ margin: 0 }}>{headerText}</h5>
+        <Tooltip
+          target={`.info-icon-${id}`}
+          content={tooltipText}
+          position="top"
+          className="custom-tooltip"
+        />
+        <MdInfoOutline
+          className={`info-icon-${id} ms-2`}
+          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
+        />
       </div>
+    </div>
+  );
+
+  const sortIconTemplate = (options) => {
+    let icon = options.sorted ? (
+      options.sortOrder < 0 ? (
+        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
+      ) : (
+        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
+      )
+    ) : (
+      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
     );
+    return icon;
   };
 
   return (
-    <div className="container">
-      {loading ? (
-        <div className="col-md-6">
-          <h3>Game Rank</h3>
-          <span style={{fontWeight: 400}}>Track top games in every market.</span>
-        </div>
-      ) : (
-        ""
-      )}
-      {!loading && (
-        <div className="tracker-details-body calibrate-compass-table">
-          <DataTable
-            className="tracker-details-table"
-            paginator
-            rows={10}
-            value={tableData}
-            header={renderHeader}
-            sortField="country_rank"
-            sortOrder={1}
-            filterDisplay="row"
-            filters={filters}
-            tableStyle={{ minWidth: "50rem" }}
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-            currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
-            rowsPerPageOptions={[10, 20, 30]}
-            globalFilterFields={["game_name", "game_provider"]}
-            rowHover
-          >
-            <Column
-              field="game_name"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                  Game Name
-                </div>
-              }
-              body={gameNameTemplate}
-            ></Column>
-            <Column
-              field="game_provider"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                  Game Provider
-                </div>
-              }
-              body={gameProviderTemplate}
-            ></Column>
-            <Column
-              field="country_rank"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>Rank</div>
-              }
-              body={countryRankTemplate}
-            ></Column>
-            <Column
-              field="avg_position"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>
-                  Avg. Position
-                </div>
-              }
-              body={averagePositionTemplate}
-            ></Column>
-            <Column
-              field="casino_present"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>
-                  Casino Present
-                </div>
-              }
-              body={casinoPresentTemplate}
-            ></Column>
-            <Column
-              field="stability"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>
-                  Stability
-                </div>
-              }
-              body={stabilityTemplate}
-            ></Column>
-            <Column
-              field="change"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>Change</div>
-              }
-              body={changeTemplate}
-            ></Column>
-          </DataTable>
-        </div>
-      )}
-      {!loading && (
-        <Tooltip position="top" target=".custom-tooltip-btn">
-          <div>
-            <ProgressBarRange values={[currentAvgPosition]} />
-          </div>
-        </Tooltip>
-      )}
+    <>
+      <div className="compass">
+        <div className="compass-data">
+          <div className="d-flex flex-column gap-3 justify-content-between">
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <h4
+                  className="m-md-0 font-semibold"
+                  style={{ color: "#392f6c" }}
+                >
+                  Game Rank
+                </h4>
+                <span className="text-black" style={{ fontSize: "1rem" }}>
+                  Track top games in every market
+                </span>
+              </div>
 
-      {loading && (
-        <div style={{ display: "flex" }}>
-          <ProgressSpinner />
-        </div>
-      )}
-    </div>
-  );
-};
+              <div className="d-flex flex-wrap gap-2">
+                <Dropdown
+                  optionLabel="label"
+                  optionValue="value"
+                  filter
+                  placeholder="Select Region"
+                  loading={loading}
+                  value={selectedRegion}
+                  onChange={(e) => setSelectedRegion(e.value)}
+                  options={regions}
+                />
 
-const ProgressBarRange = ({ values }) => {
-  return (
-    <div style={{ minWidth: "250px", padding: "10px" }}>
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingBottom: "10px",
-          color: "white",
-        }}
-      >
-        <h6>Better</h6>
-        <h6>Average</h6>
-        <h6>Worse</h6>
-      </div>
-      <Range
-        step={1}
-        min={1}
-        max={2000}
-        values={values}
-        renderTrack={({ props, children }) => (
-          <div
-            {...props}
-            style={{
-              ...props.style,
-              height: "6px",
-              background: "linear-gradient(to left, red, yellow, green)",
-            }}
-          >
-            {children}
+                <IconField iconPosition="left" style={{ flex: 2 }}>
+                  <InputIcon className="pi pi-search" />
+                  <InputText
+                    disabled={loading}
+                    placeholder="Search"
+                    value={filters.global.value}
+                    onChange={(e) =>
+                      setFilters((f) => ({
+                        ...f,
+                        global: { ...f.global, value: e.target.value },
+                      }))
+                    }
+                  />
+                </IconField>
+              </div>
+            </div>
           </div>
-        )}
-        renderThumb={({ props, value }) => {
-          console.log(props);
-          return (
+        </div>
+
+        {loading ? (
+          <>
             <div
-              {...props}
-              style={{
-                ...props.style,
-                height: "20px",
-                width: "20px",
-                borderRadius: "20px",
-                backgroundColor: "white",
-              }}
-            />
-          );
-        }}
-      />
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-          paddingTop: "10px",
-        }}
-      >
-        <h6>1</h6>
-        <h6>2000</h6>
+              className="row align-items-center justify-content-center"
+              style={{ height: "500px" }}
+            >
+              <div className="col-md-5">
+                <div className="text-center">
+                  <Spin size="large" />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="border border-secondary p-3 rounded-3 mt-3">
+              <h5 className="font-semibold pl-2">Latest Details</h5>
+              <DataTable
+                value={tableData}
+                filters={filters}
+                removableSort
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25]}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                size="small"
+                className="table-bordered p-component p-datatable custom-table small"
+                scrollable
+                sortIcon={sortIconTemplate}
+                sortField="country_rank"
+                sortOrder={1}
+              >
+                <Column
+                  field="game_name"
+                  sortable
+                  header={headerWithTooltip(
+                    "Game Name",
+                    "The name of the game",
+                    "game_name"
+                  )}
+                ></Column>
+
+                <Column
+                  field="game_provider"
+                  sortable
+                  header={headerWithTooltip(
+                    "Game Provider",
+                    "The name of the game provider",
+                    "game_provider"
+                  )}
+                ></Column>
+
+                <Column
+                  field="country_rank"
+                  sortable
+                  header={headerWithTooltip(
+                    "Country Rank",
+                    "The rank of the game in the selected country",
+                    "country_rank"
+                  )}
+                ></Column>
+
+                <Column
+                  field="avg_position"
+                  sortable
+                  header={headerWithTooltip(
+                    "Average Position",
+                    "The average position of the game in the selected country",
+                    "avg_position"
+                  )}
+                ></Column>
+
+                <Column
+                  field="casino_present"
+                  sortable
+                  header={headerWithTooltip(
+                    "Casino Present",
+                    "The number of casinos where the game is present",
+                    "casino_present"
+                  )}
+                ></Column>
+
+                <Column
+                  field="stability"
+                  sortable
+                  header={headerWithTooltip(
+                    "Stability",
+                    "The stability of the game",
+                    "stability"
+                  )}
+                  body={stabilityTemplate}
+                ></Column>
+
+                <Column
+                  field="change"
+                  sortable
+                  header={headerWithTooltip(
+                    "Change",
+                    "The change in rank of the game",
+                    "change"
+                  )}
+                  body={changeTemplate}
+                ></Column>
+              </DataTable>
+            </div>
+          </>
+        )}
       </div>
-    </div>
+    </>
   );
 };
 
