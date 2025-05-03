@@ -1,21 +1,23 @@
 import React, { useRef, useState } from "react";
-import Dropdown from "react-dropdown";
-import "react-dropdown/style.css";
 import Loader from "../../layouts/loader/Loader";
-import { FaChartLine, FaPlus } from "react-icons/fa6";
-import { CiPause1 } from "react-icons/ci";
-import { IoMdSearch } from "react-icons/io";
+import { FaPlus } from "react-icons/fa6";
 import CompassData from "../../services/CompassApi";
-import toast from "react-hot-toast";
+import { MdInfoOutline } from "react-icons/md";
+
 import { Spin } from "antd";
+import { Button } from 'primereact/button';
 import { DataTable } from "primereact/datatable";
+import { Dropdown } from 'primereact/dropdown';
 import { Column } from "primereact/column";
-import { MdKeyboardArrowLeft, MdKeyboardArrowRight } from "react-icons/md";
-import { Pagination } from "react-bootstrap";
-import Select from "react-select";
-import { Link } from "react-router-dom";
-import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
-import { useNavigate } from "react-router-dom";
+import { Tooltip } from "primereact/tooltip";
+import { Toast } from 'primereact/toast';
+import { Tag } from 'primereact/tag';
+import 'primereact/resources/themes/lara-light-blue/theme.css';
+import 'primereact/resources/primereact.min.css';
+import 'primeicons/primeicons.css';
+
+import "../ui/Compass.css";
+
 
 const CompassDataPage = ({
   setOpen,
@@ -26,16 +28,13 @@ const CompassDataPage = ({
   const options4 = [5, 10, 15, 20];
 
   const dt = useRef(null);
-  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
 
-  const [page, setPage] = useState(0);
-  const [rows, setRows] = useState(10);
-
   const [operatorFilter, setOperatorFilter] = useState(null);
   const [gameFilter, setGameFilter] = useState(null);
+  const toast = useRef(null);
 
   const filterData = () => {
     let filteredData = compassRead;
@@ -66,26 +65,44 @@ const CompassDataPage = ({
         if (res?.success === true) {
           getCompassReadData();
           setSelectedRows([]);
-          toast.success(res?.message);
-          setPage(0);
+          toast.current?.show({
+            severity: 'success',
+            summary: 'Success',
+            detail: res?.message || 'Deleted successfully',
+            life: 3000
+          });
           setOperatorFilter(null);
           setGameFilter(null);
         }
       })
-      .catch(console.error)
+      .catch((err) => {
+        console.error(err);
+        toast.current?.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'Delete failed. Try again.',
+          life: 3000
+        });
+      })
       .finally(() => setDeleteLoader(false));
   };
 
+
   const showFirstDrawer = () => setOpen(true);
 
-  // const createdBodyTemplate = () => <span className="text-center">-</span>;
-  const createdBodyTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.created_at}
-      </h5>
+  const sortIconTemplate = (options) => {
+    let icon = options.sorted ? (
+      options.sortOrder < 0 ? (
+        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
+      ) : (
+        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
+      )
+    ) : (
+      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
     );
+    return icon;
   };
+
 
   const StatusBodyTemplate = (row) => {
     const startDate = new Date(row?.start_date);
@@ -99,126 +116,69 @@ const CompassDataPage = ({
       .replace(/\//g, "-");
 
     return (
-      <h5 style={{ color: "#8A92A6" }}>
+      <span>
         {formattedStartDate} to {formattedEndDate}
-      </h5>
+      </span>
     );
   };
 
-  const operatorNameBodyTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.name}
-      </h5>
-    );
-  };
 
-  const gameNameBodyTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.game_original_name}
-      </h5>
-    );
-  };
-  
-  const gameProviderBodyTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.game_provider}
-      </h5>
-    );
-  };
+  const statusActionTemplate = (rowData) => {
+    let tagStyle = {
+      fontSize: '12px',
+      fontWeight: 500,
+    };
 
-  const sectionNameTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.section_name}
-      </h5>
-    );
-  };
+    switch (rowData.status) {
+      case 'pass':
+        tagStyle.backgroundColor = '#d4edda';
+        tagStyle.color = '#155724';
+        break;
+      case 'fail':
+        tagStyle.backgroundColor = '#f8d7da';
+        tagStyle.color = '#721c24';
+        break;
+      default:
+        tagStyle.backgroundColor = '#fff3cd';
+        tagStyle.color = '#856404';
+        break;
+    }
 
-  const minPositionTemplate = (row) => {
     return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.min_position}
-      </h5>
-    );
-  };
-
-  const maxPositionTemplate = (row) => {
-    return (
-      <h5 style={{ color: "#222222", fontWeight: "500", fontSize: "15px" }}>
-        {row?.max_position}
-      </h5>
-    );
-  };
-
-  const statusActionTemplate = (row) => (
-    <td className="text-center">
-      {
-        row.status === 'fail' ? (
-          <span className="action-btn"></span>
-        ) : (row.status === 'pass' ? (
-          <span className="action-btn-green"></span>
-        ) : (
-          <span className="action-btn-yellow"></span>
-        ))
-      }
-    </td>
-  );
-
-  const checkDataTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "24px" }}
-        onClick={() => {
-          console.log(rowData);
-          navigate('/game-tracking-details', { state: { operator_site_id: rowData.operator_site_id,  game_name: rowData.game_original_name, casino_name: rowData.name } });
-          //console.log(rowData.game_name, rowData.operator_site_id);
-          //window.location.href = `/game-track-details?game_name=${rowData.game_name}&operator_site_id=${rowData.operator_site_id}`;
-        }}
+      <Tag
+        value={rowData.status}
+        style={tagStyle}
+        className="text-capitalize"
+        rounded
       />
     );
   };
 
+
+  const headerWithTooltip = (headerText, tooltipText, id) => (
+    <div
+      className="d-flex align-items-center justify-content-between"
+      style={{ width: "100%" }}
+    >
+      <div className="d-flex align-items-center m-1">
+        <h5 style={{ margin: 0 }}>{headerText}</h5>
+        <Tooltip
+          target={`.info-icon-${id}`}
+          content={tooltipText}
+          position="top"
+          className="custom-tooltip"
+        />
+        <MdInfoOutline
+          className={`info-icon-${id} ms-2`}
+          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
+        />
+      </div>
+    </div>
+  );
+
+
+
   const filteredData = filterData();
-  const totalRecords = filteredData.length;
-  const totalPages = Math.ceil(totalRecords / rows);
-  const paginatedData = filteredData.slice(page * rows, (page + 1) * rows);
-
-  const dateTimePeriod = [
-    {
-      id: "7 days",
-      date: "7 days",
-    },
-    {
-      id: "1 month",
-      date: "1 month",
-    },
-    {
-      id: "3 month",
-      date: "3 month",
-    },
-    {
-      id: "custom",
-      date: "custom",
-    },
-  ];
-
-  const statusPeriod = [
-    {
-      id: "Pause",
-      status: "Pause",
-    },
-    {
-      id: "In Progress",
-      status: "In Progress",
-    },
-    {
-      id: "Not Available",
-      status: "Not Available",
-    },
-  ];
 
   const operatorOption = Array.from(
     new Set(compassRead?.map((data) => data.name))
@@ -234,22 +194,9 @@ const CompassDataPage = ({
     label: name,
   }));
 
-  const timeOption = dateTimePeriod?.map((data) => ({
-    value: data.id,
-    label: data.date,
-  }));
-
-  const statusOption = statusPeriod?.map((data) => ({
-    value: data.id,
-    label: data.status,
-  }));
-
-  const casinoFilterChange = (option) => {
-    setOperatorFilter(option ? option.value : null);
-  };
-
   return (
     <>
+      <Toast ref={toast} />
       {loader ? (
         <Loader />
       ) : (
@@ -260,7 +207,7 @@ const CompassDataPage = ({
                 <div className="compass-text text-center">
                   <p>No games or casinos configured.</p>
                   <button
-                    className="btn game_add_btn"
+                    className="btn-filter"
                     onClick={showFirstDrawer}
                   >
                     Calibrate Casino or Game <FaPlus className="ms-2" />
@@ -269,279 +216,198 @@ const CompassDataPage = ({
               </div>
             </div>
           ) : (
-            <div className="compass-data">
-              <div className="row align-items-center">
-                <div className="col-md-6">
-                  <h3>Calibrate Compass</h3>
-                  <span>Track, add, delete all your games and operators</span>
-                </div>
-                <div className="col-md-6 text-md-end create_casino_game_btn">
-                  <button
-                    className="btn game_add_btn"
-                    onClick={showFirstDrawer}
-                  >
-                    Calibrate Casino or Game <FaPlus className="ms-2" />
-                  </button>
-                </div>
-              </div>
-              {/* <div className="compass-data-border mb-3">
-                <span></span>
-              </div> */}
-              <div className="d-md-flex d-lg-flex justify-content-between mt-5">
-                <div className="calibrate-dropdown">
-                  {/* <div className="all-time-status-dropdown">
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isClearable={true}
-                      isSearchable={false}
-                      name="trackingstatus"
-                      options={statusOption}
-                      placeholder="Status"
-                      onChange={casinoFilterChange}
-                    />
-                  </div> */}
-                  <div className="all-time-status-dropdown">
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isClearable={true}
-                      isSearchable={false}
-                      name="trackingstatus"
-                      options={operatorOption}
-                      placeholder="Operator"
-                      onChange={casinoFilterChange}
-                    />
-                  </div>
-                  <div className="all-time-status-dropdown">
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isClearable={true}
-                      isSearchable={false}
-                      name="trackingstatus"
-                      options={gameOption}
-                      placeholder="Game"
-                      onChange={(option) =>
-                        setGameFilter(option ? option.value : null)
-                      }
-                    />
-                  </div>
-                  {/* <div className="all-time-status-dropdown">
-                    <Select
-                      className="basic-single"
-                      classNamePrefix="select"
-                      isClearable={true}
-                      isSearchable={false}
-                      name="trackingstatus"
-                      options={timeOption}
-                      placeholder="All Time"
-                      onChange={(option) =>
-                        setGameFilter(option ? option.value : null)
-                      }
-                    />
-                  </div> */}
-                </div>
-                <div className="compass-right-icon">
-                  {/* <div className="compass-search">
-                    <Link to="/game-tracking">
-                      <FaChartLine />
-                    </Link>
-                  </div> */}
-                  {deleteLoader ? (
-                    <div className="compass-search">
-                      <Spin />
+            <div className="compass">
+
+              <div className="compass-data">
+                <div className="d-flex flex-column gap-3 justify-content-between">
+                  <div className="d-flex align-items-center justify-content-between">
+                    <div className="col-md-5 col-lg-5">
+                      <h3 className="m-md-0">Calibrate Compass</h3>
+                      <span>Track, add, delete all your games and operators</span>
                     </div>
-                  ) : (
-                    <div
-                      className="compass-search"
+
+                    <Button
+                      className="btn-filter"
+                      onClick={showFirstDrawer}
+                      label="Calibrate Casino or Game"
+                      icon="pi pi-plus" iconPos="right"
+                    />
+                  </div>
+
+                  <div className="d-md-flex d-lg-flex justify-content-between">
+                    <div className="d-flex gap-2">
+                      <Dropdown
+                        optionLabel="label"
+                        optionValue="value"
+                        filter
+                        showClear
+                        placeholder="Select Operator"
+                        value={operatorFilter}
+                        options={operatorOption}
+                        onChange={(option) =>
+                          setOperatorFilter(option ? option.value : null)
+                        }
+                      />
+                      <Dropdown
+                        optionLabel="label"
+                        optionValue="value"
+                        filter
+                        showClear
+                        placeholder="Select Game"
+                        value={gameFilter}
+                        options={gameOption}
+                        onChange={(option) =>
+                          setGameFilter(option ? option.value : null)
+                        }
+                      />
+                    </div>
+
+                    {/* <div className="compass-right-icon">
+                      {deleteLoader ? (
+                        <div className="compass-search">
+                          <Spin />
+                        </div>
+                      ) : (
+                        <div
+                          className="compass-search"
+                          onClick={selectedRows.length > 0 ? handleDelete : null}
+                          style={{
+                            cursor:
+                              selectedRows.length > 0 ? "pointer" : "not-allowed",
+                            opacity: selectedRows.length > 0 ? 1 : 0.5,
+                          }}
+                        >
+                          <i className="bi bi-trash3"></i>
+                        </div>
+                      )}
+                    </div> */}
+                    <Button
+                      icon="pi pi-trash"
+                      className="btn-filter"
                       onClick={selectedRows.length > 0 ? handleDelete : null}
-                      style={{
-                        cursor:
-                          selectedRows.length > 0 ? "pointer" : "not-allowed",
-                        opacity: selectedRows.length > 0 ? 1 : 0.5,
-                      }}
-                    >
-                      <i className="bi bi-trash3"></i>
-                    </div>
-                  )}
-                  {/* <div className="compass-search">
-                    <CiPause1 />
+                      disabled={selectedRows.length === 0}
+                      tooltip="Delete Selected Rows"
+                      tooltipOptions={{ position: 'left' }}
+                      loading={deleteLoader}
+                    />
                   </div>
-                  <div className="compass-search">
-                    <IoMdSearch />
-                  </div> */}
                 </div>
               </div>
 
-              {/* Tracker Details  Data Table */}
-              <div className="tracker-details mt-3 p-0">
-                <div className="tracker-details-body calibrate-compass-table">
-                  <DataTable
-                    ref={dt}
-                    value={paginatedData}
-                    selection={selectedRows}
-                    onSelectionChange={(e) => setSelectedRows(e.value)}
-                    dataKey="id"
-                    removableSort
-                    paginator={false}
-                    className="tracker-details-table"
-                    scrollable
-                    scrollHeight="400px"
-                  >
-                    <Column
-                      selectionMode="multiple"
-                      exportable={false}
-                    ></Column>
-                    {/* <Column
-                      field="operator_name"
-                      header="Created On"
-                      body={createdBodyTemplate}
-                    ></Column> */}
-                    <Column
-                      field="name"
-                      header="Operator Name"
-                      style={{ minWidth: "12rem" }}
-                      body={operatorNameBodyTemplate}
-                    ></Column>
-                    <Column
-                      field="game_original_name"
-                      header="Game Name"
-                      style={{ minWidth: "12rem" }}
-                      body={gameNameBodyTemplate}
-                    ></Column>
-                    <Column
-                      field="game_provider"
-                      header="Provider"
-                      style={{ minWidth: "12rem" }}
-                      body={gameProviderBodyTemplate}
-                    ></Column>
-                    <Column
-                      field="start_date"
-                      header="Tracking Timeline"
-                      style={{ minWidth: "15rem" }}
-                      body={StatusBodyTemplate}
-                    ></Column>
-                    <Column
-                      field="status"
-                      header="Status"
-                      body={statusActionTemplate}
-                      style={{ minWidth: "5rem" }}
-                    ></Column>
-                    {/* <Column
-                      field="checkdata"
-                      header="Check Data"
-                      body={checkDataTemplate}
-                      style={{ minWidth: "8rem" }}
-                    ></Column> */}
-                    
-                    <Column
-                      field="section_name"
-                      header="Section Title"
-                      style={{ minWidth: "12rem" }}
-                    ></Column>
-                    
-                    <Column
-                      field="min_position"
-                      header="Minimum Position"
-                      style={{ minWidth: "12rem" }}
-                    ></Column>
-                    
-                    <Column
-                      field="max_position"
-                      header="Maximum Position"
-                      style={{ minWidth: "12rem" }}
-                    ></Column>
-                    {/* <Column
-                      field="credit"
-                      header="Credits consumed"
-                      body={createdBodyTemplate}
-                    ></Column> */}
-                  </DataTable>
-                </div>
+              <div className="border border-secondary p-3 rounded-3 mt-3">
+                <h5 className="font-semibold pl-2">Latest Details</h5>
+                <DataTable
+                  ref={dt}
+                  value={filteredData}
+                  selection={selectedRows}
+                  onSelectionChange={(e) => setSelectedRows(e.value)}
+                  dataKey="id"
+                  removableSort
+                  scrollable
+                  paginator
+                  rows={10}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                  sortIcon={sortIconTemplate}
+                  size="small"
+                  className="table-bordered p-component p-datatable custom-calibrate-table small"
+
+                >
+                  <Column
+                    selectionMode="multiple"
+                    exportable={false}
+                  ></Column>
+
+                  <Column
+                    field="name"
+                    header={headerWithTooltip(
+                      "Operator Name",
+                      "Name of Operator",
+                      "name"
+                    )}
+                    sortable
+                    style={{ minWidth: "10rem" }}
+                  ></Column>
+
+                  <Column
+                    field="game_original_name"
+                    header={headerWithTooltip(
+                      "Game Name",
+                      "Name of Game",
+                      "game_name"
+                    )}
+                    sortable
+                    style={{ minWidth: "10rem" }}
+                  ></Column>
+
+                  <Column
+                    field="game_provider"
+                    header={headerWithTooltip(
+                      "Game Provider",
+                      "Name of Game Provider",
+                      "game_provider"
+                    )}
+                    sortable
+                    style={{ minWidth: "10rem" }}
+                  ></Column>
+
+                  <Column
+                    field="start_date"
+                    header={headerWithTooltip(
+                      "Tracking Timeline",
+                      "Tracking Timeline",
+                      "start_date"
+                    )}
+                    style={{ minWidth: "15rem" }}
+                    body={StatusBodyTemplate}
+                  ></Column>
+
+                  <Column
+                    field="status"
+                    header={headerWithTooltip(
+                      "Status",
+                      "Status",
+                      "status"
+                    )}
+                    style={{ minWidth: "8rem" }}
+                    body={statusActionTemplate}
+
+                  ></Column>
+
+                  <Column
+                    field="section_name"
+                    header={headerWithTooltip(
+                      "Section Name",
+                      "Section Name",
+                      "section_name"
+                    )}
+                    style={{ minWidth: "12rem" }}
+                  ></Column>
+
+                  <Column
+                    field="min_position"
+                    header={headerWithTooltip(
+                      "Minimum Position",
+                      "Minimum Position of Game",
+                      "min_position"
+                    )}
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+
+                  <Column
+                    field="max_position"
+                    header={headerWithTooltip(
+                      "Maximum Position",
+                      "Maximum Position of Game",
+                      "max_position"
+                    )}
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+
+                </DataTable>
               </div>
 
-              {/* Tracker Details Pagination of Data Table */}
-              <div className="d-flex justify-content-between align-items-center mt-3">
-                <div>
-                  <span>
-                    Showing {page * rows + 1} -
-                    {Math.min((page + 1) * rows, totalRecords)} out of &nbsp;
-                    {totalRecords}
-                  </span>
-                </div>
-                <div>
-                  {totalPages > 1 && (
-                    <div className="d-flex justify-content-center orderlist_pagination">
-                      <Pagination className="custom-pagination">
-                        <Pagination.Prev
-                          disabled={page === 0}
-                          onClick={() =>
-                            setPage((prev) => Math.max(prev - 1, 0))
-                          }
-                        >
-                          <MdKeyboardArrowLeft className="me-2" /> Prev
-                        </Pagination.Prev>
-
-                        {[...Array(totalPages).keys()].map((num) => {
-                          if (
-                            num === 0 ||
-                            num === totalPages - 1 ||
-                            (num >= page - 1 && num <= page + 1)
-                          ) {
-                            return (
-                              <Pagination.Item
-                                key={num}
-                                onClick={() => setPage(num)}
-                                active={num === page}
-                                className="custom-pagination-item"
-                              >
-                                {num + 1}
-                              </Pagination.Item>
-                            );
-                          } else if (
-                            (num === 1 && page > 4) ||
-                            (num === totalPages - 2 && page < totalPages - 3)
-                          ) {
-                            return (
-                              <Pagination.Item
-                                key={num}
-                                disabled
-                                className="custom-pagination-item"
-                              >
-                                ...
-                              </Pagination.Item>
-                            );
-                          }
-                          return null;
-                        })}
-
-                        <Pagination.Next
-                          disabled={page + 1 === totalPages}
-                          onClick={() =>
-                            setPage((prev) =>
-                              Math.min(prev + 1, totalPages - 1)
-                            )
-                          }
-                        >
-                          Next <MdKeyboardArrowRight className="ms-2" />
-                        </Pagination.Next>
-                      </Pagination>
-                    </div>
-                  )}
-                </div>
-                {/* <div className="d-flex align-items-center pagination_per_select">
-                  <span className="me-1">Items per Page: </span>
-                  <Dropdown
-                    options={options4.map((option) => ({
-                      value: option,
-                      label: option,
-                    }))}
-                    onChange={(e) => setRows(Number(e.value))}
-                    value={rows?.toString()}
-                  />
-                </div> */}
-              </div>
             </div>
           )}
         </div>

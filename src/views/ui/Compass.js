@@ -14,6 +14,7 @@ import { Link } from "react-router-dom";
 import Configure from "../modules/Configure";
 
 import CompassData from "../../services/CompassApi";
+import "./Compass.css";
 
 const Compass = () => {
   const user_id = localStorage.getItem("user_id");
@@ -118,7 +119,7 @@ const Compass = () => {
       <div className="casino_game_selection">
         <Drawer
           title="Configure"
-          width={casinoDrawer || gameDrawer || newCasino ? "89%" : "70%"}
+          width={casinoDrawer || gameDrawer || newCasino ? "89%" : "50%"}
           closable={true}
           onClose={onClose}
           maskClosable={false}
@@ -182,7 +183,10 @@ const Compass = () => {
               <p>Start configuration by adding operator first</p>
             </div>
           </div>
-          <div className="calibrate-title mt-md-4 mt-3" style={{ cursor: "pointer" }}>
+          <div
+            className="calibrate-title mt-md-4 mt-3"
+            style={{ cursor: "pointer" }}
+          >
             <span>Select Game</span>
             <div className="casino-select-listing mt-2 mt-md-4">
               {game?.map((data, index) => (
