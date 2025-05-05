@@ -326,7 +326,7 @@ const CompetitorDashboardMod = () => {
                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                   sortIcon={sortIconTemplate}
                   size="small"
-                  className="table-bordered p-component p-datatable custom-competitor-table small"
+                  className="table-bordered p-component p-datatable custom-competitor-table small fixed-row-height"
                 >
                   <Column
                     frozen
@@ -348,9 +348,11 @@ const CompetitorDashboardMod = () => {
                     <Column
                       key={pos}
                       field={pos}
-                      //header={pos}
                       header={headerWithoutTooltip(pos)}
-                      style={{ minWidth: "120px", whiteSpace: "normal" }}
+                      style={{
+                        minWidth: "120px",
+                        whiteSpace: "normal",
+                      }}
                     />
                   ))}
                 </DataTable>
