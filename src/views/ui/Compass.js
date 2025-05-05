@@ -119,7 +119,7 @@ const Compass = () => {
       <div className="casino_game_selection">
         <Drawer
           title="Configure"
-          width={casinoDrawer || gameDrawer || newCasino ? "89%" : "50%"}
+          width={casinoDrawer || gameDrawer || newCasino ? "89%" : "70%"}
           closable={true}
           onClose={onClose}
           maskClosable={false}

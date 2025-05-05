@@ -416,8 +416,8 @@ const DashboardMod = () => {
                         className="table-bordered p-component p-datatable custom-table small"
                         scrollable
                         sortIcon={sortIconTemplate}
-                        sortField="last_observed_date" // Sort by last_observed_date field
-                        sortOrder={-1} // Sort in descending order by default
+                        sortField="last_observed_date"
+                        sortOrder={-1}
                       >
                         <Column
                           field="game_name"

@@ -18,7 +18,7 @@ const Configure = ({
 }) => {
   const user_id = localStorage.getItem("user_id");
   const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
-  const [trackTime, setTrackTime] = useState(null);
+  const [trackTime, setTrackTime] = useState("custom");
 
   const [initialDate, setInitialDate] = useState("");
   const [finalDate, setFinalDate] = useState("");
@@ -231,13 +231,12 @@ const Configure = ({
             </button>
             <button
               style={{ marginRight: 8 }}
-              className={`compass-sidebar-back ${
-                !trackTime ||
+              className={`compass-sidebar-back ${!trackTime ||
                 (trackTime === "custom" && (!startDate || !endDate)) ||
                 !(casinos?.length > 0 && game?.length > 0)
-                  ? "btn-disabled"
-                  : ""
-              }`}
+                ? "btn-disabled"
+                : ""
+                }`}
               onClick={handleSaveCasinoGame}
               disabled={
                 !trackTime ||
@@ -296,7 +295,7 @@ const Configure = ({
             <div>
               <div className="row">
                 <div className="col-md-6">
-                  <div className="tracking_gaming_date">
+                  {/* <div className="tracking_gaming_date">
                     <div className="row">
                       <div className="col-md-6">
                         <div className="form-group tracking_time_dropdown credit-field">
@@ -311,53 +310,51 @@ const Configure = ({
                         </div>
                       </div>
                     </div>
-                  </div>
+                  </div> */}
                   <div className="tracking_csm_date">
-                    {trackTime === "custom" && (
-                      <>
-                        <div className="start-end-date-selection">
-                          <div className="form-group credit-field">
-                            <label>Tracking starts on</label>
-                            <div className="tracking-game-credit date-input-wrapper">
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="date-input"
-                                onChange={onStartDateChange}
-                                required
-                                value={startDate}
-                                style={{ color: startDate ? "black" : "gray" }}
-                              />
-                              {!startDate && (
-                                <div className="placeholder-text">
-                                  Select a date
-                                </div>
-                              )}
+
+                    <div className="start-end-date-selection">
+                      <div className="form-group credit-field">
+                        <label>Tracking starts on</label>
+                        <div className="tracking-game-credit date-input-wrapper">
+                          <input
+                            type="date"
+                            className="form-control"
+                            id="date-input"
+                            onChange={onStartDateChange}
+                            required
+                            value={startDate}
+                            style={{ color: startDate ? "black" : "gray" }}
+                          />
+                          {!startDate && (
+                            <div className="placeholder-text">
+                              Select a date
                             </div>
-                          </div>
-                          <div className="form-group credit-field">
-                            <label>Tracking ends on</label>
-                            <div className="tracking-game-credit date-input-wrapper">
-                              <input
-                                type="date"
-                                className="form-control"
-                                id="date-input"
-                                onChange={onEndDateChange}
-                                value={endDate}
-                                required
-                                style={{ color: endDate ? "black" : "gray" }}
-                              />
-                              {!endDate && (
-                                <div className="placeholder-text">
-                                  Select a date
-                                </div>
-                              )}
-                            </div>
-                          </div>
+                          )}
                         </div>
-                      </>
-                    )}
+                      </div>
+                      <div className="form-group credit-field">
+                        <label>Tracking ends on</label>
+                        <div className="tracking-game-credit date-input-wrapper">
+                          <input
+                            type="date"
+                            className="form-control"
+                            id="date-input"
+                            onChange={onEndDateChange}
+                            value={endDate}
+                            required
+                            style={{ color: endDate ? "black" : "gray" }}
+                          />
+                          {!endDate && (
+                            <div className="placeholder-text">
+                              Select a date
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </div>
                   </div>
+
                 </div>
                 <div className="col-md-6">
                   <div className="row">
