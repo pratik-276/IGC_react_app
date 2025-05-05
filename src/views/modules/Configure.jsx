@@ -1,13 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import Dropdown from "react-dropdown";
 import "react-dropdown/style.css";
 import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
 import toast from "react-hot-toast";
-import { min } from "d3";
 
 const Configure = ({
   configure,
@@ -17,11 +15,6 @@ const Configure = ({
   getCompassReadData,
 }) => {
   const user_id = localStorage.getItem("user_id");
-  const TrackingTime = ["7 days", "1 month", "3 months", "custom"];
-  const [trackTime, setTrackTime] = useState("custom");
-
-  const [initialDate, setInitialDate] = useState("");
-  const [finalDate, setFinalDate] = useState("");
 
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
@@ -30,8 +23,14 @@ const Configure = ({
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
 
-  const [startDate, setStartDate] = useState(null);
-  const [endDate, setEndDate] = useState(null);
+  const today = new Date();
+  const sevenDaysLater = new Date();
+  sevenDaysLater.setDate(today.getDate() + 7);
+  const formatDate = (date) => date.toISOString().split("T")[0];
+
+  const [startDate, setStartDate] = useState(formatDate(today));
+  const [endDate, setEndDate] = useState(formatDate(sevenDaysLater));
+
   const [section_title, setSectionTitle] = useState("");
   const [minimum_position, setMinPosition] = useState(1);
   const [maximum_position, setMaxPosition] = useState(50);
@@ -60,9 +59,8 @@ const Configure = ({
 
   const handleClose = () => {
     onConfigueDrawerClose();
-    setStartDate(null);
-    setEndDate(null);
-    setTrackTime(null);
+    setStartDate(formatDate(today));
+    setEndDate(formatDate(sevenDaysLater));
   };
 
   const generateTableRows = () => {
@@ -113,60 +111,29 @@ const Configure = ({
       [uniqueId]: false,
     }));
 
-    const updatedGames = game.filter((game) => game.id !== gameId);
+    // const updatedGames = game.filter((game) => game.id !== gameId);
 
-    const updatedCasinos = casinos.filter((casino) => {
-      if (casino.id === casinoId) {
-        return updatedGames.length > 0;
-      }
-      return true;
-    });
+    // const updatedCasinos = casinos.filter((casino) => {
+    //   if (casino.id === casinoId) {
+    //     return updatedGames.length > 0;
+    //   }
+    //   return true;
+    // });
 
-    localStorage.setItem("casinos", JSON.stringify(updatedCasinos));
-    localStorage.setItem("games", JSON.stringify(updatedGames));
+    // localStorage.setItem("casinos", JSON.stringify(updatedCasinos));
+    // localStorage.setItem("games", JSON.stringify(updatedGames));
 
-    if (updatedGames.length > 0) {
-      return setConfigure(true);
-    }
+    // if (updatedGames.length > 0) {
+    //   return setConfigure(true);
+    // }
   };
 
   const onStartDateChange = (e) => {
     setStartDate(e.target.value);
-    setEndDate(null);
   };
 
   const onEndDateChange = (e) => {
     setEndDate(e.target.value);
-  };
-
-  const formatDate = (date) => date?.toISOString().split("T")[0];
-
-  const handleTrackTimeChange = (option) => {
-    const selectedTime = option.value;
-    setTrackTime(selectedTime);
-
-    const today = new Date();
-    setInitialDate(formatDate(today));
-
-    let calculatedFinalDate = new Date(today);
-    switch (selectedTime) {
-      case "7 days":
-        calculatedFinalDate.setDate(today.getDate() + 7);
-        break;
-      case "1 month":
-        calculatedFinalDate.setMonth(today.getMonth() + 1);
-        break;
-      case "3 months":
-        calculatedFinalDate.setMonth(today.getMonth() + 3);
-        break;
-      case "custom":
-        calculatedFinalDate = "";
-        break;
-      default:
-        break;
-    }
-
-    setFinalDate(calculatedFinalDate ? formatDate(calculatedFinalDate) : "");
   };
 
   const handleSaveCasinoGame = () => {
@@ -177,8 +144,8 @@ const Configure = ({
           user_id: user_id,
           operator_id: casino.id,
           game_id: g.id,
-          start_date: trackTime === "custom" ? startDate : initialDate,
-          end_date: trackTime === "custom" ? endDate : finalDate,
+          start_date: startDate,
+          end_date: endDate,
           game_name: g.game_original_name,
           game_provider: g.game_provider_name,
           section_name: section_title,
@@ -193,12 +160,11 @@ const Configure = ({
         if (res?.success === true) {
           toast.success("Combination Create Successfully!");
           onConfigueDrawerClose();
-          setStartDate(null);
-          setEndDate(null);
-          setTrackTime(null);
           localStorage.removeItem("games");
           localStorage.removeItem("casinos");
           setOpen(false);
+          setStartDate(formatDate(today));
+          setEndDate(formatDate(sevenDaysLater));
           getCompassReadData();
           setCasinos([]);
           setGame([]);
@@ -231,18 +197,12 @@ const Configure = ({
             </button>
             <button
               style={{ marginRight: 8 }}
-              className={`compass-sidebar-back ${!trackTime ||
-                (trackTime === "custom" && (!startDate || !endDate)) ||
-                !(casinos?.length > 0 && game?.length > 0)
+              className={`compass-sidebar-back ${(!startDate || !endDate || casinos.length === 0 || game.length === 0)
                 ? "btn-disabled"
                 : ""
                 }`}
               onClick={handleSaveCasinoGame}
-              disabled={
-                !trackTime ||
-                (trackTime === "custom" && (!startDate || !endDate)) ||
-                !(casinos?.length > 0 && game?.length > 0)
-              }
+              disabled={!startDate || !endDate || casinos.length === 0 || game.length === 0}
             >
               Save
             </button>
@@ -258,6 +218,7 @@ const Configure = ({
               want to track.
             </span>
           </div>
+
           <div className="compass-data-table track_game_table pt-3">
             <table className="table table-bordered m-0">
               <thead className="table-heading-name">
@@ -274,6 +235,7 @@ const Configure = ({
                 </tr>
               </thead>
             </table>
+
             <div className="table-scroll-container">
               <table className="table table-bordered m-0">
                 <tbody className="table-body-items">
@@ -292,110 +254,79 @@ const Configure = ({
           </div>
 
           <div className="tracking-game-time">
-            <div>
-              <div className="row">
-                <div className="col-md-6">
-                  {/* <div className="tracking_gaming_date">
-                    <div className="row">
-                      <div className="col-md-6">
-                        <div className="form-group tracking_time_dropdown credit-field">
-                          <label className="">Select Tracking Time</label>
-                          <Dropdown
-                            options={TrackingTime}
-                            placeholder="Select tracking Time"
-                            onChange={handleTrackTimeChange}
-                            value={trackTime}
-                            className="w-100"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div> */}
-                  <div className="tracking_csm_date">
+            <div className="d-flex align-items-center gap-2">
 
-                    <div className="start-end-date-selection">
-                      <div className="form-group credit-field">
-                        <label>Tracking starts on</label>
-                        <div className="tracking-game-credit date-input-wrapper">
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="date-input"
-                            onChange={onStartDateChange}
-                            required
-                            value={startDate}
-                            style={{ color: startDate ? "black" : "gray" }}
-                          />
-                          {!startDate && (
-                            <div className="placeholder-text">
-                              Select a date
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      <div className="form-group credit-field">
-                        <label>Tracking ends on</label>
-                        <div className="tracking-game-credit date-input-wrapper">
-                          <input
-                            type="date"
-                            className="form-control"
-                            id="date-input"
-                            onChange={onEndDateChange}
-                            value={endDate}
-                            required
-                            style={{ color: endDate ? "black" : "gray" }}
-                          />
-                          {!endDate && (
-                            <div className="placeholder-text">
-                              Select a date
-                            </div>
-                          )}
-                        </div>
-                      </div>
+              <div className="form-group credit-field">
+                <label>Tracking starts on</label>
+                <div className="tracking-game-credit date-input-wrapper">
+                  <input
+                    type="date"
+                    className="form-control"
+                    onChange={onStartDateChange}
+                    required
+                    value={startDate}
+                    style={{ color: startDate ? "black" : "gray" }}
+                  />
+                  {!startDate && (
+                    <div className="placeholder-text">
+                      Select a date
                     </div>
-                  </div>
-
-                </div>
-                <div className="col-md-6">
-                  <div className="row">
-                    <div className="col-md-4 col-4">
-                      <div className="form-group credit-field">
-                        <label>Section Title</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={section_title}
-                          onChange={(e) => setSectionTitle(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-4">
-                      <div className="form-group credit-field">
-                        <label>Min Position</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={minimum_position}
-                          onChange={(e) => setMinPosition(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="col-md-4 col-4">
-                      <div className="form-group credit-field">
-                        <label>Max Position</label>
-                        <input
-                          type="text"
-                          className="form-control"
-                          value={maximum_position}
-                          onChange={(e) => setMaxPosition(e.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
+
+              <div className="form-group credit-field">
+                <label>Tracking ends on</label>
+                <div className="tracking-game-credit date-input-wrapper">
+                  <input
+                    type="date"
+                    className="form-control"
+                    onChange={onEndDateChange}
+                    value={endDate}
+                    required
+                    style={{ color: endDate ? "black" : "gray" }}
+                  />
+                  {!endDate && (
+                    <div className="placeholder-text">
+                      Select a date
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="form-group credit-field">
+                <label>Section Title</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={section_title}
+                  onChange={(e) => setSectionTitle(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group credit-field">
+                <label>Min Position</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={minimum_position}
+                  onChange={(e) => setMinPosition(e.target.value)}
+                />
+              </div>
+
+              <div className="form-group credit-field">
+                <label>Max Position</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={maximum_position}
+                  onChange={(e) => setMaxPosition(e.target.value)}
+                />
+              </div>
+
             </div>
           </div>
+
         </div>
       </Drawer>
     </>

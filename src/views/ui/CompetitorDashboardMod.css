@@ -47,10 +47,6 @@
     vertical-align: middle;
 }
 
-.custom-competitor-table .p-datatable-tbody>tr:hover {
-    background-color: transparent !important;
-}
-
 .custom-competitor-table .p-datatable-tbody td:hover {
     background-color: #f0f0f0 !important;
     cursor: pointer;
