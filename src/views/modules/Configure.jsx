@@ -138,22 +138,48 @@ const Configure = ({
 
   const handleSaveCasinoGame = () => {
     const data = [];
+
+    // casinos?.forEach((casino) => {
+    //   game?.forEach((g) => {
+    //     data.push({
+    //       user_id: user_id,
+    //       operator_id: casino.id,
+    //       game_id: g.id,
+    //       start_date: startDate,
+    //       end_date: endDate,
+    //       game_name: g.game_original_name,
+    //       game_provider: g.game_provider_name,
+    //       section_name: section_title,
+    //       min_position: minimum_position,
+    //       max_position: maximum_position,
+    //     });
+    //   });
+    // });
+
     casinos?.forEach((casino) => {
       game?.forEach((g) => {
-        data.push({
-          user_id: user_id,
-          operator_id: casino.id,
-          game_id: g.id,
-          start_date: startDate,
-          end_date: endDate,
-          game_name: g.game_original_name,
-          game_provider: g.game_provider_name,
-          section_name: section_title,
-          min_position: minimum_position,
-          max_position: maximum_position,
-        });
+        const uniqueId = `${casino.id}-${g.id}`;
+        if (displayedGames[uniqueId]) {
+          data.push({
+            user_id: user_id,
+            operator_id: casino.id,
+            game_id: g.id,
+            start_date: startDate,
+            end_date: endDate,
+            game_name: g.game_original_name,
+            game_provider: g.game_provider_name,
+            section_name: section_title,
+            min_position: minimum_position,
+            max_position: maximum_position,
+          });
+        }
       });
     });
+
+    if (data.length === 0) {
+      toast.error("No combinations selected to save.");
+      return;
+    }
 
     GameData.compass_create(data)
       .then((res) => {
