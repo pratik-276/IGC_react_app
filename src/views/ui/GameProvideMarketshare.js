@@ -1,34 +1,34 @@
 import React, { useEffect, useState } from "react";
+import { MdInfoOutline } from "react-icons/md";
+import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+
+import { Spin } from "antd";
+import { Tooltip } from "primereact/tooltip";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
-import TextField from "@mui/material/TextField";
-import { Range } from "react-range";
-import { Tooltip } from "primereact/tooltip";
-import { ProgressSpinner } from "primereact/progressspinner";
-import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
-import "./index.css";
+import { Dropdown } from "primereact/dropdown";
+import { InputText } from "primereact/inputtext";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { FilterMatchMode } from "primereact/api";
+
+import "./DashboardMod.css";
 import call from "../../services/Call";
-import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import toast from "react-hot-toast";
-import { ProgressBar } from "primereact/progressbar";
-import { FilterMatchMode, FilterOperator } from "primereact/api";
 
 const GameProvideMarketshare = () => {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [regions, setRegions] = useState([]);
-  const [yearMonthList, setYearMonthList] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
-  const [selectedMonthYear, setSelectedMonthYear] = useState("");
 
-  const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
 
   useEffect(() => {
     getPageData();
-  }, [selectedRegion, selectedMonthYear]);
+  }, [selectedRegion]);
 
   useEffect(() => {
     import("../../utils/DatatableBottomFix").then(
@@ -44,30 +44,15 @@ const GameProvideMarketshare = () => {
       method: "GET",
     });
 
-    setRegions(res.data);
-  }
+    if (res?.data && Array.isArray(res.data)) {
+      const cleaned = res.data
+        .filter((region) => region !== null && typeof region === "string")
+        .map((region) => ({ label: region, value: region }));
 
-  function generateMonthYear() {
-    const startYear = 2024;
-    const endYear = 2024;
-
-    const monthYearList = [];
-
-    for (let year = startYear; year <= endYear; year++) {
-      for (let month = 0; month < 12; month++) {
-        const date = new Date(year, month);
-        // Format the month and year (e.g., "Jan 2024")
-        const monthYear = date.toLocaleString("default", {
-          month: "short",
-          year: "numeric",
-        });
-        // Consider till current month
-        if (date > new Date()) break;
-        monthYearList.push(monthYear);
-      }
+      setRegions(cleaned);
+    } else {
+      setRegions([]);
     }
-
-    setYearMonthList(monthYearList);
   }
 
   async function getMarketshareData() {
@@ -76,8 +61,8 @@ const GameProvideMarketshare = () => {
       method: "POST",
       data: {
         region: selectedRegion,
-        month: selectedMonthYear,
-        search_term: searchTerm,
+        month: "",
+        search_term: "",
       },
     });
 
@@ -90,7 +75,6 @@ const GameProvideMarketshare = () => {
     try {
       await getRegions();
       await getMarketshareData();
-      generateMonthYear();
     } catch (e) {
       toast.error(e);
       setTableData([]);
@@ -116,7 +100,7 @@ const GameProvideMarketshare = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#f8d7da",
+              //backgroundColor: "#f8d7da",
               color: "#dc3545",
             }}
           >
@@ -134,7 +118,7 @@ const GameProvideMarketshare = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#faf3e8",
+              //backgroundColor: "#faf3e8",
               color: "#dc9b00",
             }}
           >
@@ -152,7 +136,7 @@ const GameProvideMarketshare = () => {
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              backgroundColor: "#e6f9e6",
+              //backgroundColor: "#e6f9e6",
               color: "#28a745",
             }}
           >
@@ -166,7 +150,6 @@ const GameProvideMarketshare = () => {
   };
 
   const marketshareTemplate = (row) => {
-    //const share = mapToRange(row.market_share, 0, Math.max(...tableData.map(d => parseFloat(d.market_share))))
     const share = mapToRange(row.market_share, 0, 100);
     let bg = "bg-info";
 
@@ -202,174 +185,201 @@ const GameProvideMarketshare = () => {
     );
   };
 
-  return (
-    <div className="container">
-      <div
-        className="pb-3 pt-3"
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
-      >
-        <div style={{ flex: 1 }}>
-          <h3>Game Provider Marketshare</h3>
-          <span>Understand provider dominance across global casinos.</span>
-        </div>
-        <ProgressBar value={12}></ProgressBar>
-        <div
-          style={{
-            display: "flex",
-            flexDirection: "row",
-            justifyItems: "flex-end",
-            gap: 5,
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              gap: "16px",
-              alignItems: "center",
-              minWidth: "200px",
-            }}
-          >
-            <FormControl size="small" style={{ flex: 1 }}>
-              <InputLabel id="region-select">Region</InputLabel>
-              <Select
-                labelId="region-select"
-                value={selectedRegion}
-                label="Region"
-                onChange={(e) => setSelectedRegion(e.target.value)}
-              >
-                {regions.map((region) => (
-                  <MenuItem value={region} key={region}>
-                    {region}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-
-            <TextField
-              size="small"
-              label="Search"
-              variant="outlined"
-              value={filters.global.value}
-              onChange={(e) =>
-                setFilters((f) => ({
-                  global: { ...f.global, value: e.target.value },
-                }))
-              }
-              style={{ flex: 2 }}
-            />
-          </div>
-          {/* <div style={{ flex: 1, minWidth: '200px' }}>
-                        <FormControl size="small" fullWidth>
-                            <InputLabel id="month-select">Month</InputLabel>
-                            <Select
-                                labelId="month-select"
-                                value={selectedMonthYear}
-                                label="Month"
-                                onChange={(e) => setSelectedMonthYear(e.target.value)}
-                            >
-                                { yearMonthList.map((ym) => <MenuItem value={ym}>{ym}</MenuItem> ) }
-                            </Select>
-                        </FormControl>
-                    </div> */}
-        </div>
+  const headerWithTooltip = (headerText, tooltipText, id) => (
+    <div
+      className="d-flex align-items-center justify-content-between"
+      style={{ width: "100%" }}
+    >
+      <div className="d-flex align-items-center m-1">
+        <h5 style={{ margin: 0 }}>{headerText}</h5>
+        <Tooltip
+          target={`.info-icon-${id}`}
+          content={tooltipText}
+          position="top"
+          className="custom-tooltip"
+        />
+        <MdInfoOutline
+          className={`info-icon-${id} ms-2`}
+          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
+        />
       </div>
-      {!loading && (
-        <div className="tracker-details-body calibrate-compass-table">
-          <DataTable
-            paginator
-            value={tableData}
-            rows={10}
-            totalRecords={tableData.length}
-            sortField="market_share"
-            sortOrder={0}
-            className="tracker-details-table"
-            tableStyle={{ minWidth: "50rem" }}
-            rowHover
-            paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-            currentPageReportTemplate="Showing {first}-{last} out of {totalRecords}"
-            rowsPerPageOptions={[10, 20, 30]}
-            filters={filters}
-            globalFilterFields={["game_provider"]}
-          >
-          <Column
-            field="provider_rank"
-            sortable
-            header={
-              <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                Rank
-              </div>
-            }
-          ></Column>
-            <Column
-              field="game_provider"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                  Game Provider
-                </div>
-              }
-            ></Column>
-            <Column
-              field="unique_games"
-              style={{ maxWidth: "100px" }}
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                  Unique Games
-                </div>
-              }
-            ></Column>
-            <Column
-              field="unique_casinos"
-              style={{ maxWidth: "100px" }}
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 700 }}>
-                  Unique Casinos
-                </div>
-              }
-            ></Column>
-            <Column
-              field="market_share"
-              style={{ minWidth: "190px" }}
-              sortable
-              align="center"
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>
-                  Marketshare
-                </div>
-              }
-              body={marketshareTemplate}
-            ></Column>
-            <Column
-              field="major_market"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>Market</div>
-              }
-            ></Column>
-            <Column
-              field="change"
-              sortable
-              header={
-                <div style={{ color: "#392F6C", fontWeight: 500 }}>Change (MoM)</div>
-              }
-              body={changeTemplate}
-            ></Column>
-          </DataTable>
-        </div>
-      )}
-
-      {loading && (
-        <div style={{ display: "flex" }}>
-          <ProgressSpinner />
-        </div>
-      )}
     </div>
+  );
+
+  const sortIconTemplate = (options) => {
+    let icon = options.sorted ? (
+      options.sortOrder < 0 ? (
+        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
+      ) : (
+        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
+      )
+    ) : (
+      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
+    );
+    return icon;
+  };
+
+  return (
+    <>
+      <div className="compass">
+        <div className="compass-data">
+          <div className="d-flex flex-column gap-3 justify-content-between">
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <h4
+                  className="m-md-0 font-semibold"
+                  style={{ color: "#392f6c" }}
+                >
+                  Game Provider Marketshare
+                </h4>
+                <span className="text-black" style={{ fontSize: "1rem" }}>
+                  Understand provider dominance across global casinos
+                </span>
+              </div>
+
+              <div className="d-flex flex-wrap gap-2">
+                <Dropdown
+                  optionLabel="label"
+                  optionValue="value"
+                  filter
+                  placeholder="Select Region"
+                  loading={loading}
+                  value={selectedRegion}
+                  onChange={(e) => setSelectedRegion(e.value)}
+                  options={regions}
+                />
+
+                <IconField iconPosition="left" style={{ flex: 2 }}>
+                  <InputIcon className="pi pi-search" />
+                  <InputText
+                    disabled={loading}
+                    placeholder="Search"
+                    value={filters.global.value}
+                    onChange={(e) =>
+                      setFilters((f) => ({
+                        ...f,
+                        global: { ...f.global, value: e.target.value },
+                      }))
+                    }
+                  />
+                </IconField>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {loading ? (
+          <>
+            <div
+              className="row align-items-center justify-content-center"
+              style={{ height: "500px" }}
+            >
+              <div className="col-md-5">
+                <div className="text-center">
+                  <Spin size="large" />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="border border-secondary p-3 rounded-3 mt-3">
+              <h5 className="font-semibold pl-2">Latest Details</h5>
+              <DataTable
+                value={tableData}
+                filters={filters}
+                removableSort
+                paginator
+                rows={10}
+                rowsPerPageOptions={[5, 10, 25]}
+                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                size="small"
+                className="table-bordered p-component p-datatable custom-table small"
+                scrollable
+                sortIcon={sortIconTemplate}
+                sortField="market_share"
+                sortOrder={0}
+                globalFilterFields={["game_provider"]}
+              >
+                <Column
+                  field="provider_rank"
+                  sortable
+                  header={headerWithTooltip(
+                    "Rank",
+                    "Rank of the game provider in the market",
+                    "rank"
+                  )}
+                ></Column>
+
+                <Column
+                  field="game_provider"
+                  sortable
+                  header={headerWithTooltip(
+                    "Game Provider",
+                    "Name of the game provider",
+                    "game_provider"
+                  )}
+                ></Column>
+
+                <Column
+                  field="unique_games"
+                  sortable
+                  header={headerWithTooltip(
+                    "Unique Games",
+                    "Number of unique games provided by the provider",
+                    "unique_games"
+                  )}
+                ></Column>
+
+                <Column
+                  field="unique_casinos"
+                  sortable
+                  header={headerWithTooltip(
+                    "Unique Casinos",
+                    "Number of unique casinos using the provider",
+                    "unique_casinos"
+                  )}
+                ></Column>
+
+                <Column
+                  field="market_share"
+                  sortable
+                  align="center"
+                  header={headerWithTooltip(
+                    "Market Share",
+                    "Market share of the provider in the selected region",
+                    "market_share"
+                  )}
+                  body={marketshareTemplate}
+                ></Column>
+
+                <Column
+                  field="major_market"
+                  sortable
+                  header={headerWithTooltip(
+                    "Market",
+                    "Market of the provider in the selected region",
+                    "major_market"
+                  )}
+                ></Column>
+
+                <Column
+                  field="change"
+                  sortable
+                  header={headerWithTooltip(
+                    "Change (MoM)",
+                    "Change in market share",
+                    "change"
+                  )}
+                  body={changeTemplate}
+                ></Column>
+              </DataTable>
+            </div>
+          </>
+        )}
+      </div>
+    </>
   );
 };
 
