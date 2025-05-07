@@ -24,6 +24,7 @@ import CompetitorDashboardMod from "./views/ui/CompetitorDashboardMod";
 import GameDetailsMod from "./views/ui/GameDetailsMod";
 import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
+import GameRankL2 from "./views/ui/GameRankL2";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import CasinoRequests from "./views/ui/CasinoRequests";
 import GameTrackingDetails from "./views/ui/GameTrackingDetails";
@@ -113,6 +114,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <CompetitorDashboardMod />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="game-rank-details"
+                  element={
+                    <ProtectedRoute>
+                      <GameRankL2 />
                     </ProtectedRoute>
                   }
                 />
