@@ -1,0 +1,366 @@
+import React, { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import { DataTable } from "primereact/datatable";
+import { Dropdown } from "primereact/dropdown";
+import { Column } from "primereact/column";
+
+import { Spin } from "antd";
+import "./DashboardMod.css";
+
+import GetApiData from "../../services/GameProvideMarketshare";
+import InfoCard from "../../charts/InfoCard";
+
+const GameProvideMarketshareL2 = () => {
+  const location = useLocation();
+  const regionName = location?.state?.regionName || null;
+  const providerId = location?.state?.providerId || null;
+
+  const [regionLoading, setRegionLoading] = useState(false);
+  const [providerLoading, setProviderLoading] = useState(false);
+  const [loading, setLoading] = useState(false);
+
+  const [regions, setRegions] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState("");
+  const [providers, setProviders] = useState([]);
+  const [selectedProvider, setSelectedProvider] = useState("");
+
+  const [data, setData] = useState({});
+  const [gameData, setGameData] = useState([]);
+  const [latestReleasesData, setLatestReleasesData] = useState([]);
+  const [casinosData, setCasinosData] = useState([]);
+
+  useEffect(() => {
+    getGeographyList();
+    setSelectedRegion(regionName);
+    GetProvidersList();
+    setSelectedProvider(providerId);
+  }, []);
+
+  useEffect(() => {
+    if (selectedRegion && selectedProvider) {
+      getData();
+    }
+  }, [selectedRegion, selectedProvider]);
+
+  async function getGeographyList() {
+    setRegionLoading(true);
+    GetApiData.get_geography_lists()
+      .then((res) => {
+        if (res?.success === true) {
+          const cleaned = res.data
+            .filter((region) => region && region.geography)
+            .map((region) => ({
+              label: region.geography,
+              value: region.geography,
+            }));
+
+          setRegions(cleaned);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setRegions([]);
+      })
+      .finally(() => {
+        setRegionLoading(false);
+      });
+  }
+
+  async function GetProvidersList() {
+    setProviderLoading(true);
+
+    const payload = {
+      region: selectedRegion,
+    };
+
+    GetApiData.post_provider_by_geography_lists(payload)
+      .then((res) => {
+        if (res?.success === true && Array.isArray(res.data)) {
+          const cleaned = res.data.map((provider) => ({
+            label: provider.provider_name,
+            value: provider.provider_id,
+          }));
+          setProviders(cleaned);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setProviders([]);
+      })
+      .finally(() => {
+        setProviderLoading(false);
+      });
+  }
+
+  async function getData() {
+    const payload = {
+      provider_id: selectedProvider,
+      region: selectedRegion,
+    };
+
+    setLoading(true);
+    await getProviderMarketshareDetails(payload);
+    await getProviderTopGames(payload);
+    await getProviderLatestRelese(payload);
+    await getProviderTopCasinos(payload);
+    setLoading(false);
+    console.log("data : ", data);
+  }
+
+  async function getProviderMarketshareDetails(payload) {
+    return GetApiData.post_provider_marketshare_details(payload)
+      .then((res) => {
+        if (res?.success === true) {
+          setData(
+            Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : {}
+          );
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setData({});
+      });
+  }
+
+  async function getProviderTopGames(payload) {
+    return GetApiData.post_provider_top_games(payload)
+      .then((res) => {
+        if (res?.success === true) {
+          console.log(res.data);
+          setGameData(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setGameData([]);
+      });
+  }
+
+  async function getProviderLatestRelese(payload) {
+    return GetApiData.post_provider_latest_relese(payload)
+      .then((res) => {
+        if (res?.success === true) {
+          setLatestReleasesData(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setLatestReleasesData([]);
+      });
+  }
+
+  async function getProviderTopCasinos(payload) {
+    return GetApiData.post_provider_top_casinos(payload)
+      .then((res) => {
+        if (res?.success === true) {
+          setCasinosData(res.data);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setCasinosData([]);
+      });
+  }
+
+  const headerWithTooltip = (headerText) => (
+    <div
+      className="d-flex align-items-center justify-content-between"
+      style={{ width: "100%" }}
+    >
+      <div className="d-flex align-items-center m-1">
+        <h5 style={{ margin: 0 }}>{headerText}</h5>
+      </div>
+    </div>
+  );
+
+  return (
+    <>
+      <div className="compass">
+        <div className="compass-data">
+          <div className="d-flex flex-column gap-3 justify-content-between">
+            <div className="d-flex align-items-center justify-content-between">
+              <div>
+                <h4
+                  className="m-md-0 font-semibold"
+                  style={{ color: "#392f6c" }}
+                >
+                  Game Provider Marketshare L2
+                </h4>
+                <span className="text-black" style={{ fontSize: "1rem" }}>
+                  Details of the game provider in the selected region
+                </span>
+              </div>
+
+              <div className="d-flex flex-wrap gap-2">
+                <Dropdown
+                  optionLabel="label"
+                  optionValue="value"
+                  filter
+                  placeholder="Select Region"
+                  loading={regionLoading}
+                  value={selectedRegion}
+                  onChange={(e) => setSelectedRegion(e.value)}
+                  options={regions}
+                />
+
+                <Dropdown
+                  optionLabel="label"
+                  optionValue="value"
+                  filter
+                  placeholder="Select Provider"
+                  loading={providerLoading}
+                  value={selectedProvider}
+                  onChange={(e) => setSelectedProvider(e.value)}
+                  options={providers}
+                  itemTemplate={(option) => (
+                    <div title={option.provider_name}>
+                      {option.provider_name}
+                    </div>
+                  )}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {loading ? (
+          <>
+            <div
+              className="row align-items-center justify-content-center"
+              style={{ height: "500px" }}
+            >
+              <div className="col-md-5">
+                <div className="text-center">
+                  <Spin size="large" />
+                </div>
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="border border-secondary p-3 rounded-3 mt-3 d-flex flex-column">
+              <div>
+                <h5 className="font-semibold pl-2">Details</h5>
+                <div className="flex gap-2 mt-2">
+                  <InfoCard
+                    header="Game Count"
+                    tooltip="Shows total game count"
+                    tooltipTarget="game_count"
+                    value={data.game_count ?? "N/A"}
+                  />
+
+                  <InfoCard
+                    header="Visibility"
+                    tooltip="Shows Visibility"
+                    tooltipTarget="visibility"
+                    value={data.visibility ?? "N/A"}
+                  />
+
+                  <InfoCard
+                    header="Current Market Share"
+                    tooltip="Shows Current Market Share"
+                    tooltipTarget="current_market_share"
+                    value={data.current_market_share ?? "N/A"}
+                  />
+
+                  <InfoCard
+                    header="Market Share Growth"
+                    tooltip="Shows Market Share Growth"
+                    tooltipTarget="market_share_growth"
+                    value={data.market_share_growth ?? "N/A"}
+                  />
+                </div>
+              </div>
+
+              <div className="d-flex gap-2">
+                <div className="flex-1">
+                  <h5 className="font-semibold pl-2 mt-3">Top Games</h5>
+                  {Array.isArray(gameData) && gameData.length === 0 ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center w-100 border"
+                      style={{ height: "200px" }}
+                    >
+                      <h5>Data not availble.</h5>
+                    </div>
+                  ) : (
+                    <DataTable
+                      value={gameData}
+                      scrollable
+                      scrollHeight="200px"
+                      size="small"
+                      className="table-bordered p-component p-datatable custom-table small"
+                    >
+                      <Column header={headerWithTooltip("Game")} field="game" />
+                      <Column
+                        header={headerWithTooltip("Casino Count")}
+                        field="casino_count"
+                      />
+                      <Column
+                        header={headerWithTooltip("Avg Pos")}
+                        field="average_position"
+                      />
+                    </DataTable>
+                  )}
+                </div>
+
+                <div className="flex-1">
+                  <h5 className="font-semibold pl-2 mt-3">Latest Releases</h5>
+                  {Array.isArray(latestReleasesData) &&
+                  latestReleasesData.length === 0 ? (
+                    <div
+                      className="d-flex justify-content-center align-items-center w-100 border"
+                      style={{ height: "200px" }}
+                    >
+                      <h5>Data not availble.</h5>
+                    </div>
+                  ) : (
+                    <DataTable
+                      value={latestReleasesData}
+                      scrollable
+                      scrollHeight="200px"
+                      size="small"
+                      className="table-bordered p-component p-datatable custom-table small"
+                    >
+                      <Column header={headerWithTooltip("Game")} field="game" />
+                      <Column
+                        header={headerWithTooltip("Release Date")}
+                        field="release_date"
+                      />
+                    </DataTable>
+                  )}
+                </div>
+              </div>
+
+              <div>
+                <h5 className="font-semibold pl-2 mt-3">Top Casinos</h5>
+                <DataTable
+                  value={casinosData}
+                  scrollable
+                  scrollHeight="400px"
+                  size="small"
+                  className="table-bordered p-component p-datatable custom-table small"
+                >
+                  <Column header={headerWithTooltip("Casino")} field="casino" />
+                  <Column
+                    header={headerWithTooltip("Site URL")}
+                    field="site_url"
+                  />
+                  <Column
+                    header={headerWithTooltip("Game Count")}
+                    field="game_count"
+                  />
+                  <Column
+                    header={headerWithTooltip("Avg Pos")}
+                    field="average_position"
+                  />
+                </DataTable>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </>
+  );
+};
+
+export default GameProvideMarketshareL2;

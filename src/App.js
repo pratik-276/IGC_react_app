@@ -8,12 +8,8 @@ import Compass from "./views/ui/Compass";
 import Login from "./views/auth/Login";
 import Verify from "./views/auth/Verify";
 import Signup from "./views/auth/Signup";
-import ForgotPass from "./views/auth/ForgotPass";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import ProfileMenu from "./views/profile/ProfileMenu";
-import Billing from "./views/profile/Billing";
-import ReferEarn from "./views/profile/ReferEarn";
-import HelpSupport from "./views/profile/HelpSupport";
 import ProfileProvider from "./context/ProfileContext";
 import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
@@ -26,6 +22,7 @@ import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameRankL2 from "./views/ui/GameRankL2";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
+import GameProvideMarketshareL2 from "./views/ui/GameProvideMarketshareL2";
 import CasinoRequests from "./views/ui/CasinoRequests";
 import GameTrackingDetails from "./views/ui/GameTrackingDetails";
 import CompetitorDashboard from "./views/ui/CompetitorDashboard";
@@ -122,6 +119,14 @@ const App = () => {
                   element={
                     <ProtectedRoute>
                       <GameRankL2 />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path="game-provider-marketshare-details"
+                  element={
+                    <ProtectedRoute>
+                      <GameProvideMarketshareL2 />
                     </ProtectedRoute>
                   }
                 />
