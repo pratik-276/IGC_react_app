@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
-
+import { useLocation } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { Column } from "primereact/column";
 
 import { Spin } from "antd";
-import { FilterMatchMode } from "primereact/api";
 import "./DashboardMod.css";
 
 import GameTrendChart from "../../charts/GameTrendChart";
 import GameRankData from "../../services/GameRank";
 
 const GameRankL2 = () => {
+  const location = useLocation();
+  console.log(location.state);
+  const { game_id } = location.state || {};
+
   const [loading, setLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
   const [gameLoading, setGameLoading] = useState(false);
@@ -19,7 +22,7 @@ const GameRankL2 = () => {
   const [regions, setRegions] = useState([]);
   const [games, setGames] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
-  const [selectedGame, setSelectedGame] = useState("");
+  const [selectedGame, setSelectedGame] = useState(game_id);
 
   const [data, setData] = useState([]);
   const [trendData, setTrendData] = useState([]);
@@ -80,7 +83,7 @@ const GameRankL2 = () => {
 
   async function getData() {
     const payload = {
-      game_id: 61,
+      game_id: selectedGame,
       region: selectedRegion,
     };
 
@@ -216,12 +219,16 @@ const GameRankL2 = () => {
                     }}
                   >
                     <h5>Game Image</h5>
-                    <img
-                      src={data.game_image_base64}
-                      alt="Game"
-                      className="img-fluid mb-1"
-                      style={{ maxHeight: "100px", objectFit: "scale-down" }}
-                    />
+                    {data.game_image_base64 ? (
+                      <img
+                        src={data.game_image_base64}
+                        alt="Game"
+                        className="img-fluid mb-1"
+                        style={{ maxHeight: "100px", objectFit: "scale-down" }}
+                      />
+                    ) : (
+                      <h5 className="font-semibold">N/A</h5>
+                    )}
                   </div>
                 </div>
 

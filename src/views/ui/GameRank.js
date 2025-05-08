@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { MdInfoOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import { DataTable } from "primereact/datatable";
 import { Tooltip } from "primereact/tooltip";
@@ -8,14 +10,14 @@ import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
-
-import { Spin } from "antd";
 import { FilterMatchMode } from "primereact/api";
-import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
-import "./DashboardMod.css";
+import { Spin } from "antd";
 
 import call from "../../services/Call";
+import "./DashboardMod.css";
+
 const GameRank = () => {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [filters, setFilters] = useState({
@@ -235,6 +237,22 @@ const GameRank = () => {
     return icon;
   };
 
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <MdArrowForwardIos
+        style={{ fontSize: "24px" }}
+        onClick={() => {
+          console.log(rowData);
+          navigate("/game-rank-details", {
+            state: {
+              game_id: rowData.game_id,
+            },
+          });
+        }}
+      />
+    );
+  };
+
   return (
     <>
       <div className="compass">
@@ -387,6 +405,17 @@ const GameRank = () => {
                     "change"
                   )}
                   body={changeTemplate}
+                ></Column>
+
+                <Column
+                  field="details"
+                  header={headerWithTooltip(
+                    "Details",
+                    "Check historical movement of the game",
+                    "details"
+                  )}
+                  className="text-center"
+                  body={actionBodyTemplate}
                 ></Column>
               </DataTable>
             </div>
