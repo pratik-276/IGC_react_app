@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { MdInfoOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+
+import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import { Spin } from "antd";
@@ -17,6 +19,8 @@ import call from "../../services/Call";
 import toast from "react-hot-toast";
 
 const GameProvideMarketshare = () => {
+  const navigate = useNavigate();
+
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -95,12 +99,10 @@ const GameProvideMarketshare = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#f8d7da",
               color: "#dc3545",
             }}
           >
@@ -113,16 +115,14 @@ const GameProvideMarketshare = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#faf3e8",
               color: "#dc9b00",
             }}
           >
-            {change}%{" "}
+            {change}%
           </span>
         ) : (
           ""
@@ -131,12 +131,10 @@ const GameProvideMarketshare = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#e6f9e6",
               color: "#28a745",
             }}
           >
@@ -217,6 +215,23 @@ const GameProvideMarketshare = () => {
       <i className="pi pi-sort" style={{ fontSize: "14px" }} />
     );
     return icon;
+  };
+
+  const actionBodyTemplate = (rowData) => {
+    return (
+      <MdArrowForwardIos
+        style={{ fontSize: "16px" }}
+        onClick={() => {
+          console.log(rowData);
+          navigate("/game-provider-marketshare-details", {
+            state: {
+              regionName: selectedRegion,
+              providerId: rowData.provider_id,
+            },
+          });
+        }}
+      />
+    );
   };
 
   return (
@@ -373,6 +388,17 @@ const GameProvideMarketshare = () => {
                     "change"
                   )}
                   body={changeTemplate}
+                ></Column>
+
+                <Column
+                  field="details"
+                  header={headerWithTooltip(
+                    "Details",
+                    "Check details",
+                    "details"
+                  )}
+                  className="text-center"
+                  body={actionBodyTemplate}
                 ></Column>
               </DataTable>
             </div>
