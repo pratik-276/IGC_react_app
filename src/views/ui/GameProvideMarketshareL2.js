@@ -187,7 +187,7 @@ const GameProvideMarketshareL2 = () => {
                   Game Provider Marketshare L2
                 </h4>
                 <span className="text-black" style={{ fontSize: "1rem" }}>
-                  Details of the game rank in the selected region
+                  Details of the game provider in the selected region
                 </span>
               </div>
 
