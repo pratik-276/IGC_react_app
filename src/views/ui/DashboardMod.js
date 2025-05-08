@@ -6,6 +6,7 @@ import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { Tooltip } from "primereact/tooltip";
 import dayjs from "dayjs";
+import InfoCard from "../../charts/InfoCard";
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
@@ -145,7 +146,7 @@ const DashboardMod = () => {
   const actionBodyTemplate = (rowData) => {
     return (
       <MdArrowForwardIos
-        style={{ fontSize: "24px" }}
+        style={{ fontSize: "16px" }}
         onClick={() => {
           console.log(rowData);
           navigate("/game-details-mod", {
@@ -175,12 +176,10 @@ const DashboardMod = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#f8d7da",
               color: "#dc3545",
             }}
           >
@@ -193,12 +192,10 @@ const DashboardMod = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#faf3e8",
               color: "#dc9b00",
             }}
           >
@@ -211,12 +208,10 @@ const DashboardMod = () => {
           <span
             style={{
               display: "inline-block",
-              padding: "0.5em 0.75em",
               fontSize: "0.875em",
               borderRadius: "0.25em",
               fontWeight: "bold",
               textAlign: "center",
-              //backgroundColor: "#e6f9e6",
               color: "#28a745",
             }}
           >
@@ -330,59 +325,27 @@ const DashboardMod = () => {
                 <div className="border border-secondary p-3 rounded-3 mt-3">
                   <div>
                     <h5 className="font-semibold pl-2">Summary</h5>
-                    <div className="flex gap-3 mt-2">
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          <h5>Game Count</h5>
-                          <h5 className="font-semibold">
-                            {providerSummary.game_count}
-                          </h5>
-                        </div>
-                      </div>
+                    <div className="flex gap-2 mt-2">
+                      <InfoCard
+                        header="Game Count"
+                        tooltip="Shows total game count"
+                        tooltipTarget="game_count"
+                        value={providerSummary.game_count}
+                      />
 
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Casino Count</h5>
-                          <h5 className="font-semibold">
-                            {providerSummary.casino_count}
-                          </h5>
-                        </div>
-                      </div>
+                      <InfoCard
+                        header="Casino Count"
+                        tooltip="Shows total casino count"
+                        tooltipTarget="casino_count"
+                        value={providerSummary.casino_count}
+                      />
 
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Casino-Game Combinations</h5>
-                          <h5 className="font-semibold">
-                            {providerSummary.combination_count}
-                          </h5>
-                        </div>
-                      </div>
+                      <InfoCard
+                        header="Casino-Game Combinations"
+                        tooltip="Shows total Casino-Game Combinations"
+                        tooltipTarget="combination_count"
+                        value={providerSummary.combination_count}
+                      />
                     </div>
                   </div>
 
@@ -426,6 +389,7 @@ const DashboardMod = () => {
                             "game_name"
                           )}
                           sortable
+                          style={{ minWidth: "8rem" }}
                         ></Column>
                         <Column
                           field="casino_name"
@@ -453,36 +417,37 @@ const DashboardMod = () => {
                             "section_name"
                           )}
                           sortable
+                          style={{ minWidth: "10rem" }}
                         ></Column>
                         <Column
                           field="section_position"
                           header={headerWithTooltip(
-                            "Sec Position",
+                            "Sec Pos",
                             "Position of the section within casino page",
                             "section_position"
                           )}
                           sortable
-                          style={{ maxWidth: "8rem" }}
+                          style={{ minWidth: "8rem" }}
                         ></Column>
                         <Column
                           field="sectional_game_position"
                           header={headerWithTooltip(
-                            "Game Position",
+                            "Game Pos",
                             "Position of game within the section",
                             "sectional_game_position"
                           )}
                           sortable
-                          style={{ maxWidth: "8rem" }}
+                          style={{ minWidth: "9rem" }}
                         ></Column>
                         <Column
                           field="overall_position"
                           header={headerWithTooltip(
-                            "Overall Position",
+                            "Overall Pos",
                             "Overall position of the game on the casino page",
                             "overall_position"
                           )}
                           sortable
-                          style={{ maxWidth: "8rem" }}
+                          style={{ minWidth: "10rem" }}
                         ></Column>
                         <Column
                           field="growth"
@@ -492,7 +457,6 @@ const DashboardMod = () => {
                             "growth"
                           )}
                           sortable
-                          style={{ maxWidth: "8rem" }}
                           body={changeTemplate}
                         ></Column>
                         <Column
@@ -508,8 +472,14 @@ const DashboardMod = () => {
                               target="_blank"
                               rel="noopener noreferrer"
                               style={{
+                                display: "inline-block",
+                                maxWidth: "200px",
                                 color: "#0066cc",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
                               }}
+                              title={rowData.site_url}
                             >
                               {rowData.site_url}
                             </a>
@@ -518,7 +488,7 @@ const DashboardMod = () => {
                         <Column
                           field="last_observed_date"
                           header={headerWithTooltip(
-                            "Last Observed Date",
+                            "LOD",
                             "Date when the game was last observed on the casino",
                             "last_observed_date"
                           )}
@@ -528,7 +498,7 @@ const DashboardMod = () => {
                               "MMM D, YYYY"
                             );
                           }}
-                          style={{ maxWidth: "9rem" }}
+                          style={{ minWidth: "7rem" }}
                         ></Column>
 
                         <Column

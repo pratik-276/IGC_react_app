@@ -11,6 +11,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { MdArrowBackIos } from "react-icons/md";
 import AveragePositionChart from "../../charts/AveragePositionChart";
 import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
+import InfoCard from "../../charts/InfoCard";
 
 import { Spin } from "antd";
 
@@ -154,71 +155,34 @@ const GameDetailsMod = () => {
               <>
                 <div className="mt-3">
                   <h5 className="font-semibold pl-2">Indicators</h5>
-                  <div className="flex gap-3 mt-2">
-                    <div className="flex-1">
-                      <div
-                        className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                        style={{
-                          borderTop: "1px solid #392f6c",
-                          borderRight: "1px solid #392f6c",
-                          borderBottom: "1px solid #392f6c",
-                          borderLeft: "6px solid #392f6c",
-                        }}
-                      >
-                        <h5>Selected Game</h5>
-                        <h5 className="font-semibold">{game_name}</h5>
-                      </div>
-                    </div>
+                  <div className="flex gap-2 mt-2">
+                    <InfoCard
+                      header="Selected Game"
+                      tooltip="Shows selected game name"
+                      tooltipTarget="game_name"
+                      value={game_name}
+                    />
 
-                    <div className="flex-1">
-                      <div
-                        className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                        style={{
-                          borderTop: "1px solid #392f6c",
-                          borderRight: "1px solid #392f6c",
-                          borderBottom: "1px solid #392f6c",
-                          borderLeft: "6px solid #392f6c",
-                        }}
-                      >
-                        {" "}
-                        <h5>Selected Casino</h5>
-                        <h5 className="font-semibold">{casino_name}</h5>
-                      </div>
-                    </div>
+                    <InfoCard
+                      header="Selected Casino"
+                      tooltip="Shows selected casino name"
+                      tooltipTarget="casino_name"
+                      value={casino_name}
+                    />
 
-                    <div className="flex-1">
-                      <div
-                        className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                        style={{
-                          borderTop: "1px solid #392f6c",
-                          borderRight: "1px solid #392f6c",
-                          borderBottom: "1px solid #392f6c",
-                          borderLeft: "6px solid #392f6c",
-                        }}
-                      >
-                        {" "}
-                        <h5>Country</h5>
-                        <h5 className="font-semibold">{country_name}</h5>
-                      </div>
-                    </div>
+                    <InfoCard
+                      header="Country"
+                      tooltip="Shows country name"
+                      tooltipTarget="country_name"
+                      value={country_name}
+                    />
 
-                    <div className="flex-1">
-                      <div
-                        className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                        style={{
-                          borderTop: "1px solid #392f6c",
-                          borderRight: "1px solid #392f6c",
-                          borderBottom: "1px solid #392f6c",
-                          borderLeft: "6px solid #392f6c",
-                        }}
-                      >
-                        {" "}
-                        <h5>State</h5>
-                        <h5 className="font-semibold">
-                          {state_name ? state_name : "-"}
-                        </h5>
-                      </div>
-                    </div>
+                    <InfoCard
+                      header="State"
+                      tooltip="Shows state name"
+                      tooltipTarget="state_name"
+                      value={state_name ? state_name : "-"}
+                    />
                   </div>
                 </div>
 
@@ -227,102 +191,40 @@ const GameDetailsMod = () => {
                   <div>
                     <h5 className="font-semibold pl-2">Latest Details</h5>
 
-                    <div className="flex gap-3 mt-2">
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          <h5>Overall Position</h5>
-                          <h5 className="font-semibold">
-                            {" "}
-                            {
-                              trackingDetails.latest_position
-                                .overall_game_nonvisible_position
-                            }
-                          </h5>
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Section Name</h5>
-                          <h5 className="font-semibold">
-                            {" "}
-                            {trackingDetails.latest_position.section_name}
-                          </h5>
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Sectional Position</h5>
-                          <h5 className="font-semibold">
-                            {" "}
-                            {trackingDetails.latest_position.section_position}
-                          </h5>
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Sectional Game Position</h5>
-                          <h5 className="font-semibold">
-                            {" "}
-                            {trackingDetails.latest_position.game_position}
-                          </h5>
-                        </div>
-                      </div>
-
-                      <div className="flex-1">
-                        <div
-                          className="d-flex flex-column h-100 justify-content-center w-100 pl-3 pt-2"
-                          style={{
-                            borderTop: "1px solid #392f6c",
-                            borderRight: "1px solid #392f6c",
-                            borderBottom: "1px solid #392f6c",
-                            borderLeft: "6px solid #392f6c",
-                          }}
-                        >
-                          {" "}
-                          <h5>Latest Date</h5>
-                          <h5 className="font-semibold">
-                            {trackingDetails.latest_position.created_date}
-                          </h5>
-                        </div>
-                      </div>
+                    <div className="flex gap-2 mt-2">
+                      <InfoCard
+                        header="Overall Position"
+                        tooltip="Shows state name"
+                        tooltipTarget="overall_game_nonvisible_position"
+                        value={
+                          trackingDetails.latest_position
+                            .overall_game_nonvisible_position
+                        }
+                      />
+                      <InfoCard
+                        header="Section Name"
+                        tooltip="Shows Section Name"
+                        tooltipTarget="section_name"
+                        value={trackingDetails.latest_position.section_name}
+                      />
+                      <InfoCard
+                        header="Sectional Position"
+                        tooltip="Shows Sectional Position"
+                        tooltipTarget="section_position"
+                        value={trackingDetails.latest_position.section_position}
+                      />
+                      <InfoCard
+                        header="Sectional Game Position"
+                        tooltip="Shows Sectional Game Position"
+                        tooltipTarget="game_position"
+                        value={trackingDetails.latest_position.game_position}
+                      />
+                      <InfoCard
+                        header="Latest Date"
+                        tooltip="Shows Latest Date"
+                        tooltipTarget="created_date"
+                        value={trackingDetails.latest_position.created_date}
+                      />
                     </div>
 
                     <div className="mt-4">

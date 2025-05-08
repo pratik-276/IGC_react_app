@@ -96,7 +96,7 @@ const AveragePositionChart = ({ trackingDetails }) => {
     <>
       <div className="mb-5">
         {/* <h5 className="m-0">Average Position Changes</h5> */}
-        <h5 className="font-semibold pl-2">Daily Treand</h5>
+        <h5 className="font-semibold pl-2">Daily Trend</h5>
       </div>
       <div
         style={{ width: "100%", height: 180, backgroundColor: "transparent" }}
@@ -129,8 +129,8 @@ const AveragePositionChart = ({ trackingDetails }) => {
               fill="none"
               strokeWidth={2}
             />
-            <ReferenceLine y={minPos} stroke="#DA70D6" strokeWidth={2} strokeDasharray="5 5" />
-            <ReferenceLine y={maxPos} stroke="#00FFFF" strokeWidth={2} strokeDasharray="5 5" />
+            <ReferenceLine y={minPos} stroke="#00FFFF" strokeWidth={2} strokeDasharray="5 5" />
+            <ReferenceLine y={maxPos} stroke="#DA70D6" strokeWidth={2} strokeDasharray="5 5" />
           </AreaChart>
         </ResponsiveContainer>
       </div>
