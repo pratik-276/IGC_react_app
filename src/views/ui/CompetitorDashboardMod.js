@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CompetitorData from "../../services/Competitor";
+import GameRankData from "../../services/GameRank";
 
 import { MultiSelect } from "primereact/multiselect";
 import { Dropdown } from "primereact/dropdown";
@@ -19,6 +20,13 @@ import { Spin } from "antd";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
+
+  const [regions, setRegions] = useState([]);
+  const [selectedRegion, setSelectedRegion] = useState("United States");
+
+  const [operators, setOperators] = useState([]);
+  const [selectedOperator, setSelectedOperator] = useState(null);
+
   const [siteData, setSiteData] = useState([]);
   const [siteId, setSiteId] = useState(null);
 
@@ -31,18 +39,64 @@ const CompetitorDashboardMod = () => {
   const [data, setData] = useState([]);
 
   const [loader, setLoader] = useState(false);
-  const [siteDataLoader, setSiteDataLoader] = useState(true);
+  const [regionLoading, setRegionLoading] = useState(true);
+  const [operatorDataLoader, setOperatorDataLoader] = useState(false);
+  const [siteDataLoader, setSiteDataLoader] = useState(false);
   const [providerDataLoader, setProviderDataLoader] = useState(false);
   const [gameDataLoader, setGameDataLoader] = useState(false);
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
 
+  const getRegionsList = () => {
+    setRegionLoading(true);
+    GameRankData.get_regions()
+      .then((res) => {
+        if (res?.success === true) {
+          const cleaned = res.data
+            .filter((region) => region !== null && typeof region === "string")
+            .map((region) => ({ label: region, value: region }));
+
+          setRegions(cleaned);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setRegions([]);
+      })
+      .finally(() => {
+        setRegionLoading(false);
+      });
+  };
+
+  const operatorDropdownData = () => {
+    setOperatorDataLoader(true);
+
+    const payload = {
+      region: selectedRegion,
+    };
+
+    CompetitorData.post_operator_by_geography_lists(payload)
+      .then((res) => {
+        if (res?.success === true) {
+          setOperators(res?.data || null);
+          setOperatorDataLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      })
+      .finally(() => {
+        setOperatorDataLoader(false);
+      });
+  };
+
   const siteDropdownData = () => {
     setSiteDataLoader(true);
 
     const payload = {
       game_provider: user_company,
+      operator_id: 182,
     };
 
     CompetitorData.get_operator_sites_list(payload)
@@ -127,14 +181,29 @@ const CompetitorDashboardMod = () => {
   };
 
   useEffect(() => {
-    siteDropdownData();
+    getRegionsList();
   }, []);
 
   useEffect(() => {
-    setProvidersName(null);
-    setGamesName(null);
-    providerDropdownData();
-    gameDropdownData();
+    if (selectedRegion) {
+      operatorDropdownData();
+    }
+  }, [selectedRegion]);
+
+  useEffect(() => {
+    console.log("selectedOperator", selectedOperator);
+    if (selectedOperator) {
+      siteDropdownData();
+    }
+  }, [selectedOperator]);
+
+  useEffect(() => {
+    if (siteId) {
+      setProvidersName(null);
+      setGamesName(null);
+      providerDropdownData();
+      gameDropdownData();
+    }
   }, [siteId]);
 
   useEffect(() => {
@@ -228,74 +297,132 @@ const CompetitorDashboardMod = () => {
               </span>
             </div>
 
-            <div className="d-flex flex-wrap gap-2">
-              <Dropdown
-                optionLabel="label"
-                optionValue="value"
-                filter
-                placeholder="Select Site URL"
-                loading={siteDataLoader}
-                value={siteId}
-                onChange={(e) => setSiteId(e.value)}
-                options={siteData}
-                itemTemplate={(option) => (
-                  <div title={option.label}>{option.label}</div>
-                )}
-                className="flex-1"
-                style={{ maxWidth: "300px" }}
-              />
+            <div className="d-flex flex-column gap-2">
+              <div className="row g-2">
+                <div className="col-md-4">
+                  <Dropdown
+                    optionLabel="label"
+                    optionValue="value"
+                    filter
+                    placeholder="Select Region"
+                    loading={regionLoading}
+                    value={selectedRegion}
+                    onChange={(e) => {
+                      setSelectedRegion(e.value);
+                      setSelectedOperator(null);
+                      setSiteData([]);
+                      setSiteId(null);
+                      setProviderData([]);
+                      setProvidersName(null);
+                      setGameData([]);
+                      setGamesName(null);
+                    }}
+                    options={regions}
+                    className="w-100"
+                  />
+                </div>
 
-              <MultiSelect
-                value={providersName}
-                onChange={(e) => setProvidersName(e.value)}
-                options={providerData}
-                loading={providerDataLoader}
-                placeholder="Select Providers"
-                filter
-                disabled={!siteId}
-                maxSelectedLabels={1}
-                className="flex-1"
-              />
+                <div className="col-md-4">
+                  <Dropdown
+                    optionLabel="operator_name"
+                    optionValue="operator_id"
+                    filter
+                    placeholder="Select Operator"
+                    disabled={!selectedRegion}
+                    loading={operatorDataLoader}
+                    value={selectedOperator}
+                    onChange={(e) => {
+                      setSelectedOperator(e.value);
+                      setSiteId(null);
+                    }}
+                    options={operators}
+                    itemTemplate={(option) => (
+                      <div title={option.operator_name}>
+                        {option.operator_name}
+                      </div>
+                    )}
+                    className="w-100"
+                  />
+                </div>
 
-              <MultiSelect
-                value={gamesName}
-                onChange={(e) => setGamesName(e.value)}
-                options={gameData}
-                loading={gameDataLoader}
-                placeholder="Select Games"
-                filter
-                disabled={!siteId}
-                maxSelectedLabels={1}
-                className="flex-1"
-              />
+                <div className="col-md-4">
+                  <Dropdown
+                    optionLabel="label"
+                    optionValue="value"
+                    filter
+                    placeholder="Select Site URL"
+                    loading={siteDataLoader}
+                    value={siteId}
+                    onChange={(e) => setSiteId(e.value)}
+                    options={siteData}
+                    itemTemplate={(option) => (
+                      <div title={option.label}>{option.label}</div>
+                    )}
+                    className="w-100"
+                  />
+                </div>
+              </div>
 
-              <Button
-                type="button"
-                label="Apply"
-                loading={loader}
-                icon="pi pi-filter"
-                disabled={!siteId}
-                onClick={getCompitatorData}
-                className="btn-filter"
-                style={{ minWidth: "100px" }}
-              />
+              <div className="row g-2">
+                <div className="col-md-4">
+                  <MultiSelect
+                    value={providersName}
+                    onChange={(e) => setProvidersName(e.value)}
+                    options={providerData}
+                    loading={providerDataLoader}
+                    placeholder="Select Providers"
+                    filter
+                    disabled={!siteId}
+                    maxSelectedLabels={1}
+                    className="w-100"
+                  />
+                </div>
 
-              <Button
-                type="button"
-                label="Reset"
-                icon="pi pi-refresh"
-                disabled={!siteId}
-                onClick={() => {
-                  setSiteId(null);
-                  setProvidersName(null);
-                  setGamesName(null);
-                  setData([]);
-                  setTableData([]);
-                  setUniquePositions([]);
-                }}
-                className="btn-filter"
-                style={{ minWidth: "100px" }}
-              />
+                <div className="col-md-4">
+                  <MultiSelect
+                    value={gamesName}
+                    onChange={(e) => setGamesName(e.value)}
+                    options={gameData}
+                    loading={gameDataLoader}
+                    placeholder="Select Games"
+                    filter
+                    disabled={!siteId}
+                    maxSelectedLabels={1}
+                    className="w-100"
+                  />
+                </div>
+
+                <div className="col-md-4 d-flex align-items-start gap-2">
+                  <Button
+                    type="button"
+                    label="Apply"
+                    loading={loader}
+                    icon="pi pi-filter"
+                    disabled={!siteId}
+                    onClick={getCompitatorData}
+                    className="btn-filter flex-1 h-100"
+                    style={{ minWidth: "100px" }}
+                  />
+                  <Button
+                    type="button"
+                    label="Reset"
+                    icon="pi pi-refresh"
+                    disabled={!siteId}
+                    onClick={() => {
+                      setSelectedOperator(null);
+                      setSiteId(null);
+                      setProvidersName(null);
+                      setGamesName(null);
+                      setSiteData([]);
+                      setData([]);
+                      setTableData([]);
+                      setUniquePositions([]);
+                    }}
+                    className="btn-filter flex-1 h-100"
+                    style={{ minWidth: "100px" }}
+                  />
+                </div>
+              </div>
             </div>
           </div>
         </div>

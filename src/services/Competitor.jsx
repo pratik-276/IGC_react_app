@@ -9,6 +9,15 @@ const get_operator_sites_list = async (data) => {
     return d;
 };
 
+const post_operator_by_geography_lists = async (data) => {
+    let d = await Call({
+        path: "post_operator_by_geography_lists",
+        method: "post",
+        data,
+    });
+    return d;
+};
+
 const get_games_by_site = async (data) => {
     let d = await Call({
         path: "get_games_by_site",
@@ -38,6 +47,7 @@ const get_competitor_data = async (data) => {
 
 const exportObject = {
     get_operator_sites_list,
+    post_operator_by_geography_lists,
     get_games_by_site,
     get_providers_by_site,
     get_competitor_data,
