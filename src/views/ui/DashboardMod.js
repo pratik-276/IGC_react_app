@@ -26,35 +26,16 @@ const DashboardMod = () => {
   const dt = useRef(null);
   const [selectedRows, setSelectedRows] = useState(null);
 
-  const [show, setShow] = useState(false);
   const [loader, setLoader] = useState(true);
 
   const [providerSummary, setProviderSummary] = useState(null);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
-  const [trackingDetails, setTrackingDetails] = useState([]);
 
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
 
   const arrayFromValues = Object.values(providerLatestDetails);
-
-  const latest_details_fetch = () => {
-    const data = {
-      game_provider: user_company,
-    };
-
-    GameData.provider_latest_details(data)
-      .then((res) => {
-        if (res?.success === true) {
-          //console.log(res?.data);
-          setProviderLatestDetails(res?.data || []);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  };
 
   const gamesList =
     providerLatestDetails.length > 0
@@ -115,26 +96,54 @@ const DashboardMod = () => {
     setFilteredData(filtered);
   }, [providerLatestDetails, selectedGames, selectedCasinos]);
 
-  const overviewDashboard = () => {
-    const data = {
-      game_provider: user_company,
-    };
+  // const overviewDashboard = () => {
+  //   const data = {
+  //     game_provider: user_company,
+  //   };
 
-    GameData.provider_summary(data)
-      .then((res) => {
-        if (res?.success === true) {
-          setProviderSummary(res?.data || null);
-          setLoader(false);
-          latest_details_fetch();
-        } else {
-          console.log("Failed to fetch provider summary");
-          setLoader(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setLoader(false);
+  //   GameData.provider_summary(data)
+  //     .then((res) => {
+  //       if (res?.success === true) {
+  //         setProviderSummary(res?.data || null);
+  //         setLoader(false);
+  //         latest_details_fetch();
+  //       } else {
+  //         console.log("Failed to fetch provider summary");
+  //         setLoader(false);
+  //       }
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //       setLoader(false);
+  //     });
+  // };
+
+  const overviewDashboard = async () => {
+    try {
+      const summaryRes = await GameData.provider_summary({
+        game_provider: user_company,
       });
+
+      if (summaryRes?.success === true) {
+        setProviderSummary(summaryRes?.data || null);
+
+        const detailsRes = await GameData.provider_latest_details({
+          game_provider: user_company,
+        });
+
+        if (detailsRes?.success === true) {
+          setProviderLatestDetails(detailsRes?.data || []);
+        } else {
+          console.log("Failed to fetch latest details");
+        }
+      } else {
+        console.log("Failed to fetch provider summary");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setLoader(false);
+    }
   };
 
   useEffect(() => {
@@ -275,9 +284,7 @@ const DashboardMod = () => {
           <div className="d-flex align-items-center justify-content-between">
             <div>
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                {trackingDetails?.operator_name != undefined
-                  ? `${trackingDetails?.operator_name} Dashboard`
-                  : `Tracker Dashboard`}
+                Tracker Dashboard
               </h4>
               <span>
                 Track latest positions of all your games across all casinos
@@ -320,7 +327,7 @@ const DashboardMod = () => {
           </div>
         ) : (
           <>
-            {show === false && providerSummary ? (
+            {providerSummary ? (
               <>
                 <div className="border border-secondary p-3 rounded-3 mt-3">
                   <div>
