@@ -337,21 +337,24 @@ const DashboardMod = () => {
                         header="Game Count"
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
-                        value={providerSummary.game_count}
+                        //value={providerSummary.game_count}
+                        value={new Set(filteredData.map(item => item.game_name)).size}
                       />
 
                       <InfoCard
                         header="Casino Count"
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
-                        value={providerSummary.casino_count}
+                        //value={providerSummary.casino_count}
+                        value={new Set(filteredData.map(item => `${item.casino_name}|${item.country_name}`)).size}
                       />
 
                       <InfoCard
                         header="Casino-Game Combinations"
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
-                        value={providerSummary.combination_count}
+                        //value={providerSummary.combination_count}
+                        value={new Set(filteredData.map(item => `${item.casino_name}|${item.country_name}|${item.game_name}`)).size}
                       />
                     </div>
                   </div>
