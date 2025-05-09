@@ -29,6 +29,7 @@ const CompetitorDashboardMod = () => {
 
   const [siteData, setSiteData] = useState([]);
   const [siteId, setSiteId] = useState(null);
+  const [selectedSiteDetails, setSelectedSiteDetails] = useState(null);
 
   const [providerData, setProviderData] = useState([]);
   const [providersName, setProvidersName] = useState(null);
@@ -96,7 +97,7 @@ const CompetitorDashboardMod = () => {
 
     const payload = {
       game_provider: user_company,
-      operator_id: 182,
+      operator_id: selectedOperator,
     };
 
     CompetitorData.get_operator_sites_list(payload)
@@ -131,7 +132,9 @@ const CompetitorDashboardMod = () => {
           setProviderDataLoader(false);
         }
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+      })
       .finally(() => setProviderDataLoader(false));
   };
 
@@ -152,7 +155,9 @@ const CompetitorDashboardMod = () => {
           setGameDataLoader(false);
         }
       })
-      .catch(console.log)
+      .catch((err) => {
+        console.log(err);
+      })
       .finally(() => setGameDataLoader(false));
   };
 
@@ -191,7 +196,6 @@ const CompetitorDashboardMod = () => {
   }, [selectedRegion]);
 
   useEffect(() => {
-    console.log("selectedOperator", selectedOperator);
     if (selectedOperator) {
       siteDropdownData();
     }
@@ -353,7 +357,11 @@ const CompetitorDashboardMod = () => {
                     placeholder="Select Site URL"
                     loading={siteDataLoader}
                     value={siteId}
-                    onChange={(e) => setSiteId(e.value)}
+                    onChange={(e) => {
+                      setSiteId(e.value);
+                      const site = siteData.find((s) => s.value === e.value);
+                      setSelectedSiteDetails(site || null);
+                    }}
                     options={siteData}
                     itemTemplate={(option) => (
                       <div title={option.label}>{option.label}</div>
@@ -443,6 +451,19 @@ const CompetitorDashboardMod = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <h5 className="font-semibold pl-2">Latest Details</h5>
+                {selectedSiteDetails && (
+                  <div className="d-flex justify-content-between pl-2 mb-2">
+                    <div>
+                      <strong>Site URL : </strong>
+                      {selectedSiteDetails.label}
+                    </div>
+                    <div>
+                      <strong>Updated On : </strong>
+                      {selectedSiteDetails.latest_date}
+                    </div>
+                  </div>
+                )}
+
                 <DataTable
                   value={tableData}
                   scrollable
