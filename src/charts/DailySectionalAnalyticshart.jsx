@@ -4,6 +4,17 @@ import { format } from 'date-fns';
 const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
     const dates = [...new Set(trackingDetails?.daywise_data?.map(t => t.created_date))].sort().reverse();
 
+    // Get the lowest game_position
+    const globalMinPosition = trackingDetails?.daywise_data?.reduce((min, entry) => {
+        const value = parseInt(entry.game_position, 10);
+        if (!isNaN(value)) {
+            return value < min ? value : min;
+        }
+        return min;
+    }, Infinity);
+
+    console.log("globalMinPosition:", globalMinPosition)
+
     // Organizing data to group by section name and then by section position
     const groupedData = {};
     trackingDetails?.daywise_data?.forEach(entry => {
@@ -27,13 +38,22 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
         let firstRow = true;
         Object.entries(positions).forEach(([section_position, gamePositions]) => {
             tableData.push({
-                section_name: firstRow ? section_name : null, // Merge section names across rows
+                section_name: firstRow ? section_name : null,
                 section_position,
                 ...gamePositions
             });
             firstRow = false;
         });
     });
+
+    const getBackgroundColor = (value) => {
+        if (value === null || value === undefined) return 'transparent';
+
+        const numericVal = parseInt(value, 10);
+        if (isNaN(numericVal)) return 'transparent';
+
+        return numericVal === globalMinPosition ? '#d9fafa' : '#DAD2FF';
+    };
 
     return (
         <div>
@@ -65,8 +85,21 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
                                 <td style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center' }}>
                                     {row.section_position}
                                 </td>
-                                {dates.map(date => (
+                                {/* {dates.map(date => (
                                     <td key={date} style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center', backgroundColor: row[date] ? '#DAD2FF' : 'transparent' }}>
+                                        {row[date] || ''}
+                                    </td>
+                                ))} */}
+                                {dates.map(date => (
+                                    <td
+                                        key={date}
+                                        style={{
+                                            padding: '4px',
+                                            border: '1px solid #392f6c',
+                                            textAlign: 'center',
+                                            backgroundColor: getBackgroundColor(row[date]),
+                                        }}
+                                    >
                                         {row[date] || ''}
                                     </td>
                                 ))}
