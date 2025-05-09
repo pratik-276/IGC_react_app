@@ -35,6 +35,7 @@ const DashboardMod = () => {
 
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
+  const [selectedFreqs, setSelectedFreqs] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
 
   const arrayFromValues = Object.values(providerLatestDetails);
@@ -72,15 +73,28 @@ const DashboardMod = () => {
           .map((casinoName) => ({ name: casinoName, code: casinoName }))
       : [];
 
+  const freqsList =
+    providerLatestDetails.length > 0
+      ? Array.from(
+          new Set(providerLatestDetails.map((item) => item.frequency))
+        )
+          .sort()
+          .map((freq) => ({ name: freq, code: freq }))
+      : [];
+
   useEffect(() => {
     const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
     const savedCasinos = JSON.parse(localStorage.getItem("selectedCasinos"));
+    const savedFreqs = JSON.parse(localStorage.getItem("selectedFreqs"));
 
     if (savedGames) {
       setSelectedGames(savedGames);
     }
     if (savedCasinos) {
       setSelectedCasinos(savedCasinos);
+    }
+    if (savedFreqs) {
+      setSelectedFreqs(savedFreqs);
     }
   }, []);
 
@@ -91,7 +105,10 @@ const DashboardMod = () => {
     if (selectedCasinos !== null) {
       localStorage.setItem("selectedCasinos", JSON.stringify(selectedCasinos));
     }
-  }, [selectedGames, selectedCasinos]);
+    if (selectedFreqs !== null) {
+      localStorage.setItem("selectedFreqs", JSON.stringify(selectedFreqs));
+    }
+  }, [selectedGames, selectedCasinos, selectedFreqs]);
 
   useEffect(() => {
     let filtered = [...providerLatestDetails];
@@ -111,9 +128,15 @@ const DashboardMod = () => {
       );
     }
 
+    if (selectedFreqs && selectedFreqs.length > 0) {
+      filtered = filtered.filter((item) =>
+        selectedFreqs.some((freq) => freq.name === item.frequency)
+      );
+    }
+
     //console.log("filtered", filtered);
     setFilteredData(filtered);
-  }, [providerLatestDetails, selectedGames, selectedCasinos]);
+  }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
 
   const overviewDashboard = () => {
     const data = {
@@ -303,6 +326,15 @@ const DashboardMod = () => {
                 placeholder="Select Casinos"
                 maxSelectedLabels={3}
               />
+              <MultiSelect
+                value={selectedFreqs}
+                onChange={(e) => setSelectedFreqs(e.value)}
+                options={freqsList}
+                optionLabel="name"
+                filter
+                placeholder="Site Frequency"
+                maxSelectedLabels={3}
+              />
             </div>
           </div>
         </div>
@@ -487,6 +519,16 @@ const DashboardMod = () => {
                               {rowData.site_url}
                             </a>
                           )}
+                        ></Column>
+                        <Column
+                          field="frequency"
+                          header={headerWithTooltip(
+                            "Site Freq",
+                            "Frequency at which the site is scanned",
+                            "frequency"
+                          )}
+                          sortable
+                          style={{ minWidth: "10rem" }}
                         ></Column>
                         <Column
                           field="last_observed_date"
