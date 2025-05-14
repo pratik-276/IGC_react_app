@@ -187,7 +187,7 @@ const GameDetailsMod = () => {
                 <div className="flex gap-2 mt-2">
                   <InfoCard
                     header="Overall Position"
-                    tooltip="Shows state name"
+                    tooltip="Overall Position of game on casino"
                     tooltipTarget="overall_game_nonvisible_position"
                     value={
                       trackingDetails.latest_position
@@ -196,25 +196,25 @@ const GameDetailsMod = () => {
                   />
                   <InfoCard
                     header="Section Name"
-                    tooltip="Shows Section Name"
+                    tooltip="Section in which the game resides"
                     tooltipTarget="section_name"
                     value={trackingDetails.latest_position.section_name}
                   />
                   <InfoCard
                     header="Sectional Position"
-                    tooltip="Shows Sectional Position"
+                    tooltip="Shows position of section within casino"
                     tooltipTarget="section_position"
                     value={trackingDetails.latest_position.section_position}
                   />
                   <InfoCard
                     header="Sectional Game Position"
-                    tooltip="Shows Sectional Game Position"
+                    tooltip="Shows position of game within section"
                     tooltipTarget="game_position"
                     value={trackingDetails.latest_position.game_position}
                   />
                   <InfoCard
                     header="Latest Date"
-                    tooltip="Shows Latest Date"
+                    tooltip="Last date when the game was observed on the casino"
                     tooltipTarget="created_date"
                     value={trackingDetails.latest_position.created_date}
                   />
