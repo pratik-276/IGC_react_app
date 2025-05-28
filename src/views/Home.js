@@ -80,11 +80,11 @@ const Home = () => {
             <Button variant="contained" style={{ backgroundColor: '#392f6c', marginBottom: '0.5rem' }} startIcon={<FaGem />}  onClick={() => toast.error("Coming Soon")}>
               Upgrade Plan
             </Button>
-            <div className="compass-data">
+            {/* <div className="compass-data">
               <span>
                 {profile?.plan_text_show}
               </span>
-            </div>
+            </div> */}
           </div>
         </div>
 

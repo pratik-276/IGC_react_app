@@ -107,7 +107,7 @@ const App = () => {
                   }
                 />
                 <Route
-                  path="competitor-dashboard-mod"
+                  path="competitor-dashboard"
                   element={
                     <ProtectedRoute>
                       <CompetitorDashboardMod />
@@ -132,7 +132,7 @@ const App = () => {
                 />
 
                 <Route
-                  path="competitor-dashboard"
+                  path="competitor-dashboard-mod"
                   element={
                     <ProtectedRoute>
                       <CompetitorDashboard />

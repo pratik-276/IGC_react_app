@@ -45,13 +45,17 @@ const iGameTrackerNavigation = [
   //   title: "Calibrate Compass",
   //   href: "/calibrate-compass",
   // },
+  // {
+  //   title: "Priority Casinos",
+  //   href: "/priority-casinos",
+  // },
+  // {
+  //   title: "Global Dashboard",
+  //   href: "/dashboard",
+  // },
   {
-    title: "Priority Casinos",
-    href: "/priority-casinos",
-  },
-  {
-    title: "Global Dashboard",
-    href: "/dashboard",
+    title: "Positions Dashboard",
+    href: "/dashboard-mod",
   },
   {
     title: "Competitor Dashboard",
