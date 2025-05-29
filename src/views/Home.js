@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { ProgressSpinner } from "primereact/progressspinner";
 import Autocomplete from '@mui/material/Autocomplete';
 import toast from "react-hot-toast";
+import CompassData from "../services/CompassApi";
 
 const Home = () => {
   const [profile, setProfile] = useState({})
@@ -35,12 +36,23 @@ const Home = () => {
       // Patch for Admin Dashboard siderbar button visibility on first open 
       navigate('/')
 
-      const _operators = await Call({
-        path: 'get_operator',
-        method: 'GET'
+      // const _operators = await Call({
+      //   path: 'get_operator_by_provider',
+      //   method: 'POST'
+      // })
+      CompassData.get_operator_by_provider({
+        provider: localStorage.getItem('user_company')
       })
-      setOperators(_operators.data)
-      console.log(_operators.data)
+        .then((res) => {
+          if (res?.success) {
+            setOperators(res.data)
+          }
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+      // setOperators(_operators.data)
+      // console.log(_operators.data)
     } catch (e) {
       console.log(e)
     } finally {
@@ -146,10 +158,10 @@ const Home = () => {
             </span>
           </div> */}
           <div className="d-flex flex-row gap-3">
-            {/* <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
-            <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" /> */}
-            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
-            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" />
+            <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
+            {/* <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" /> */}
           </div>
         </div>
 
@@ -191,17 +203,20 @@ const ReportCard = ({ title, onButtonPress }) => {
 
 const TrackDetail = ({ name, url, navigate }) => {
   return (
-    <Card className="mt-5" style={{ backgroundColor: '#EDF5F0', maxWidth: '600px' }}>
+    <Card className="mt-5" style={{ backgroundColor: '#EDF5F0', maxWidth: '800px' }}>
       <CardBody style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-between' }}>
         <div>
-          <h5>{name}</h5>
-          <Link>{url}</Link>
+          <h5><strong>{localStorage.getItem('user_company')}</strong> games are available on <strong>{name}</strong></h5>
+          <p>Example URL: <Link>{url}</Link></p>
         </div>
         <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
           {/* <Button onClick={() => navigate('game-tracking')} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
             View Tracker
           </Button> */}
-          <Button onClick={() => toast.error("Coming Soon")} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
+          <Button onClick={() => {
+            localStorage.setItem('selectedCasinos', JSON.stringify([{'name': name, 'code': name}]));
+            navigate('dashboard-mod');
+          }} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
             View Tracker
           </Button>
         </div>

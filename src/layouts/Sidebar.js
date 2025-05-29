@@ -69,12 +69,20 @@ const iGameTrackerNavigation = [
 
 const marketIntelligenceNavigation = [
   {
-    title: "Game Provider Marketshare",
+    title: "Marketshare",
     href: "/game-provider-marketshare",
+  },
+  {
+    title: "Provider Details",
+    href: "/game-provider-marketshare-details",
   },
   {
     title: "Game Rank",
     href: "/game-rank-report",
+  },
+  {
+    title: "Game Details",
+    href: "/game-rank-details",
   },
   // {
   //   title: "Game Position",
@@ -155,6 +163,19 @@ const Sidebar = () => {
                 <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Home</span>
               </Link>
             </div>
+            <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/calibrate-compass"
+                className={
+                  location.pathname === "/calibrate-compass"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaHouse style={{ fontSize: "23px" }} /> 
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Calibrate</span>
+              </Link>
+            </div>
 
             {/* <div className="sidenav-bg mt-2 mx-2">
               <Link
@@ -189,7 +210,7 @@ const Sidebar = () => {
                 <Accordion.Header>
                     <FaLocationArrow style={{ fontSize: "23px" }} /> 
                     &nbsp;&nbsp;
-                    <div style={{ fontWeight: 'bold' }}>iGame Tracker</div>
+                    <div style={{ fontWeight: 'bold' }}>Positions</div>
                 </Accordion.Header>
                 <Accordion.Body>
                   <div>
@@ -227,7 +248,48 @@ const Sidebar = () => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
+            <div className="sidenav-bg mt-2 mx-2">
+              <Link
+                to="/competitor-dashboard"
+                className={
+                  location.pathname === "/competitor-dashboard"
+                    ? "active nav-link mb-2 py-2 px-2"
+                    : "nav-link mb-2 py-2 px-2"
+                }
+              >
+                <FaHouse style={{ fontSize: "23px" }} /> 
+                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Competitor Dashboard</span>
+              </Link>
+            </div>
 
+            <Accordion className="pb-2 mx-2 mt-2" defaultActiveKey="1">
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                    <FaLocationArrow style={{ fontSize: "23px" }} /> 
+                    &nbsp;&nbsp;
+                    <div style={{ fontWeight: 'bold' }}>Market Intelligence</div>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>
+                  {marketIntelligenceNavigation.map((navi, index) => (
+                    <div key={index} className="sidenav-bg mb-2">
+                      <Link
+                        to={navi.href}
+                        className={
+                          location.pathname === navi.href
+                            ? "active nav-link mb-2 py-2 px-2"
+                            : "nav-link mb-2 py-2 px-2"
+                        }
+                        style={{fontWeight: '500'}}
+                      >
+                        <span className="ms-3 d-inline-block">{navi.title}</span>
+                      </Link>
+                    </div>
+                  ))}
+                  </div>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
             {/* <Accordion className="pb-2 mx-2">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
