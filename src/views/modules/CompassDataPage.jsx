@@ -5,6 +5,7 @@ import CompassData from "../../services/CompassApi";
 import { MdInfoOutline } from "react-icons/md";
 
 import { Spin } from "antd";
+import { FloatLabel } from "primereact/floatlabel";
 import { Button } from 'primereact/button';
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from 'primereact/dropdown';
@@ -105,15 +106,10 @@ const CompassDataPage = ({
 
 
   const StatusBodyTemplate = (row) => {
-    const startDate = new Date(row?.start_date);
-    const formattedStartDate = startDate
-      ?.toLocaleDateString("en-GB")
-      .replace(/\//g, "-");
+    const options = { year: "numeric", month: "short", day: "numeric" };
 
-    const endDate = new Date(row?.end_date);
-    const formattedEndDate = endDate
-      ?.toLocaleDateString("en-GB")
-      .replace(/\//g, "-");
+    const formattedStartDate = new Date(row?.start_date).toLocaleDateString("en-US", options);
+    const formattedEndDate = new Date(row?.end_date).toLocaleDateString("en-US", options);
 
     return (
       <span>
@@ -220,7 +216,7 @@ const CompassDataPage = ({
 
               <div className="compass-data">
                 <div className="d-flex flex-column gap-3 justify-content-between">
-                  <div className="d-flex align-items-center justify-content-between">
+                  <div className="d-flex align-items-center justify-content-between pb-3">
 
                     <div>
                       <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
@@ -239,30 +235,39 @@ const CompassDataPage = ({
 
                   <div className="d-md-flex d-lg-flex justify-content-between">
                     <div className="d-flex gap-2">
-                      <Dropdown
-                        optionLabel="label"
-                        optionValue="value"
-                        filter
-                        showClear
-                        placeholder="Select Operator"
-                        value={operatorFilter}
-                        options={operatorOption}
-                        onChange={(option) =>
-                          setOperatorFilter(option ? option.value : null)
-                        }
-                      />
-                      <Dropdown
-                        optionLabel="label"
-                        optionValue="value"
-                        filter
-                        showClear
-                        placeholder="Select Game"
-                        value={gameFilter}
-                        options={gameOption}
-                        onChange={(option) =>
-                          setGameFilter(option ? option.value : null)
-                        }
-                      />
+                      <FloatLabel>
+                        <Dropdown
+                          optionLabel="label"
+                          optionValue="value"
+                          filter
+                          showClear
+                          inputId="operator"
+                          style={{ minWidth: '200px' }}
+                          value={operatorFilter}
+                          options={operatorOption}
+                          onChange={(option) =>
+                            setOperatorFilter(option ? option.value : null)
+                          }
+                        />
+                        <label className="fs-6" htmlFor="operator">Operator</label>
+                      </FloatLabel>
+
+                      <FloatLabel>
+                        <Dropdown
+                          optionLabel="label"
+                          optionValue="value"
+                          filter
+                          showClear
+                          inputId="game"
+                          style={{ minWidth: '200px' }}
+                          value={gameFilter}
+                          options={gameOption}
+                          onChange={(option) =>
+                            setGameFilter(option ? option.value : null)
+                          }
+                        />
+                        <label className="fs-6" htmlFor="game">Game</label>
+                      </FloatLabel>
                     </div>
 
                     <Button

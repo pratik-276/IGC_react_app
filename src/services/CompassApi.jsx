@@ -71,6 +71,15 @@ const request_new_casino = async (data) => {
   return d;
 };
 
+const section_name_by_operator_site_id = async (data) => {
+  let d = await Call({
+    path: "section_name",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
 const exportObject = {
   compass_read,
   compass_create,
@@ -80,6 +89,7 @@ const exportObject = {
   get_game,
   get_game_by_provider,
   request_new_casino,
+  section_name_by_operator_site_id,
 };
 
 export default exportObject;

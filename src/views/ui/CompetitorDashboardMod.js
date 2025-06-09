@@ -17,6 +17,7 @@ import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./CompetitorDashboardMod.css";
 import { Spin } from "antd";
+import Papa from "papaparse";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
@@ -287,6 +288,16 @@ const CompetitorDashboardMod = () => {
     return icon;
   };
 
+  const exportCSV = (data) => {
+    const csv = Papa.unparse(data);
+    const link = document.createElement("a");
+    link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    link.download = "competitor_data.csv";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <>
       <div className="compass">
@@ -450,7 +461,16 @@ const CompetitorDashboardMod = () => {
           ) : (
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
-                <h5 className="font-semibold pl-2">Latest Details</h5>
+                <div className="d-flex align-items-center justify-content-between">
+                  <h5 className="font-semibold pl-2">Latest Details</h5>
+                  <span
+                    className="text-primary cursor-pointer"
+                    onClick={() => exportCSV(tableData)}
+                  >
+                    Download Report
+                  </span>
+                </div>
+
                 {selectedSiteDetails && (
                   <div className="d-flex justify-content-between pl-2 mb-2">
                     <div>
@@ -459,7 +479,15 @@ const CompetitorDashboardMod = () => {
                     </div>
                     <div>
                       <strong>Updated On : </strong>
-                      {selectedSiteDetails.latest_date}
+                      {selectedSiteDetails.latest_date
+                        ? new Date(
+                            selectedSiteDetails.latest_date
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "N/A"}
                     </div>
                   </div>
                 )}

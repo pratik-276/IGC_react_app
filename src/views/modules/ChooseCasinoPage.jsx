@@ -64,15 +64,21 @@ const ChooseCasinoPage = ({
     return localSelectedCasinos.some((selected) => selected.id === casino.id);
   };
 
+  // allow multiple casino selection
+  // const handleCheckboxChange = (data) => {
+  //   setLocalSelectedCasinos((prev) => {
+  //     const exists = prev.some((casino) => casino.id === data.id);
+  //     if (exists) {
+  //       return prev.filter((casino) => casino.id !== data.id);
+  //     } else {
+  //       return [...prev, data];
+  //     }
+  //   });
+  // };
+
+  // allow single casino selection
   const handleCheckboxChange = (data) => {
-    setLocalSelectedCasinos((prev) => {
-      const exists = prev.some((casino) => casino.id === data.id);
-      if (exists) {
-        return prev.filter((casino) => casino.id !== data.id);
-      } else {
-        return [...prev, data];
-      }
-    });
+    setLocalSelectedCasinos([data]);
   };
 
   const handleSave = () => {

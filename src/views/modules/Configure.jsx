@@ -3,6 +3,10 @@ import { Link } from "react-router-dom";
 import "react-dropdown/style.css";
 import { FiMinusCircle } from "react-icons/fi";
 import { CloseOutlined } from "@ant-design/icons";
+import { Dropdown } from 'primereact/dropdown';
+import { InputText } from "primereact/inputtext";
+import { FloatLabel } from "primereact/floatlabel";
+import { Calendar } from "primereact/calendar";
 import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
 import toast from "react-hot-toast";
@@ -19,6 +23,9 @@ const Configure = ({
   const [casinos, setCasinos] = useState([]);
   const [game, setGame] = useState([]);
   const [displayedGames, setDisplayedGames] = useState({});
+
+  const [sectionTitleData, setSectionTitleData] = useState();
+  const [sectionLoader, setSectionLoader] = useState(true);
 
   const casinoJSON = localStorage.getItem("casinos");
   const gameJson = localStorage.getItem("games");
@@ -39,8 +46,31 @@ const Configure = ({
     if (casinoJSON) {
       const parsedCasinos = JSON.parse(casinoJSON);
       setCasinos(parsedCasinos);
+
+      if (parsedCasinos.length > 0) {
+        getSectionTitleData(parsedCasinos[0].id);
+      }
     }
   }, [casinoJSON]);
+
+  const getSectionTitleData = (operator_id) => {
+    GameData.section_name_by_operator_site_id({ operator_id })
+      .then((res) => {
+        if (res?.success) {
+          const transformed = res.data.map((item) => ({
+            label: item.game_collection_title,
+            value: item.game_collection_title,
+          }));
+
+          setSectionTitleData(transformed);
+          setSectionLoader(false);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+        setSectionLoader(false);
+      });
+  };
 
   useEffect(() => {
     if (gameJson) {
@@ -282,7 +312,7 @@ const Configure = ({
           <div className="tracking-game-time">
             <div className="d-flex align-items-center gap-2">
 
-              <div className="form-group credit-field">
+              {/* <div className="form-group credit-field">
                 <label>Tracking starts on</label>
                 <div className="tracking-game-credit date-input-wrapper">
                   <input
@@ -318,18 +348,77 @@ const Configure = ({
                     </div>
                   )}
                 </div>
+              </div> */}
+              <div className="form-group credit-field" style={{ minWidth: "150px" }}>
+                <FloatLabel>
+                  <Calendar
+                    inputId="tracking_start"
+                    value={startDate}
+                    onChange={onStartDateChange}
+                    required
+                    className="w-full"
+                    appendTo="self"
+                  />
+                  <label htmlFor="tracking_start">Tracking starts on</label>
+                </FloatLabel>
               </div>
 
-              <div className="form-group credit-field">
-                <label>Section Title</label>
-                <input
-                  type="text"
-                  className="form-control"
-                  value={section_title}
-                  onChange={(e) => setSectionTitle(e.target.value)}
-                />
+              <div className="form-group credit-field" style={{ minWidth: "150px" }}>
+                <FloatLabel>
+                  <Calendar
+                    inputId="tracking_end"
+                    value={endDate}
+                    onChange={onEndDateChange}
+                    required
+                    className="w-full"
+                    appendTo="self"
+                  />
+                  <label htmlFor="tracking_end">Tracking ends on</label>
+                </FloatLabel>
               </div>
 
+              <div className="form-group credit-field" style={{ minWidth: "150px" }}>
+                <FloatLabel>
+                  <Dropdown
+                    optionLabel="label"
+                    optionValue="value"
+                    filter
+                    loading={sectionLoader}
+                    value={section_title}
+                    options={sectionTitleData}
+                    onChange={(e) => setSectionTitle(e.value)}
+                    appendTo="self"
+                    className="w-full"
+                  />
+                  <label htmlFor="dd-city">Section Title</label>
+                </FloatLabel>
+              </div>
+
+              <div className="form-group credit-field" style={{ minWidth: "150px" }}>
+                <FloatLabel>
+                  <InputText
+                    id="minPosition"
+                    value={minimum_position}
+                    onChange={(e) => setMinPosition(e.target.value)}
+                    className="w-full"
+                  />
+                  <label htmlFor="minPosition">Min Position</label>
+                </FloatLabel>
+              </div>
+
+              <div className="form-group credit-field" style={{ minWidth: "150px" }}>
+                <FloatLabel>
+                  <InputText
+                    id="maxPosition"
+                    value={maximum_position}
+                    onChange={(e) => setMaxPosition(e.target.value)}
+                    className="w-full"
+                  />
+                  <label htmlFor="maxPosition">Max Position</label>
+                </FloatLabel>
+              </div>
+
+              {/* 
               <div className="form-group credit-field">
                 <label>Min Position</label>
                 <input
@@ -348,7 +437,7 @@ const Configure = ({
                   value={maximum_position}
                   onChange={(e) => setMaxPosition(e.target.value)}
                 />
-              </div>
+              </div> */}
 
             </div>
           </div>
