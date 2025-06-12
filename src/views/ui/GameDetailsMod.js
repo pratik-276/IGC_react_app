@@ -216,7 +216,18 @@ const GameDetailsMod = () => {
                     header="Latest Date"
                     tooltip="Last date when the game was observed on the casino"
                     tooltipTarget="created_date"
-                    value={trackingDetails.latest_position.created_date}
+                    // value={trackingDetails.latest_position.created_date}
+                    value={
+                      trackingDetails.latest_position.created_date
+                        ? new Date(
+                            trackingDetails.latest_position.created_date
+                          ).toLocaleDateString("en-US", {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          })
+                        : "N/A"
+                    }
                   />
                 </div>
 

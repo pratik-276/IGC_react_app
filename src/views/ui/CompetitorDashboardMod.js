@@ -8,6 +8,7 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
+import { FloatLabel } from "primereact/floatlabel";
 
 import { MdInfoOutline } from "react-icons/md";
 
@@ -303,7 +304,7 @@ const CompetitorDashboardMod = () => {
       <div className="compass">
         <div className="compass-data">
           <div className="d-flex flex-column gap-3 justify-content-between">
-            <div>
+            <div className="pb-3">
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
                 Competitor Dashboard
               </h4>
@@ -312,106 +313,137 @@ const CompetitorDashboardMod = () => {
               </span>
             </div>
 
-            <div className="d-flex flex-column gap-2">
-              <div className="row g-2">
+            <div className="d-flex flex-column gap-4">
+              <div className="row g-3">
                 <div className="col-md-4">
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Region"
-                    loading={regionLoading}
-                    value={selectedRegion}
-                    onChange={(e) => {
-                      setSelectedRegion(e.value);
-                      setSelectedOperator(null);
-                      setSiteData([]);
-                      setSiteId(null);
-                      setProviderData([]);
-                      setProvidersName(null);
-                      setGameData([]);
-                      setGamesName(null);
-                    }}
-                    options={regions}
-                    className="w-100"
-                  />
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={regionLoading}
+                      value={selectedRegion}
+                      onChange={(e) => {
+                        setSelectedRegion(e.value);
+                        setSelectedOperator(null);
+                        setSiteData([]);
+                        setSiteId(null);
+                        setProviderData([]);
+                        setProvidersName(null);
+                        setGameData([]);
+                        setGamesName(null);
+                      }}
+                      options={regions}
+                      className="w-100"
+                      inputId="region"
+                    />
+                    <label className="fs-6" htmlFor="region">
+                      Region
+                    </label>
+                  </FloatLabel>
                 </div>
 
                 <div className="col-md-4">
-                  <Dropdown
-                    optionLabel="operator_name"
-                    optionValue="operator_id"
-                    filter
-                    placeholder="Select Operator"
-                    disabled={!selectedRegion}
-                    loading={operatorDataLoader}
-                    value={selectedOperator}
-                    onChange={(e) => {
-                      setSelectedOperator(e.value);
-                      setSiteId(null);
-                    }}
-                    options={operators}
-                    itemTemplate={(option) => (
-                      <div title={option.operator_name}>
-                        {option.operator_name}
-                      </div>
-                    )}
-                    className="w-100"
-                  />
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="operator_name"
+                      optionValue="operator_id"
+                      filter
+                      placeholder="Select Operator"
+                      disabled={!selectedRegion}
+                      loading={operatorDataLoader}
+                      value={selectedOperator}
+                      onChange={(e) => {
+                        setSelectedOperator(e.value);
+                        setSiteId(null);
+                      }}
+                      options={operators}
+                      itemTemplate={(option) => (
+                        <div title={option.operator_name}>
+                          {option.operator_name}
+                        </div>
+                      )}
+                      className="w-100"
+                      inputId="operator"
+                    />
+                    <label className="fs-6" htmlFor="operator">
+                      Operator
+                    </label>
+                  </FloatLabel>
                 </div>
 
                 <div className="col-md-4">
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Site URL"
-                    loading={siteDataLoader}
-                    value={siteId}
-                    onChange={(e) => {
-                      setSiteId(e.value);
-                      const site = siteData.find((s) => s.value === e.value);
-                      setSelectedSiteDetails(site || null);
-                    }}
-                    options={siteData}
-                    itemTemplate={(option) => (
-                      <div title={option.label}>{option.label}</div>
-                    )}
-                    className="w-100"
-                  />
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Site URL"
+                      loading={siteDataLoader}
+                      disabled={!selectedOperator}
+                      value={siteId}
+                      onChange={(e) => {
+                        setSiteId(e.value);
+                        const site = siteData.find((s) => s.value === e.value);
+                        setSelectedSiteDetails(site || null);
+                      }}
+                      options={siteData}
+                      itemTemplate={(option) => (
+                        <div title={option.label}>{option.label}</div>
+                      )}
+                      className="w-100"
+                      inputId="siteUrl"
+                    />
+                    <label className="fs-6" htmlFor="siteUrl">
+                      Site URL
+                    </label>
+                  </FloatLabel>
                 </div>
               </div>
 
-              <div className="row g-2">
+              <div className="row g-3">
                 <div className="col-md-4">
-                  <MultiSelect
-                    value={providersName}
-                    onChange={(e) => setProvidersName(e.value)}
-                    options={providerData}
-                    loading={providerDataLoader}
-                    placeholder="Select Providers"
-                    filter
-                    disabled={!siteId}
-                    maxSelectedLabels={1}
-                    className="w-100"
-                  />
+                  <FloatLabel>
+                    <MultiSelect
+                      value={providersName}
+                      onChange={(e) => setProvidersName(e.value)}
+                      options={providerData}
+                      loading={providerDataLoader}
+                      placeholder="Select Providers"
+                      filter
+                      disabled={!siteId}
+                      maxSelectedLabels={1}
+                      className="w-100"
+                      inputId="providers"
+                    />
+                    <label className="fs-6" htmlFor="providers">
+                      Providers
+                    </label>
+                  </FloatLabel>
                 </div>
 
                 <div className="col-md-4">
-                  <MultiSelect
-                    value={gamesName}
-                    onChange={(e) => setGamesName(e.value)}
-                    options={gameData}
-                    loading={gameDataLoader}
-                    placeholder="Select Games"
-                    filter
-                    disabled={!siteId}
-                    maxSelectedLabels={1}
-                    className="w-100"
-                  />
+                  <FloatLabel>
+                    <MultiSelect
+                      value={gamesName}
+                      onChange={(e) => setGamesName(e.value)}
+                      options={gameData}
+                      loading={gameDataLoader}
+                      placeholder="Select Games"
+                      filter
+                      disabled={!siteId}
+                      maxSelectedLabels={1}
+                      className="w-100"
+                      inputId="game"
+                    />
+                    <label className="fs-6" htmlFor="game">
+                      Games
+                    </label>
+                  </FloatLabel>
                 </div>
 
-                <div className="col-md-4 d-flex align-items-start gap-2">
+                <div className="col-md-4 d-flex align-items-start gap-3">
                   <Button
                     type="button"
                     label="Apply"
@@ -426,7 +458,7 @@ const CompetitorDashboardMod = () => {
                     type="button"
                     label="Reset"
                     icon="pi pi-refresh"
-                    disabled={!siteId}
+                    disabled={!selectedOperator}
                     onClick={() => {
                       setSelectedOperator(null);
                       setSiteId(null);

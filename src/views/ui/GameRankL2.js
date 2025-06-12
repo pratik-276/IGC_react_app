@@ -6,6 +6,8 @@ import { Column } from "primereact/column";
 
 import { Spin } from "antd";
 import "./DashboardMod.css";
+import { Tooltip } from "primereact/tooltip";
+import { MdInfoOutline } from "react-icons/md";
 
 import GameTrendChart from "../../charts/GameTrendChart";
 import GameRankData from "../../services/GameRank";
@@ -13,7 +15,7 @@ import GameRankData from "../../services/GameRank";
 const GameRankL2 = () => {
   const location = useLocation();
   console.log(location.state);
-  const { game_id } = location.state || {};
+  const { selected_region, game_id } = location.state || {};
 
   const [loading, setLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
@@ -21,7 +23,7 @@ const GameRankL2 = () => {
 
   const [regions, setRegions] = useState([]);
   const [games, setGames] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [selectedRegion, setSelectedRegion] = useState(selected_region);
   const [selectedGame, setSelectedGame] = useState(game_id);
 
   const [data, setData] = useState([]);
@@ -235,12 +237,42 @@ const GameRankL2 = () => {
                 <div className="col-md-9">
                   <div className="row g-2 h-100">
                     {[
-                      { label: "Game Name", value: data.game_name },
-                      { label: "Provider Name", value: data.provider_name },
-                      { label: "RTP", value: data.rtp },
-                      { label: "Max Win", value: data.max_win },
-                      { label: "visibility %", value: data.visibility },
-                      { label: "Game Theme", value: data.theme },
+                      {
+                        label: "Game Name",
+                        value: data.game_name,
+                        tooltip: "Game Name",
+                        tooltipTarget: "game_name",
+                      },
+                      {
+                        label: "Provider Name",
+                        value: data.provider_name,
+                        tooltip: "Game Provider Name",
+                        tooltipTarget: "provider_name",
+                      },
+                      {
+                        label: "RTP",
+                        value: data.rt,
+                        tooltip: "Game RTP",
+                        tooltipTarget: "rt",
+                      },
+                      {
+                        label: "Max Win",
+                        value: data.max_win,
+                        tooltip: "Game Max Win",
+                        tooltipTarget: "max_win",
+                      },
+                      {
+                        label: "visibility %",
+                        value: data.visibility,
+                        tooltip: "Game visibility",
+                        tooltipTarget: "visibility",
+                      },
+                      {
+                        label: "Game Theme",
+                        value: data.theme,
+                        tooltip: "Game theme",
+                        tooltipTarget: "theme",
+                      },
                     ].map((item, idx) => (
                       <div className="col-md-4 d-flex" key={idx}>
                         <div
@@ -253,7 +285,23 @@ const GameRankL2 = () => {
                             flex: 1,
                           }}
                         >
-                          <h5>{item.label}</h5>
+                          <div className="d-flex align-items-center">
+                            <h5 className="mb-0">{item.label}</h5>
+                            <Tooltip
+                              target={`.${item.tooltipTarget}`}
+                              content={item.tooltip}
+                              position="top"
+                              className="custom-tooltip"
+                            />
+                            <MdInfoOutline
+                              className={`${item.tooltipTarget} m-2`}
+                              style={{
+                                fontSize: "16px",
+                                cursor: "pointer",
+                                flexShrink: 0,
+                              }}
+                            />
+                          </div>
                           <h5
                             className="font-semibold"
                             title={

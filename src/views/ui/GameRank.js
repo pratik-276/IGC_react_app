@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
+import { FloatLabel } from "primereact/floatlabel";
 import { DataTable } from "primereact/datatable";
 import { Tooltip } from "primereact/tooltip";
 import { Dropdown } from "primereact/dropdown";
@@ -20,6 +21,7 @@ const GameRank = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [totalCasinos, setTotalCasinos] = useState("");
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -38,9 +40,14 @@ const GameRank = () => {
         search_term: "",
       },
     })
-      .then((v) => {
-        setTableData(v.data);
-        console.log(v.data[0]);
+      .then((res) => {
+        if (Array.isArray(res.data.data)) {
+          setTableData(res.data.data);
+          setTotalCasinos(res.data.total_casinos);
+        } else {
+          console.error("Expected array but got:", res.data.data);
+          setTableData([]);
+        }
       })
       .finally(() => {
         setLoading(false);
@@ -245,6 +252,7 @@ const GameRank = () => {
           console.log(rowData);
           navigate("/game-rank-details", {
             state: {
+              selected_region: selectedRegion,
               game_id: rowData.game_id,
             },
           });
@@ -258,7 +266,7 @@ const GameRank = () => {
       <div className="compass">
         <div className="compass-data">
           <div className="d-flex flex-column gap-3 justify-content-between">
-            <div className="d-flex align-items-center justify-content-between">
+            <div className="d-flex align-items-center justify-content-between pt-3">
               <div>
                 <h4
                   className="m-md-0 font-semibold"
@@ -271,17 +279,22 @@ const GameRank = () => {
                 </span>
               </div>
 
-              <div className="d-flex flex-wrap gap-2">
-                <Dropdown
-                  optionLabel="label"
-                  optionValue="value"
-                  filter
-                  placeholder="Select Region"
-                  loading={loading}
-                  value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.value)}
-                  options={regions}
-                />
+              <div className="d-flex flex-wrap gap-3">
+                <FloatLabel>
+                  <Dropdown
+                    optionLabel="label"
+                    optionValue="value"
+                    filter
+                    placeholder="Select Region"
+                    loading={loading}
+                    value={selectedRegion}
+                    onChange={(e) => setSelectedRegion(e.value)}
+                    options={regions}
+                  />
+                  <label className="fs-6" htmlFor="region">
+                    Region
+                  </label>
+                </FloatLabel>
 
                 <IconField iconPosition="left" style={{ flex: 2 }}>
                   <InputIcon className="pi pi-search" />
@@ -318,7 +331,14 @@ const GameRank = () => {
         ) : (
           <>
             <div className="border border-secondary p-3 rounded-3 mt-3">
-              <h5 className="font-semibold pl-2">Latest Details</h5>
+              <div className="d-flex justify-content-between mb-2">
+                <h5 className="font-semibold pl-2">Latest Details</h5>
+                <div>
+                  <strong>Total Casinos : </strong>
+                  {totalCasinos}
+                </div>
+              </div>
+
               <DataTable
                 value={tableData}
                 filters={filters}
