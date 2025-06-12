@@ -20,7 +20,7 @@ const GameProvideMarketshareL2 = () => {
   const [loading, setLoading] = useState(false);
 
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("");
+  const [selectedRegion, setSelectedRegion] = useState(null);
   const [providers, setProviders] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState("");
 
@@ -34,6 +34,7 @@ const GameProvideMarketshareL2 = () => {
     setSelectedRegion(regionName);
     GetProvidersList();
     setSelectedProvider(providerId);
+    console.log(providerId);
   }, []);
 
   useEffect(() => {
@@ -66,11 +67,12 @@ const GameProvideMarketshareL2 = () => {
       });
   }
 
-  async function GetProvidersList() {
+
+  async function GetProvidersList(region_name=null) {
     setProviderLoading(true);
 
     const payload = {
-      region: selectedRegion,
+      region: region_name ? region_name:selectedRegion,
     };
 
     GetApiData.post_provider_by_geography_lists(payload)
@@ -80,7 +82,9 @@ const GameProvideMarketshareL2 = () => {
             label: provider.provider_name,
             value: provider.provider_id,
           }));
+          console.log(cleaned);
           setProviders(cleaned);
+          setSelectedProvider(null);
         }
       })
       .catch((err) => {
@@ -199,7 +203,11 @@ const GameProvideMarketshareL2 = () => {
                   placeholder="Select Region"
                   loading={regionLoading}
                   value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.value)}
+                  onChange={(e) => {
+                    setSelectedRegion(e.value);
+                    setProviders([]);
+                    GetProvidersList(e.value);
+                  }}
                   options={regions}
                 />
 
@@ -212,11 +220,11 @@ const GameProvideMarketshareL2 = () => {
                   value={selectedProvider}
                   onChange={(e) => setSelectedProvider(e.value)}
                   options={providers}
-                  itemTemplate={(option) => (
-                    <div title={option.provider_name}>
-                      {option.provider_name}
-                    </div>
-                  )}
+                  // itemTemplate={(option) => (
+                  //   <div title={option.provider_name}>
+                  //     {option.provider_name}
+                  //   </div>
+                  // )}
                 />
               </div>
             </div>

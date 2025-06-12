@@ -125,12 +125,12 @@ const CompassDataPage = ({
       fontWeight: 500,
     };
 
-    switch (rowData.status) {
-      case 'pass':
+    switch (rowData.scan_status) {
+      case 1:
         tagStyle.backgroundColor = '#d4edda';
         tagStyle.color = '#155724';
         break;
-      case 'fail':
+      case 0:
         tagStyle.backgroundColor = '#f8d7da';
         tagStyle.color = '#721c24';
         break;
@@ -142,7 +142,7 @@ const CompassDataPage = ({
 
     return (
       <Tag
-        value={rowData.status}
+        value={rowData.scan_status === 0 ? 'Outside Position': 'Within Position'}
         style={tagStyle}
         className="text-capitalize"
         rounded
@@ -353,11 +353,11 @@ const CompassDataPage = ({
                   ></Column>
 
                   <Column
-                    field="status"
+                    field="scan_status"
                     header={headerWithTooltip(
                       "Status",
                       "Status",
-                      "status"
+                      "scan_status"
                     )}
                     sortable
                     style={{ minWidth: "8rem" }}
@@ -393,6 +393,28 @@ const CompassDataPage = ({
                       "Maximum Position",
                       "Maximum Position of Game",
                       "max_position"
+                    )}
+                    sortable
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+
+                  <Column
+                    field="geography"
+                    header={headerWithTooltip(
+                      "Country",
+                      "Country",
+                      "geography"
+                    )}
+                    sortable
+                    style={{ minWidth: "8rem" }}
+                  ></Column>
+
+                  <Column
+                    field="last_scan_date"
+                    header={headerWithTooltip(
+                      "Last Scanned Date",
+                      "Last Scanned Date",
+                      "last_scan_date"
                     )}
                     sortable
                     style={{ minWidth: "8rem" }}

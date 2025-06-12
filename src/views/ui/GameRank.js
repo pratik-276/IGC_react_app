@@ -355,6 +355,16 @@ const GameRank = () => {
                 sortField="country_rank"
                 sortOrder={1}
               >
+
+              <Column
+                field="country_rank"
+                sortable
+                header={headerWithTooltip(
+                  "Rank",
+                  "The rank of the game in the selected country",
+                  "country_rank"
+                )}
+              ></Column>
                 <Column
                   field="game_name"
                   sortable
@@ -375,17 +385,7 @@ const GameRank = () => {
                   )}
                 ></Column>
 
-                <Column
-                  field="country_rank"
-                  sortable
-                  header={headerWithTooltip(
-                    "Country Rank",
-                    "The rank of the game in the selected country",
-                    "country_rank"
-                  )}
-                ></Column>
-
-                <Column
+                {/* <Column
                   field="avg_position"
                   sortable
                   header={headerWithTooltip(
@@ -393,7 +393,7 @@ const GameRank = () => {
                     "The average position of the game in the selected country",
                     "avg_position"
                   )}
-                ></Column>
+                ></Column> */}
 
                 <Column
                   field="casino_present"
@@ -420,7 +420,7 @@ const GameRank = () => {
                   field="change"
                   sortable
                   header={headerWithTooltip(
-                    "Change",
+                    "Rank Change",
                     "The change in rank of the game",
                     "change"
                   )}

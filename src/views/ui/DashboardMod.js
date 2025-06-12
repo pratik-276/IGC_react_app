@@ -200,7 +200,7 @@ const DashboardMod = () => {
     let growth = ";";
     if (row != null) {
       growth = row?.growth;
-      growth = parseFloat(growth).toFixed(1);
+      growth = parseFloat(growth).toFixed(0);
     }
     return (
       <h6 className="text-secondary font-normal" style={{ fontSize: "1rem" }}>
@@ -215,7 +215,7 @@ const DashboardMod = () => {
               color: "#dc3545",
             }}
           >
-            {growth}% <FaCaretDown />
+            {growth} <FaCaretDown />
           </span>
         ) : (
           ""
@@ -231,7 +231,7 @@ const DashboardMod = () => {
               color: "#dc9b00",
             }}
           >
-            {growth}%{" "}
+            {growth}{" "}
           </span>
         ) : (
           ""
@@ -247,7 +247,7 @@ const DashboardMod = () => {
               color: "#28a745",
             }}
           >
-            {growth}% <FaCaretUp />
+            {growth} <FaCaretUp />
           </span>
         ) : (
           ""
@@ -495,7 +495,7 @@ const DashboardMod = () => {
                           field="growth"
                           header={headerWithTooltip(
                             "Growth",
-                            "WoW Growth in overall position of the game on casino page",
+                            "Change in overall position of the game on casino page since last scan",
                             "growth"
                           )}
                           sortable

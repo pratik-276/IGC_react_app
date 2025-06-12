@@ -35,6 +35,15 @@ const get_operator = async () => {
   return d;
 };
 
+const get_operator_by_provider = async (data) => {
+  let d = await Call({
+    path: "get_operator_by_provider",
+    method: "POST",
+    data
+  });
+  return d;
+};
+
 
 const get_provider = async () => {
   let d = await Call({
@@ -86,6 +95,7 @@ const exportObject = {
   compass_delete,
   get_provider,
   get_operator,
+  get_operator_by_provider,
   get_game,
   get_game_by_provider,
   request_new_casino,
