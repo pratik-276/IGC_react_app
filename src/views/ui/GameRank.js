@@ -62,6 +62,13 @@ const GameRank = () => {
     );
   }, [tableData]);
 
+  useEffect(() => {
+    const savedRegion = localStorage.getItem("gameRegion");
+    if (savedRegion) {
+      setSelectedRegion(savedRegion);
+    }
+  }, []);
+
   async function getRegions() {
     const res = await call({
       path: "get_regions",
@@ -288,7 +295,12 @@ const GameRank = () => {
                     placeholder="Select Region"
                     loading={loading}
                     value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.value)}
+                    // onChange={(e) => setSelectedRegion(e.value)}
+                    onChange={(e) => {
+                      const region = e.value;
+                      setSelectedRegion(region);
+                      localStorage.setItem("gameRegion", region);
+                    }}
                     options={regions}
                   />
                   <label className="fs-6" htmlFor="region">
@@ -355,16 +367,15 @@ const GameRank = () => {
                 sortField="country_rank"
                 sortOrder={1}
               >
-
-              <Column
-                field="country_rank"
-                sortable
-                header={headerWithTooltip(
-                  "Rank",
-                  "The rank of the game in the selected country",
-                  "country_rank"
-                )}
-              ></Column>
+                <Column
+                  field="country_rank"
+                  sortable
+                  header={headerWithTooltip(
+                    "Rank",
+                    "The rank of the game in the selected country",
+                    "country_rank"
+                  )}
+                ></Column>
                 <Column
                   field="game_name"
                   sortable

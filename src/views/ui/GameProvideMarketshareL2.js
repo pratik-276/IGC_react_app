@@ -38,6 +38,13 @@ const GameProvideMarketshareL2 = () => {
   }, []);
 
   useEffect(() => {
+    const savedRegion = localStorage.getItem("marketshareRegion");
+    if (savedRegion) {
+      setSelectedRegion(savedRegion);
+    }
+  }, []);
+
+  useEffect(() => {
     if (selectedRegion && selectedProvider) {
       getData();
     }
@@ -67,12 +74,11 @@ const GameProvideMarketshareL2 = () => {
       });
   }
 
-
-  async function GetProvidersList(region_name=null) {
+  async function GetProvidersList(region_name = null) {
     setProviderLoading(true);
 
     const payload = {
-      region: region_name ? region_name:selectedRegion,
+      region: region_name ? region_name : selectedRegion,
     };
 
     GetApiData.post_provider_by_geography_lists(payload)

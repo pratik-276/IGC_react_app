@@ -15,7 +15,7 @@ import GameRankData from "../../services/GameRank";
 const GameRankL2 = () => {
   const location = useLocation();
   console.log(location.state);
-  const { selected_region, game_id } = location.state || {};
+  const { game_id } = location.state || {};
 
   const [loading, setLoading] = useState(false);
   const [regionLoading, setRegionLoading] = useState(false);
@@ -23,7 +23,7 @@ const GameRankL2 = () => {
 
   const [regions, setRegions] = useState([]);
   const [games, setGames] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState(selected_region);
+  const [selectedRegion, setSelectedRegion] = useState("United States");
   const [selectedGame, setSelectedGame] = useState(game_id);
 
   const [data, setData] = useState([]);
@@ -35,6 +35,13 @@ const GameRankL2 = () => {
     getGamesList();
     getData();
   }, [selectedRegion, selectedGame]);
+
+  useEffect(() => {
+    const savedRegion = localStorage.getItem("gameRegion");
+    if (savedRegion) {
+      setSelectedRegion(savedRegion);
+    }
+  }, []);
 
   async function getRegionsList() {
     setRegionLoading(true);

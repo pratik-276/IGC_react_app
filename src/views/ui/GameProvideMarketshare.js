@@ -25,10 +25,19 @@ const GameProvideMarketshare = () => {
   const [tableData, setTableData] = useState([]);
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [totalCasinos, setTotalCasinos] = useState(null);
+  const [updatedOn, setUpdatedOn] = useState(null);
 
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
+
+  useEffect(() => {
+    const savedRegion = localStorage.getItem("marketshareRegion");
+    if (savedRegion) {
+      setSelectedRegion(savedRegion);
+    }
+  }, []);
 
   useEffect(() => {
     getPageData();
@@ -70,8 +79,36 @@ const GameProvideMarketshare = () => {
       },
     });
 
-    console.log(Math.max(...data.data.map((d) => parseFloat(d.market_share))));
-    setTableData(data.data.sort((a, b) => b.market_share - a.market_share));
+    const month = data?.data?.month;
+    const year = data?.data?.year;
+
+    const monthNames = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+
+    const formattedDate =
+      month && year ? `${monthNames[month - 1]}, ${year}` : null;
+
+    setUpdatedOn(formattedDate);
+    setTotalCasinos(data?.data?.total_casinos || "-");
+
+    const marketData = data?.data?.data || [];
+    console.log(Math.max(...marketData.map((d) => parseFloat(d.market_share))));
+    setTableData(marketData.sort((a, b) => b.market_share - a.market_share));
+
+    //console.log(Math.max(...data.data.map((d) => parseFloat(d.market_share))));
+    //setTableData(data.data.sort((a, b) => b.market_share - a.market_share));
   }
 
   async function getPageData() {
@@ -80,7 +117,7 @@ const GameProvideMarketshare = () => {
       await getRegions();
       await getMarketshareData();
     } catch (e) {
-      toast.error(e);
+      toast.error(e?.message || "Something went wrong");
       setTableData([]);
     }
 
@@ -88,11 +125,16 @@ const GameProvideMarketshare = () => {
   }
 
   const changeTemplate = (row) => {
-    let change = ";";
+    // let change = ";";
+    // if (row != null) {
+    //   change = row?.change.replaceAll("%", "");
+    //   change = parseFloat(change).toFixed(2);
+    // }
+    let change = 0;
     if (row != null) {
-      change = row?.change.replaceAll("%", "");
-      change = parseFloat(change).toFixed(2);
+      change = parseFloat(row?.change).toFixed(2);
     }
+
     return (
       <h6 className="font-normal text-secondary">
         {change < 0 ? (
@@ -260,7 +302,11 @@ const GameProvideMarketshare = () => {
                   placeholder="Select Region"
                   loading={loading}
                   value={selectedRegion}
-                  onChange={(e) => setSelectedRegion(e.value)}
+                  onChange={(e) => {
+                    const region = e.value;
+                    setSelectedRegion(region);
+                    localStorage.setItem("marketshareRegion", region);
+                  }}
                   options={regions}
                 />
 
@@ -300,6 +346,16 @@ const GameProvideMarketshare = () => {
           <>
             <div className="border border-secondary p-3 rounded-3 mt-3">
               <h5 className="font-semibold pl-2">Latest Details</h5>
+              <div className="d-flex justify-content-between pl-2 mb-2">
+                <div>
+                  <strong>Total Casinos : </strong>
+                  {totalCasinos}
+                </div>
+                <div>
+                  <strong>Updated On : </strong>
+                  {updatedOn}
+                </div>
+              </div>
               <DataTable
                 value={tableData}
                 filters={filters}
