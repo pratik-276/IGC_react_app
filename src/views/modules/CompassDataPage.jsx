@@ -88,7 +88,6 @@ const CompassDataPage = ({
       .finally(() => setDeleteLoader(false));
   };
 
-
   const showFirstDrawer = () => setOpen(true);
 
   const sortIconTemplate = (options) => {
@@ -104,7 +103,6 @@ const CompassDataPage = ({
     return icon;
   };
 
-
   const StatusBodyTemplate = (row) => {
     const options = { year: "numeric", month: "short", day: "numeric" };
 
@@ -117,7 +115,6 @@ const CompassDataPage = ({
       </span>
     );
   };
-
 
   const statusActionTemplate = (rowData) => {
     let tagStyle = {
@@ -142,7 +139,7 @@ const CompassDataPage = ({
 
     return (
       <Tag
-        value={rowData.scan_status === 0 ? 'Outside Position': 'Within Position'}
+        value={rowData.scan_status === 0 ? 'Outside Position' : 'Within Position'}
         style={tagStyle}
         className="text-capitalize"
         rounded
@@ -171,8 +168,6 @@ const CompassDataPage = ({
       </div>
     </div>
   );
-
-
 
   const filteredData = filterData();
 

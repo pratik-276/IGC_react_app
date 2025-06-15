@@ -5,6 +5,7 @@ export const ProfileSystem = createContext();
 const initialState = {
   email: false,
   profilename: false,
+  plan: null,
 };
 
 const Profile = (state, action) => {
@@ -21,6 +22,11 @@ const Profile = (state, action) => {
         profilename: action?.payload?.profilename,
       };
 
+    case "SET_PLAN":
+      return {
+        ...state,
+        plan: action?.payload?.plan,
+      };
     default:
       return state;
   }

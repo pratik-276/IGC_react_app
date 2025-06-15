@@ -11,6 +11,7 @@ import Signup from "./views/auth/Signup";
 import ProtectedRoute from "./utils/ProtectedRoute";
 import ProfileMenu from "./views/profile/ProfileMenu";
 import ProfileProvider from "./context/ProfileContext";
+import ContactSalesProvider from "./context/confirmationContext";
 import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
@@ -36,150 +37,151 @@ const App = () => {
     <>
       <ProfileProvider>
         <CasinoProvider>
-          <GameProvider>
-            <ScrollToTop />
-            <Toaster toastOptions={{ duration: 1500 }} position="top-right" />
-            <Routes>
-              <Route path="/" element={<Layout />}>
-                <Route
-                  index
-                  element={
-                    <ProtectedRoute>
-                      <Home />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/game-tracking"
-                  element={
-                    <ProtectedRoute>
-                      <GameTracking />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="/game-tracking-details"
-                  element={
-                    <ProtectedRoute>
-                      <GameTrackingDetails />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="calibrate-compass"
-                  element={
-                    <ProtectedRoute>
-                      <Compass />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="priority-casinos"
-                  element={
-                    <ProtectedRoute>
-                      <DailyDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <Dashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* added by akshay */}
-                <Route
-                  path="game-details-mod"
-                  element={
-                    <ProtectedRoute>
-                      <GameDetailsMod />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="dashboard-mod"
-                  element={
-                    <ProtectedRoute>
-                      <DashboardMod />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="competitor-dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <CompetitorDashboardMod />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="game-rank-details"
-                  element={
-                    <ProtectedRoute>
-                      <GameRankL2 />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="game-provider-marketshare-details"
-                  element={
-                    <ProtectedRoute>
-                      <GameProvideMarketshareL2 />
-                    </ProtectedRoute>
-                  }
-                />
+          <ContactSalesProvider>
+            <GameProvider>
+              <ScrollToTop />
+              <Toaster toastOptions={{ duration: 1500 }} position="top-right" />
+              <Routes>
+                <Route path="/" element={<Layout />}>
+                  <Route
+                    index
+                    element={
+                      <ProtectedRoute>
+                        <Home />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/game-tracking"
+                    element={
+                      <ProtectedRoute>
+                        <GameTracking />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/game-tracking-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameTrackingDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="calibrate-compass"
+                    element={
+                      <ProtectedRoute>
+                        <Compass />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="priority-casinos"
+                    element={
+                      <ProtectedRoute>
+                        <DailyDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* added by akshay */}
+                  <Route
+                    path="game-details-mod"
+                    element={
+                      <ProtectedRoute>
+                        <GameDetailsMod />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="dashboard-mod"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardMod />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="competitor-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <CompetitorDashboardMod />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="game-rank-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameRankL2 />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="game-provider-marketshare-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameProvideMarketshareL2 />
+                      </ProtectedRoute>
+                    }
+                  />
 
-                <Route
-                  path="competitor-dashboard-mod"
-                  element={
-                    <ProtectedRoute>
-                      <CompetitorDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="all-data-dashboard"
-                  element={
-                    <ProtectedRoute>
-                      <RawDataDashboard />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="my-account"
-                  element={
-                    <ProtectedRoute>
-                      <ProfileMenu />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="game-rank-report"
-                  element={
-                    <ProtectedRoute>
-                      <GameRank />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="game-provider-marketshare"
-                  element={
-                    <ProtectedRoute>
-                      <GameProvideMarketshare />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="casino-requests"
-                  element={
-                    <ProtectedRoute>
-                      <CasinoRequests />
-                    </ProtectedRoute>
-                  }
-                />
-                {/* <Route 
+                  <Route
+                    path="competitor-dashboard-mod"
+                    element={
+                      <ProtectedRoute>
+                        <CompetitorDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="all-data-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <RawDataDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="my-account"
+                    element={
+                      <ProtectedRoute>
+                        <ProfileMenu />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="game-rank-report"
+                    element={
+                      <ProtectedRoute>
+                        <GameRank />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="game-provider-marketshare"
+                    element={
+                      <ProtectedRoute>
+                        <GameProvideMarketshare />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="casino-requests"
+                    element={
+                      <ProtectedRoute>
+                        <CasinoRequests />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* <Route 
                   path="game-track-details"
                   element={
                     <ProtectedRoute>
@@ -187,7 +189,7 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 /> */}
-                {/* <Route
+                  {/* <Route
                   path="billing-section"
                   element={
                     <ProtectedRoute>
@@ -211,13 +213,14 @@ const App = () => {
                     </ProtectedRoute>
                   }
                 /> */}
-              </Route>
-              <Route path="/login" element={<Login />} />
-              <Route path="/verify" element={<Verify />} />
-              <Route path="/signup" element={<Signup />} />
-              {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
-            </Routes>
-          </GameProvider>
+                </Route>
+                <Route path="/login" element={<Login />} />
+                <Route path="/verify" element={<Verify />} />
+                <Route path="/signup" element={<Signup />} />
+                {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
+              </Routes>
+            </GameProvider>
+          </ContactSalesProvider>
         </CasinoProvider>
       </ProfileProvider>
     </>

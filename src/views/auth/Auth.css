@@ -6,7 +6,8 @@
 
 .auth_inr {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  /* grid-template-columns: repeat(2, 1fr); */
+  grid-template-columns: 65% 35%;
   height: 100%;
 }
 
@@ -29,13 +30,14 @@
   height: 100%;
 }
 
-.login_detail {
+
+/* .login_detail {
   background: #fff;
   border-radius: 15px;
   padding: 30px 15px;
   box-shadow: 0 2px 2px 2px rgba(10, 21, 78, 0.12);
   border: 2px solid #cccee5;
-}
+} */
 
 .login_detail .login_title {
   margin-bottom: 30px;
@@ -45,7 +47,8 @@
   color: #222222;
   font-weight: 600;
   font-size: 28px;
-  line-height: 48px;
+  /* line-height: 48px; */
+  line-height: 30px;
 }
 
 .login_detail .login_title p {
@@ -55,14 +58,14 @@
   line-height: 27px;
 }
 
-.login_detail_inr {
+/* .login_detail_inr {
   padding: 0 20px;
-}
+} */
 
 .login_detail_inr .google_login {
   width: 100%;
   border-color: #392f6c;
-  padding: 8px 22px;
+  /* padding: 8px 22px; */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -257,7 +260,7 @@
   justify-content: space-between;
 }
 
-.otp_input_box .otp-container > input {
+.otp_input_box .otp-container>input {
   border: 1px solid rgba(173, 181, 189, 1) !important;
   font-size: 19px;
   font-weight: 800;
@@ -267,7 +270,7 @@
   border-radius: 5px;
 }
 
-.otp_input_box .otp-container > input:focus-visible {
+.otp_input_box .otp-container>input:focus-visible {
   border: 1px solid rgba(173, 181, 189, 1) !important;
   outline: none;
 }
@@ -396,6 +399,18 @@
   background-image: none;
 }
 
+/* added by akshay */
+.signup-text {
+  color: #392f6c;
+  cursor: pointer;
+  transition: color 0.3s;
+  font-weight: 600;
+}
+
+.auth_signup_link span:hover {
+  color: #5a4dcf;
+}
+
 @media screen and (max-width: 767px) {
   .auth_inr {
     grid-template-columns: repeat(1, 1fr) !important;
@@ -408,6 +423,7 @@
   .login_detail_inr {
     padding: 0 !important;
   }
+
   .login_detail {
     padding: 15px 15px !important;
   }

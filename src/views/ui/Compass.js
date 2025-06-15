@@ -1,20 +1,30 @@
 import React, { useEffect, useState } from "react";
-import "./index.css";
-import { Drawer } from "antd";
-
-import { CiCirclePlus } from "react-icons/ci";
-import { CloseOutlined } from "@ant-design/icons";
-import { FiMinusCircle } from "react-icons/fi";
+import { Link } from "react-router-dom";
 
 import NewCasino from "../modules/NewCasino";
 import CompassDataPage from "../modules/CompassDataPage";
 import ChooseCasinoPage from "../modules/ChooseCasinoPage";
 import ChooseGamePage from "../modules/ChooseGamePage";
-import { Link } from "react-router-dom";
 import Configure from "../modules/Configure";
 
+import { Button } from "primereact/button";
+
+import { Drawer } from "antd";
+
+import { CiCirclePlus } from "react-icons/ci";
+import { FaGem, FaLock } from "react-icons/fa6";
+import { CloseOutlined } from "@ant-design/icons";
+import { FiMinusCircle } from "react-icons/fi";
+
 import CompassData from "../../services/CompassApi";
+
+import { useContext } from "react";
+import { ProfileSystem } from "../../context/ProfileContext";
+import { useContactSales } from "../../context/confirmationContext";
+
+import "./index.css";
 import "./Compass.css";
+import "./AccessBlur.css";
 
 const Compass = () => {
   const user_id = localStorage.getItem("user_id");
@@ -32,6 +42,11 @@ const Compass = () => {
   const [configure, setConfigure] = useState(false);
 
   const [searchQuery, setSearchQuery] = useState("");
+
+  const { state } = useContext(ProfileSystem);
+  const isPlanExpired = state?.plan === "trial_expired";
+  // const isPlanExpired = state?.plan === "trial";
+  const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
     const parsedCasinos = JSON.parse(casinoJSON);
@@ -106,14 +121,26 @@ const Compass = () => {
 
   return (
     <>
-      {/* CALIBRATE COMPASS FIRST PAGE */}
-      <CompassDataPage
-        open={open}
-        setOpen={setOpen}
-        compassRead={compassRead}
-        loader={loader}
-        getCompassReadData={getCompassReadData}
-      />
+      <div className={`content ${isPlanExpired ? "show" : ""}`}>
+        <FaLock
+          style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "#392f6c" }}
+        />
+        <p className="fw-bold">Your plan has expired</p>
+        <Button className="btn-upgrade" onClick={showContactSalesConfirmation}>
+          <FaGem /> <span>Upgrade Plan</span>
+        </Button>
+      </div>
+
+      <div className={`w-100 h-100 ${isPlanExpired ? "overlay active" : ""}`}>
+        {/* CALIBRATE COMPASS FIRST PAGE */}
+        <CompassDataPage
+          open={open}
+          setOpen={setOpen}
+          compassRead={compassRead}
+          loader={loader}
+          getCompassReadData={getCompassReadData}
+        />
+      </div>
 
       {/* CALIBRATE COMPASS FIRST DRAWER FOR CHOOSE CASINO OR GAME IN ANTD */}
       <div className="casino_game_selection">

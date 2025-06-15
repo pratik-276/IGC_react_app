@@ -1,145 +1,140 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import "./Auth.css";
-import { FaEye, FaEyeSlash } from "react-icons/fa6";
-import { FcGoogle } from "react-icons/fc";
-import { IoIosArrowForward } from "react-icons/io";
-import { signInWithPopup } from "firebase/auth";
-import { auth, provider } from "./config";
-import UserLogin from "../../services/Login";
-import toast from "react-hot-toast";
-import Cookies from "universal-cookie";
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 
-const cookies = new Cookies();
+import "./Auth.css";
+import UserLogin from "../../services/Login";
+import CompassData from "../../services/CompassApi";
+
+import toast from "react-hot-toast";
+import WebsiteLogo from "../../assets/images/logos/logo.ico";
+
+import { Dropdown } from "primereact/dropdown";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
+import { InputOtp } from "primereact/inputotp";
+import { Button } from "primereact/button";
 
 const Login = () => {
   const navigate = useNavigate();
-  const [value, setValue] = useState("");
-  const [passwordType, setPasswordType] = useState("password");
-  const [errors, setErrors] = useState({});
-  const [isButtonDisabled, setButtonDisabled] = useState(false);
 
-  const [input, setInput] = useState({
-    email: "",
-    password: "",
-  });
+  const [providerLoading, setProviderLoading] = useState(true);
+  const [providerData, setProviderData] = useState([]);
+  const [selectedProvider, setSelectedProvider] = useState("");
 
-  const togglePassword = (e) => {
-    e.preventDefault();
-    if (passwordType === "password") {
-      setPasswordType("text");
-      return;
-    }
-    setPasswordType("password");
-  };
+  const [pageType, setPageType] = useState("SignIn");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otp, setOtp] = useState("");
+  const [email, setEmail] = useState("");
+  const [loading, setLoading] = useState(false);
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    setInput({ ...input, [name]: value });
+  const signUpFormRef = useRef(null);
 
-    if (errors[name]) {
-      setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
-    }
-  };
+  useEffect(() => {
+    getProviderData();
+  }, []);
 
-  const handleGoogleLogin = () => {
-    signInWithPopup(auth, provider)
-      .then((data) => {
-        const email = data?.user?.email;
-        if (email) {
-          UserLogin.SignUp({ user_email: email, password: "user@123" })
-            .then((res) => {
-              if (res?.success === true) {
-                localStorage.setItem("user_id", res?.data?.user_id);
-                localStorage.setItem("access_token", res?.data?.access);
-                localStorage.setItem("refresh_token", res?.data?.refresh);
-                toast.success("Login Successfully");
-                navigate("/");
-              } else {
-                toast.error("Login failed");
-              }
-            })
-            .catch((err) => {
-              toast.error("Error during login");
-              if (err.response && err.response.status === 401) {
-                toast.error("Unauthorized. Please check your credentials.");
-              }
-            });
-        } else {
-          toast.error("No email found from Google sign-in");
+  const getProviderData = () => {
+    setProviderLoading(true);
+    CompassData.get_provider()
+      .then((res) => {
+        if (res?.success && Array.isArray(res.data)) {
+          const cleaned = res.data
+            .filter(
+              (record) =>
+                record?.game_provider_name &&
+                typeof record.game_provider_name === "string"
+            )
+            .map((record) => ({
+              label: record.game_provider_name,
+              value: record.game_provider_name,
+            }));
+
+          setProviderData(cleaned);
         }
       })
-      .catch((error) => {
-        console.error("Error signing in with Google:", error);
-        navigate("/login");
+      .catch((err) => {
+        console.log(err);
+        setProviderLoading(false);
+      })
+      .finally(() => {
+        setProviderLoading(false);
       });
   };
 
-  const validation = () => {
-    let errors = {};
-    let isValid = true;
-
-    if (!input["email"]) {
-      isValid = false;
-      errors["email"] = "Please enter your email.";
-    } else if (!/\S+@\S+\.\S+/.test(input?.email)) {
-      errors["email"] = "Email field is invalid";
-      isValid = false;
-    }
-
-    if (!input["password"]) {
-      isValid = false;
-      errors["password"] = "Please enter your password.";
-    }
-
-    if (input["password"] && input["password"].length < 6) {
-      isValid = false;
-      errors["password"] = "Please add at least 6 characters.";
-    }
-
-    setErrors((prevErrors) => ({ ...prevErrors, ...errors }));
-    return isValid;
-  };
-
-  const handleSubmit = (e) => {
+  const handleEmailSubmit = (e) => {
     e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+    setLoading(true);
 
-    if (validation()) {
-      setButtonDisabled(true);
-      UserLogin.login({ user_email: input?.email, password: input?.password })
-        .then((res) => {
-          if (res?.success === true) {
-            localStorage.setItem("user_id", res?.data?.user_id);
-            localStorage.setItem("access_token", res?.data?.access);
-            localStorage.setItem("refresh_token", res?.data?.refresh);
-            localStorage.setItem("user_company", res?.data?.user_company);
-            toast.success("Login Successfully");
-            navigate("/");
-            setButtonDisabled(false);
-          }
-        })
-        .catch((err) => {
-          setButtonDisabled(false);
-          toast.error(err, {
-            duration: 10000,
-          });
-          if (err.response && err.response.status === 401) {
-            toast.error("Unauthorized. Please check your credentials.");
-            setButtonDisabled(false);
-          }
+    UserLogin.LoginNew(formData)
+      .then((res) => {
+        if (res?.success === true) {
+          toast.success(res.message);
+          setEmail(formData.user_email);
+          setOtpSent(true);
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err, {
+          duration: 10000,
         });
-    }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
   };
 
-  useEffect(() => {
-    setValue(localStorage.getItem("email"));
-    localStorage.removeItem("email");
-    localStorage.removeItem("password");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refreesh_token");
-    localStorage.removeItem("user_company");
-    localStorage.removeItem("user_id");
-  }, []);
+  const handleOtpSubmit = (e) => {
+    e.preventDefault();
+    console.log("Submitted OTP:", otp);
+    setLoading(true);
+
+    UserLogin.OtpVerification({ user_email: email, otp: otp })
+      .then((res) => {
+        if (res?.success === true) {
+          toast.success(res.message);
+          localStorage.setItem("user_id", res?.data?.user_id);
+          localStorage.setItem("user_company", res?.data?.user_company);
+          localStorage.setItem("access_token", res?.data?.access);
+          localStorage.setItem("refresh_token", res?.data?.refresh);
+          navigate("/");
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err, {
+          duration: 10000,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
+
+  const handleSignUpSubmit = (e) => {
+    e.preventDefault();
+    const formData = Object.fromEntries(new FormData(e.currentTarget));
+
+    setLoading(true);
+
+    UserLogin.SignUpNew(formData)
+      .then((res) => {
+        if (res?.success === true) {
+          toast.success(res.message);
+        }
+      })
+      .catch((err) => {
+        setLoading(false);
+        toast.error(err, {
+          duration: 10000,
+        });
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  };
 
   return (
     <>
@@ -149,96 +144,190 @@ const Login = () => {
           <div className="auth_right">
             <div className="login_main">
               <div className="row justify-content-center align-items-center h-100">
-                <div className="col-md-6">
+                <div className="col-10 col-sm-10 col-md-10">
                   <div className="login_detail">
-                    <div className="login_title">
-                      <h3>Sign in</h3>
-                      <p>Your partner in gaming insights!</p>
-                    </div>
-                    <div className="login_detail_inr">
-                      {/* <button
-                        className="btn google_login"
-                        onClick={handleGoogleLogin}
-                      >
-                        <FcGoogle className="me-2 google_icon" />
-                        Sign in with Google
-                      </button>
-                      <h4>
-                        <span>Or Sign in with</span>
-                      </h4> */}
-                      <form onSubmit={handleSubmit}>
-                        <div className="form-group">
-                          <input
-                            type="email"
-                            name="email"
-                            className={`form-control ${
-                              errors.email && "is-invalid"
-                            }`}
-                            placeholder="Email ID"
-                            autoComplete="off"
-                            onChange={(e) => handleChange(e)}
-                            // required
-                          />
-                          {errors.email && (
-                            <div
-                              className="text-danger m-0 pb-1"
-                              style={{ fontSize: "14px" }}
+                    {pageType === "SignIn" ? (
+                      !otpSent ? (
+                        <>
+                          <div className="login_title">
+                            <img
+                              src={WebsiteLogo}
+                              alt="IGC"
+                              style={{
+                                height: "80px",
+                              }}
+                            />
+                            <h3
+                              className="fw-bold"
+                              style={{ color: "#392f6c" }}
                             >
-                              {errors.email}
+                              Sign in
+                            </h3>
+                            <p>Your partner in gaming insights !</p>
+                          </div>
+
+                          <div className="login_detail_inr">
+                            <form onSubmit={handleEmailSubmit}>
+                              <div className="form-group">
+                                <IconField iconPosition="left">
+                                  <InputIcon className="pi pi-envelope"></InputIcon>
+                                  <InputText
+                                    name="user_email"
+                                    type="email"
+                                    keyfilter="email"
+                                    required
+                                    placeholder="Email"
+                                    className="w-100"
+                                  />
+                                </IconField>
+                              </div>
+
+                              <div className="auth_login_btn">
+                                <Button className="login_btn" loading={loading}>
+                                  Send OTP
+                                  <i className="pi pi-send ms-2" />
+                                </Button>
+                              </div>
+                            </form>
+
+                            <div className="auth_signup_link">
+                              <p>Don't have an account ?</p>
+                              <span
+                                className="ms-2 signup-text"
+                                onClick={() => setPageType("SignUp")}
+                              >
+                                Sign up
+                              </span>
                             </div>
-                          )}
-                        </div>
-                        <div className="form-group m-0 position-relative">
-                          <input
-                            type={passwordType}
-                            name="password"
-                            className={`form-control ${
-                              errors.password && "is-invalid"
-                            }`}
-                            placeholder="Password"
-                            autoComplete="off"
-                            onChange={(e) => handleChange(e)}
-                            // required
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          <div className="login_title">
+                            <img
+                              src={WebsiteLogo}
+                              alt="IGC"
+                              style={{
+                                height: "80px",
+                              }}
+                            />
+                            <h3
+                              className="fw-bold"
+                              style={{ color: "#392f6c" }}
+                            >
+                              Enter OTP
+                            </h3>
+                            <p>OTP is sent to {email}</p>
+                          </div>
+
+                          <div className="login_detail_inr">
+                            <form onSubmit={handleOtpSubmit}>
+                              <div className="form-group">
+                                <InputOtp
+                                  name="otp"
+                                  integerOnly
+                                  length={6}
+                                  className="w-100"
+                                  value={otp}
+                                  onChange={(e) => setOtp(e.value)}
+                                />
+                              </div>
+
+                              <div className="auth_login_btn">
+                                <Button
+                                  className="login_btn"
+                                  loading={loading}
+                                  disabled={!otp || otp.length < 6}
+                                >
+                                  Verify OTP
+                                  <i className="pi pi-check ms-2" />
+                                </Button>
+                              </div>
+                            </form>
+                          </div>
+                        </>
+                      )
+                    ) : (
+                      <>
+                        <div className="login_title">
+                          <img
+                            src={WebsiteLogo}
+                            alt="IGC"
+                            style={{
+                              height: "80px",
+                            }}
                           />
-                          <div
-                            className="eye-icon"
-                            onClick={(e) => togglePassword(e)}
+                          <h3 className="fw-bold" style={{ color: "#392f6c" }}>
+                            Sign Up
+                          </h3>
+                          <p>Your partner in gaming insights !</p>
+                        </div>
+
+                        <div className="login_detail_inr">
+                          <form
+                            ref={signUpFormRef}
+                            onSubmit={handleSignUpSubmit}
                           >
-                            {passwordType === "password" ? (
-                              <FaEye />
-                            ) : (
-                              <FaEyeSlash />
-                            )}
+                            <div className="form-group">
+                              <IconField iconPosition="left">
+                                <InputIcon className="pi pi-envelope"></InputIcon>
+                                <InputText
+                                  name="user_email"
+                                  type="email"
+                                  keyfilter="email"
+                                  required
+                                  placeholder="Email"
+                                  className="w-100"
+                                />
+                              </IconField>
+                            </div>
+
+                            <div className="form-group">
+                              <Dropdown
+                                name="provider"
+                                optionLabel="label"
+                                optionValue="value"
+                                filter
+                                placeholder="Select Provider"
+                                loading={providerLoading}
+                                value={selectedProvider}
+                                onChange={(e) => {
+                                  setSelectedProvider(e.value);
+                                }}
+                                options={providerData}
+                                className="w-100"
+                              />
+                            </div>
+
+                            <div className="auth_login_btn">
+                              <Button
+                                className="login_btn"
+                                loading={loading}
+                                disabled={!selectedProvider}
+                              >
+                                Send OTP
+                                <i className="pi pi-send ms-2" />
+                              </Button>
+                            </div>
+                          </form>
+
+                          <div className="auth_signup_link">
+                            <p>Already have an account ?</p>
+                            <span
+                              className="ms-2 signup-text"
+                              onClick={() => {
+                                signUpFormRef.current?.reset();
+                                setSelectedProvider(null);
+                                setPageType("SignIn");
+                                setOtpSent(false);
+                              }}
+                            >
+                              Sign in
+                            </span>
                           </div>
                         </div>
-                        {errors.password && (
-                          <div
-                            className="text-danger m-0 pb-1"
-                            style={{ fontSize: "14px" }}
-                          >
-                            {errors.password}
-                          </div>
-                        )}
-                        <p className="text-end m-0 pt-2 mb-4">
-                          {/* <Link to="/forget-password">Forgot Password?</Link> */}
-                        </p>
-                        <div className="auth_login_btn">
-                          <button
-                            className="login_btn"
-                            disabled={isButtonDisabled}
-                          >
-                            Login
-                            <IoIosArrowForward className="ms-2" />
-                          </button>
-                        </div>
-                        <div className="auth_signup_link">
-                          <p>Don't have an account?</p>
-                          <Link to="/signup" className="ms-2">
-                            Sign up
-                          </Link>
-                        </div>
-                      </form>
-                    </div>
+                      </>
+                    )}
                   </div>
                 </div>
               </div>

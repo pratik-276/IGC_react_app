@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
-import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import { FloatLabel } from "primereact/floatlabel";
 import { DataTable } from "primereact/datatable";
@@ -11,11 +9,22 @@ import { Column } from "primereact/column";
 import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
+import { Button } from "primereact/button";
 import { FilterMatchMode } from "primereact/api";
+
 import { Spin } from "antd";
+
+import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import { FaGem, FaLock } from "react-icons/fa6";
+
+import { useContext } from "react";
+import { ProfileSystem } from "../../context/ProfileContext";
+import { useContactSales } from "../../context/confirmationContext";
 
 import call from "../../services/Call";
 import "./DashboardMod.css";
+import "./AccessBlur.css";
 
 const GameRank = () => {
   const navigate = useNavigate();
@@ -28,6 +37,11 @@ const GameRank = () => {
 
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
+
+  const { state } = useContext(ProfileSystem);
+  const isPlanExpired = state?.plan === "trial_expired";
+  // const isPlanExpired = state?.plan === "trial";
+  const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
     setLoading(true);
@@ -270,133 +284,144 @@ const GameRank = () => {
 
   return (
     <>
-      <div className="compass">
-        <div className="compass-data">
-          <div className="d-flex flex-column gap-3 justify-content-between">
-            <div className="d-flex align-items-center justify-content-between pt-3">
-              <div>
-                <h4
-                  className="m-md-0 font-semibold"
-                  style={{ color: "#392f6c" }}
-                >
-                  Game Rank
-                </h4>
-                <span className="text-black" style={{ fontSize: "1rem" }}>
-                  Track top games in every market
-                </span>
-              </div>
+      <div className={`content ${isPlanExpired ? "show" : ""}`}>
+        <FaLock
+          style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "#392f6c" }}
+        />
+        <p className="fw-bold">Your plan has expired</p>
+        <Button className="btn-upgrade" onClick={showContactSalesConfirmation}>
+          <FaGem /> <span>Upgrade Plan</span>
+        </Button>
+      </div>
 
-              <div className="d-flex flex-wrap gap-3">
-                <FloatLabel>
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Region"
-                    loading={loading}
-                    value={selectedRegion}
-                    // onChange={(e) => setSelectedRegion(e.value)}
-                    onChange={(e) => {
-                      const region = e.value;
-                      setSelectedRegion(region);
-                      localStorage.setItem("gameRegion", region);
-                    }}
-                    options={regions}
-                  />
-                  <label className="fs-6" htmlFor="region">
-                    Region
-                  </label>
-                </FloatLabel>
+      <div className={`w-100 h-100 ${isPlanExpired ? "overlay active" : ""}`}>
+        <div className="compass">
+          <div className="compass-data">
+            <div className="d-flex flex-column gap-3 justify-content-between">
+              <div className="d-flex align-items-center justify-content-between pt-3">
+                <div>
+                  <h4
+                    className="m-md-0 font-semibold"
+                    style={{ color: "#392f6c" }}
+                  >
+                    Game Rank
+                  </h4>
+                  <span className="text-black" style={{ fontSize: "1rem" }}>
+                    Track top games in every market
+                  </span>
+                </div>
 
-                <IconField iconPosition="left" style={{ flex: 2 }}>
-                  <InputIcon className="pi pi-search" />
-                  <InputText
-                    disabled={loading}
-                    placeholder="Search"
-                    value={filters.global.value}
-                    onChange={(e) =>
-                      setFilters((f) => ({
-                        ...f,
-                        global: { ...f.global, value: e.target.value },
-                      }))
-                    }
-                  />
-                </IconField>
+                <div className="d-flex flex-wrap gap-3">
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={loading}
+                      value={selectedRegion}
+                      // onChange={(e) => setSelectedRegion(e.value)}
+                      onChange={(e) => {
+                        const region = e.value;
+                        setSelectedRegion(region);
+                        localStorage.setItem("gameRegion", region);
+                      }}
+                      options={regions}
+                    />
+                    <label className="fs-6" htmlFor="region">
+                      Region
+                    </label>
+                  </FloatLabel>
+
+                  <IconField iconPosition="left" style={{ flex: 2 }}>
+                    <InputIcon className="pi pi-search" />
+                    <InputText
+                      disabled={loading}
+                      placeholder="Search"
+                      value={filters.global.value}
+                      onChange={(e) =>
+                        setFilters((f) => ({
+                          ...f,
+                          global: { ...f.global, value: e.target.value },
+                        }))
+                      }
+                    />
+                  </IconField>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {loading ? (
-          <>
-            <div
-              className="row align-items-center justify-content-center"
-              style={{ height: "500px" }}
-            >
-              <div className="col-md-5">
-                <div className="text-center">
-                  <Spin size="large" />
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
-          <>
-            <div className="border border-secondary p-3 rounded-3 mt-3">
-              <div className="d-flex justify-content-between mb-2">
-                <h5 className="font-semibold pl-2">Latest Details</h5>
-                <div>
-                  <strong>Total Casinos : </strong>
-                  {totalCasinos}
-                </div>
-              </div>
-
-              <DataTable
-                value={tableData}
-                filters={filters}
-                removableSort
-                paginator
-                rows={10}
-                rowsPerPageOptions={[5, 10, 25]}
-                paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                size="small"
-                className="table-bordered p-component p-datatable custom-table small"
-                scrollable
-                sortIcon={sortIconTemplate}
-                sortField="country_rank"
-                sortOrder={1}
+          {loading ? (
+            <>
+              <div
+                className="row align-items-center justify-content-center"
+                style={{ height: "500px" }}
               >
-                <Column
-                  field="country_rank"
-                  sortable
-                  header={headerWithTooltip(
-                    "Rank",
-                    "The rank of the game in the selected country",
-                    "country_rank"
-                  )}
-                ></Column>
-                <Column
-                  field="game_name"
-                  sortable
-                  header={headerWithTooltip(
-                    "Game Name",
-                    "The name of the game",
-                    "game_name"
-                  )}
-                ></Column>
+                <div className="col-md-5">
+                  <div className="text-center">
+                    <Spin size="large" />
+                  </div>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="border border-secondary p-3 rounded-3 mt-3">
+                <div className="d-flex justify-content-between mb-2">
+                  <h5 className="font-semibold pl-2">Latest Details</h5>
+                  <div>
+                    <strong>Total Casinos : </strong>
+                    {totalCasinos}
+                  </div>
+                </div>
 
-                <Column
-                  field="game_provider"
-                  sortable
-                  header={headerWithTooltip(
-                    "Game Provider",
-                    "The name of the game provider",
-                    "game_provider"
-                  )}
-                ></Column>
+                <DataTable
+                  value={tableData}
+                  filters={filters}
+                  removableSort
+                  paginator
+                  rows={10}
+                  rowsPerPageOptions={[5, 10, 25]}
+                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                  size="small"
+                  className="table-bordered p-component p-datatable custom-table small"
+                  scrollable
+                  sortIcon={sortIconTemplate}
+                  sortField="country_rank"
+                  sortOrder={1}
+                >
+                  <Column
+                    field="country_rank"
+                    sortable
+                    header={headerWithTooltip(
+                      "Rank",
+                      "The rank of the game in the selected country",
+                      "country_rank"
+                    )}
+                  ></Column>
+                  <Column
+                    field="game_name"
+                    sortable
+                    header={headerWithTooltip(
+                      "Game Name",
+                      "The name of the game",
+                      "game_name"
+                    )}
+                  ></Column>
 
-                {/* <Column
+                  <Column
+                    field="game_provider"
+                    sortable
+                    header={headerWithTooltip(
+                      "Game Provider",
+                      "The name of the game provider",
+                      "game_provider"
+                    )}
+                  ></Column>
+
+                  {/* <Column
                   field="avg_position"
                   sortable
                   header={headerWithTooltip(
@@ -406,52 +431,53 @@ const GameRank = () => {
                   )}
                 ></Column> */}
 
-                <Column
-                  field="casino_present"
-                  sortable
-                  header={headerWithTooltip(
-                    "Casino Present",
-                    "The number of casinos where the game is present",
-                    "casino_present"
-                  )}
-                ></Column>
+                  <Column
+                    field="casino_present"
+                    sortable
+                    header={headerWithTooltip(
+                      "Casino Present",
+                      "The number of casinos where the game is present",
+                      "casino_present"
+                    )}
+                  ></Column>
 
-                <Column
-                  field="stability"
-                  sortable
-                  header={headerWithTooltip(
-                    "Stability",
-                    "The stability of the game",
-                    "stability"
-                  )}
-                  body={stabilityTemplate}
-                ></Column>
+                  <Column
+                    field="stability"
+                    sortable
+                    header={headerWithTooltip(
+                      "Stability",
+                      "The stability of the game",
+                      "stability"
+                    )}
+                    body={stabilityTemplate}
+                  ></Column>
 
-                <Column
-                  field="change"
-                  sortable
-                  header={headerWithTooltip(
-                    "Rank Change",
-                    "The change in rank of the game",
-                    "change"
-                  )}
-                  body={changeTemplate}
-                ></Column>
+                  <Column
+                    field="change"
+                    sortable
+                    header={headerWithTooltip(
+                      "Rank Change",
+                      "The change in rank of the game",
+                      "change"
+                    )}
+                    body={changeTemplate}
+                  ></Column>
 
-                <Column
-                  field="details"
-                  header={headerWithTooltip(
-                    "Details",
-                    "Check historical movement of the game",
-                    "details"
-                  )}
-                  className="text-center"
-                  body={actionBodyTemplate}
-                ></Column>
-              </DataTable>
-            </div>
-          </>
-        )}
+                  <Column
+                    field="details"
+                    header={headerWithTooltip(
+                      "Details",
+                      "Check historical movement of the game",
+                      "details"
+                    )}
+                    className="text-center"
+                    body={actionBodyTemplate}
+                  ></Column>
+                </DataTable>
+              </div>
+            </>
+          )}
+        </div>
       </div>
     </>
   );

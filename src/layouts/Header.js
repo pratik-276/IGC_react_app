@@ -22,6 +22,7 @@ const Header = () => {
 
   const { state: namestate } = useContext(ProfileSystem);
   const { state: emailstate } = useContext(ProfileSystem);
+  const { dispatch } = useContext(ProfileSystem);
 
   const user_id = localStorage.getItem("user_id");
 
@@ -62,6 +63,11 @@ const Header = () => {
 
       if (profileResponse?.success) {
         setProfile(profileResponse?.data);
+
+        dispatch({
+          type: "SET_PLAN",
+          payload: { plan: profileResponse?.data?.plan },
+        });
       } else if (profileResponse?.error?.status === 401) {
         localStorage.clear();
         toast.error("Session expired. Please log in again.");

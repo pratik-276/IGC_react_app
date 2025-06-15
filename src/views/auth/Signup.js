@@ -11,14 +11,13 @@ import CompassData from "../../services/CompassApi";
 import Cookies from "universal-cookie";
 import toast from "react-hot-toast";
 
-
 // const cookies = new Cookies();
 
 const Signup = () => {
   const navigate = useNavigate();
   const [passShow, setPassShow] = useState(false);
   const [providerData, setProviderData] = useState([]);
-  const [selectedProvider, setSelectedProvider] = useState('---');
+  const [selectedProvider, setSelectedProvider] = useState("---");
 
   const [email, setEmail] = useState("");
   const [isValidEmail, setIsValidEmail] = useState(true);
@@ -117,7 +116,7 @@ const Signup = () => {
     const isValid = validateEmail(email);
     setIsValidEmail(isValid);
     if (isValid) {
-      if (selectedProvider === '---') {
+      if (selectedProvider === "---") {
         toast.error("Please select a provider");
         return;
       }
@@ -133,7 +132,11 @@ const Signup = () => {
     e.preventDefault();
     if (validatePassword()) {
       // navigate("/login");
-      UserLogin.SignUp({ user_email: email, provider: selectedProvider, password: input?.password })
+      UserLogin.SignUp({
+        user_email: email,
+        provider: selectedProvider,
+        password: input?.password,
+      })
         .then((res) => {
           console.log(res.success, res.status, res.message, res);
           if (res?.success === true) {
@@ -243,31 +246,39 @@ const Signup = () => {
                             </div>
                             <div className="form-group position-relative">
                               <label>Select Game Provider</label>
-                              <select 
+                              <select
                                 className="form-control"
-                                options={providerData} 
-                                value={selectedProvider} 
-                                onChange={(e) => setSelectedProvider(e.target.value)}
-                              >
-                                <option key={"---"} value={provider.game_provider_name} disabled>
-                                      ---
-                                    </option>
-                                {
-                                  providerData.map((provider, index) => (
-                                    <option key={provider.game_provider_name + "" + index} value={provider.game_provider_name}>
-                                      {provider.game_provider_name}
-                                    </option>
-                                  ))
+                                options={providerData}
+                                value={selectedProvider}
+                                onChange={(e) =>
+                                  setSelectedProvider(e.target.value)
                                 }
+                              >
+                                <option
+                                  key={"---"}
+                                  value={provider.game_provider_name}
+                                  disabled
+                                >
+                                  ---
+                                </option>
+                                {providerData.map((provider, index) => (
+                                  <option
+                                    key={
+                                      provider.game_provider_name + "" + index
+                                    }
+                                    value={provider.game_provider_name}
+                                  >
+                                    {provider.game_provider_name}
+                                  </option>
+                                ))}
                               </select>
                             </div>
                             <div className="auth_login_btn mb-4">
-                                <button className="login_btn">
-                                  Next
-                                  <IoIosArrowForward className="ms-2" />
-                                </button>
-                              </div>
-                            
+                              <button className="login_btn">
+                                Next
+                                <IoIosArrowForward className="ms-2" />
+                              </button>
+                            </div>
                           </form>
                         </>
                       )}

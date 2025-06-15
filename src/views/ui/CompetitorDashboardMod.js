@@ -10,6 +10,9 @@ import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { FloatLabel } from "primereact/floatlabel";
 
+import { FaGem, FaLock } from "react-icons/fa6";
+import { useContactSales } from "../../context/confirmationContext";
+
 import { MdInfoOutline } from "react-icons/md";
 
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -19,6 +22,11 @@ import "primeicons/primeicons.css";
 import "./CompetitorDashboardMod.css";
 import { Spin } from "antd";
 import Papa from "papaparse";
+
+import { useContext } from "react";
+import { ProfileSystem } from "../../context/ProfileContext";
+
+import "./AccessBlur.css";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
@@ -50,6 +58,11 @@ const CompetitorDashboardMod = () => {
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
+
+  const { state } = useContext(ProfileSystem);
+  // const isPlanExpired = state?.plan === "trial_expired";
+  const isPlanExpired = state?.plan === "trial";
+  const { showContactSalesConfirmation } = useContactSales();
 
   const getRegionsList = () => {
     setRegionLoading(true);
@@ -454,6 +467,7 @@ const CompetitorDashboardMod = () => {
                     className="btn-filter flex-1 h-100"
                     style={{ minWidth: "100px" }}
                   />
+
                   <Button
                     type="button"
                     label="Reset"
@@ -525,9 +539,9 @@ const CompetitorDashboardMod = () => {
                 )}
 
                 <DataTable
-                  value={tableData}
+                  value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                   scrollable
-                  paginator
+                  paginator={!isPlanExpired}
                   rows={10}
                   rowsPerPageOptions={[5, 10, 25]}
                   paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -564,6 +578,35 @@ const CompetitorDashboardMod = () => {
                     />
                   ))}
                 </DataTable>
+
+                {isPlanExpired && (
+                  <div
+                    className="d-flex flex-column align-items-center justify-content-center py-4"
+                    style={{
+                      background: "#f8f8f8",
+                      borderRadius: "8px",
+                      border: "1px solid #ccc",
+                      marginTop: "1rem",
+                    }}
+                  >
+                    <FaLock
+                      style={{
+                        fontSize: "2rem",
+                        marginBottom: "0.5rem",
+                        color: "#392f6c",
+                      }}
+                    />
+                    <p className="fw-bold m-1">
+                      To access the complete data, please upgrade your plan.
+                    </p>
+                    <Button
+                      className="btn-upgrade"
+                      onClick={showContactSalesConfirmation}
+                    >
+                      <FaGem /> <span>Upgrade Plan</span>
+                    </Button>
+                  </div>
+                )}
               </div>
             </>
           )
