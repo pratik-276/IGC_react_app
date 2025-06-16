@@ -5,11 +5,12 @@ import { MultiSelect } from "primereact/multiselect";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
+import { Button } from "primereact/button";
 
 import { Spin } from "antd";
 
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
-import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import { FaGem, FaLock, FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import dayjs from "dayjs";
 import Papa from "papaparse";
@@ -17,24 +18,28 @@ import Papa from "papaparse";
 import InfoCard from "../../charts/InfoCard";
 import GameData from "../../services/GameTracker";
 
+import { useContext } from "react";
+import { ProfileSystem } from "../../context/ProfileContext";
+import { useContactSales } from "../../context/confirmationContext";
+
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
+import "./AccessBlur.css";
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
   console.log(user_company);
   const dt = useRef(null);
+  const navigate = useNavigate();
+
   const [selectedRows, setSelectedRows] = useState(null);
-
   const [loader, setLoader] = useState(true);
-
   const [providerSummary, setProviderSummary] = useState(null);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
-
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
   const [selectedFreqs, setSelectedFreqs] = useState(null);
@@ -64,6 +69,11 @@ const DashboardMod = () => {
           .sort()
           .map((freq) => ({ name: freq, code: freq }))
       : [];
+
+  const { state } = useContext(ProfileSystem);
+  const isPlanExpired = state?.plan === "trial_expired";
+  //const isPlanExpired = state?.plan === "trial";
+  const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
     const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
@@ -96,9 +106,6 @@ const DashboardMod = () => {
   useEffect(() => {
     let filtered = [...providerLatestDetails];
 
-    //console.log("selectedGames", selectedGames);
-    //console.log("selectedCasinos", selectedCasinos);
-
     if (selectedGames && selectedGames.length > 0) {
       filtered = filtered.filter((item) =>
         selectedGames.some((game) => game.name === item.game_name)
@@ -120,28 +127,6 @@ const DashboardMod = () => {
     //console.log("filtered", filtered);
     setFilteredData(filtered);
   }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
-
-  // const overviewDashboard = () => {
-  //   const data = {
-  //     game_provider: user_company,
-  //   };
-
-  //   GameData.provider_summary(data)
-  //     .then((res) => {
-  //       if (res?.success === true) {
-  //         setProviderSummary(res?.data || null);
-  //         setLoader(false);
-  //         latest_details_fetch();
-  //       } else {
-  //         console.log("Failed to fetch provider summary");
-  //         setLoader(false);
-  //       }
-  //     })
-  //     .catch((err) => {
-  //       console.log(err);
-  //       setLoader(false);
-  //     });
-  // };
 
   const overviewDashboard = async () => {
     try {
@@ -174,8 +159,6 @@ const DashboardMod = () => {
   useEffect(() => {
     overviewDashboard();
   }, [user_id, user_company]);
-
-  const navigate = useNavigate();
 
   const actionBodyTemplate = (rowData) => {
     return (
@@ -425,12 +408,17 @@ const DashboardMod = () => {
                     <div>
                       <DataTable
                         ref={dt}
-                        value={filteredData}
+                        //value={filteredData}
+                        value={
+                          isPlanExpired
+                            ? filteredData.slice(0, 3)
+                            : filteredData
+                        }
                         selection={selectedRows}
                         onSelectionChange={(e) => setSelectedRows(e.value)}
                         dataKey="comb_id"
                         removableSort
-                        paginator
+                        paginator={!isPlanExpired}
                         rows={10}
                         rowsPerPageOptions={[5, 10, 25]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
@@ -583,6 +571,36 @@ const DashboardMod = () => {
                           body={actionBodyTemplate}
                         ></Column>
                       </DataTable>
+
+                      {isPlanExpired && (
+                        <div
+                          className="d-flex flex-column align-items-center justify-content-center py-4"
+                          style={{
+                            background: "#f8f8f8",
+                            borderRadius: "8px",
+                            border: "1px solid #ccc",
+                            marginTop: "1rem",
+                          }}
+                        >
+                          <FaLock
+                            style={{
+                              fontSize: "2rem",
+                              marginBottom: "0.5rem",
+                              color: "#392f6c",
+                            }}
+                          />
+                          <p className="fw-bold m-1">
+                            To access the complete data, please upgrade your
+                            plan.
+                          </p>
+                          <Button
+                            className="btn-upgrade"
+                            onClick={showContactSalesConfirmation}
+                          >
+                            <FaGem /> <span>Upgrade Plan</span>
+                          </Button>
+                        </div>
+                      )}
                     </div>
                   </div>
                 </div>

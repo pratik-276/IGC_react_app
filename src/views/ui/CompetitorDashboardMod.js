@@ -10,9 +10,9 @@ import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { FloatLabel } from "primereact/floatlabel";
 
-import { FaGem, FaLock } from "react-icons/fa6";
-import { useContactSales } from "../../context/confirmationContext";
+import { Spin } from "antd";
 
+import { FaGem, FaLock } from "react-icons/fa6";
 import { MdInfoOutline } from "react-icons/md";
 
 import "primereact/resources/themes/saga-blue/theme.css";
@@ -20,13 +20,13 @@ import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./CompetitorDashboardMod.css";
-import { Spin } from "antd";
+import "./AccessBlur.css";
+
 import Papa from "papaparse";
 
 import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
-
-import "./AccessBlur.css";
+import { useContactSales } from "../../context/confirmationContext";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");

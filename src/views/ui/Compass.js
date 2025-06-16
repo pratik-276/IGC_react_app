@@ -121,16 +121,6 @@ const Compass = () => {
 
   return (
     <>
-      <div className={`content ${isPlanExpired ? "show" : ""}`}>
-        <FaLock
-          style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "#392f6c" }}
-        />
-        <p className="fw-bold">Your plan has expired</p>
-        <Button className="btn-upgrade" onClick={showContactSalesConfirmation}>
-          <FaGem /> <span>Upgrade Plan</span>
-        </Button>
-      </div>
-
       <div className={`w-100 h-100 ${isPlanExpired ? "overlay active" : ""}`}>
         {/* CALIBRATE COMPASS FIRST PAGE */}
         <CompassDataPage

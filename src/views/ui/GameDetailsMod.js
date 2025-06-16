@@ -1,19 +1,29 @@
 import React, { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+import { Calendar } from "primereact/calendar";
+import { Button } from "primereact/button";
+
+import { Spin } from "antd";
+
+import { MdArrowBackIos } from "react-icons/md";
+import { FaGem, FaLock } from "react-icons/fa6";
+
+import call from "../../services/Call";
+import AveragePositionChart from "../../charts/AveragePositionChart";
+import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
+import InfoCard from "../../charts/InfoCard";
+
+import { useContext } from "react";
+import { ProfileSystem } from "../../context/ProfileContext";
+import { useContactSales } from "../../context/confirmationContext";
 
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
-import { Calendar } from "primereact/calendar";
-import call from "../../services/Call";
-import { useLocation, useNavigate } from "react-router-dom";
-import { MdArrowBackIos } from "react-icons/md";
-import AveragePositionChart from "../../charts/AveragePositionChart";
-import DailySectionalAnalyticshart from "../../charts/DailySectionalAnalyticshart";
-import InfoCard from "../../charts/InfoCard";
-
-import { Spin } from "antd";
+import "./AccessBlur.css";
 
 const GameDetailsMod = () => {
   const navigate = useNavigate();
@@ -29,6 +39,11 @@ const GameDetailsMod = () => {
   console.log("location.state", location.state);
   const { operator_site_id, game_name, casino_name, country_name, state_name } =
     location.state || {};
+
+  const { state } = useContext(ProfileSystem);
+  const isPlanExpired = state?.plan === "trial_expired";
+  //const isPlanExpired = state?.plan === "trial";
+  const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
     const currentDate = new Date();
@@ -81,7 +96,17 @@ const GameDetailsMod = () => {
 
   return (
     <>
-      <div>
+      <div className={`content ${isPlanExpired ? "show" : ""}`}>
+        <FaLock
+          style={{ fontSize: "2rem", marginBottom: "0.5rem", color: "#392f6c" }}
+        />
+        <p className="fw-bold">Your plan has expired</p>
+        <Button className="btn-upgrade" onClick={showContactSalesConfirmation}>
+          <FaGem /> <span>Upgrade Plan</span>
+        </Button>
+      </div>
+
+      <div className={`w-100 h-100 ${isPlanExpired ? "overlay active" : ""}`}>
         <div>
           <div className="d-flex align-items-center justify-content-between">
             <div className="d-flex gap-2 align-items-center">
