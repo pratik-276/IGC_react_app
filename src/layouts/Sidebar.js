@@ -2,10 +2,17 @@ import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
 import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { FaChevronLeft, FaDatabase, FaHouse, FaLocationArrow, FaUserPlus, FaLightbulb } from "react-icons/fa6";
+import {
+  FaChevronLeft,
+  FaDatabase,
+  FaHouse,
+  FaLocationArrow,
+  FaUserPlus,
+  FaLightbulb,
+} from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
 import { MdViewKanban } from "react-icons/md";
-import Accordion from 'react-bootstrap/Accordion';
+import Accordion from "react-bootstrap/Accordion";
 
 // For Gaming Navigation
 const navigation = [
@@ -65,7 +72,7 @@ const iGameTrackerNavigation = [
   //   title: "View Request",
   //   href: "/casino-requests",
   // }
-]
+];
 
 const marketIntelligenceNavigation = [
   {
@@ -88,7 +95,7 @@ const marketIntelligenceNavigation = [
   //   title: "Game Position",
   //   href: "/game-position",
   // }
-]
+];
 
 // For Profile Navigation
 const ProfileMenu = [
@@ -110,15 +117,15 @@ const Sidebar = () => {
   const navigate = useNavigate();
   let location = useLocation();
 
-  const isAdmin = localStorage.getItem('is_admin')
-  console.log('isAdmin', isAdmin)
+  const isAdmin = localStorage.getItem("is_admin");
+  console.log("isAdmin", isAdmin);
 
   return (
     <>
       {location.pathname === "/my-account" ||
-        location.pathname === "/billing-section" ||
-        location.pathname === "/help-support" ||
-        location.pathname === "/refer-earn" ? (
+      location.pathname === "/billing-section" ||
+      location.pathname === "/help-support" ||
+      location.pathname === "/refer-earn" ? (
         <>
           <div className="profile-sidebar" id="sidebarArea">
             <Nav vertical className="sidebarNav">
@@ -150,7 +157,7 @@ const Sidebar = () => {
       ) : (
         <>
           <div className="sidebar" id="sidebarArea">
-            <div className="sidenav-bg mt-2 mx-2">
+            <div className="sidenav-bg mt-2 mx-2 ps-2">
               <Link
                 to="/"
                 className={
@@ -159,11 +166,17 @@ const Sidebar = () => {
                     : "nav-link mb-2 py-2 px-2"
                 }
               >
-                <FaHouse style={{ fontSize: "23px" }} /> 
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Home</span>
+                <FaHouse style={{ fontSize: "23px" }} />
+                <span
+                  className="ms-3 d-inline-block"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Home
+                </span>
               </Link>
             </div>
-            <div className="sidenav-bg mt-2 mx-2">
+
+            <div className="sidenav-bg mt-2 mx-2 ps-2">
               <Link
                 to="/calibrate-compass"
                 className={
@@ -172,8 +185,13 @@ const Sidebar = () => {
                     : "nav-link mb-2 py-2 px-2"
                 }
               >
-                <FaHouse style={{ fontSize: "23px" }} /> 
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Calibrate</span>
+                <FaHouse style={{ fontSize: "23px" }} />
+                <span
+                  className="ms-3 d-inline-block"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Calibrate
+                </span>
               </Link>
             </div>
 
@@ -208,28 +226,30 @@ const Sidebar = () => {
             <Accordion className="pb-2 mx-2 mt-2" defaultActiveKey="1">
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                    <FaLocationArrow style={{ fontSize: "23px" }} /> 
-                    &nbsp;&nbsp;
-                    <div style={{ fontWeight: 'bold' }}>Positions</div>
+                  <FaLocationArrow style={{ fontSize: "23px" }} />
+                  &nbsp;&nbsp;
+                  <div style={{ fontWeight: "bold" }}>Positions</div>
                 </Accordion.Header>
                 <Accordion.Body>
                   <div>
-                  {iGameTrackerNavigation.map((navi, index) => (
-                    <div key={index} className="sidenav-bg mb-2">
-                      <Link
-                        to={navi.href}
-                        className={
-                          location.pathname === navi.href
-                            ? "active nav-link mb-2 py-2 px-2"
-                            : "nav-link mb-2 py-2 px-2"
-                        }
-                        style={{fontWeight: '500'}}
-                      >
-                        <span className="ms-3 d-inline-block">{navi.title}</span>
-                      </Link>
-                    </div>
-                  ))}
-                  {/* {isAdmin != 1 && (
+                    {iGameTrackerNavigation.map((navi, index) => (
+                      <div key={index} className="sidenav-bg mb-2">
+                        <Link
+                          to={navi.href}
+                          className={
+                            location.pathname === navi.href
+                              ? "active nav-link mb-2 py-2 px-2"
+                              : "nav-link mb-2 py-2 px-2"
+                          }
+                          style={{ fontWeight: "500" }}
+                        >
+                          <span className="ms-3 d-inline-block">
+                            {navi.title}
+                          </span>
+                        </Link>
+                      </div>
+                    ))}
+                    {/* {isAdmin != 1 && (
                     <div key={2} className="sidenav-bg mb-2">
                       <Link
                         to="/casino-requests"
@@ -248,7 +268,8 @@ const Sidebar = () => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            <div className="sidenav-bg mt-2 mx-2">
+
+            <div className="sidenav-bg mt-2 mx-2 ps-2">
               <Link
                 to="/competitor-dashboard"
                 className={
@@ -257,35 +278,42 @@ const Sidebar = () => {
                     : "nav-link mb-2 py-2 px-2"
                 }
               >
-                <FaHouse style={{ fontSize: "23px" }} /> 
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Competitor Dashboard</span>
+                <FaHouse style={{ fontSize: "23px" }} />
+                <span
+                  className="ms-3 d-inline-block"
+                  style={{ fontWeight: "bold" }}
+                >
+                  Competitor Dashboard
+                </span>
               </Link>
             </div>
 
             <Accordion className="pb-2 mx-2 mt-2" defaultActiveKey="1">
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
-                    <FaLocationArrow style={{ fontSize: "23px" }} /> 
-                    &nbsp;&nbsp;
-                    <div style={{ fontWeight: 'bold' }}>Market Intelligence</div>
+                  <FaLocationArrow style={{ fontSize: "23px" }} />
+                  &nbsp;&nbsp;
+                  <div style={{ fontWeight: "bold" }}>Market Intelligence</div>
                 </Accordion.Header>
                 <Accordion.Body>
                   <div>
-                  {marketIntelligenceNavigation.map((navi, index) => (
-                    <div key={index} className="sidenav-bg mb-2">
-                      <Link
-                        to={navi.href}
-                        className={
-                          location.pathname === navi.href
-                            ? "active nav-link mb-2 py-2 px-2"
-                            : "nav-link mb-2 py-2 px-2"
-                        }
-                        style={{fontWeight: '500'}}
-                      >
-                        <span className="ms-3 d-inline-block">{navi.title}</span>
-                      </Link>
-                    </div>
-                  ))}
+                    {marketIntelligenceNavigation.map((navi, index) => (
+                      <div key={index} className="sidenav-bg mb-2">
+                        <Link
+                          to={navi.href}
+                          className={
+                            location.pathname === navi.href
+                              ? "active nav-link mb-2 py-2 px-2"
+                              : "nav-link mb-2 py-2 px-2"
+                          }
+                          style={{ fontWeight: "500" }}
+                        >
+                          <span className="ms-3 d-inline-block">
+                            {navi.title}
+                          </span>
+                        </Link>
+                      </div>
+                    ))}
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
@@ -348,7 +376,6 @@ const Sidebar = () => {
                 </Accordion.Item>
               </Accordion>
             } */}
-
           </div>
         </>
       )}
