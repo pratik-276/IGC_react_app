@@ -159,7 +159,7 @@ const Sidebar = () => {
       ) : (
         <>
           <div className="sidebar" id="sidebarArea">
-            <div className="sidenav-bg mt-2 mx-2 ps-2">
+            <div className="sidenav-bg mt-2 mx-2 ps-3">
               <Link
                 to="/"
                 className={
@@ -178,7 +178,7 @@ const Sidebar = () => {
               </Link>
             </div>
 
-            <div className="sidenav-bg mt-2 mx-2 ps-2">
+            <div className="sidenav-bg mt-2 mx-2 ps-3">
               <Link
                 to="/calibrate-compass"
                 className={
@@ -187,7 +187,7 @@ const Sidebar = () => {
                     : "nav-link mb-2 py-2 px-2"
                 }
               >
-                <FaHouse style={{ fontSize: "23px" }} />
+                <FaCompassDrafting style={{ fontSize: "23px" }} />
                 <span
                   className="ms-3 d-inline-block"
                   style={{ fontWeight: "bold" }}
