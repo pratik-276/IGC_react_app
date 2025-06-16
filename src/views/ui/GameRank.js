@@ -31,6 +31,7 @@ const GameRank = () => {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [totalCasinos, setTotalCasinos] = useState("");
+  const [updatedOn, setUpdatedOn] = useState(null);
   const [filters, setFilters] = useState({
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
   });
@@ -57,6 +58,31 @@ const GameRank = () => {
       .then((res) => {
         if (Array.isArray(res.data.data)) {
           setTableData(res.data.data);
+
+          const month = res.data?.month;
+          const year = res.data?.year;
+
+          const monthNames = [
+            "January",
+            "February",
+            "March",
+            "April",
+            "May",
+            "June",
+            "July",
+            "August",
+            "September",
+            "October",
+            "November",
+            "December",
+          ];
+
+          const formattedDate =
+            month && year ? `${monthNames[month - 1]}, ${year}` : null;
+
+          console.log(formattedDate);
+
+          setUpdatedOn(formattedDate);
           setTotalCasinos(res.data.total_casinos);
         } else {
           console.error("Expected array but got:", res.data.data);
@@ -329,7 +355,7 @@ const GameRank = () => {
                       options={regions}
                     />
                     <label className="fs-6" htmlFor="region">
-                      Region
+                      Select Country
                     </label>
                   </FloatLabel>
 
@@ -368,13 +394,23 @@ const GameRank = () => {
           ) : (
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
-                <div className="d-flex justify-content-between mb-2">
+                {/* <div className="d-flex justify-content-between mb-2"> */}
                   <h5 className="font-semibold pl-2">Latest Details</h5>
-                  <div>
+                  {/* <div>
                     <strong>Total Casinos : </strong>
                     {totalCasinos}
+                  </div> */}
+                  <div className="d-flex justify-content-between pl-2 mb-2">
+                    <div>
+                      <strong>Total Casinos : </strong>
+                      {totalCasinos}
+                    </div>
+                    <div>
+                      <strong>Updated On : </strong>
+                      {updatedOn}
+                    </div>
                   </div>
-                </div>
+                {/* </div> */}
 
                 <DataTable
                   value={tableData}
