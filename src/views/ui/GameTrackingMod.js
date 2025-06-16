@@ -98,6 +98,7 @@ const GameTrackingMod = () => {
       </button>
     </div>
   );
+
   const actionBodyTemplate = (rowData) => {
     return (
       <MdArrowForwardIos

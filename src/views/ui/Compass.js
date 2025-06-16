@@ -45,7 +45,7 @@ const Compass = () => {
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
-  // const isPlanExpired = state?.plan === "trial";
+  //const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {

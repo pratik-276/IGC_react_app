@@ -63,6 +63,7 @@ const Header = () => {
 
       if (profileResponse?.success) {
         setProfile(profileResponse?.data);
+        localStorage.setItem("user_company", profileResponse?.data.company);
 
         dispatch({
           type: "SET_PLAN",

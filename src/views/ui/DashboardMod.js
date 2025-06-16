@@ -1,23 +1,27 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import { MultiSelect } from "primereact/multiselect";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
+import { Tooltip } from "primereact/tooltip";
+
+import { Spin } from "antd";
+
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
-import { Tooltip } from "primereact/tooltip";
+
 import dayjs from "dayjs";
+import Papa from "papaparse";
+
 import InfoCard from "../../charts/InfoCard";
+import GameData from "../../services/GameTracker";
+
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
-import Papa from "papaparse";
-
-import GameData from "../../services/GameTracker";
-import { Spin } from "antd";
-
-import { useNavigate } from "react-router-dom";
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
@@ -56,9 +60,7 @@ const DashboardMod = () => {
 
   const freqsList =
     providerLatestDetails.length > 0
-      ? Array.from(
-          new Set(providerLatestDetails.map((item) => item.frequency))
-        )
+      ? Array.from(new Set(providerLatestDetails.map((item) => item.frequency)))
           .sort()
           .map((freq) => ({ name: freq, code: freq }))
       : [];
@@ -370,7 +372,10 @@ const DashboardMod = () => {
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
                         //value={providerSummary.game_count}
-                        value={new Set(filteredData.map(item => item.game_name)).size}
+                        value={
+                          new Set(filteredData.map((item) => item.game_name))
+                            .size
+                        }
                       />
 
                       <InfoCard
@@ -378,7 +383,14 @@ const DashboardMod = () => {
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
                         //value={providerSummary.casino_count}
-                        value={new Set(filteredData.map(item => `${item.casino_name}|${item.country_name}`)).size}
+                        value={
+                          new Set(
+                            filteredData.map(
+                              (item) =>
+                                `${item.casino_name}|${item.country_name}`
+                            )
+                          ).size
+                        }
                       />
 
                       <InfoCard
@@ -386,7 +398,14 @@ const DashboardMod = () => {
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
                         //value={providerSummary.combination_count}
-                        value={new Set(filteredData.map(item => `${item.casino_name}|${item.country_name}|${item.game_name}`)).size}
+                        value={
+                          new Set(
+                            filteredData.map(
+                              (item) =>
+                                `${item.casino_name}|${item.country_name}|${item.game_name}`
+                            )
+                          ).size
+                        }
                       />
                     </div>
                   </div>

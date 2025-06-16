@@ -6,6 +6,8 @@ import {
   FaChevronLeft,
   FaDatabase,
   FaHouse,
+  FaCompassDrafting,
+  FaMarker,
   FaLocationArrow,
   FaUserPlus,
   FaLightbulb,
