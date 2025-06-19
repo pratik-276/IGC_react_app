@@ -6,6 +6,7 @@ import { Dropdown } from "primereact/dropdown";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { Tooltip } from "primereact/tooltip";
+import { FloatLabel } from "primereact/floatlabel";
 
 import { Spin } from "antd";
 
@@ -185,7 +186,7 @@ const GameRankL2 = () => {
         <div className="compass">
           <div className="compass-data">
             <div className="d-flex flex-column gap-3 justify-content-between">
-              <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center justify-content-between pt-3">
                 <div>
                   <h4
                     className="m-md-0 font-semibold"
@@ -199,6 +200,7 @@ const GameRankL2 = () => {
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
+                  <FloatLabel>
                   <Dropdown
                     optionLabel="label"
                     optionValue="value"
@@ -209,6 +211,10 @@ const GameRankL2 = () => {
                     onChange={(e) => setSelectedRegion(e.value)}
                     options={regions}
                   />
+                                                                          <label className="fs-6" htmlFor="region">
+                                                                            Select Region
+                                                                          </label>
+                                                                        </FloatLabel>
 
                   <Dropdown
                     optionLabel="label"

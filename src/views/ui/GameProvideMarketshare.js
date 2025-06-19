@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
+import { FloatLabel } from "primereact/floatlabel";
 import { Tooltip } from "primereact/tooltip";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
@@ -358,7 +359,7 @@ const GameProvideMarketshare = () => {
         <div className="compass">
           <div className="compass-data">
             <div className="d-flex flex-column gap-3 justify-content-between">
-              <div className="d-flex align-items-center justify-content-between">
+              <div className="d-flex align-items-center justify-content-between pt-3">
                 <div>
                   <h4
                     className="m-md-0 font-semibold"
@@ -371,7 +372,8 @@ const GameProvideMarketshare = () => {
                   </span>
                 </div>
 
-                <div className="d-flex flex-wrap gap-2">
+                <div className="d-flex flex-wrap gap-3">
+                                  <FloatLabel>
                   <Dropdown
                     optionLabel="label"
                     optionValue="value"
@@ -386,6 +388,10 @@ const GameProvideMarketshare = () => {
                     }}
                     options={regions}
                   />
+                                      <label className="fs-6" htmlFor="region">
+                                        Select Region
+                                      </label>
+                                    </FloatLabel>
 
                   <IconField iconPosition="left" style={{ flex: 2 }}>
                     <InputIcon className="pi pi-search" />

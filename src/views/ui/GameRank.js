@@ -355,7 +355,7 @@ const GameRank = () => {
                       options={regions}
                     />
                     <label className="fs-6" htmlFor="region">
-                      Select Country
+                      Select Region
                     </label>
                   </FloatLabel>
 
