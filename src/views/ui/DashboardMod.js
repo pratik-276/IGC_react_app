@@ -6,6 +6,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { Button } from "primereact/button";
+import { Dialog } from "primereact/dialog";
 
 import { Spin } from "antd";
 
@@ -29,6 +30,9 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 
+const VIDEO_URL =
+  "https://igc-videos.blr1.cdn.digitaloceanspaces.com/browser_recording_6.mp4";
+
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
@@ -44,6 +48,7 @@ const DashboardMod = () => {
   const [selectedCasinos, setSelectedCasinos] = useState(null);
   const [selectedFreqs, setSelectedFreqs] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
+  const [videoDialogVisible, setVideoDialogVisible] = useState(false);
 
   const arrayFromValues = Object.values(providerLatestDetails);
 
@@ -238,6 +243,17 @@ const DashboardMod = () => {
           ""
         )}
       </h6>
+    );
+  };
+
+  const evidanceTemplate = (rowData) => {
+    return (
+      <Button
+        label="Watch"
+        icon="pi pi-play"
+        className="p-button-text"
+        onClick={() => setVideoDialogVisible(true)}
+      />
     );
   };
 
@@ -440,6 +456,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "8rem" }}
                         ></Column>
+
                         <Column
                           field="casino_name"
                           header={headerWithTooltip(
@@ -449,6 +466,7 @@ const DashboardMod = () => {
                           )}
                           sortable
                         ></Column>
+
                         <Column
                           field="country_name"
                           header={headerWithTooltip(
@@ -458,6 +476,7 @@ const DashboardMod = () => {
                           )}
                           sortable
                         ></Column>
+
                         <Column
                           field="section_name"
                           header={headerWithTooltip(
@@ -468,6 +487,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "10rem" }}
                         ></Column>
+
                         <Column
                           field="section_position"
                           header={headerWithTooltip(
@@ -478,6 +498,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "8rem" }}
                         ></Column>
+
                         <Column
                           field="sectional_game_position"
                           header={headerWithTooltip(
@@ -488,6 +509,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "9rem" }}
                         ></Column>
+
                         <Column
                           field="overall_position"
                           header={headerWithTooltip(
@@ -498,6 +520,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "10rem" }}
                         ></Column>
+
                         <Column
                           field="growth"
                           header={headerWithTooltip(
@@ -508,6 +531,7 @@ const DashboardMod = () => {
                           sortable
                           body={changeTemplate}
                         ></Column>
+
                         <Column
                           field="site_url"
                           header={headerWithTooltip(
@@ -534,6 +558,7 @@ const DashboardMod = () => {
                             </a>
                           )}
                         ></Column>
+
                         <Column
                           field="frequency"
                           header={headerWithTooltip(
@@ -544,6 +569,7 @@ const DashboardMod = () => {
                           sortable
                           style={{ minWidth: "10rem" }}
                         ></Column>
+
                         <Column
                           field="last_observed_date"
                           header={headerWithTooltip(
@@ -558,6 +584,16 @@ const DashboardMod = () => {
                             );
                           }}
                           style={{ minWidth: "7rem" }}
+                        ></Column>
+
+                        <Column
+                          field="evidance"
+                          header={headerWithTooltip(
+                            "Evidence",
+                            "Evidence",
+                            "evidance"
+                          )}
+                          body={evidanceTemplate}
                         ></Column>
 
                         <Column
@@ -622,6 +658,19 @@ const DashboardMod = () => {
           </>
         )}
       </div>
+
+      <Dialog
+        header="Evidence Video"
+        visible={videoDialogVisible}
+        style={{ width: "60vw" }}
+        modal
+        onHide={() => setVideoDialogVisible(false)}
+      >
+        <video width="100%" height="auto" controls>
+          <source src={VIDEO_URL} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </Dialog>
     </>
   );
 };
