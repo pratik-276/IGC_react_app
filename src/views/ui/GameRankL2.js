@@ -286,28 +286,22 @@ const GameRankL2 = () => {
                           tooltipTarget: "provider_name",
                         },
                         {
-                          label: "RTP",
-                          value: data.rt,
-                          tooltip: "Game RTP",
-                          tooltipTarget: "rt",
+                          label: "Casinos Present",
+                          value: data.casinos_present,
+                          tooltip: "Casinos Present",
+                          tooltipTarget: "casinos_present",
                         },
                         {
-                          label: "Max Win",
-                          value: data.max_win,
-                          tooltip: "Game Max Win",
-                          tooltipTarget: "max_win",
+                          label: "Lobby %",
+                          value: data.loby_perc,
+                          tooltip: "Lobby %",
+                          tooltipTarget: "loby_perc",
                         },
                         {
                           label: "visibility %",
                           value: data.visibility,
                           tooltip: "Game visibility",
                           tooltipTarget: "visibility",
-                        },
-                        {
-                          label: "Game Theme",
-                          value: data.theme,
-                          tooltip: "Game theme",
-                          tooltipTarget: "theme",
                         },
                       ].map((item, idx) => (
                         <div className="col-md-4 d-flex" key={idx}>
@@ -387,13 +381,44 @@ const GameRankL2 = () => {
                     header={headerWithTooltip("Casino Name")}
                     field="casino_name"
                   />
+                  <Column header={headerWithTooltip("State")} field="state" />
                   <Column
                     header={headerWithTooltip("Casino URL")}
                     field="casino_url"
+                    body={(rowData) => (
+                      <a
+                        href={rowData.casino_url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{
+                          display: "inline-block",
+                          maxWidth: "200px",
+                          color: "#0066cc",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                        title={rowData.casino_url}
+                      >
+                        {rowData.casino_url}
+                      </a>
+                    )}
                   />
                   <Column
-                    header={headerWithTooltip("Avg Position")}
-                    field="avg_position"
+                    header={headerWithTooltip("Lobby Pos")}
+                    field="lobby_position"
+                  />
+                  <Column
+                    header={headerWithTooltip("Sec Name")}
+                    field="section_name"
+                  />
+                  <Column
+                    header={headerWithTooltip("Sec Pos")}
+                    field="section_position"
+                  />
+                  <Column
+                    header={headerWithTooltip("Sec Game Pos")}
+                    field="section_game_position"
                   />
                 </DataTable>
               </div>

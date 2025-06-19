@@ -203,21 +203,54 @@ const GameProvideMarketshare = () => {
     );
   };
 
+  // const marketshareTemplate = (row) => {
+  //   const share = mapToRange(row.market_share, 0, 100);
+  //   let bg = "bg-info";
+
+  //   if (parseFloat(row.market_share) < 3.0) {
+  //     bg = "bg-danger";
+  //   } else if (
+  //     parseFloat(row.market_share) > 3.0 &&
+  //     parseFloat(row.market_share) < 6.0
+  //   ) {
+  //     bg = "bg-warning";
+  //   } else if (parseFloat(row.market_share) > 6.0) {
+  //     bg = "bg-success";
+  //   } else {
+  //     bg = "bg-info";
+  //   }
+
+  //   return (
+  //     <div style={{ display: "flex", flexDirection: "row", gap: 4 }}>
+  //       <div style={{ fontSize: "12px", flex: 0.3 }}>
+  //         {parseFloat(row.market_share).toFixed(2)}%
+  //       </div>
+  //       <div style={{ flex: 1 }} className="progress">
+  //         <div
+  //           className={`progress-bar ${bg}`}
+  //           role="progressbar"
+  //           style={{ width: `${share}%` }}
+  //           aria-valuenow="50"
+  //           aria-valuemin="0"
+  //           aria-valuemax="100"
+  //         ></div>
+  //       </div>
+  //     </div>
+  //   );
+  // };
   const marketshareTemplate = (row) => {
-    const share = mapToRange(row.market_share, 0, 100);
+    const share = mapToRange(row.normalized_share, 0, 100); // use normalized_share for graph
     let bg = "bg-info";
 
-    if (parseFloat(row.market_share) < 3.0) {
+    if (parseFloat(row.normalized_share) < 3.0) {
       bg = "bg-danger";
     } else if (
-      parseFloat(row.market_share) > 3.0 &&
-      parseFloat(row.market_share) < 6.0
+      parseFloat(row.normalized_share) >= 3.0 &&
+      parseFloat(row.normalized_share) < 6.0
     ) {
       bg = "bg-warning";
-    } else if (parseFloat(row.market_share) > 6.0) {
+    } else if (parseFloat(row.normalized_share) >= 6.0) {
       bg = "bg-success";
-    } else {
-      bg = "bg-info";
     }
 
     return (
@@ -230,7 +263,7 @@ const GameProvideMarketshare = () => {
             className={`progress-bar ${bg}`}
             role="progressbar"
             style={{ width: `${share}%` }}
-            aria-valuenow="50"
+            aria-valuenow={share}
             aria-valuemin="0"
             aria-valuemax="100"
           ></div>
@@ -470,12 +503,12 @@ const GameProvideMarketshare = () => {
                   ></Column>
 
                   <Column
-                    field="major_market"
+                    field="total_lobby_position"
                     sortable
                     header={headerWithTooltip(
-                      "Market",
-                      "Market of the provider in the selected region",
-                      "major_market"
+                      "Lobby Pos",
+                      "Lobby Position",
+                      "total_lobby_position"
                     )}
                   ></Column>
 

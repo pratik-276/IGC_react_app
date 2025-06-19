@@ -395,21 +395,21 @@ const GameRank = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 {/* <div className="d-flex justify-content-between mb-2"> */}
-                  <h5 className="font-semibold pl-2">Latest Details</h5>
-                  {/* <div>
+                <h5 className="font-semibold pl-2">Latest Details</h5>
+                {/* <div>
                     <strong>Total Casinos : </strong>
                     {totalCasinos}
                   </div> */}
-                  <div className="d-flex justify-content-between pl-2 mb-2">
-                    <div>
-                      <strong>Total Casinos : </strong>
-                      {totalCasinos}
-                    </div>
-                    <div>
-                      <strong>Updated On : </strong>
-                      {updatedOn}
-                    </div>
+                <div className="d-flex justify-content-between pl-2 mb-2">
+                  <div>
+                    <strong>Total Casinos : </strong>
+                    {totalCasinos}
                   </div>
+                  <div>
+                    <strong>Updated On : </strong>
+                    {updatedOn}
+                  </div>
+                </div>
                 {/* </div> */}
 
                 <DataTable
@@ -478,14 +478,23 @@ const GameRank = () => {
                   ></Column>
 
                   <Column
-                    field="stability"
+                    field="visibility_perc"
                     sortable
                     header={headerWithTooltip(
-                      "Stability",
-                      "The stability of the game",
-                      "stability"
+                      "Visibility %",
+                      "The visibility % of the game",
+                      "visibility_perc"
                     )}
-                    body={stabilityTemplate}
+                  ></Column>
+
+                  <Column
+                    field="lobby_perc"
+                    sortable
+                    header={headerWithTooltip(
+                      "Lobby %",
+                      "The lobby % of the game",
+                      "lobby_perc"
+                    )}
                   ></Column>
 
                   <Column
