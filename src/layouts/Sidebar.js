@@ -66,10 +66,10 @@ const iGameTrackerNavigation = [
     title: "Positions Dashboard",
     href: "/dashboard-mod",
   },
-  {
-    title: "Competitor Dashboard",
-    href: "/competitor-dashboard",
-  },
+  // {
+  //   title: "Competitor Dashboard",
+  //   href: "/competitor-dashboard",
+  // },
   // {
   //   title: "View Request",
   //   href: "/casino-requests",
