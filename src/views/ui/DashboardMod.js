@@ -135,25 +135,25 @@ const DashboardMod = () => {
 
   const overviewDashboard = async () => {
     try {
-      const summaryRes = await GameData.provider_summary({
+      // const summaryRes = await GameData.provider_summary({
+      //   game_provider: user_company,
+      // });
+
+      // if (summaryRes?.success === true) {
+      //   setProviderSummary(summaryRes?.data || null);
+
+      const detailsRes = await GameData.provider_latest_details({
         game_provider: user_company,
       });
 
-      if (summaryRes?.success === true) {
-        setProviderSummary(summaryRes?.data || null);
-
-        const detailsRes = await GameData.provider_latest_details({
-          game_provider: user_company,
-        });
-
-        if (detailsRes?.success === true) {
-          setProviderLatestDetails(detailsRes?.data || []);
-        } else {
-          console.log("Failed to fetch latest details");
-        }
+      if (detailsRes?.success === true) {
+        setProviderLatestDetails(detailsRes?.data || []);
       } else {
-        console.log("Failed to fetch provider summary");
+        console.log("Failed to fetch latest details");
       }
+      // } else {
+      //   console.log("Failed to fetch provider summary");
+      // }
     } catch (err) {
       console.log(err);
     } finally {
@@ -360,7 +360,7 @@ const DashboardMod = () => {
           </div>
         ) : (
           <>
-            {providerSummary ? (
+            {providerLatestDetails ? (
               <>
                 <div className="border border-secondary p-3 rounded-3 mt-3">
                   <div>

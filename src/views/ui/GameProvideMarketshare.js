@@ -497,6 +497,16 @@ const GameProvideMarketshare = () => {
                   ></Column>
 
                   <Column
+                    field="total_lobby_position"
+                    sortable
+                    header={headerWithTooltip(
+                      "Lobby Casinos",
+                      "Count of casinos where games in lobby",
+                      "total_lobby_position"
+                    )}
+                  ></Column>
+
+                  <Column
                     field="market_share"
                     sortable
                     align="center"
@@ -506,16 +516,6 @@ const GameProvideMarketshare = () => {
                       "market_share"
                     )}
                     body={marketshareTemplate}
-                  ></Column>
-
-                  <Column
-                    field="total_lobby_position"
-                    sortable
-                    header={headerWithTooltip(
-                      "Lobby Pos",
-                      "Lobby Position",
-                      "total_lobby_position"
-                    )}
                   ></Column>
 
                   <Column

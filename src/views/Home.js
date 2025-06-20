@@ -9,6 +9,7 @@ import { ProgressSpinner } from "primereact/progressspinner";
 import Autocomplete from '@mui/material/Autocomplete';
 import toast from "react-hot-toast";
 import CompassData from "../services/CompassApi";
+import { useContactSales } from "../context/confirmationContext";
 
 const Home = () => {
   const [profile, setProfile] = useState({})
@@ -17,6 +18,7 @@ const Home = () => {
   const [searchText, setSearchText] = useState("")
   const [searchInput, setSearchInput] = useState("")
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(null)
+  const { showContactSalesConfirmation } = useContactSales();
 
   async function getData() {
     setLoading(true)
@@ -89,9 +91,16 @@ const Home = () => {
             </div>
           </div>
           <div className="d-flex flex-column align-items-end">
-            <Button variant="contained" style={{ backgroundColor: '#392f6c', marginBottom: '0.5rem' }} startIcon={<FaGem />}  onClick={() => toast.error("Coming Soon")}>
+            {/* <Button variant="contained" style={{ backgroundColor: '#392f6c', marginBottom: '0.5rem' }} startIcon={<FaGem />}  onClick={() => toast.error("Coming Soon")}>
               Upgrade Plan
-            </Button>
+            </Button> */}
+            
+                                <Button
+                                  className="btn-upgrade"
+                                  onClick={showContactSalesConfirmation}
+                                >
+                                  <FaGem /> <span>Upgrade Plan</span>
+                                </Button>
             {/* <div className="compass-data">
               <span>
                 {profile?.plan_text_show}

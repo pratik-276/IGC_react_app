@@ -299,9 +299,9 @@ const GameRankL2 = () => {
                         },
                         {
                           label: "Lobby %",
-                          value: data.loby_perc,
+                          value: data.lobby_perc,
                           tooltip: "Lobby %",
-                          tooltipTarget: "loby_perc",
+                          tooltipTarget: "lobby_perc",
                         },
                         {
                           label: "visibility %",
