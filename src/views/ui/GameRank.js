@@ -406,7 +406,7 @@ const GameRank = () => {
                     {totalCasinos}
                   </div>
                   <div>
-                    <strong>Updated On : </strong>
+                    <strong>Period : </strong>
                     {updatedOn}
                   </div>
                 </div>

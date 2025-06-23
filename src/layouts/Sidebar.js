@@ -81,18 +81,18 @@ const marketIntelligenceNavigation = [
     title: "Marketshare",
     href: "/game-provider-marketshare",
   },
-  {
-    title: "Provider Details",
-    href: "/game-provider-marketshare-details",
-  },
+  // {
+  //   title: "Provider Details",
+  //   href: "/game-provider-marketshare-details",
+  // },
   {
     title: "Game Rank",
     href: "/game-rank-report",
   },
-  {
-    title: "Game Details",
-    href: "/game-rank-details",
-  },
+  // {
+  //   title: "Game Details",
+  //   href: "/game-rank-details",
+  // },
   // {
   //   title: "Game Position",
   //   href: "/game-position",
@@ -178,7 +178,7 @@ const Sidebar = () => {
               </Link>
             </div>
 
-            <div className="sidenav-bg mt-2 mx-2 ps-3">
+            {/* <div className="sidenav-bg mt-2 mx-2 ps-3">
               <Link
                 to="/calibrate-compass"
                 className={
@@ -195,7 +195,7 @@ const Sidebar = () => {
                   Calibrate
                 </span>
               </Link>
-            </div>
+            </div> */}
 
             {/* <div className="sidenav-bg mt-2 mx-2">
               <Link

@@ -126,7 +126,7 @@ const GameProvideMarketshareL2 = () => {
     setLoading(true);
     await getProviderMarketshareDetails(payload);
     await getProviderTopGames(payload);
-    await getProviderLatestRelese(payload);
+    // await getProviderLatestRelese(payload);
     await getProviderTopCasinos(payload);
     setLoading(false);
     console.log("data : ", data);
@@ -344,14 +344,18 @@ const GameProvideMarketshareL2 = () => {
                           field="casino_count"
                         />
                         <Column
+                          header={headerWithTooltip("Lobby Casino Count")}
+                          field="lobby_casino_count"
+                        />
+                        {/* <Column
                           header={headerWithTooltip("Avg Pos")}
                           field="average_position"
-                        />
+                        /> */}
                       </DataTable>
                     )}
                   </div>
 
-                  <div className="flex-1">
+                  {/* <div className="flex-1">
                     <h5 className="font-semibold pl-2 mt-3">Latest Releases</h5>
                     {Array.isArray(latestReleasesData) &&
                     latestReleasesData.length === 0 ? (
@@ -379,7 +383,7 @@ const GameProvideMarketshareL2 = () => {
                         />
                       </DataTable>
                     )}
-                  </div>
+                  </div> */}
                 </div>
 
                 <div>
@@ -404,9 +408,13 @@ const GameProvideMarketshareL2 = () => {
                       field="game_count"
                     />
                     <Column
+                      header={headerWithTooltip("Lobby Game Count")}
+                      field="lobby_game_count"
+                    />
+                    {/* <Column
                       header={headerWithTooltip("Avg Pos")}
                       field="average_position"
-                    />
+                    /> */}
                   </DataTable>
                 </div>
               </div>

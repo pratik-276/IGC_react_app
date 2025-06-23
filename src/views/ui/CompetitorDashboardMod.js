@@ -524,7 +524,7 @@ const CompetitorDashboardMod = () => {
                       {selectedSiteDetails.label}
                     </div>
                     <div>
-                      <strong>Updated On : </strong>
+                      <strong>Period : </strong>
                       {selectedSiteDetails.latest_date
                         ? new Date(
                             selectedSiteDetails.latest_date

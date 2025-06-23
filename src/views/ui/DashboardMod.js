@@ -340,7 +340,7 @@ const DashboardMod = () => {
                 options={freqsList}
                 optionLabel="name"
                 filter
-                placeholder="Site Frequency"
+                placeholder="Scan Frequency"
                 maxSelectedLabels={3}
               />
             </div>
