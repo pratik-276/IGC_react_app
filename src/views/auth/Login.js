@@ -31,6 +31,7 @@ const Login = () => {
   const signUpFormRef = useRef(null);
 
   useEffect(() => {
+    localStorage.clear();
     getProviderData();
   }, []);
 
