@@ -2,6 +2,7 @@ import React, { createContext, useContext } from "react";
 import { ConfirmDialog } from "primereact/confirmdialog";
 import { confirmDialog } from "primereact/confirmdialog";
 import toast from "react-hot-toast";
+import GameTracker from "../services/GameTracker";
 
 const ContactSalesContext = createContext();
 
@@ -16,6 +17,8 @@ const ContactSalesProvider = ({ children }) => {
       accept: () => {
         toast.success("User accepted to be contacted.");
         console.log("User accepted to be contacted.");
+        const user_email = localStorage.getItem('user_email');
+        GameTracker.mail_sales_team({"user_email": user_email});
       },
       reject: () => {
         toast.error("User declined to be contacted.");

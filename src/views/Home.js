@@ -167,7 +167,8 @@ const Home = () => {
             </span>
           </div> */}
           <div className="d-flex flex-row gap-3">
-            <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Game Provider Marketshare" />
+            <ReportCard onButtonPress={() => navigate('dashboard')} title="Game Positions Dashboard" />
+            <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Provider Marketshare" />
             <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
             {/* <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />
             <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Rank" /> */}
@@ -224,7 +225,7 @@ const TrackDetail = ({ name, url, navigate }) => {
           </Button> */}
           <Button onClick={() => {
             localStorage.setItem('selectedCasinos', JSON.stringify([{'name': name, 'code': name}]));
-            navigate('dashboard-mod');
+            navigate('dashboard');
           }} size="small" variant="outlined" style={{ color: 'white', backgroundColor: '#392f6c', marginBottom: '0.5rem' }} endIcon={<FaAngleRight />}>
             View Tracker
           </Button>

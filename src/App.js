@@ -51,7 +51,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="/game-tracking"
                     element={
                       <ProtectedRoute>
@@ -66,7 +66,7 @@ const App = () => {
                         <GameTrackingDetails />
                       </ProtectedRoute>
                     }
-                  />
+                  /> */}
                   <Route
                     path="calibrate-compass"
                     element={
@@ -75,25 +75,25 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-                  <Route
+                  {/* <Route
                     path="priority-casinos"
                     element={
                       <ProtectedRoute>
                         <DailyDashboard />
                       </ProtectedRoute>
                     }
-                  />
-                  <Route
+                  /> */}
+                  {/* <Route
                     path="dashboard"
                     element={
                       <ProtectedRoute>
                         <Dashboard />
                       </ProtectedRoute>
                     }
-                  />
+                  /> */}
                   {/* added by akshay */}
                   <Route
-                    path="game-details-mod"
+                    path="position-details"
                     element={
                       <ProtectedRoute>
                         <GameDetailsMod />
@@ -101,7 +101,7 @@ const App = () => {
                     }
                   />
                   <Route
-                    path="dashboard-mod"
+                    path="dashboard"
                     element={
                       <ProtectedRoute>
                         <DashboardMod />
@@ -117,10 +117,26 @@ const App = () => {
                     }
                   />
                   <Route
+                    path="game-rank-report"
+                    element={
+                      <ProtectedRoute>
+                        <GameRank />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
                     path="game-rank-details"
                     element={
                       <ProtectedRoute>
                         <GameRankL2 />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="game-provider-marketshare"
+                    element={
+                      <ProtectedRoute>
+                        <GameProvideMarketshare />
                       </ProtectedRoute>
                     }
                   />
@@ -133,14 +149,14 @@ const App = () => {
                     }
                   />
 
-                  <Route
+                  {/* <Route
                     path="competitor-dashboard-mod"
                     element={
                       <ProtectedRoute>
                         <CompetitorDashboard />
                       </ProtectedRoute>
                     }
-                  />
+                  /> */}
                   <Route
                     path="all-data-dashboard"
                     element={
@@ -154,22 +170,6 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <ProfileMenu />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="game-rank-report"
-                    element={
-                      <ProtectedRoute>
-                        <GameRank />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="game-provider-marketshare"
-                    element={
-                      <ProtectedRoute>
-                        <GameProvideMarketshare />
                       </ProtectedRoute>
                     }
                   />

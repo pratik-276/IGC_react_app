@@ -115,7 +115,7 @@ const GameDetailsMod = () => {
                   fontSize: "30px",
                   cursor: "pointer",
                 }}
-                onClick={() => navigate("/dashboard-mod")}
+                onClick={() => navigate("/dashboard")}
               />
               <div>
                 <h4

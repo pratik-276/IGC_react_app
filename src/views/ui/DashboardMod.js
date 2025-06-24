@@ -171,7 +171,7 @@ const DashboardMod = () => {
         style={{ fontSize: "16px" }}
         onClick={() => {
           console.log(rowData);
-          navigate("/game-details-mod", {
+          navigate("/position-details", {
             state: {
               operator_site_id: rowData.operator_site_id,
               game_name: rowData.game_name,
@@ -586,7 +586,7 @@ const DashboardMod = () => {
                           style={{ minWidth: "7rem" }}
                         ></Column>
 
-                        <Column
+                        {/* <Column
                           field="evidance"
                           header={headerWithTooltip(
                             "Evidence",
@@ -594,7 +594,7 @@ const DashboardMod = () => {
                             "evidance"
                           )}
                           body={evidanceTemplate}
-                        ></Column>
+                        ></Column> */}
 
                         <Column
                           field="details"
