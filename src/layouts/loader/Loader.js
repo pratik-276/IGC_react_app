@@ -1,5 +1,4 @@
 import { Spin } from "antd";
-import React from "react";
 
 const Loader = () => (
   <div className="h-100">
@@ -7,7 +6,7 @@ const Loader = () => (
       <div className="col-md-5">
         <div className="text-center">
           <div className="">
-          <Spin size="large" />
+            <Spin size="large" />
           </div>
         </div>
       </div>

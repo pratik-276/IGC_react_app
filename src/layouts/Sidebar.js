@@ -2,16 +2,7 @@ import "./layout.css";
 import "../assets/scss/layout/_sidebar.scss";
 import { Nav, NavItem } from "reactstrap";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import {
-  FaChevronLeft,
-  FaDatabase,
-  FaHouse,
-  FaCompassDrafting,
-  FaMarker,
-  FaLocationArrow,
-  FaUserPlus,
-  FaLightbulb,
-} from "react-icons/fa6";
+import { FaChevronLeft, FaHouse, FaLocationArrow } from "react-icons/fa6";
 import { IoMdCompass, IoMdHome } from "react-icons/io";
 import { MdViewKanban } from "react-icons/md";
 import Accordion from "react-bootstrap/Accordion";
@@ -178,53 +169,6 @@ const Sidebar = () => {
               </Link>
             </div>
 
-            {/* <div className="sidenav-bg mt-2 mx-2 ps-3">
-              <Link
-                to="/calibrate-compass"
-                className={
-                  location.pathname === "/calibrate-compass"
-                    ? "active nav-link mb-2 py-2 px-2"
-                    : "nav-link mb-2 py-2 px-2"
-                }
-              >
-                <FaCompassDrafting style={{ fontSize: "23px" }} />
-                <span
-                  className="ms-3 d-inline-block"
-                  style={{ fontWeight: "bold" }}
-                >
-                  Calibrate
-                </span>
-              </Link>
-            </div> */}
-
-            {/* <div className="sidenav-bg mt-2 mx-2">
-              <Link
-                to="/dashboard"
-                className={
-                  location.pathname === "/dashboard"
-                    ? "active nav-link mb-2 py-2 px-2"
-                    : "nav-link mb-2 py-2 px-2"
-                }
-              >
-                <FaLocationArrow style={{ fontSize: "23px" }} />  
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Positions Dashboard</span>
-              </Link>
-            </div>
-
-            <div className="sidenav-bg mt-2 mx-2">
-              <Link
-                to="/competitor-dashboard"
-                className={
-                  location.pathname === "/competitor-dashboard"
-                    ? "active nav-link mb-2 py-2 px-2"
-                    : "nav-link mb-2 py-2 px-2"
-                }
-              >
-                <FaDatabase style={{ fontSize: "23px" }} /> 
-                <span className="ms-3 d-inline-block" style={{ fontWeight: 'bold' }}>Competitor Dashboard</span>
-              </Link>
-            </div> */}
-
             <Accordion className="pb-2 mx-2 mt-2" defaultActiveKey="1">
               <Accordion.Item eventKey="1">
                 <Accordion.Header>
@@ -251,21 +195,6 @@ const Sidebar = () => {
                         </Link>
                       </div>
                     ))}
-                    {/* {isAdmin != 1 && (
-                    <div key={2} className="sidenav-bg mb-2">
-                      <Link
-                        to="/casino-requests"
-                        className={
-                          location.pathname === "/casino-requests"
-                            ? "active nav-link mb-2 py-2 px-2"
-                            : "nav-link mb-2 py-2 px-2"
-                        }
-                        style={{fontWeight: '500'}}
-                      >
-                        <span className="ms-3 d-inline-block">Casino Requests</span>
-                      </Link>
-                    </div>
-                  )} */}
                   </div>
                 </Accordion.Body>
               </Accordion.Item>
@@ -320,64 +249,6 @@ const Sidebar = () => {
                 </Accordion.Body>
               </Accordion.Item>
             </Accordion>
-            {/* <Accordion className="pb-2 mx-2">
-              <Accordion.Item eventKey="0">
-                <Accordion.Header>
-                    <FaLightbulb style={{ fontSize: "23px" }} /> 
-                    &nbsp;&nbsp;
-                    <div style={{ fontWeight: 'bold' }}>Market Intelligence</div>
-                </Accordion.Header>
-                <Accordion.Body>
-                  <div>
-                  {marketIntelligenceNavigation.map((navi, index) => (
-                    <div key={index} className="sidenav-bg mb-2">
-                      <Link
-                        to={navi.href}
-                        className={
-                          location.pathname === navi.href
-                            ? "active nav-link mb-2 py-2 px-2"
-                            : "nav-link mb-2 py-2 px-2"
-                        }
-                        style={{fontWeight: '500'}}
-                      >
-                        <span className="ms-3 d-inline-block">{navi.title}</span>
-                      </Link>
-                    </div>
-                  ))}
-                  </div>
-                </Accordion.Body>
-              </Accordion.Item>
-            </Accordion> */}
-
-            {/* {
-              isAdmin == 1 &&
-              <Accordion className="pb-2 mx-2">
-                <Accordion.Item eventKey="0">
-                  <Accordion.Header>
-                      <FaDatabase style={{ fontSize: "23px" }} /> 
-                      &nbsp;&nbsp;
-                      <div style={{ fontWeight: 'bold' }}>Admin Dashboards</div>
-                  </Accordion.Header>
-                  <Accordion.Body>
-                    <div>
-                    <div className="sidenav-bg mb-2">
-                        <Link
-                          to="/casino-requests"
-                          className={
-                            location.pathname === "/casino-requests"
-                              ? "active nav-link mb-2 py-2 px-2"
-                              : "nav-link mb-2 py-2 px-2"
-                          }
-                          style={{fontWeight: '500'}}
-                        >
-                          <span className="ms-3 d-inline-block">Casino Requests</span>
-                        </Link>
-                      </div>
-                    </div>
-                  </Accordion.Body>
-                </Accordion.Item>
-              </Accordion>
-            } */}
           </div>
         </>
       )}

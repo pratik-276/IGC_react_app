@@ -1,7 +1,8 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
-import Layout from "./views/Layout";
+// import Layout from "./views/Layout";
+import Layout from "./views/AntdLayout";
 import Home from "./views/Home";
 import GameTracking from "./views/ui/GameTrackingMod";
 import Compass from "./views/ui/Compass";
@@ -41,6 +42,7 @@ const App = () => {
             <GameProvider>
               <ScrollToTop />
               <Toaster toastOptions={{ duration: 1500 }} position="top-right" />
+
               <Routes>
                 <Route path="/" element={<Layout />}>
                   <Route
@@ -215,8 +217,8 @@ const App = () => {
                 /> */}
                 </Route>
                 <Route path="/login" element={<Login />} />
-                <Route path="/verify" element={<Verify />} />
-                <Route path="/signup" element={<Signup />} />
+                {/* <Route path="/verify" element={<Verify />} /> */}
+                {/* <Route path="/signup" element={<Signup />} /> */}
                 {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
               </Routes>
             </GameProvider>
