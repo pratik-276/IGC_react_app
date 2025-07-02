@@ -38,7 +38,7 @@ const AppLayout = () => {
         {
             key: "calibrate",
             label: "Calibrate",
-            icon: <FaRegStar />,
+            icon: <FaCompassDrafting />,
             children: [
                 {
                     key: "/calibrate-compass",
@@ -50,7 +50,7 @@ const AppLayout = () => {
         {
             key: "position",
             label: "⁠Game Positions",
-            icon: <FaRegStar />,
+            icon: <DashboardOutlined />,
             children: [
                 {
                     key: "/dashboard",
@@ -62,7 +62,7 @@ const AppLayout = () => {
         {
             key: "casino",
             label: "Casino Overview",
-            icon: <FaRegStar />,
+            icon: <FaChartLine />,
             children: [
                 {
                     key: "/competitor-dashboard",
