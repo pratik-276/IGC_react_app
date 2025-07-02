@@ -35,16 +35,8 @@ const AppLayout = () => {
             icon: <FaHouse />,
             label: "Home",
         },
-
-
         {
-            key: "/competitor-dashboard",
-            icon: <FaChartLine />,
-            label: "Competitor Dashboard",
-        },
-
-        {
-            key: "position",
+            key: "calibrate",
             label: "Calibrate",
             icon: <FaRegStar />,
             children: [
