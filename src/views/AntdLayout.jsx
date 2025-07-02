@@ -35,30 +35,66 @@ const AppLayout = () => {
             icon: <FaHouse />,
             label: "Home",
         },
-        {
-            key: "/dashboard",
-            icon: <DashboardOutlined />,
-            label: "Dashboard",
-        },
-        {
-            key: "/calibrate-compass",
-            icon: <FaCompassDrafting />,
-            label: "Calibrate Compass",
-        },
+
+
         {
             key: "/competitor-dashboard",
             icon: <FaChartLine />,
             label: "Competitor Dashboard",
         },
+
         {
-            key: "/game-rank-report",
+            key: "position",
+            label: "Calibrate",
             icon: <FaRegStar />,
-            label: "Game Rank",
+            children: [
+                {
+                    key: "/calibrate-compass",
+                    icon: <FaCompassDrafting />,
+                    label: "Calibrate Compass",
+                },
+            ],
         },
         {
-            key: "/game-provider-marketshare",
-            icon: <FaChartPie />,
-            label: "Marketshare",
+            key: "position",
+            label: "⁠Game Positions",
+            icon: <FaRegStar />,
+            children: [
+                {
+                    key: "/dashboard",
+                    icon: <DashboardOutlined />,
+                    label: "Position Trends",
+                },
+            ],
+        },
+        {
+            key: "casino",
+            label: "Casino Overview",
+            icon: <FaRegStar />,
+            children: [
+                {
+                    key: "/competitor-dashboard",
+                    icon: <FaChartLine />,
+                    label: "Daily Layout",
+                },
+            ],
+        },
+        {
+            key: "game",
+            label: "Market Intelligence",
+            icon: <FaRegStar />,
+            children: [
+                {
+                    key: "/game-rank-report",
+                    icon: <FaRegStar />,
+                    label: "Game Rank",
+                },
+                {
+                    key: "/game-provider-marketshare",
+                    icon: <FaChartPie />,
+                    label: "Marketshare",
+                },
+            ],
         },
     ];
 
@@ -141,8 +177,6 @@ const AppLayout = () => {
                         </Dropdown>
                     </div>
                 </Header>
-
-
 
                 <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
                     <Outlet />
