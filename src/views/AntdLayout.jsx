@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import user1 from "../assets/images/users/user4.jpg";
 import logo from "../assets/images/logos/logo.png";
 import { Layout, Menu, Dropdown, Avatar } from "antd";
@@ -11,6 +11,9 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
 import { FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
+import profileService from "../services/Profile";
+import { ProfileSystem } from "../context/ProfileContext";
+import toast from "react-hot-toast";
 
 const { Header, Sider, Content } = Layout;
 
@@ -21,6 +24,8 @@ const AppLayout = () => {
     const [profile, setProfile] = useState({});
 
     const user_id = localStorage.getItem("user_id");
+    
+    const { dispatch } = useContext(ProfileSystem);
 
     const toggle = () => setCollapsed(!collapsed);
 
@@ -35,18 +40,18 @@ const AppLayout = () => {
             icon: <FaHouse />,
             label: "Home",
         },
-        {
-            key: "calibrate",
-            label: "Calibrate",
-            icon: <FaCompassDrafting />,
-            children: [
-                {
-                    key: "/calibrate-compass",
-                    icon: <FaCompassDrafting />,
-                    label: "Calibrate Compass",
-                },
-            ],
-        },
+        // {
+        //     key: "calibrate",
+        //     label: "Calibrate",
+        //     icon: <FaCompassDrafting />,
+        //     children: [
+        //         {
+        //             key: "/calibrate-compass",
+        //             icon: <FaCompassDrafting />,
+        //             label: "Calibrate Compass",
+        //         },
+        //     ],
+        // },
         {
             key: "position",
             label: "⁠Game Positions",
@@ -67,7 +72,7 @@ const AppLayout = () => {
                 {
                     key: "/competitor-dashboard",
                     icon: <FaChartLine />,
-                    label: "Daily Layout",
+                    label: "Data View",
                 },
             ],
         },
@@ -108,10 +113,38 @@ const AppLayout = () => {
         </Menu>
     );
 
+    const getProfile = async () => {
+        try {
+            const profileResponse = await profileService.Profile({
+                user_id: parseInt(user_id),
+            });
+
+            if (profileResponse?.success) {
+                setProfile(profileResponse?.data);
+                console.log(profileResponse?.data);
+                localStorage.setItem("user_company", profileResponse?.data.company);
+                localStorage.setItem("user_email", profileResponse?.data.email);
+
+                dispatch({
+                type: "SET_PLAN",
+                payload: { plan: profileResponse?.data?.plan },
+                });
+            } else if (profileResponse?.error?.status === 401) {
+                localStorage.clear();
+                toast.error("Session expired. Please log in again.");
+                navigate("/login");
+            }
+        } catch (err) {
+            console.error(err);
+            toast.error("An error occurred. Please try again.");
+        }
+    };
+
     useEffect(() => {
-        const name = localStorage.getItem("user_name") || "User";
-        const email = localStorage.getItem("user_email") || "";
-        setProfile({ name, email });
+        // const name = localStorage.getItem("user_name") || "User";
+        // const email = localStorage.getItem("user_email") || "";
+        getProfile();
+        //setProfile({ name, email });
     }, []);
 
     return (
