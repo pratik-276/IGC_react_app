@@ -40,18 +40,18 @@ const AppLayout = () => {
             icon: <FaHouse />,
             label: "Home",
         },
-        // {
-        //     key: "calibrate",
-        //     label: "Calibrate",
-        //     icon: <FaCompassDrafting />,
-        //     children: [
-        //         {
-        //             key: "/calibrate-compass",
-        //             icon: <FaCompassDrafting />,
-        //             label: "Calibrate Compass",
-        //         },
-        //     ],
-        // },
+        {
+            key: "calibrate",
+            label: "Calibrate",
+            icon: <FaCompassDrafting />,
+            children: [
+                {
+                    key: "/calibrate-compass",
+                    icon: <FaCompassDrafting />,
+                    label: "Calibrate Compass",
+                },
+            ],
+        },
         {
             key: "position",
             label: "⁠Game Positions",
