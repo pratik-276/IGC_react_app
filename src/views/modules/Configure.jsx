@@ -199,7 +199,7 @@ const Configure = ({
           data.push({
             user_id: user_id,
             operator_id: casino.id,
-            game_id: g.id,
+            game_id: g.game_id,
             start_date: startDate,
             end_date: endDate,
             game_name: g.game_original_name,
@@ -289,7 +289,7 @@ const Configure = ({
               <thead className="table-heading-name">
                 <tr>
                   <th scope="col" style={{ width: "40%" }}>
-                    Operator Name
+                    Casino Name
                   </th>
                   <th scope="col" style={{ width: "20%" }}>
                     Game Name{" "}

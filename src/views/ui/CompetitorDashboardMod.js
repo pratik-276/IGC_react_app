@@ -363,7 +363,7 @@ const CompetitorDashboardMod = () => {
                       optionLabel="operator_name"
                       optionValue="operator_id"
                       filter
-                      placeholder="Select Operator"
+                      placeholder="Select Casino"
                       disabled={!selectedRegion}
                       loading={operatorDataLoader}
                       value={selectedOperator}
@@ -381,7 +381,7 @@ const CompetitorDashboardMod = () => {
                       inputId="operator"
                     />
                     <label className="fs-6" htmlFor="operator">
-                      Operator
+                      Casino
                     </label>
                   </FloatLabel>
                 </div>

@@ -127,9 +127,17 @@ const CompassDataPage = ({
         tagStyle.backgroundColor = '#d4edda';
         tagStyle.color = '#155724';
         break;
-      case 0:
+      case 3:
         tagStyle.backgroundColor = '#f8d7da';
         tagStyle.color = '#721c24';
+        break;
+      case 2:
+        tagStyle.backgroundColor = '#fff3cd';
+        tagStyle.color = '#856404';
+        break;
+      case 0:
+        tagStyle.backgroundColor = '#fff3cd';
+        tagStyle.color = '#856404';
         break;
       default:
         tagStyle.backgroundColor = '#fff3cd';
@@ -139,7 +147,7 @@ const CompassDataPage = ({
 
     return (
       <Tag
-        value={rowData.scan_status === 0 ? 'Outside Position' : 'Within Position'}
+        value={rowData.scan_status === 0 ? 'Not Scanned' : rowData.scan_status === 1 ? 'Within Position' : rowData.scan_status === 2 ? 'Game Not Found' : rowData.scan_status === 3 ? 'Outside Position' : 'Not Scanned'}
         style={tagStyle}
         className="text-capitalize"
         rounded
@@ -244,7 +252,7 @@ const CompassDataPage = ({
                             setOperatorFilter(option ? option.value : null)
                           }
                         />
-                        <label className="fs-6" htmlFor="operator">Operator</label>
+                        <label className="fs-6" htmlFor="operator">Casino</label>
                       </FloatLabel>
 
                       <FloatLabel>
@@ -306,8 +314,8 @@ const CompassDataPage = ({
                   <Column
                     field="name"
                     header={headerWithTooltip(
-                      "Operator Name",
-                      "Name of Operator",
+                      "Casino Name",
+                      "Name of Casino",
                       "name"
                     )}
                     sortable
@@ -351,7 +359,7 @@ const CompassDataPage = ({
                     field="scan_status"
                     header={headerWithTooltip(
                       "Status",
-                      "Status",
+                      "Latest status of the scan",
                       "scan_status"
                     )}
                     sortable
