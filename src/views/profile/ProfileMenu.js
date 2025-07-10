@@ -491,6 +491,7 @@ const ProfileMenu = () => {
                   onChange={companyFormik.handleChange}
                   onBlur={companyFormik.handleBlur}
                   value={companyFormik.values.company || ""}
+                  disabled
                 />
               </div>
             </div>

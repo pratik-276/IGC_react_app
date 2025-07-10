@@ -220,7 +220,7 @@ const GameProvideMarketshareL2 = () => {
                     className="m-md-0 font-semibold"
                     style={{ color: "#392f6c" }}
                   >
-                    Game Provider Marketshare L2
+                    Provider Details
                   </h4>
                   <span className="text-black" style={{ fontSize: "1rem" }}>
                     Details of the game provider in the selected region

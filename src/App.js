@@ -41,7 +41,7 @@ const App = () => {
           <ContactSalesProvider>
             <GameProvider>
               <ScrollToTop />
-              <Toaster toastOptions={{ duration: 1500 }} position="top-right" />
+              <Toaster toastOptions={{ duration: 1500, style: {zIndex: 10001} }} position="top-right" />
 
               <Routes>
                 <Route path="/" element={<Layout />}>

@@ -365,7 +365,7 @@ const GameProvideMarketshare = () => {
                     className="m-md-0 font-semibold"
                     style={{ color: "#392f6c" }}
                   >
-                    Game Provider Marketshare
+                    Provider Marketshare
                   </h4>
                   <span className="text-black" style={{ fontSize: "1rem" }}>
                     Understand provider dominance across global casinos

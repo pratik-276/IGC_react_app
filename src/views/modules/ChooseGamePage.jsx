@@ -2,12 +2,15 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import { IoIosSearch } from "react-icons/io";
 import CompassData from "../../services/CompassApi";
 import Loader from "../../layouts/loader/Loader";
-import { CloseOutlined } from "@ant-design/icons";
+import { CloseOutlined, ConsoleSqlOutlined } from "@ant-design/icons";
 import { Drawer } from "antd";
 import { useGameContext } from "../../context/gameContext";
 import toast from "react-hot-toast";
 import { debounce } from "lodash";
 import { provider } from "../auth/config";
+import { Toaster } from 'react-hot-toast';
+
+
 
 const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const [searchQuery, setSearchQuery] = useState("");
@@ -15,6 +18,7 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
   const [currPage, setCurrPage] = useState(1);
   const [gameData, setGameData] = useState([]);
   const [noGamesFound, setNoGamesFound] = useState(false);
+  const [selectAllGames, setSelectAllGames] = useState(false);
   const gameListContainerRef = useRef(null);
 
   const [localSelectedGames, setLocalSelectedGames] = useState([]);
@@ -131,21 +135,41 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
 
   const handleCheckboxChange = (data) => {
     setLocalSelectedGames((prev) => {
+      
       const exists = prev.some((casino) => casino.id === data.id);
       if (exists) {
         return prev.filter((casino) => casino.id !== data.id);
       } else {
-        return [...prev, data];
+        if(prev.length < 10){
+          return [...prev, data];
+        }else{
+          toast.error("Only 10 games can be selected at once");
+          return prev;
+        } 
       }
     });
   };
+
+  const handleSelectAllGames = () => {
+    setSelectAllGames((prev) => {
+      if(prev){
+        setLocalSelectedGames([]);
+      }else{
+        setLocalSelectedGames([...gameData.map((item, index) => ({
+                ...item,
+                id: index + 1,
+              })).slice(0, 10)]);
+      }
+      return !prev;
+    });
+  }
 
   const handleSave = () => {
     clearGame();
     localSelectedGames.forEach((casino) => addGame(casino));
     localStorage.setItem("games", JSON.stringify(localSelectedGames));
     setGameDrawer(false);
-    toast.success("Game selected successfully");
+    toast.success("Games added successfully");
     setSearchQuery("");
     setCurrPage(1);
     debouncedFetchData("", 1);
@@ -186,6 +210,15 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
         </div>
       }
     >
+      <Toaster
+        container={() => document.getElementById('toast-container')}
+        position="top-right"
+        toastOptions={{
+          style: {
+            zIndex: 9999,
+          },
+        }}
+      />
       <div className="search-bar position-relative">
         <div className="serching">
           <input
@@ -215,6 +248,17 @@ const ChooseGamePage = ({ onGameDrawerClose, gameDrawer, setGameDrawer }) => {
             </div>
           ) : (
             <>
+              <div className="casino-data-display" key="key_0">
+                  <input
+                    type="checkbox"
+                    className="casino-checkbox"
+                    checked={selectAllGames}
+                    onChange={() => handleSelectAllGames()}
+                  />
+                  <div className="casino-data-bar">
+                    <label>Select All</label>
+                  </div>
+                </div>
               {gameData.map((item, index) => ({
                 ...item,
                 id: index + 1,

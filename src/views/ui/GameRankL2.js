@@ -192,7 +192,7 @@ const GameRankL2 = () => {
                     className="m-md-0 font-semibold"
                     style={{ color: "#392f6c" }}
                   >
-                    Game Rank Details
+                    Game Details
                   </h4>
                   <span className="text-black" style={{ fontSize: "1rem" }}>
                     Details of the game rank in the selected region
@@ -210,10 +210,11 @@ const GameRankL2 = () => {
                     value={selectedRegion}
                     onChange={(e) => setSelectedRegion(e.value)}
                     options={regions}
+                    disabled
                   />
-                                                                          <label className="fs-6" htmlFor="region">
+                                                                          {/* <label className="fs-6" htmlFor="region">
                                                                             Select Region
-                                                                          </label>
+                                                                          </label> */}
                                                                         </FloatLabel>
 
                   <Dropdown
@@ -225,6 +226,7 @@ const GameRankL2 = () => {
                     value={selectedGame}
                     onChange={(e) => setSelectedGame(e.value)}
                     options={games}
+                    disabled
                   />
                 </div>
               </div>
@@ -247,7 +249,7 @@ const GameRankL2 = () => {
           ) : (
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
-                <h5 className="font-semibold pl-2">Game Rank Details</h5>
+                <h5 className="font-semibold pl-2">Game Details</h5>
                 <div className="row g-2">
                   <div className="col-md-3">
                     <div
@@ -304,7 +306,7 @@ const GameRankL2 = () => {
                           tooltipTarget: "lobby_perc",
                         },
                         {
-                          label: "visibility %",
+                          label: "Visibility %",
                           value: data.visibility,
                           tooltip: "Game visibility",
                           tooltipTarget: "visibility",

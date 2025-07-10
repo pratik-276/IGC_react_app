@@ -9,6 +9,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Calendar } from "primereact/calendar";
 import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
+import { addDays } from 'date-fns';
 import toast from "react-hot-toast";
 
 const Configure = ({
@@ -41,6 +42,7 @@ const Configure = ({
   const [section_title, setSectionTitle] = useState("");
   const [minimum_position, setMinPosition] = useState(1);
   const [maximum_position, setMaxPosition] = useState(50);
+  const [saveDataClick, setSaveDataClick] = useState(false);
 
   useEffect(() => {
     if (casinoJSON) {
@@ -167,6 +169,10 @@ const Configure = ({
   };
 
   const handleSaveCasinoGame = () => {
+    if(saveDataClick){
+      return;
+    }
+    setSaveDataClick(true);
     const data = [];
 
     // casinos?.forEach((casino) => {
@@ -224,11 +230,13 @@ const Configure = ({
           getCompassReadData();
           setCasinos([]);
           setGame([]);
+          setSaveDataClick(false);
         }
       })
       .catch((err) => {
         console.log(err);
       });
+
   };
 
   return (
@@ -248,17 +256,18 @@ const Configure = ({
               onClick={handleClose}
               style={{ marginRight: 8 }}
               className="compass-sidebar-back"
+              disabled={saveDataClick}
             >
               Back
             </button>
             <button
               style={{ marginRight: 8 }}
-              className={`compass-sidebar-back ${(!startDate || !endDate || casinos.length === 0 || game.length === 0)
+              className={`compass-sidebar-back ${(!startDate || !endDate || casinos.length === 0 || game.length === 0 || saveDataClick)
                 ? "btn-disabled"
                 : ""
                 }`}
               onClick={handleSaveCasinoGame}
-              disabled={!startDate || !endDate || casinos.length === 0 || game.length === 0}
+              disabled={!startDate || !endDate || casinos.length === 0 || game.length === 0 || saveDataClick}
             >
               Save
             </button>
@@ -358,6 +367,7 @@ const Configure = ({
                     required
                     className="w-full"
                     appendTo="self"
+                    minDate={addDays(new Date(), 1)}
                   />
                   <label htmlFor="tracking_start">Tracking starts on</label>
                 </FloatLabel>
@@ -372,6 +382,7 @@ const Configure = ({
                     required
                     className="w-full"
                     appendTo="self"
+                    minDate={addDays(new Date(), 2)}
                   />
                   <label htmlFor="tracking_end">Tracking ends on</label>
                 </FloatLabel>
