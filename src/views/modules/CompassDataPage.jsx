@@ -116,6 +116,18 @@ const CompassDataPage = ({
     );
   };
 
+  const LastScanDateBodyTemplate = (row) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+
+    const lastScanDate = new Date(row?.last_scan_date).toLocaleDateString("en-US", options);
+
+    return (
+      <span>
+        {lastScanDate}
+      </span>
+    );
+  }
+
   const statusActionTemplate = (rowData) => {
     let tagStyle = {
       fontSize: '12px',
@@ -421,6 +433,7 @@ const CompassDataPage = ({
                     )}
                     sortable
                     style={{ minWidth: "8rem" }}
+                    body={LastScanDateBodyTemplate}
                   ></Column>
 
                 </DataTable>
