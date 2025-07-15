@@ -328,7 +328,7 @@ const GameProvideMarketshare = () => {
                   </span>
                 </div>
 
-                <div className="d-flex flex-wrap gap-3">
+                <div className="d-flex flex-wrap gap-2">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
@@ -343,6 +343,7 @@ const GameProvideMarketshare = () => {
                         localStorage.setItem("marketshareRegion", region);
                       }}
                       options={regions}
+                      style={{ width: "200px" }}
                     />
                     <label className="fs-6" htmlFor="region">
                       Select Region

@@ -244,22 +244,29 @@ const GameProvideMarketshareL2 = () => {
                         GetProvidersList(e.value);
                       }}
                       options={regions}
+                      style={{ width: "200px" }}
                     />
                     <label className="fs-6" htmlFor="region">
                       Select Region
                     </label>
                   </FloatLabel>
 
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Provider"
-                    loading={providerLoading}
-                    value={selectedProvider}
-                    onChange={(e) => setSelectedProvider(e.value)}
-                    options={providers}
-                  />
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Provider"
+                      loading={providerLoading}
+                      value={selectedProvider}
+                      onChange={(e) => setSelectedProvider(e.value)}
+                      options={providers}
+                      style={{ width: "200px" }}
+                    />
+                    <label className="fs-6" htmlFor="provider">
+                      Select Provider
+                    </label>
+                  </FloatLabel>
                 </div>
               </div>
             </div>
