@@ -135,13 +135,6 @@ const DashboardMod = () => {
 
   const overviewDashboard = async () => {
     try {
-      // const summaryRes = await GameData.provider_summary({
-      //   game_provider: user_company,
-      // });
-
-      // if (summaryRes?.success === true) {
-      //   setProviderSummary(summaryRes?.data || null);
-
       const detailsRes = await GameData.provider_latest_details({
         game_provider: user_company,
       });
@@ -151,9 +144,6 @@ const DashboardMod = () => {
       } else {
         console.log("Failed to fetch latest details");
       }
-      // } else {
-      //   console.log("Failed to fetch provider summary");
-      // }
     } catch (err) {
       console.log(err);
     } finally {
@@ -413,12 +403,32 @@ const DashboardMod = () => {
                   <div className="mt-3">
                     <div className="d-flex align-items-center justify-content-between">
                       <h5 className="font-semibold pl-2">Latest Details</h5>
-                      <span
-                        className="text-primary cursor-pointer"
-                        onClick={() => exportCSV(filteredData)}
-                      >
-                        Download Report
-                      </span>
+                      {isPlanExpired ? (
+                        <>
+                          <span
+                            className="text-muted"
+                            id="download-disabled"
+                            style={{
+                              cursor: "not-allowed",
+                              textDecoration: "underline dotted",
+                            }}
+                          >
+                            Download Report
+                          </span>
+                          <Tooltip
+                            target="#download-disabled"
+                            content="Upgrade your plan to download full report"
+                            position="top"
+                          />
+                        </>
+                      ) : (
+                        <span
+                          className="text-primary cursor-pointer"
+                          onClick={() => exportCSV(filteredData)}
+                        >
+                          Download Report
+                        </span>
+                      )}
                     </div>
 
                     <div>
