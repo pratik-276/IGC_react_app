@@ -30,9 +30,9 @@ const GameProvideMarketshareL2 = () => {
   const [loading, setLoading] = useState(false);
 
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState(null);
+  const [selectedRegion, setSelectedRegion] = useState(regionName);
   const [providers, setProviders] = useState([]);
-  const [selectedProvider, setSelectedProvider] = useState("");
+  const [selectedProvider, setSelectedProvider] = useState(providerId);
 
   const [data, setData] = useState({});
   const [gameData, setGameData] = useState([]);
@@ -47,9 +47,7 @@ const GameProvideMarketshareL2 = () => {
   useEffect(() => {
     getGeographyList();
     setSelectedRegion(regionName);
-    GetProvidersList();
-    setSelectedProvider(providerId);
-    console.log(providerId);
+    GetProvidersList(regionName, providerId);
   }, []);
 
   useEffect(() => {
@@ -89,7 +87,10 @@ const GameProvideMarketshareL2 = () => {
       });
   }
 
-  async function GetProvidersList(region_name = null) {
+  async function GetProvidersList(
+    region_name = null,
+    initialProviderId = null
+  ) {
     setProviderLoading(true);
 
     const payload = {
@@ -103,9 +104,12 @@ const GameProvideMarketshareL2 = () => {
             label: provider.provider_name,
             value: provider.provider_id,
           }));
-          console.log(cleaned);
           setProviders(cleaned);
-          setSelectedProvider(null);
+          if (initialProviderId) {
+            setSelectedProvider(initialProviderId);
+          } else {
+            setSelectedProvider(null);
+          }
         }
       })
       .catch((err) => {
@@ -126,10 +130,8 @@ const GameProvideMarketshareL2 = () => {
     setLoading(true);
     await getProviderMarketshareDetails(payload);
     await getProviderTopGames(payload);
-    // await getProviderLatestRelese(payload);
     await getProviderTopCasinos(payload);
     setLoading(false);
-    console.log("data : ", data);
   }
 
   async function getProviderMarketshareDetails(payload) {
@@ -151,7 +153,7 @@ const GameProvideMarketshareL2 = () => {
     return GetApiData.post_provider_top_games(payload)
       .then((res) => {
         if (res?.success === true) {
-          console.log(res.data);
+          // console.log(res.data);
           setGameData(res.data);
         }
       })
@@ -228,25 +230,25 @@ const GameProvideMarketshareL2 = () => {
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
-                                                  <FloatLabel>
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Region"
-                    loading={regionLoading}
-                    value={selectedRegion}
-                    onChange={(e) => {
-                      setSelectedRegion(e.value);
-                      setProviders([]);
-                      GetProvidersList(e.value);
-                    }}
-                    options={regions}
-                  />
-                                                        <label className="fs-6" htmlFor="region">
-                                                          Select Region
-                                                        </label>
-                                                      </FloatLabel>
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={regionLoading}
+                      value={selectedRegion}
+                      onChange={(e) => {
+                        setSelectedRegion(e.value);
+                        setProviders([]);
+                        GetProvidersList(e.value);
+                      }}
+                      options={regions}
+                    />
+                    <label className="fs-6" htmlFor="region">
+                      Select Region
+                    </label>
+                  </FloatLabel>
 
                   <Dropdown
                     optionLabel="label"
@@ -257,11 +259,6 @@ const GameProvideMarketshareL2 = () => {
                     value={selectedProvider}
                     onChange={(e) => setSelectedProvider(e.value)}
                     options={providers}
-                    // itemTemplate={(option) => (
-                    //   <div title={option.provider_name}>
-                    //     {option.provider_name}
-                    //   </div>
-                    // )}
                   />
                 </div>
               </div>

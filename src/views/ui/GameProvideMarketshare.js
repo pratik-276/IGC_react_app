@@ -119,11 +119,8 @@ const GameProvideMarketshare = () => {
     setTotalCasinos(data?.data?.total_casinos || "-");
 
     const marketData = data?.data?.data || [];
-    console.log(Math.max(...marketData.map((d) => parseFloat(d.market_share))));
+    // console.log(Math.max(...marketData.map((d) => parseFloat(d.market_share))));
     setTableData(marketData.sort((a, b) => b.market_share - a.market_share));
-
-    //console.log(Math.max(...data.data.map((d) => parseFloat(d.market_share))));
-    //setTableData(data.data.sort((a, b) => b.market_share - a.market_share));
   }
 
   async function getPageData() {
@@ -140,11 +137,6 @@ const GameProvideMarketshare = () => {
   }
 
   const changeTemplate = (row) => {
-    // let change = ";";
-    // if (row != null) {
-    //   change = row?.change.replaceAll("%", "");
-    //   change = parseFloat(change).toFixed(2);
-    // }
     let change = 0;
     if (row != null) {
       change = parseFloat(row?.change).toFixed(2);
@@ -204,41 +196,6 @@ const GameProvideMarketshare = () => {
     );
   };
 
-  // const marketshareTemplate = (row) => {
-  //   const share = mapToRange(row.market_share, 0, 100);
-  //   let bg = "bg-info";
-
-  //   if (parseFloat(row.market_share) < 3.0) {
-  //     bg = "bg-danger";
-  //   } else if (
-  //     parseFloat(row.market_share) > 3.0 &&
-  //     parseFloat(row.market_share) < 6.0
-  //   ) {
-  //     bg = "bg-warning";
-  //   } else if (parseFloat(row.market_share) > 6.0) {
-  //     bg = "bg-success";
-  //   } else {
-  //     bg = "bg-info";
-  //   }
-
-  //   return (
-  //     <div style={{ display: "flex", flexDirection: "row", gap: 4 }}>
-  //       <div style={{ fontSize: "12px", flex: 0.3 }}>
-  //         {parseFloat(row.market_share).toFixed(2)}%
-  //       </div>
-  //       <div style={{ flex: 1 }} className="progress">
-  //         <div
-  //           className={`progress-bar ${bg}`}
-  //           role="progressbar"
-  //           style={{ width: `${share}%` }}
-  //           aria-valuenow="50"
-  //           aria-valuemin="0"
-  //           aria-valuemax="100"
-  //         ></div>
-  //       </div>
-  //     </div>
-  //   );
-  // };
   const marketshareTemplate = (row) => {
     const share = mapToRange(row.normalized_share, 0, 100); // use normalized_share for graph
     let bg = "bg-info";
@@ -312,7 +269,6 @@ const GameProvideMarketshare = () => {
       <MdArrowForwardIos
         style={{ fontSize: "16px" }}
         onClick={() => {
-          console.log(rowData);
           navigate("/game-provider-marketshare-details", {
             state: {
               regionName: selectedRegion,
@@ -373,25 +329,25 @@ const GameProvideMarketshare = () => {
                 </div>
 
                 <div className="d-flex flex-wrap gap-3">
-                                  <FloatLabel>
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Region"
-                    loading={loading}
-                    value={selectedRegion}
-                    onChange={(e) => {
-                      const region = e.value;
-                      setSelectedRegion(region);
-                      localStorage.setItem("marketshareRegion", region);
-                    }}
-                    options={regions}
-                  />
-                                      <label className="fs-6" htmlFor="region">
-                                        Select Region
-                                      </label>
-                                    </FloatLabel>
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={loading}
+                      value={selectedRegion}
+                      onChange={(e) => {
+                        const region = e.value;
+                        setSelectedRegion(region);
+                        localStorage.setItem("marketshareRegion", region);
+                      }}
+                      options={regions}
+                    />
+                    <label className="fs-6" htmlFor="region">
+                      Select Region
+                    </label>
+                  </FloatLabel>
 
                   <IconField iconPosition="left" style={{ flex: 2 }}>
                     <InputIcon className="pi pi-search" />
