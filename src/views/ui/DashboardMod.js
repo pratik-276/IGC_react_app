@@ -417,7 +417,7 @@ const DashboardMod = () => {
                           </span>
                           <Tooltip
                             target="#download-disabled"
-                            content="Upgrade your plan to download full report"
+                            content="Upgrade your plan to download the report"
                             position="top"
                           />
                         </>

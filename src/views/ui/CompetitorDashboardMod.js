@@ -60,8 +60,8 @@ const CompetitorDashboardMod = () => {
   const [tableData, setTableData] = useState([]);
 
   const { state } = useContext(ProfileSystem);
-  // const isPlanExpired = state?.plan === "trial_expired";
-  const isPlanExpired = state?.plan === "trial";
+  const isPlanExpired = state?.plan === "trial_expired";
+  // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
   const getRegionsList = () => {
@@ -303,7 +303,21 @@ const CompetitorDashboardMod = () => {
   };
 
   const exportCSV = (data) => {
-    const csv = Papa.unparse(data);
+    if (!data || data.length === 0) return;
+
+    const formattedData = data.map((row) => {
+      const formattedRow = {
+        "Section Title": row.section_title,
+      };
+
+      uniquePositions.forEach((pos) => {
+        formattedRow[pos] = row[pos] || "";
+      });
+
+      return formattedRow;
+    });
+
+    const csv = Papa.unparse(formattedData);
     const link = document.createElement("a");
     link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
     link.download = "competitor_data.csv";
@@ -509,12 +523,33 @@ const CompetitorDashboardMod = () => {
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="font-semibold pl-2">Latest Details</h5>
-                  <span
-                    className="text-primary cursor-pointer"
-                    onClick={() => exportCSV(tableData)}
-                  >
-                    Download Report
-                  </span>
+                  {isPlanExpired ? (
+                    <>
+                      <span
+                        className="text-muted"
+                        id="download-disabled"
+                        style={{
+                          cursor: "not-allowed",
+                          textDecoration: "underline dotted",
+                        }}
+                      >
+                        Download Report
+                      </span>
+                      <Tooltip
+                        target="#download-disabled"
+                        content="Upgrade your plan to download the report"
+                        position="top"
+                        className="custom-tooltip"
+                      />
+                    </>
+                  ) : (
+                    <span
+                      className="text-primary cursor-pointer"
+                      onClick={() => exportCSV(tableData)}
+                    >
+                      Download Report
+                    </span>
+                  )}
                 </div>
 
                 {selectedSiteDetails && (
