@@ -25,10 +25,12 @@ import "./AccessBlur.css";
 
 const GameRankL2 = () => {
   const location = useLocation();
-  console.log(location.state);
   const { game_id } = location.state || {};
 
-  const [loading, setLoading] = useState(false);
+  const [gameDetailsLoading, setGameDetailsLoading] = useState(false);
+  const [trendLoading, setTrendLoading] = useState(false);
+  const [casinosLoading, setCasinosLoading] = useState(false);
+
   const [regionLoading, setRegionLoading] = useState(false);
   const [gameLoading, setGameLoading] = useState(false);
 
@@ -112,51 +114,60 @@ const GameRankL2 = () => {
       region: selectedRegion,
     };
 
-    setLoading(true);
-    await getGameRankDetails(payload);
-    await getGameRankTrend(payload);
-    await getGameRankCasinos(payload);
-    setLoading(false);
+    getGameRankDetails(payload);
+    getGameRankTrend(payload);
+    getGameRankCasinos(payload);
   }
 
   async function getGameRankDetails(payload) {
-    return GameRankData.get_game_rank_details(payload)
+    setGameDetailsLoading(true);
+    GameRankData.get_game_rank_details(payload)
       .then((res) => {
         if (res?.success === true) {
-          console.log(res.data);
           setData(res.data);
+        } else {
+          setData([]);
         }
       })
       .catch((err) => {
         console.log(err);
         setData([]);
-      });
+      })
+      .finally(() => setGameDetailsLoading(false));
   }
 
   async function getGameRankTrend(payload) {
-    return GameRankData.get_game_rank_trend(payload)
+    setTrendLoading(true);
+    GameRankData.get_game_rank_trend(payload)
       .then((res) => {
         if (res?.success === true) {
           setTrendData(res.data);
+        } else {
+          setTrendData([]);
         }
       })
       .catch((err) => {
         console.log(err);
         setTrendData([]);
-      });
+      })
+      .finally(() => setTrendLoading(false));
   }
 
   async function getGameRankCasinos(payload) {
-    return GameRankData.get_game_rank_casinos(payload)
+    setCasinosLoading(true);
+    GameRankData.get_game_rank_casinos(payload)
       .then((res) => {
         if (res?.success === true) {
           setCasinosData(res.data);
+        } else {
+          setCasinosData([]);
         }
       })
       .catch((err) => {
         console.log(err);
         setCasinosData([]);
-      });
+      })
+      .finally(() => setCasinosLoading(false));
   }
 
   const headerWithTooltip = (headerText) => (
@@ -201,21 +212,22 @@ const GameRankL2 = () => {
 
                 <div className="d-flex flex-wrap gap-2">
                   <FloatLabel>
-                  <Dropdown
-                    optionLabel="label"
-                    optionValue="value"
-                    filter
-                    placeholder="Select Region"
-                    loading={regionLoading}
-                    value={selectedRegion}
-                    onChange={(e) => setSelectedRegion(e.value)}
-                    options={regions}
-                    disabled
-                  />
-                                                                          {/* <label className="fs-6" htmlFor="region">
-                                                                            Select Region
-                                                                          </label> */}
-                                                                        </FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={regionLoading}
+                      value={selectedRegion}
+                      onChange={(e) => setSelectedRegion(e.value)}
+                      options={regions}
+                      style={{ width: "200px" }}
+                      disabled
+                    />
+                    <label className="fs-6" htmlFor="region">
+                      Region
+                    </label>
+                  </FloatLabel>
 
                   <Dropdown
                     optionLabel="label"
@@ -226,6 +238,7 @@ const GameRankL2 = () => {
                     value={selectedGame}
                     onChange={(e) => setSelectedGame(e.value)}
                     options={games}
+                    style={{ width: "200px" }}
                     disabled
                   />
                 </div>
@@ -233,7 +246,7 @@ const GameRankL2 = () => {
             </div>
           </div>
 
-          {loading ? (
+          {/* {loading ? (
             <>
               <div
                 className="row align-items-center justify-content-center"
@@ -247,191 +260,207 @@ const GameRankL2 = () => {
               </div>
             </>
           ) : (
-            <>
-              <div className="border border-secondary p-3 rounded-3 mt-3">
-                <h5 className="font-semibold pl-2">Game Details</h5>
-                <div className="row g-2">
-                  <div className="col-md-3">
-                    <div
-                      className="d-flex flex-column w-100 h-100 pl-2 pt-2"
-                      style={{
-                        borderTop: "1px solid #392f6c",
-                        borderRight: "1px solid #392f6c",
-                        borderBottom: "1px solid #392f6c",
-                        borderLeft: "6px solid #392f6c",
-                      }}
-                    >
-                      <h5>Game Image</h5>
-                      {data.game_image_base64 ? (
-                        <img
-                          src={data.game_image_base64}
-                          alt="Game"
-                          className="img-fluid mb-1"
-                          style={{
-                            maxHeight: "100px",
-                            objectFit: "scale-down",
-                          }}
-                        />
-                      ) : (
-                        <h5 className="font-semibold">N/A</h5>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="col-md-9">
-                    <div className="row g-2 h-100">
-                      {[
-                        {
-                          label: "Game Name",
-                          value: data.game_name,
-                          tooltip: "Game Name",
-                          tooltipTarget: "game_name",
-                        },
-                        {
-                          label: "Provider Name",
-                          value: data.provider_name,
-                          tooltip: "Game Provider Name",
-                          tooltipTarget: "provider_name",
-                        },
-                        {
-                          label: "Casinos Present",
-                          value: data.casinos_present,
-                          tooltip: "Casinos Present",
-                          tooltipTarget: "casinos_present",
-                        },
-                        {
-                          label: "Lobby %",
-                          value: data.lobby_perc,
-                          tooltip: "Lobby %",
-                          tooltipTarget: "lobby_perc",
-                        },
-                        {
-                          label: "Visibility %",
-                          value: data.visibility,
-                          tooltip: "Game visibility",
-                          tooltipTarget: "visibility",
-                        },
-                      ].map((item, idx) => (
-                        <div className="col-md-4 d-flex" key={idx}>
-                          <div
-                            className="d-flex flex-column w-100 pl-2 pt-2 justify-content-center"
-                            style={{
-                              borderTop: "1px solid #392f6c",
-                              borderRight: "1px solid #392f6c",
-                              borderBottom: "1px solid #392f6c",
-                              borderLeft: "6px solid #392f6c",
-                              flex: 1,
-                            }}
-                          >
-                            <div className="d-flex align-items-center">
-                              <h5 className="mb-0">{item.label}</h5>
-                              <Tooltip
-                                target={`.${item.tooltipTarget}`}
-                                content={item.tooltip}
-                                position="top"
-                                className="custom-tooltip"
-                              />
-                              <MdInfoOutline
-                                className={`${item.tooltipTarget} m-2`}
-                                style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                                }}
-                              />
-                            </div>
-                            <h5
-                              className="font-semibold"
-                              title={
-                                item.label === "Game Theme"
-                                  ? item.value ?? "N/A"
-                                  : ""
-                              }
-                              style={
-                                item.label === "Game Theme"
-                                  ? {
-                                      whiteSpace: "nowrap",
-                                      overflow: "hidden",
-                                      textOverflow: "ellipsis",
-                                    }
-                                  : {}
-                              }
-                            >
-                              {item.value ?? "N/A"}
-                            </h5>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
+            <> */}
+          <div className="border border-secondary p-3 rounded-3 mt-3">
+            <h5 className="font-semibold pl-2">Game Details</h5>
+            {gameDetailsLoading ? (
+              <div className="text-center py-3">
+                <Spin size="small" />
+              </div>
+            ) : (
+              <div className="row g-2">
+                <div className="col-md-3">
+                  <div
+                    className="d-flex flex-column w-100 h-100 pl-2 pt-2"
+                    style={{
+                      borderTop: "1px solid #392f6c",
+                      borderRight: "1px solid #392f6c",
+                      borderBottom: "1px solid #392f6c",
+                      borderLeft: "6px solid #392f6c",
+                    }}
+                  >
+                    <h5>Game Image</h5>
+                    {data.game_image_base64 ? (
+                      <img
+                        src={data.game_image_base64}
+                        alt="Game"
+                        className="img-fluid mb-1"
+                        style={{
+                          maxHeight: "100px",
+                          objectFit: "scale-down",
+                        }}
+                      />
+                    ) : (
+                      <h5 className="font-semibold">N/A</h5>
+                    )}
                   </div>
                 </div>
 
-                <h5 className="font-semibold pl-2 mt-3">Rank Trend</h5>
-                {Array.isArray(trendData) && trendData.length === 0 ? (
-                  <div
-                    className="d-flex justify-content-center align-items-center w-100 border"
-                    style={{ height: "100px" }}
-                  >
-                    <h5>Trend data not availble.</h5>
+                <div className="col-md-9">
+                  <div className="row g-2 h-100">
+                    {[
+                      {
+                        label: "Game Name",
+                        value: data.game_name,
+                        tooltip: "Game Name",
+                        tooltipTarget: "game_name",
+                      },
+                      {
+                        label: "Provider Name",
+                        value: data.provider_name,
+                        tooltip: "Game Provider Name",
+                        tooltipTarget: "provider_name",
+                      },
+                      {
+                        label: "Casinos Present",
+                        value: data.casinos_present,
+                        tooltip: "Casinos Present",
+                        tooltipTarget: "casinos_present",
+                      },
+                      {
+                        label: "Lobby %",
+                        value: data.lobby_perc,
+                        tooltip: "Lobby %",
+                        tooltipTarget: "lobby_perc",
+                      },
+                      {
+                        label: "Visibility %",
+                        value: data.visibility,
+                        tooltip: "Game visibility",
+                        tooltipTarget: "visibility",
+                      },
+                    ].map((item, idx) => (
+                      <div className="col-md-4 d-flex" key={idx}>
+                        <div
+                          className="d-flex flex-column w-100 pl-2 pt-2 justify-content-center"
+                          style={{
+                            borderTop: "1px solid #392f6c",
+                            borderRight: "1px solid #392f6c",
+                            borderBottom: "1px solid #392f6c",
+                            borderLeft: "6px solid #392f6c",
+                            flex: 1,
+                          }}
+                        >
+                          <div className="d-flex align-items-center">
+                            <h5 className="mb-0">{item.label}</h5>
+                            <Tooltip
+                              target={`.${item.tooltipTarget}`}
+                              content={item.tooltip}
+                              position="top"
+                              className="custom-tooltip"
+                            />
+                            <MdInfoOutline
+                              className={`${item.tooltipTarget} m-2`}
+                              style={{
+                                fontSize: "16px",
+                                cursor: "pointer",
+                                flexShrink: 0,
+                              }}
+                            />
+                          </div>
+                          <h5
+                            className="font-semibold"
+                            title={
+                              item.label === "Game Theme"
+                                ? item.value ?? "N/A"
+                                : ""
+                            }
+                            style={
+                              item.label === "Game Theme"
+                                ? {
+                                    whiteSpace: "nowrap",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                  }
+                                : {}
+                            }
+                          >
+                            {item.value ?? "N/A"}
+                          </h5>
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ) : (
-                  <GameTrendChart data={trendData} />
-                )}
-
-                <h5 className="font-semibold pl-2 mt-3">Top Casinos</h5>
-                <DataTable
-                  value={casinosData}
-                  scrollable
-                  size="small"
-                  className="table-bordered p-component p-datatable custom-table small"
-                >
-                  <Column
-                    header={headerWithTooltip("Casino Name")}
-                    field="casino_name"
-                  />
-                  <Column header={headerWithTooltip("State")} field="state" />
-                  <Column
-                    header={headerWithTooltip("Casino URL")}
-                    field="casino_url"
-                    body={(rowData) => (
-                      <a
-                        href={rowData.casino_url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{
-                          display: "inline-block",
-                          maxWidth: "200px",
-                          color: "#0066cc",
-                          whiteSpace: "nowrap",
-                          overflow: "hidden",
-                          textOverflow: "ellipsis",
-                        }}
-                        title={rowData.casino_url}
-                      >
-                        {rowData.casino_url}
-                      </a>
-                    )}
-                  />
-                  <Column
-                    header={headerWithTooltip("Lobby Pos")}
-                    field="lobby_position"
-                  />
-                  <Column
-                    header={headerWithTooltip("Sec Name")}
-                    field="section_name"
-                  />
-                  <Column
-                    header={headerWithTooltip("Sec Pos")}
-                    field="section_position"
-                  />
-                  <Column
-                    header={headerWithTooltip("Sec Game Pos")}
-                    field="section_game_position"
-                  />
-                </DataTable>
+                </div>
               </div>
-            </>
-          )}
+            )}
+
+            <h5 className="font-semibold pl-2 mt-3">Rank Trend</h5>
+            {trendLoading ? (
+              <div className="text-center py-3">
+                <Spin size="small" />
+              </div>
+            ) : trendData.length === 0 ? (
+              <div
+                className="d-flex justify-content-center align-items-center w-100 border"
+                style={{ height: "100px" }}
+              >
+                <h5>Trend data not available.</h5>
+              </div>
+            ) : (
+              <GameTrendChart data={trendData} />
+            )}
+
+            <h5 className="font-semibold pl-2 mt-3">Top Casinos</h5>
+            {casinosLoading ? (
+              <div className="text-center py-3">
+                <Spin size="small" />
+              </div>
+            ) : (
+              <DataTable
+                value={casinosData}
+                scrollable
+                size="small"
+                className="table-bordered p-component p-datatable custom-table small"
+              >
+                <Column
+                  header={headerWithTooltip("Casino Name")}
+                  field="casino_name"
+                />
+                <Column header={headerWithTooltip("State")} field="state" />
+                <Column
+                  header={headerWithTooltip("Casino URL")}
+                  field="casino_url"
+                  body={(rowData) => (
+                    <a
+                      href={rowData.casino_url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{
+                        display: "inline-block",
+                        maxWidth: "200px",
+                        color: "#0066cc",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={rowData.casino_url}
+                    >
+                      {rowData.casino_url}
+                    </a>
+                  )}
+                />
+                <Column
+                  header={headerWithTooltip("Lobby Pos")}
+                  field="lobby_position"
+                />
+                <Column
+                  header={headerWithTooltip("Sec Name")}
+                  field="section_name"
+                />
+                <Column
+                  header={headerWithTooltip("Sec Pos")}
+                  field="section_position"
+                />
+                <Column
+                  header={headerWithTooltip("Sec Game Pos")}
+                  field="section_game_position"
+                />
+              </DataTable>
+            )}
+          </div>
+          {/* </>
+          )} */}
         </div>
       </div>
     </>

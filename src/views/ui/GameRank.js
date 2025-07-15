@@ -346,13 +346,13 @@ const GameRank = () => {
                       placeholder="Select Region"
                       loading={loading}
                       value={selectedRegion}
-                      // onChange={(e) => setSelectedRegion(e.value)}
                       onChange={(e) => {
                         const region = e.value;
                         setSelectedRegion(region);
                         localStorage.setItem("gameRegion", region);
                       }}
                       options={regions}
+                      style={{ width: "200px" }}
                     />
                     <label className="fs-6" htmlFor="region">
                       Select Region
@@ -371,6 +371,7 @@ const GameRank = () => {
                           global: { ...f.global, value: e.target.value },
                         }))
                       }
+                      style={{ width: "200px" }}
                     />
                   </IconField>
                 </div>

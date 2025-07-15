@@ -362,6 +362,7 @@ const GameProvideMarketshare = () => {
                           global: { ...f.global, value: e.target.value },
                         }))
                       }
+                      style={{ width: "200px" }}
                     />
                   </IconField>
                 </div>
