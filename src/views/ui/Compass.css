@@ -46,3 +46,20 @@
     color: white;
     box-shadow: 0 0 0 0.2rem rgba(102, 16, 242, 0.5);
 }
+
+.btn-filter:disabled,
+.btn-filter[disabled] {
+    background-color: #a29bbd;
+    border-color: #a29bbd;
+    color: #ffffff;
+    cursor: not-allowed;
+    opacity: 1;
+    box-shadow: none;
+}
+
+.btn-filter:disabled:hover,
+.btn-filter[disabled]:hover {
+    background-color: #a29bbd;
+    border-color: #a29bbd;
+    color: #ffffff;
+}
