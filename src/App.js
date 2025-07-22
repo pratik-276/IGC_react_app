@@ -75,7 +75,7 @@ const App = () => {
                     }
                   /> */}
                   <Route
-                    path="calibrate-compass"
+                    path="calibrate-compass-mod"
                     element={
                       <ProtectedRoute>
                         <Compass />
@@ -83,7 +83,7 @@ const App = () => {
                     }
                   />
                   <Route
-                    path="calibrate-compass-mod"
+                    path="calibrate-compass"
                     element={
                       <ProtectedRoute>
                         <CompassMod />

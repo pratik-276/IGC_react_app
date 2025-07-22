@@ -5,10 +5,11 @@
 }
 
 .auth_inr {
-  display: grid;
+  /* display: grid; */
   /* grid-template-columns: repeat(2, 1fr); */
-  grid-template-columns: 65% 35%;
+  /* grid-template-columns: 65% 35%; */
   height: 100%;
+  width: 100%;
 }
 
 /* Auth Left Side Image Css */
@@ -18,12 +19,15 @@
   background-position: center;
   background-repeat: no-repeat;
   background-size: cover;
+  /* width: 1200px; */
 }
 
 /* Auth Login Form Css */
 .auth_right {
   background-color: #fff;
   padding: 20px;
+  width: 400px;
+  border-radius: 20px;
 }
 
 .login_main {

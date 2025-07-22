@@ -515,7 +515,7 @@ const CompassMod = () => {
               >
                 Select Game
               </h4>
-              <span>Selecte games (Maximum 10 allowed)</span>
+              <span>Selected Games (Maximum 10 allowed)</span>
             </div>
 
             <div className="px-3 mt-3">

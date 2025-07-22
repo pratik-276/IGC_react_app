@@ -49,6 +49,7 @@ const DashboardMod = () => {
   const [selectedFreqs, setSelectedFreqs] = useState(null);
   const [filteredData, setFilteredData] = useState([]);
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
+  const [videoURL, setVideoURL] = useState(null);
 
   const arrayFromValues = Object.values(providerLatestDetails);
 
@@ -237,9 +238,11 @@ const DashboardMod = () => {
   };
 
   const evidanceTemplate = (rowData) => {
+    setVideoURL(rowData?.video_url);
+    const label = "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
     return (
       <Button
-        label="Watch"
+        label={label}
         icon="pi pi-play"
         className="p-button-text"
         onClick={() => setVideoDialogVisible(true)}
@@ -313,7 +316,7 @@ const DashboardMod = () => {
                 optionLabel="name"
                 filter
                 placeholder="Select Games"
-                maxSelectedLabels={3}
+                maxSelectedLabels={10}
               />
               <MultiSelect
                 value={selectedCasinos}
@@ -322,7 +325,7 @@ const DashboardMod = () => {
                 optionLabel="name"
                 filter
                 placeholder="Select Casinos"
-                maxSelectedLabels={3}
+                maxSelectedLabels={10}
               />
               <MultiSelect
                 value={selectedFreqs}
@@ -596,7 +599,7 @@ const DashboardMod = () => {
                           style={{ minWidth: "7rem" }}
                         ></Column>
 
-                        {/* <Column
+                        <Column
                           field="evidance"
                           header={headerWithTooltip(
                             "Evidence",
@@ -604,7 +607,8 @@ const DashboardMod = () => {
                             "evidance"
                           )}
                           body={evidanceTemplate}
-                        ></Column> */}
+                          style={{ minWidth: "13rem" }}
+                        ></Column>
 
                         <Column
                           field="details"
@@ -677,7 +681,7 @@ const DashboardMod = () => {
         onHide={() => setVideoDialogVisible(false)}
       >
         <video width="100%" height="auto" controls>
-          <source src={VIDEO_URL} type="video/mp4" />
+          <source src={videoURL} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
       </Dialog>
