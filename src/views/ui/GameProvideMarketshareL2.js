@@ -245,10 +245,11 @@ const GameProvideMarketshareL2 = () => {
                       }}
                       options={regions}
                       style={{ width: "200px" }}
+                      disabled
                     />
-                    <label className="fs-6" htmlFor="region">
+                    {/* <label className="fs-6" htmlFor="region">
                       Select Region
-                    </label>
+                    </label> */}
                   </FloatLabel>
 
                   <FloatLabel>
@@ -262,10 +263,11 @@ const GameProvideMarketshareL2 = () => {
                       onChange={(e) => setSelectedProvider(e.value)}
                       options={providers}
                       style={{ width: "200px" }}
+                      disabled
                     />
-                    <label className="fs-6" htmlFor="provider">
+                    {/* <label className="fs-6" htmlFor="provider">
                       Select Provider
-                    </label>
+                    </label> */}
                   </FloatLabel>
                 </div>
               </div>

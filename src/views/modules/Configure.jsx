@@ -11,6 +11,7 @@ import { Drawer } from "antd";
 import GameData from "../../services/CompassApi";
 import { addDays } from 'date-fns';
 import toast from "react-hot-toast";
+import { Toaster } from 'react-hot-toast';
 
 const Configure = ({
   configure,
@@ -168,6 +169,45 @@ const Configure = ({
     setEndDate(e.target.value);
   };
 
+  const settingMinPosition = (e) => {
+    const min_position_val = e.target.value;
+    if(min_position_val){
+      if(min_position_val < 1){
+        toast.error("Minimum Position can't be less than 1");
+        return;
+      }
+      if(min_position_val > 100){
+        toast.error("Minimum Position can't be more than 100");
+        return;
+      }
+      // if(maximum_position && min_position_val > maximum_position){
+      //   console.log(maximum_position, min_position_val);
+      //   toast.error("Minimum Position can't be more than maximum position");
+      //   return;
+      // }
+    }
+    setMinPosition(e.target.value);
+  }
+  
+  const settingMaxPosition = (e) => {
+    const max_position_val = e.target.value;
+    if(max_position_val){
+      if(max_position_val < 1){
+        toast.error("Maximum Position can't be less than 1");
+        return;
+      }
+      if(max_position_val > 100){
+        toast.error("Maximum Position can't be more than 100");
+        return;
+      }
+      // if(minimum_position && max_position_val < minimum_position){
+      //   toast.error("Maximum Position can't be less than minimum position");
+      //   return;
+      // }
+    }
+    setMaxPosition(e.target.value);
+  }
+
   const handleSaveCasinoGame = () => {
     if(saveDataClick){
       return;
@@ -191,7 +231,32 @@ const Configure = ({
     //     });
     //   });
     // });
-
+    const min_postion_int = parseInt(minimum_position);
+    const max_position_int = parseInt(maximum_position);
+    if(min_postion_int > max_position_int){
+      toast.error("Minimum position can't be more than maximum position");
+      setSaveDataClick(false);
+      return;
+    }
+    if(!startDate){
+      toast.error("Start Date is required");
+      setSaveDataClick(false);
+      return;
+    }
+    if(!endDate){
+      toast.error("End Date is required");
+      setSaveDataClick(false);
+      return;
+    }
+    if(startDate > endDate){
+      toast.error("Start date can't be after End date");
+      setSaveDataClick(false);
+      return;
+    }
+    // console.log(startDate.toLocaleDateString('en-CA'), endDate.toLocaleDateString('en-CA'));
+    // toast.success('created');
+    // setSaveDataClick(false);
+    
     casinos?.forEach((casino) => {
       game?.forEach((g) => {
         const uniqueId = `${casino.id}-${g.id}`;
@@ -200,8 +265,8 @@ const Configure = ({
             user_id: user_id,
             operator_id: casino.id,
             game_id: g.game_id,
-            start_date: startDate,
-            end_date: endDate,
+            start_date: startDate.toLocaleDateString('en-CA'),
+            end_date: endDate.toLocaleDateString('en-CA'),
             game_name: g.game_original_name,
             game_provider: g.game_provider_name,
             section_name: section_title,
@@ -241,6 +306,7 @@ const Configure = ({
 
   return (
     <>
+          
       <Drawer
         title="Enter Tracker Details"
         width="75%"
@@ -273,7 +339,15 @@ const Configure = ({
             </button>
           </div>
         }
-      >
+      ><Toaster
+            container={() => document.getElementById('toast-container')}
+            position="top-right"
+            toastOptions={{
+              style: {
+                zIndex: 9999,
+              },
+            }}
+          />
         <div className="Tracking-game-model-content">
           <div className="col-md-12">
             <h6>Tracking list will contain:</h6>
@@ -410,7 +484,7 @@ const Configure = ({
                   <InputText
                     id="minPosition"
                     value={minimum_position}
-                    onChange={(e) => setMinPosition(e.target.value)}
+                    onChange={(e) => settingMinPosition(e)}
                     className="w-full"
                   />
                   <label htmlFor="minPosition">Min Position</label>
@@ -422,7 +496,7 @@ const Configure = ({
                   <InputText
                     id="maxPosition"
                     value={maximum_position}
-                    onChange={(e) => setMaxPosition(e.target.value)}
+                    onChange={(e) => settingMaxPosition(e)}
                     className="w-full"
                   />
                   <label htmlFor="maxPosition">Max Position</label>

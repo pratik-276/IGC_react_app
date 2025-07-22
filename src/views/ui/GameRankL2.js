@@ -224,9 +224,9 @@ const GameRankL2 = () => {
                       style={{ width: "200px" }}
                       disabled
                     />
-                    <label className="fs-6" htmlFor="region">
+                    {/* <label className="fs-6" htmlFor="region">
                       Region
-                    </label>
+                    </label> */}
                   </FloatLabel>
 
                   <Dropdown

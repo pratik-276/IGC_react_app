@@ -49,6 +49,16 @@
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
   <!-- <script>window.$zoho=window.$zoho || {};$zoho.salesiq=$zoho.salesiq||{ready:function(){}}</script><script id="zsiqscript" src="https://salesiq.zohopublic.in/widget?wc=siq68803b95247df144e8b466caee2feb26e6738dc05e57426626c4f99ee34a8129" defer></script> -->
-</body>
+    <!-- <div id="rasa-chat-widget" data-websocket-url="http://0.0.0.0:5005/socket.io"></div>
+     -->
 
+    <div id="rasa-chat-widget"
+        data-websocket-url="http://127.0.0.1:5005/socket.io"
+        data-title="Ask IGC"
+        data-subtitle="Chat with IgamingCompass AI assistant"
+        data-init-payload='{"message": "/greet"}'>
+    </div>
+    <script src="https://unpkg.com/@rasahq/rasa-chat" type="application/javascript"></script>
+
+</body>
 </html>

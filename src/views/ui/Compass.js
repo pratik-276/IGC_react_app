@@ -197,7 +197,7 @@ const Compass = () => {
               <div className="calibrate-icon">
                 <CiCirclePlus />
               </div>
-              <p>Start configuration by adding operator first</p>
+              <p>{casinos && casinos.length > 0 ? "Change casino selection" : "Start configuration by adding casino first"}</p>
             </div>
           </div>
           <div
@@ -231,7 +231,7 @@ const Compass = () => {
                 <CiCirclePlus />
               </div>
               <div>
-                <p>Start configuration by adding Casino game first</p>
+                <p>{game && game.length > 0 ? "Add more games" : "Start configuration by adding games"}</p>
               </div>
             </div>
           </div>
