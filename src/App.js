@@ -6,6 +6,7 @@ import Layout from "./views/AntdLayout";
 import Home from "./views/Home";
 import GameTracking from "./views/ui/GameTrackingMod";
 import Compass from "./views/ui/Compass";
+import CompassMod from "./views/ui/CompassMod";
 import Login from "./views/auth/Login";
 import Verify from "./views/auth/Verify";
 import Signup from "./views/auth/Signup";
@@ -16,6 +17,7 @@ import ContactSalesProvider from "./context/confirmationContext";
 import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
+
 import Dashboard from "./views/ui/Dashboard";
 import DashboardMod from "./views/ui/DashboardMod";
 import CompetitorDashboardMod from "./views/ui/CompetitorDashboardMod";
@@ -41,7 +43,10 @@ const App = () => {
           <ContactSalesProvider>
             <GameProvider>
               <ScrollToTop />
-              <Toaster toastOptions={{ duration: 1500, style: {zIndex: 10001} }} position="top-right" />
+              <Toaster
+                toastOptions={{ duration: 1500, style: { zIndex: 10001 } }}
+                position="top-right"
+              />
 
               <Routes>
                 <Route path="/" element={<Layout />}>
@@ -74,6 +79,14 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <Compass />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="calibrate-compass-mod"
+                    element={
+                      <ProtectedRoute>
+                        <CompassMod />
                       </ProtectedRoute>
                     }
                   />

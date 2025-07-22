@@ -77,11 +77,10 @@ const CompassDataPage = ({
         }
       })
       .catch((err) => {
-        console.error(err);
         toast.current?.show({
           severity: 'error',
           summary: 'Error',
-          detail: 'Delete failed. Try again.',
+          detail: err,
           life: 3000
         });
       })
