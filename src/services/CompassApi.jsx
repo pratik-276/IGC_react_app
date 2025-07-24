@@ -18,6 +18,16 @@ const compass_create = async (data) => {
   return d;
 };
 
+
+const compass_create_mail = async (data) => {
+  let d = await Call({
+    path: "mail_casino_games_combination",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const compass_delete = async (data) => {
   let d = await Call({
     path: "delete_compass",
@@ -101,6 +111,7 @@ const section_name_by_operator_site_id = async (data) => {
 const exportObject = {
   compass_read,
   compass_create,
+  compass_create_mail,
   compass_delete,
   get_provider,
   get_operator,

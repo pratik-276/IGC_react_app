@@ -87,8 +87,20 @@ const CompassDataPage = ({
       .finally(() => setDeleteLoader(false));
   };
 
-  const showFirstDrawer = () => setOpen(true);
-
+  const showFirstDrawer = () => {
+    if(filteredData.length >= 50){
+      //toast.error("Your quota for compass calibration is reached. Contact administrator at info@igamingcompass.com");
+      
+      toast.current?.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: "Your quota for compass calibration is reached. Contact administrator at info@igamingcompass.com",
+        life: 1500
+      });
+      return
+    }
+    setOpen(true);
+  }
   const sortIconTemplate = (options) => {
     let icon = options.sorted ? (
       options.sortOrder < 0 ? (

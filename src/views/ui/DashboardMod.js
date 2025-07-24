@@ -599,7 +599,7 @@ const DashboardMod = () => {
                           style={{ minWidth: "7rem" }}
                         ></Column>
 
-                        <Column
+                        {/* <Column
                           field="evidance"
                           header={headerWithTooltip(
                             "Evidence",
@@ -608,7 +608,7 @@ const DashboardMod = () => {
                           )}
                           body={evidanceTemplate}
                           style={{ minWidth: "13rem" }}
-                        ></Column>
+                        ></Column> */}
 
                         <Column
                           field="details"

@@ -296,6 +296,7 @@ const Configure = ({
           setCasinos([]);
           setGame([]);
           setSaveDataClick(false);
+          GameData.compass_create_mail({"user_id": user_id}).then((res) => {console.log("Compass Mailed")}).catch((err) => {console.log("Compass mail error")});
         }
       })
       .catch((err) => {

@@ -77,6 +77,9 @@ const CompassMod = () => {
   const [minPosition, setMinPosition] = useState(1);
   const [maxPosition, setMaxPosition] = useState(50);
 
+  
+  const [selectAllGames, setSelectAllGames] = useState(false);
+
   const onStartDateChange = (e) => {
     setStartDate(e.target.value);
   };
@@ -201,9 +204,71 @@ const CompassMod = () => {
       });
   };
 
+
+    const settingMinPosition = (e) => {
+    const min_position_val = e.target.value;
+    if(min_position_val){
+      if(min_position_val < 1){
+        toast.error("Minimum Position can't be less than 1");
+        return;
+      }
+      if(min_position_val > 100){
+        toast.error("Minimum Position can't be more than 100");
+        return;
+      }
+      // if(maximum_position && min_position_val > maximum_position){
+      //   console.log(maximum_position, min_position_val);
+      //   toast.error("Minimum Position can't be more than maximum position");
+      //   return;
+      // }
+    }
+    setMinPosition(e.target.value);
+  }
+  
+  const settingMaxPosition = (e) => {
+    const max_position_val = e.target.value;
+    if(max_position_val){
+      if(max_position_val < 1){
+        toast.error("Maximum Position can't be less than 1");
+        return;
+      }
+      if(max_position_val > 100){
+        toast.error("Maximum Position can't be more than 100");
+        return;
+      }
+      // if(minimum_position && max_position_val < minimum_position){
+      //   toast.error("Maximum Position can't be less than minimum position");
+      //   return;
+      // }
+    }
+    setMaxPosition(e.target.value);
+  }
   const handleSaveCompass = () => {
     setSubmitLoading(true);
     const data = [];
+
+    const min_postion_int = parseInt(minPosition);
+    const max_position_int = parseInt(maxPosition);
+    if(min_postion_int > max_position_int){
+      toast.error("Minimum position can't be more than maximum position");
+      setSubmitLoading(false);
+      return;
+    }
+    if(!startDate){
+      toast.error("Start Date is required");
+      setSubmitLoading(false);
+      return;
+    }
+    if(!endDate){
+      toast.error("End Date is required");
+      setSubmitLoading(false);
+      return;
+    }
+    if(startDate > endDate){
+      toast.error("Start date can't be after End date");
+      setSubmitLoading(false);
+      return;
+    }
 
     selectedCasino?.forEach((casino) => {
       selectedGame?.forEach((g) => {
@@ -240,7 +305,9 @@ const CompassMod = () => {
           getCompassReadData();
           setSelectedCasino([]);
           setSelectedGame([]);
+          setSelectAllGames(false);
           setDisplayedGames({});
+          CompassData.compass_create_mail({"user_id": user_id}).then((res) => {console.log("Compass Mailed")}).catch((err) => {console.log("Compass mail error")});
         }
       })
       .catch((err) => {
@@ -416,6 +483,20 @@ const CompassMod = () => {
     { icon: "pi pi-check", template: (item) => itemRenderer(item, 2) },
   ];
 
+  const handleSelectAllGames = () => {
+    setSelectAllGames((prev) => {
+      if(prev){
+        setSelectedGame([]);
+      }else{
+        setSelectedGame([...gameData.map((item, index) => ({
+                ...item,
+                id: index + 1,
+              })).slice(0, 10)]);
+      }
+      return !prev;
+    });
+  }
+
   const renderStepContent = () => {
     switch (activeStep) {
       case 0:
@@ -543,6 +624,37 @@ const CompassMod = () => {
                 }
               }}
             >
+              
+              <div
+                  className="casino-data-display rounded-1"
+                  key="game_id_select_all"
+                >
+                  <input
+                    type="checkbox"
+                    className="casino-checkbox"
+                    id="game_id_select_all"
+                    checked={selectAllGames}
+                    onChange={() => handleSelectAllGames()}
+                  />
+                  <div className="casino-data-bar">
+                    <label htmlFor="game_id_select_all">
+                      Select All
+                    </label>
+                    <span
+                      style={{
+                        display: "inline-block",
+                        maxWidth: "400px",
+                        color: "#392f6c",
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                      }}
+                      title={" "}
+                    >
+                      {" "}
+                    </span>
+                  </div>
+                </div>
               {gameData.map((data) => (
                 <div
                   className="casino-data-display rounded-1"
@@ -702,7 +814,7 @@ const CompassMod = () => {
                         <InputText
                           id="minPosition"
                           value={minPosition}
-                          onChange={(e) => setMinPosition(e.target.value)}
+                          onChange={(e) => settingMinPosition(e)}
                           className="w-full"
                         />
                         <label htmlFor="minPosition">Min Position</label>
@@ -714,7 +826,7 @@ const CompassMod = () => {
                         <InputText
                           id="maxPosition"
                           value={maxPosition}
-                          onChange={(e) => setMaxPosition(e.target.value)}
+                          onChange={(e) => settingMaxPosition(e)}
                           className="w-full"
                         />
                         <label htmlFor="maxPosition">Max Position</label>
