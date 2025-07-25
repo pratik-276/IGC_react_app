@@ -7,6 +7,8 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { FloatLabel } from "primereact/floatlabel";
 import { Calendar } from "primereact/calendar";
+import { Tooltip } from 'primereact/tooltip';
+import { MdInfoOutline } from 'react-icons/md';
 
 import { Spin } from "antd";
 
@@ -324,9 +326,9 @@ const CompassMod = () => {
 
     const rows = [];
 
-    if (selectedCasino.length > 0) {
-      getSectionTitleData(selectedCasino[0].id);
-    }
+    // if (selectedCasino.length > 0) {
+    //   getSectionTitleData(selectedCasino[0].id);
+    // }
 
     for (const casino of selectedCasino) {
       for (const gameItem of selectedGame) {
@@ -418,6 +420,7 @@ const CompassMod = () => {
   };
 
   const handleCasinoCheckboxChange = (data) => {
+    getSectionTitleData(data.id);
     setSelectedCasino([data]);
   };
 
@@ -700,6 +703,7 @@ const CompassMod = () => {
         return (
           <div className="d-flex flex-column h-full">
             {/* Header */}
+            
             <div className="px-3">
               <h4
                 className="m-md-0"
@@ -762,6 +766,26 @@ const CompassMod = () => {
                   >
                     <div className="form-group credit-field">
                       <FloatLabel>
+                        <div className="d-flex align-items-center justify-content-start">
+                          {/* <label htmlFor="minPosition">Min Position 
+                          </label> */}
+                          <p style={{fontWeight:"bold"}} className="mb-0">Tracking starts on
+                          </p>
+                          <MdInfoOutline
+                              className="tracking-start-tooltip-target m-2"
+                              style={{
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                              }}
+                          />
+                          <Tooltip
+                              target=".tracking-start-tooltip-target"
+                              content="Date when tracking for the casino game pair starts"
+                              position="top"
+                              className="custom-tooltip"
+                          />
+                        </div>
                         <Calendar
                           inputId="tracking_start"
                           value={startDate}
@@ -771,14 +795,34 @@ const CompassMod = () => {
                           appendTo="self"
                           minDate={addDays(new Date(), 1)}
                         />
-                        <label htmlFor="tracking_start">
+                        {/* <label htmlFor="tracking_start">
                           Tracking starts on
-                        </label>
+                        </label> */}
                       </FloatLabel>
                     </div>
 
                     <div className="form-group credit-field">
                       <FloatLabel>
+                        <div className="d-flex align-items-center justify-content-start">
+                          {/* <label htmlFor="minPosition">Min Position 
+                          </label> */}
+                          <p style={{fontWeight:"bold"}} className="mb-0">Tracking ends on
+                          </p>
+                          <MdInfoOutline
+                              className="tracking-end-tooltip-target m-2"
+                              style={{
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                              }}
+                          />
+                          <Tooltip
+                              target=".tracking-end-tooltip-target"
+                              content="Date when tracking for the casino game pair ends"
+                              position="top"
+                              className="custom-tooltip"
+                          />
+                        </div>
                         <Calendar
                           inputId="tracking_end"
                           value={endDate}
@@ -788,12 +832,40 @@ const CompassMod = () => {
                           appendTo="self"
                           minDate={addDays(new Date(), 2)}
                         />
-                        <label htmlFor="tracking_end">Tracking ends on</label>
+                        {/* <label htmlFor="tracking_end">Tracking ends on</label> */}
                       </FloatLabel>
                     </div>
-
+</div>
+<div
+                    className="tracking-grid mt-4"
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "repeat(3, 1fr)",
+                      gap: "1.5rem 0.5rem",
+                    }}
+                  >
                     <div className="form-group credit-field">
                       <FloatLabel>
+                        <div className="d-flex align-items-center justify-content-start">
+                          {/* <label htmlFor="minPosition">Min Position 
+                          </label> */}
+                          <p style={{fontWeight:"bold"}} className="mb-0">Section Title 
+                          </p>
+                          <MdInfoOutline
+                              className="section-title-tooltip-target m-2"
+                              style={{
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                              }}
+                          />
+                          <Tooltip
+                              target=".section-title-tooltip-target"
+                              content="Section within the casino where the selected games are expected to be present"
+                              position="top"
+                              className="custom-tooltip"
+                          />
+                        </div>
                         <Dropdown
                           optionLabel="label"
                           optionValue="value"
@@ -805,31 +877,73 @@ const CompassMod = () => {
                           appendTo="self"
                           className="w-full"
                         />
-                        <label htmlFor="dd-city">Section Title</label>
+                        {/* <label htmlFor="dd-city">Section Title</label> */}
                       </FloatLabel>
                     </div>
 
+                    
                     <div className="form-group credit-field">
+                      
                       <FloatLabel>
+                        <div className="d-flex align-items-center justify-content-start">
+                          {/* <label htmlFor="minPosition">Min Position 
+                          </label> */}
+                          <p style={{fontWeight:"bold"}} className="mb-0">Min Position 
+                          </p>
+                          <MdInfoOutline
+                              className="min-tooltip-target m-2"
+                              style={{
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                              }}
+                          />
+                          <Tooltip
+                              target=".min-tooltip-target"
+                              content="Minimum position within the section that the games can have"
+                              position="top"
+                              className="custom-tooltip"
+                          />
+                        </div>
+
                         <InputText
                           id="minPosition"
                           value={minPosition}
                           onChange={(e) => settingMinPosition(e)}
                           className="w-full"
                         />
-                        <label htmlFor="minPosition">Min Position</label>
                       </FloatLabel>
                     </div>
 
                     <div className="form-group credit-field">
                       <FloatLabel>
+                        <div className="d-flex align-items-center justify-content-start">
+                          {/* <label htmlFor="minPosition">Min Position 
+                          </label> */}
+                          <p style={{fontWeight:"bold"}} className="mb-0">Max Position 
+                          </p>
+                          <MdInfoOutline
+                              className="max-tooltip-target m-2"
+                              style={{
+                                  fontSize: "16px",
+                                  cursor: "pointer",
+                                  flexShrink: 0,
+                              }}
+                          />
+                          <Tooltip
+                              target=".max-tooltip-target"
+                              content="Maximum position within the section that the games can have"
+                              position="top"
+                              className="custom-tooltip"
+                          />
+                        </div>
                         <InputText
                           id="maxPosition"
                           value={maxPosition}
                           onChange={(e) => settingMaxPosition(e)}
                           className="w-full"
                         />
-                        <label htmlFor="maxPosition">Max Position</label>
+                        {/* <label htmlFor="maxPosition">Max Position</label> */}
                       </FloatLabel>
                     </div>
                   </div>
