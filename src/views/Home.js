@@ -167,7 +167,7 @@ const Home = () => {
             </span>
           </div> */}
           <div className="d-flex flex-row gap-3">
-            <ReportCard onButtonPress={() => navigate('dashboard')} title="Game Positions Dashboard" />
+            <ReportCard onButtonPress={() => navigate('dashboard')} title="Positions Dashboard" />
             <ReportCard onButtonPress={() => navigate('game-provider-marketshare')} title="Provider Marketshare" />
             <ReportCard onButtonPress={() => navigate('game-rank-report')} title="Game Rank" />
             {/* <ReportCard onButtonPress={() => toast.error("Coming Soon")} title="Game Provider Marketshare" />

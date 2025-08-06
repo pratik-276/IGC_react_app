@@ -25,6 +25,7 @@ import { useContactSales } from "../../context/confirmationContext";
 import call from "../../services/Call";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+import GameRankAPI from "../../services/GameRank";
 
 const GameRank = () => {
   const navigate = useNavigate();
@@ -37,22 +38,25 @@ const GameRank = () => {
   });
 
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [markets, setMarkets] = useState([]);
+  const [selectedMarket, setSelectedMarket] = useState("North America");
+  const [selectedRegion, setSelectedRegion] = useState("All");
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
   // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
-  useEffect(() => {
+  async function getGameRank(updated_market, updated_region) {
     setLoading(true);
-    getRegions();
+    
     call({
       path: "get_game_rank",
       method: "POST",
       data: {
-        region: selectedRegion,
+        region: updated_region,
         search_term: "",
+        market: updated_market
       },
     })
       .then((res) => {
@@ -92,7 +96,11 @@ const GameRank = () => {
       .finally(() => {
         setLoading(false);
       });
-  }, [selectedRegion]);
+  };
+
+  // useEffect(() => {
+  //   getRegions(selectedMarket);
+  // }, [selectedMarket]);
 
   useEffect(() => {
     import("../../utils/DatatableBottomFix").then(
@@ -103,16 +111,47 @@ const GameRank = () => {
   }, [tableData]);
 
   useEffect(() => {
-    const savedRegion = localStorage.getItem("gameRegion");
-    if (savedRegion) {
-      setSelectedRegion(savedRegion);
+    //const savedRegion = localStorage.getItem("gameRegion");
+    const savedMarket = localStorage.getItem("gameMarket");
+    // if (savedRegion) {
+    //   setSelectedRegion(savedRegion);
+    // }
+    setSelectedRegion("All");
+    getMarkets();
+    if (savedMarket) {
+      setSelectedMarket(savedMarket);
+      getRegions(savedMarket);
+      getGameRank(savedMarket, "All");
+    }else{
+      setSelectedMarket("North America");
+      getRegions("North America");
+      getGameRank("North America", "All");
     }
   }, []);
 
-  async function getRegions() {
+  async function getMarkets() {
+    GameRankAPI.get_markets().then((res) => {
+      console.log(res);
+      if(res?.data && Array.isArray(res.data)){
+        const cleaned = res.data
+          .filter((region) => region !== null && typeof region === "string")
+          .map((region) => ({ label: region, value: region }));
+
+        setMarkets(cleaned);
+      }else{
+        setMarkets([]);
+      }
+    })
+  }
+
+  async function getRegions(updated_market) {
+    setLoading(true);
     const res = await call({
-      path: "get_regions",
-      method: "GET",
+      path: "get_regions_by_market",
+      method: "POST",
+      data: {
+        region: updated_market
+      }
     });
 
     if (res?.data && Array.isArray(res.data)) {
@@ -121,8 +160,11 @@ const GameRank = () => {
         .map((region) => ({ label: region, value: region }));
 
       setRegions(cleaned);
+      setSelectedRegion("All");
+      getGameRank(updated_market, "All");
     } else {
       setRegions([]);
+      setLoading(false);
     }
   }
 
@@ -299,8 +341,9 @@ const GameRank = () => {
           console.log(rowData);
           navigate("/game-rank-details", {
             state: {
-              selected_region: selectedRegion,
-              game_id: rowData.game_id,
+              passed_region: selectedRegion,
+              passed_market: selectedMarket,
+              game_details: rowData
             },
           });
         }}
@@ -345,18 +388,40 @@ const GameRank = () => {
                       filter
                       placeholder="Select Region"
                       loading={loading}
+                      value={selectedMarket}
+                      onChange={(e) => {
+                        const region = e.value;
+                        setSelectedMarket(region);
+                        localStorage.setItem("gameMarket", region);
+                        getRegions(region);
+                      }}
+                      options={markets}
+                      style={{ width: "200px" }}
+                    />
+                    {/* <label className="fs-6" htmlFor="market">
+                      Select Market
+                    </label> */}
+                  </FloatLabel>
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Country"
+                      loading={loading}
                       value={selectedRegion}
                       onChange={(e) => {
                         const region = e.value;
                         setSelectedRegion(region);
                         localStorage.setItem("gameRegion", region);
+                        getGameRank(selectedMarket, region);
                       }}
                       options={regions}
                       style={{ width: "200px" }}
                     />
-                    <label className="fs-6" htmlFor="region">
+                    {/* <label className="fs-6" htmlFor="region">
                       Select Region
-                    </label>
+                    </label> */}
                   </FloatLabel>
 
                   <IconField iconPosition="left" style={{ flex: 2 }}>

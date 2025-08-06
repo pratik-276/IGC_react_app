@@ -8,6 +8,22 @@ const get_regions = async () => {
     return d;
 };
 
+const get_regions_by_market = async () => {
+    let d = await Call({
+        path: "get_regions_by_market",
+        method: "post",
+    });
+    return d;
+};
+
+const get_markets = async () => {
+    let d = await Call({
+        path: "get_markets",
+        method: "get",
+    });
+    return d;
+};
+
 const get_games = async (data) => {
     let d = await Call({
         path: "post_game_by_geography_lists",
@@ -47,6 +63,8 @@ const get_game_rank_casinos = async (data) => {
 
 const exportObject = {
     get_regions,
+    get_regions_by_market,
+    get_markets,
     get_games,
     get_game_rank_details,
     get_game_rank_trend,

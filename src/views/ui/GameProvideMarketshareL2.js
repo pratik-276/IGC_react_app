@@ -235,7 +235,7 @@ const GameProvideMarketshareL2 = () => {
                       optionLabel="label"
                       optionValue="value"
                       filter
-                      placeholder="Select Region"
+                      placeholder="Select Country"
                       loading={regionLoading}
                       value={selectedRegion}
                       onChange={(e) => {

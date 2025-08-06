@@ -43,7 +43,7 @@ const Dashboard = () => {
         </div>
       ) : (
         <div style={{ height: "90vh" }}>
-          <iframe title="Tracker Dashboard"
+          <iframe title="Positions Dashboard"
             style={{
               width: "100%",
               height: "100%",

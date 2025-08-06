@@ -333,10 +333,10 @@ const CompetitorDashboardMod = () => {
           <div className="d-flex flex-column gap-3 justify-content-between">
             <div className="pb-3">
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Competitor Dashboard
+                Casino View Dashboard
               </h4>
               <span className="text-black" style={{ fontSize: "1rem" }}>
-                View details related to all the competitors
+                View game positions for a casino
               </span>
             </div>
 

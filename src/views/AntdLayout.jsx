@@ -60,19 +60,19 @@ const AppLayout = () => {
                 {
                     key: "/dashboard",
                     icon: <DashboardOutlined />,
-                    label: "Position Trends",
+                    label: "Positions Dashboard",
                 },
             ],
         },
         {
             key: "casino",
-            label: "Casino Overview",
+            label: "Casino",
             icon: <FaChartLine />,
             children: [
                 {
                     key: "/competitor-dashboard",
                     icon: <FaChartLine />,
-                    label: "Data View",
+                    label: "Casino View",
                 },
             ],
         },

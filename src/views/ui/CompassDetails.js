@@ -25,7 +25,7 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 
-const GameDetailsMod = () => {
+const CompassDetails = () => {
   const navigate = useNavigate();
   const user_id = localStorage.getItem("user_id");
   const [loader, setLoader] = useState(true);
@@ -33,12 +33,11 @@ const GameDetailsMod = () => {
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
 
-  const [minDate, setMinDate] = useState(null);
+//   const [minDate, setMinDate] = useState(null);
 
   const location = useLocation();
-  console.log("location.state", location.state);
-  const { operator_site_id, game_name, casino_name, country_name, state_name } =
-    location.state || {};
+  const { operator_site_id, game_name, casino_name, country_name, state_name, start_date, end_date } = location.state || {};
+  
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -46,15 +45,17 @@ const GameDetailsMod = () => {
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
-    const currentDate = new Date();
-    const previousMonth = new Date(currentDate);
+    // const currentDate = new Date();
+    // const previousMonth = new Date(currentDate);
 
-    previousMonth.setMonth(currentDate.getMonth() - 1);
-    previousMonth.setDate(1);
-
-    setMinDate(previousMonth);
-    setStartDate(previousMonth);
-    setEndDate(currentDate);
+    // previousMonth.setMonth(currentDate.getMonth() - 1);
+    // previousMonth.setDate(1);
+    setStartDate(new Date(start_date));
+    setStartDate(new Date("2025-07-05T00:00:00"));
+    setEndDate(new Date(end_date)); 
+    // setMinDate(new Date(start_date));
+    // setStartDate(previousMonth);
+    // setEndDate(currentDate);
   }, []);
 
   useEffect(() => {
@@ -71,6 +72,7 @@ const GameDetailsMod = () => {
 
   const getDashboardData = ({ site_id, game_name, start_date, end_date }) => {
     const user_company_2 = localStorage.getItem("user_company");
+    console.log(user_company_2);
     call({
       path: "tracker_dashboard_details_2",
       method: "POST",
@@ -115,17 +117,17 @@ const GameDetailsMod = () => {
                   fontSize: "30px",
                   cursor: "pointer",
                 }}
-                onClick={() => navigate("/dashboard")}
+                onClick={() => navigate("/calibrate-compass")}
               />
               <div>
                 <h4
                   className="m-md-0 font-semibold"
                   style={{ color: "#392f6c" }}
                 >
-                  Positions Dashboard
+                  Compass Dashboard
                 </h4>
                 <span className="text-black" style={{ fontSize: "1rem" }}>
-                  View details related to game
+                  View details related to configured compass
                 </span>
               </div>
             </div>
@@ -138,8 +140,9 @@ const GameDetailsMod = () => {
                   dateFormat="yy-mm-dd"
                   showIcon
                   placeholder="Select Start Date"
-                  minDate={minDate}
-                  maxDate={new Date()}
+                //   minDate={minDate}
+                //   maxDate={new Date()}
+                    disabled
                 />
               </div>
 
@@ -150,8 +153,9 @@ const GameDetailsMod = () => {
                   dateFormat="yy-mm-dd"
                   showIcon
                   placeholder="Select End Date"
-                  minDate={minDate}
-                  maxDate={new Date()}
+                //   minDate={minDate}
+                //   maxDate={new Date()}
+                    disabled
                 />
               </div>
             </div>
@@ -276,7 +280,7 @@ const GameDetailsMod = () => {
               className="d-flex justify-content-center"
               style={{ marginTop: "15%" }}
             >
-              <h4>Tracking data is unavailable</h4>
+              <h4>No data to view for the selected period</h4>
             </div>
           </>
         )}
@@ -285,4 +289,4 @@ const GameDetailsMod = () => {
   );
 };
 
-export default GameDetailsMod;
+export default CompassDetails;

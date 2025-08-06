@@ -2,7 +2,7 @@ import React, { useRef, useState } from "react";
 import Loader from "../../layouts/loader/Loader";
 import { FaPlus } from "react-icons/fa6";
 import CompassData from "../../services/CompassApi";
-import { MdInfoOutline } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
 
 import { Spin } from "antd";
 import { FloatLabel } from "primereact/floatlabel";
@@ -17,6 +17,7 @@ import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
+import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import "../ui/Compass.css";
 
 
@@ -32,6 +33,7 @@ const CompassDataPage = ({
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  const navigate = useNavigate();
 
   const [operatorFilter, setOperatorFilter] = useState(null);
   const [gameFilter, setGameFilter] = useState(null);
@@ -215,6 +217,28 @@ const CompassDataPage = ({
     value: name,
     label: name,
   }));
+
+  const actionBodyTemplate = (rowData) => {
+      return (
+        <MdArrowForwardIos
+          style={{ fontSize: "16px" }}
+          onClick={() => {
+            console.log(rowData);
+            navigate("/compass-details", {
+              state: {
+                operator_site_id: rowData.operator_site_id,
+                game_name: rowData.game_original_name,
+                casino_name: rowData.name,
+                country_name: rowData.geography,
+                state_name: rowData.state,
+                start_date: rowData.start_date,
+                end_date: rowData.end_date
+              },
+            });
+          }}
+        />
+      );
+    };
 
   return (
     <>
@@ -445,6 +469,17 @@ const CompassDataPage = ({
                     sortable
                     style={{ minWidth: "8rem" }}
                     body={LastScanDateBodyTemplate}
+                  ></Column>
+
+                  <Column
+                    field="details"
+                    header={headerWithTooltip(
+                      "Details",
+                      "Check historical movement of the game",
+                      "details"
+                    )}
+                    className="text-center"
+                    body={actionBodyTemplate}
                   ></Column>
 
                 </DataTable>

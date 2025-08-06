@@ -25,7 +25,8 @@ import "./AccessBlur.css";
 
 const GameRankL2 = () => {
   const location = useLocation();
-  const { game_id } = location.state || {};
+  const { passed_region, passed_market, game_details } = location.state || {};
+  console.log(game_details);
 
   const [gameDetailsLoading, setGameDetailsLoading] = useState(false);
   const [trendLoading, setTrendLoading] = useState(false);
@@ -34,10 +35,12 @@ const GameRankL2 = () => {
   const [regionLoading, setRegionLoading] = useState(false);
   const [gameLoading, setGameLoading] = useState(false);
 
-  const [regions, setRegions] = useState([]);
-  const [games, setGames] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
-  const [selectedGame, setSelectedGame] = useState(game_id);
+  const [regions, setRegions] = useState([{label: passed_region, value: passed_region}]);
+  const [markets, setMarkets] = useState([{label: passed_market, value: passed_market}]);
+  const [games, setGames] = useState([{game_id: game_details.game_id, game: game_details.game_name}]);
+  const [selectedRegion, setSelectedRegion] = useState(passed_region);
+  const [selectedMarket, setSelectedMarket] = useState(passed_market);
+  const [selectedGame, setSelectedGame] = useState(game_details.game_id);
 
   const [data, setData] = useState([]);
   const [trendData, setTrendData] = useState([]);
@@ -49,8 +52,8 @@ const GameRankL2 = () => {
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
-    getRegionsList();
-    getGamesList();
+    //getRegionsList();
+    //getGamesList();
     getData();
   }, [selectedRegion, selectedGame]);
 
@@ -112,6 +115,7 @@ const GameRankL2 = () => {
     const payload = {
       game_id: selectedGame,
       region: selectedRegion,
+      market: selectedMarket
     };
 
     getGameRankDetails(payload);
@@ -217,6 +221,23 @@ const GameRankL2 = () => {
                       optionValue="value"
                       filter
                       placeholder="Select Region"
+                      loading={regionLoading}
+                      value={selectedMarket}
+                      onChange={(e) => setSelectedMarket(e.value)}
+                      options={markets}
+                      style={{ width: "200px" }}
+                      disabled
+                    />
+                    {/* <label className="fs-6" htmlFor="region">
+                      Region
+                    </label> */}
+                  </FloatLabel>
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Country"
                       loading={regionLoading}
                       value={selectedRegion}
                       onChange={(e) => setSelectedRegion(e.value)}

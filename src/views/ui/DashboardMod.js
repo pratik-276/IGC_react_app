@@ -238,16 +238,31 @@ const DashboardMod = () => {
   };
 
   const evidanceTemplate = (rowData) => {
-    setVideoURL(rowData?.video_url);
+    //setVideoURL(rowData?.video_url);
+    //console.log(rowData?.video_url);
     const label = "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
-    return (
-      <Button
-        label={label}
-        icon="pi pi-play"
-        className="p-button-text"
-        onClick={() => setVideoDialogVisible(true)}
-      />
-    );
+    if(rowData?.video_url){
+      return (
+        <Button
+          label={label}
+          icon="pi pi-play"
+          className="p-button-text"
+          onClick={() => {
+            setVideoURL(rowData?.video_url);
+            setVideoDialogVisible(true);
+          }}
+        />
+      );
+    }else{
+      return (
+        <Button
+          label={"No video"}
+          icon="pi pi-play"
+          className="p-button-text"
+          disabled
+        />
+      );
+    }
   };
 
   const headerWithTooltip = (headerText, tooltipText, id) => (
@@ -301,7 +316,7 @@ const DashboardMod = () => {
           <div className="d-flex align-items-center justify-content-between">
             <div>
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Tracker Dashboard
+                Positions Dashboard
               </h4>
               <span>
                 Track latest positions of all your games across all casinos
@@ -599,7 +614,7 @@ const DashboardMod = () => {
                           style={{ minWidth: "7rem" }}
                         ></Column>
 
-                        {/* <Column
+                        <Column
                           field="evidance"
                           header={headerWithTooltip(
                             "Evidence",
@@ -608,7 +623,7 @@ const DashboardMod = () => {
                           )}
                           body={evidanceTemplate}
                           style={{ minWidth: "13rem" }}
-                        ></Column> */}
+                        ></Column>
 
                         <Column
                           field="details"

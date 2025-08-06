@@ -24,6 +24,7 @@ import toast from "react-hot-toast";
 import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
+import GameRankAPI from "../../services/GameRank";
 
 import "./DashboardMod.css";
 import "./AccessBlur.css";
@@ -34,7 +35,9 @@ const GameProvideMarketshare = () => {
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [markets, setMarkets] = useState([]);
+  const [selectedMarket, setSelectedMarket] = useState("North America");
+  const [selectedRegion, setSelectedRegion] = useState("All");
   const [totalCasinos, setTotalCasinos] = useState(null);
   const [updatedOn, setUpdatedOn] = useState(null);
 
@@ -48,15 +51,30 @@ const GameProvideMarketshare = () => {
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
-    const savedRegion = localStorage.getItem("marketshareRegion");
-    if (savedRegion) {
-      setSelectedRegion(savedRegion);
+    // const savedRegion = localStorage.getItem("marketshareRegion");
+    // if (savedRegion) {
+    //   setSelectedRegion(savedRegion);
+    // }
+    const savedMarket = localStorage.getItem("marketshareMarket");
+    // if (savedRegion) {
+    //   setSelectedRegion(savedRegion);
+    // }
+    setSelectedRegion("All");
+    getMarkets();
+    if (savedMarket) {
+      setSelectedMarket(savedMarket);
+      getRegions(savedMarket);
+      getMarketshareData(savedMarket, "All");
+    }else{
+      setSelectedMarket("North America");
+      getRegions("North America");
+      getMarketshareData("North America", "All");
     }
   }, []);
 
-  useEffect(() => {
-    getPageData();
-  }, [selectedRegion]);
+  // useEffect(() => {
+  //   getPageData();
+  // }, [selectedRegion]);
 
   useEffect(() => {
     import("../../utils/DatatableBottomFix").then(
@@ -66,11 +84,30 @@ const GameProvideMarketshare = () => {
     );
   }, [tableData]);
 
-  async function getRegions() {
-    const res = await call({
-      path: "get_regions",
-      method: "GET",
-    });
+  async function getMarkets() {
+    GameRankAPI.get_markets().then((res) => {
+      console.log(res);
+      if(res?.data && Array.isArray(res.data)){
+        const cleaned = res.data
+          .filter((region) => region !== null && typeof region === "string")
+          .map((region) => ({ label: region, value: region }));
+
+        setMarkets(cleaned);
+      }else{
+        setMarkets([]);
+      }
+    })
+  }
+
+  async function getRegions(updated_market) {
+      setLoading(true);
+      const res = await call({
+        path: "get_regions_by_market",
+        method: "POST",
+        data: {
+          region: updated_market
+        }
+      });
 
     if (res?.data && Array.isArray(res.data)) {
       const cleaned = res.data
@@ -78,17 +115,22 @@ const GameProvideMarketshare = () => {
         .map((region) => ({ label: region, value: region }));
 
       setRegions(cleaned);
+      setSelectedRegion("All");
+      getMarketshareData(updated_market, "All");
     } else {
       setRegions([]);
+      setLoading(false);
     }
   }
 
-  async function getMarketshareData() {
+  async function getMarketshareData(updated_market, updated_region) {
+    setLoading(true);
     const data = await call({
       path: `get_provider_marketshare`,
       method: "POST",
       data: {
-        region: selectedRegion,
+        region: updated_region,
+        market: updated_market,
         month: "",
         search_term: "",
       },
@@ -121,6 +163,7 @@ const GameProvideMarketshare = () => {
     const marketData = data?.data?.data || [];
     // console.log(Math.max(...marketData.map((d) => parseFloat(d.market_share))));
     setTableData(marketData.sort((a, b) => b.market_share - a.market_share));
+    setLoading(false);
   }
 
   async function getPageData() {
@@ -330,24 +373,46 @@ const GameProvideMarketshare = () => {
 
                 <div className="d-flex flex-wrap gap-2">
                   <FloatLabel>
+                                      <Dropdown
+                                        optionLabel="label"
+                                        optionValue="value"
+                                        filter
+                                        placeholder="Select Region"
+                                        loading={loading}
+                                        value={selectedMarket}
+                                        onChange={(e) => {
+                                          const region = e.value;
+                                          setSelectedMarket(region);
+                                          localStorage.setItem("marketshareMarket", region);
+                                          getRegions(region);
+                                        }}
+                                        options={markets}
+                                        style={{ width: "200px" }}
+                                      />
+                                      {/* <label className="fs-6" htmlFor="market">
+                                        Select Market
+                                      </label> */}
+                                    </FloatLabel>
+                  <FloatLabel>
                     <Dropdown
                       optionLabel="label"
                       optionValue="value"
                       filter
-                      placeholder="Select Region"
+                      placeholder="Select Country"
                       loading={loading}
                       value={selectedRegion}
                       onChange={(e) => {
                         const region = e.value;
                         setSelectedRegion(region);
                         localStorage.setItem("marketshareRegion", region);
+                        getMarketshareData(selectedMarket, region);
                       }}
                       options={regions}
                       style={{ width: "200px" }}
                     />
-                    <label className="fs-6" htmlFor="region">
-                      Select Region
-                    </label>
+                    {/* <label className="fs-6" htmlFor="region">
+                      Select Country
+                    </label> */}
                   </FloatLabel>
 
                   <IconField iconPosition="left" style={{ flex: 2 }}>
