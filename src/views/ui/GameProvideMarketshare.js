@@ -316,6 +316,8 @@ const GameProvideMarketshare = () => {
             state: {
               regionName: selectedRegion,
               providerId: rowData.provider_id,
+              passed_market: selectedMarket,
+              provider_details: rowData
             },
           });
         }}

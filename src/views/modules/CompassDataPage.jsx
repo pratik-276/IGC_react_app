@@ -471,7 +471,7 @@ const CompassDataPage = ({
                     body={LastScanDateBodyTemplate}
                   ></Column>
 
-                  <Column
+                  {/* <Column
                     field="details"
                     header={headerWithTooltip(
                       "Details",
@@ -480,7 +480,7 @@ const CompassDataPage = ({
                     )}
                     className="text-center"
                     body={actionBodyTemplate}
-                  ></Column>
+                  ></Column> */}
 
                 </DataTable>
               </div>

@@ -53,16 +53,16 @@ const GameRankL2 = () => {
 
   useEffect(() => {
     //getRegionsList();
-    //getGamesList();
+    getGamesList();
     getData();
   }, [selectedRegion, selectedGame]);
 
-  useEffect(() => {
-    const savedRegion = localStorage.getItem("gameRegion");
-    if (savedRegion) {
-      setSelectedRegion(savedRegion);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedRegion = localStorage.getItem("gameRegion");
+  //   if (savedRegion) {
+  //     setSelectedRegion(savedRegion);
+  //   }
+  // }, []);
 
   async function getRegionsList() {
     setRegionLoading(true);
@@ -87,28 +87,30 @@ const GameRankL2 = () => {
 
   async function getGamesList() {
     setGameLoading(true);
+    setGames([{value: game_details.game_id, label: game_details.game_name}]);
 
-    const payload = {
-      region: selectedRegion,
-    };
+    // const payload = {
+    //   region: selectedRegion,
+    // };
 
-    GameRankData.get_games(payload)
-      .then((res) => {
-        if (res?.success === true && Array.isArray(res.data)) {
-          const cleaned = res.data.map((game) => ({
-            label: game.game,
-            value: game.game_id,
-          }));
-          setGames(cleaned);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-        setGames([]);
-      })
-      .finally(() => {
-        setGameLoading(false);
-      });
+    // GameRankData.get_games(payload)
+    //   .then((res) => {
+    //     if (res?.success === true && Array.isArray(res.data)) {
+    //       const cleaned = res.data.map((game) => ({
+    //         label: game.game,
+    //         value: game.game_id,
+    //       }));
+    //       setGames(cleaned);
+    //     }
+    //   })
+    //   .catch((err) => {
+    //     console.log(err);
+    //     setGames([]);
+    //   })
+    //   .finally(() => {
+    //     setGameLoading(false);
+    //   });
+    setGameLoading(false);
   }
 
   async function getData() {
@@ -312,7 +314,7 @@ const GameRankL2 = () => {
                         }}
                       />
                     ) : (
-                      <h5 className="font-semibold">N/A</h5>
+                      <h5 className="font-semibold">Not Available</h5>
                     )}
                   </div>
                 </div>

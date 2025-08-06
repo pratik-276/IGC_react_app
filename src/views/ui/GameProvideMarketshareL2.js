@@ -24,14 +24,20 @@ const GameProvideMarketshareL2 = () => {
   const location = useLocation();
   const regionName = location?.state?.regionName || null;
   const providerId = location?.state?.providerId || null;
+  const provider_details = location?.state?.provider_details || null;
+  const passed_market = location?.state?.passed_market || null;
+
+  console.log(provider_details);
 
   const [regionLoading, setRegionLoading] = useState(false);
   const [providerLoading, setProviderLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [regions, setRegions] = useState([]);
+  const [markets, setMarkets] = useState([{label: passed_market, value: passed_market}]);
+  const [selectedMarket, setSelectedMarket] = useState(passed_market);
+  const [regions, setRegions] = useState([{label: regionName, value: regionName}]);
   const [selectedRegion, setSelectedRegion] = useState(regionName);
-  const [providers, setProviders] = useState([]);
+  const [providers, setProviders] = useState([{label: provider_details.game_provider, value: providerId}]);
   const [selectedProvider, setSelectedProvider] = useState(providerId);
 
   const [data, setData] = useState({});
@@ -44,18 +50,18 @@ const GameProvideMarketshareL2 = () => {
   // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
-  useEffect(() => {
-    getGeographyList();
-    setSelectedRegion(regionName);
-    GetProvidersList(regionName, providerId);
-  }, []);
+  // useEffect(() => {
+  //   getGeographyList();
+  //   setSelectedRegion(regionName);
+  //   GetProvidersList(regionName, providerId);
+  // }, []);
 
-  useEffect(() => {
-    const savedRegion = localStorage.getItem("marketshareRegion");
-    if (savedRegion) {
-      setSelectedRegion(savedRegion);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const savedRegion = localStorage.getItem("marketshareRegion");
+  //   if (savedRegion) {
+  //     setSelectedRegion(savedRegion);
+  //   }
+  // }, []);
 
   useEffect(() => {
     if (selectedRegion && selectedProvider) {
@@ -125,6 +131,7 @@ const GameProvideMarketshareL2 = () => {
     const payload = {
       provider_id: selectedProvider,
       region: selectedRegion,
+      market: selectedMarket
     };
 
     setLoading(true);
@@ -230,6 +237,22 @@ const GameProvideMarketshareL2 = () => {
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={regionLoading}
+                      value={selectedMarket}
+                      options={markets}
+                      style={{ width: "200px" }}
+                      disabled
+                    />
+                    {/* <label className="fs-6" htmlFor="region">
+                      Select Region
+                    </label> */}
+                  </FloatLabel>
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
