@@ -126,6 +126,13 @@ const Login = () => {
           toast.success(res.message);
           setEmail(formData.user_email);
           setOtpSent(true);
+        }else{
+          console.log(res);
+          if(res?.message === 'Only professional email allowed'){
+            toast.error('Only professional email allowed', {
+              duration: 2000
+            });
+          }
         }
       })
       .catch((err) => {
@@ -444,9 +451,10 @@ const Login = () => {
                             </h3>
                             <p>Your partner in gaming insights !</p>
                             <br /><br /><br />
-                            <h4 className="fw-bold" style={{ color: "#392f6c" }}>
+                            <h4 className="fw-bold mb-0" style={{ color: "#392f6c" }}>
                               Sign Up
                             </h4>
+                            <p style={{fontSize: "14px"}}>*Use your professional email</p>
                           </div>
 
                           <div className="login_detail_inr">
