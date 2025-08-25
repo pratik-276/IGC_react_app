@@ -24,7 +24,7 @@ const AppLayout = () => {
     const [profile, setProfile] = useState({});
 
     const user_id = localStorage.getItem("user_id");
-    
+
     const { dispatch } = useContext(ProfileSystem);
 
     const toggle = () => setCollapsed(!collapsed);
@@ -126,8 +126,8 @@ const AppLayout = () => {
                 localStorage.setItem("user_email", profileResponse?.data.email);
 
                 dispatch({
-                type: "SET_PLAN",
-                payload: { plan: profileResponse?.data?.plan },
+                    type: "SET_PLAN",
+                    payload: { plan: profileResponse?.data?.plan },
                 });
             } else if (profileResponse?.error?.status === 401) {
                 localStorage.clear();
