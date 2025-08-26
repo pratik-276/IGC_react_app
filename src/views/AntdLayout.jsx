@@ -41,18 +41,6 @@ const AppLayout = () => {
             label: "Home",
         },
         {
-            key: "calibrate",
-            label: "Calibrate",
-            icon: <FaCompassDrafting />,
-            children: [
-                {
-                    key: "/calibrate-compass",
-                    icon: <FaCompassDrafting />,
-                    label: "Calibrate Compass",
-                },
-            ],
-        },
-        {
             key: "position",
             label: "⁠Game Positions",
             icon: <DashboardOutlined />,
@@ -61,6 +49,18 @@ const AppLayout = () => {
                     key: "/dashboard",
                     icon: <DashboardOutlined />,
                     label: "Positions Dashboard",
+                },
+            ],
+        },
+        {
+            key: "calibrate",
+            label: "Calibrate",
+            icon: <FaCompassDrafting />,
+            children: [
+                {
+                    key: "/calibrate-compass",
+                    icon: <FaCompassDrafting />,
+                    label: "Calibrate Compass",
                 },
             ],
         },

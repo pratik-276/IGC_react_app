@@ -556,7 +556,7 @@ const CompetitorDashboardMod = () => {
                   <div className="d-flex justify-content-between pl-2 mb-2">
                     <div>
                       <strong>Site URL : </strong>
-                      {selectedSiteDetails.label}
+                      <a href={selectedSiteDetails.label}>{selectedSiteDetails.label}</a>
                     </div>
                     <div>
                       <strong>Period : </strong>
@@ -577,7 +577,7 @@ const CompetitorDashboardMod = () => {
                   value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                   scrollable
                   paginator={!isPlanExpired}
-                  rows={10}
+                  rows={25}
                   rowsPerPageOptions={[5, 10, 25]}
                   paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"

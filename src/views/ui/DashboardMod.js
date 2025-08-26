@@ -506,6 +506,17 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          field="details"
+                          header={headerWithTooltip(
+                            "Details",
+                            "Check historical movement of the game",
+                            "details"
+                          )}
+                          className="text-center"
+                          body={actionBodyTemplate}
+                        ></Column>
+
+                        <Column
                           field="section_name"
                           header={headerWithTooltip(
                             "Sec Name",
@@ -625,16 +636,7 @@ const DashboardMod = () => {
                           style={{ minWidth: "13rem" }}
                         ></Column> */}
 
-                        <Column
-                          field="details"
-                          header={headerWithTooltip(
-                            "Details",
-                            "Check historical movement of the game",
-                            "details"
-                          )}
-                          className="text-center"
-                          body={actionBodyTemplate}
-                        ></Column>
+                        
                       </DataTable>
 
                       {isPlanExpired && (
