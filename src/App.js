@@ -36,9 +36,31 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import DailyDashboard from "./views/ui/DailyDashboard";
 
+// BLOGS
+import BubbleChart from './views/blogs/claude';
+import CLAUDE2 from './views/blogs/claude_2';
+
 const App = () => {
   return (
     <>
+    <Routes>
+
+                  <Route
+                    path="blog/id_1"
+                    element={
+                      <BubbleChart />
+                    }
+                  />
+    </Routes>
+    <Routes>
+
+                  <Route
+                    path="blog/id_2"
+                    element={
+                      <CLAUDE2 />
+                    }
+                  />
+    </Routes>
       <ProfileProvider>
         <CasinoProvider>
           <ContactSalesProvider>
