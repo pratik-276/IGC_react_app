@@ -38,7 +38,9 @@ import DailyDashboard from "./views/ui/DailyDashboard";
 
 // BLOGS
 import BubbleChart from './views/blogs/claude';
+import CLAUDE1 from './views/blogs/claude_1';
 import CLAUDE2 from './views/blogs/claude_2';
+import CLAUDE3 from './views/blogs/claude_3';
 
 const App = () => {
   return (
@@ -48,7 +50,7 @@ const App = () => {
                   <Route
                     path="blog/id_1"
                     element={
-                      <BubbleChart />
+                      <CLAUDE1 />
                     }
                   />
     </Routes>
@@ -58,6 +60,15 @@ const App = () => {
                     path="blog/id_2"
                     element={
                       <CLAUDE2 />
+                    }
+                  />
+    </Routes>
+    <Routes>
+
+                  <Route
+                    path="blog/id_3"
+                    element={
+                      <CLAUDE3 />
                     }
                   />
     </Routes>
