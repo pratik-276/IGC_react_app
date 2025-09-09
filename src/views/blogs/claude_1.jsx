@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
 
-const CLAUDE2 = () => {
+const CLAUDE1 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -24,12 +24,16 @@ const CLAUDE2 = () => {
       Chart.Legend
     );
 
-    // Data for regional Keno adoption (regions with meaningful Keno presence)
-    const kenoData = {
-      labels: ['Africa', 'Eastern Europe', 'Western Europe', 'North America', 'Southeast Asia', 'South Asia', 'Latin America'],
+    // Data for selected casino sections
+    const sectionData = {
+      labels: [
+        'Slots', 'Popular Games', 'Table Games', 'Jackpots', 'New Games', 
+        'Live Casino', 'Megaways', 'Crash Games', 'Scratch Games', 
+        'Bingo', 'Keno'
+      ],
       datasets: [{
-        label: 'Percentage of Casinos with Keno',
-        data: [18.4, 14.3, 4.9, 4.9, 3.2, 1.8, 1.0],
+        label: 'Percentage of Total Sections',
+        data: [8.1, 7.4, 5.8, 5.0, 3.5, 3.3, 2.7, 2.5, 1.9, 0.6, 0.6],
         backgroundColor: '#917AFD',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -40,7 +44,7 @@ const CLAUDE2 = () => {
 
     const config = {
       type: 'bar',
-      data: kenoData,
+      data: sectionData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -61,17 +65,9 @@ const CLAUDE2 = () => {
             callbacks: {
               label: function(context) {
                 const percentage = context.parsed.y;
-                return `${context.label}: ${percentage}% of casinos have Keno sections`;
+                return `${context.label}: ${percentage}% of all sections`;
               }
             }
-          }
-        },
-        layout: {
-          padding: {
-            left: 10,
-            right: 10,
-            top: 10,
-            bottom: 20
           }
         },
         scales: {
@@ -82,16 +78,15 @@ const CLAUDE2 = () => {
             ticks: {
               color: '#64748b',
               font: {
-                size: 12,
+                size: 14,
                 family: 'Arial'
               },
-              maxRotation: 35,
-              minRotation: 35
+              maxRotation: 45,
+              minRotation: 45
             }
           },
           y: {
             beginAtZero: true,
-            max: 20,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',
               drawBorder: false
@@ -99,7 +94,7 @@ const CLAUDE2 = () => {
             ticks: {
               color: '#64748b',
               font: {
-                size: 11,
+                size: 12,
                 family: 'Arial'
               },
               callback: function(value) {
@@ -108,10 +103,10 @@ const CLAUDE2 = () => {
             },
             title: {
               display: true,
-              text: 'Percentage of Casinos with Keno (%)',
+              text: 'Percentage of Total Sections (%)',
               color: '#374151',
               font: {
-                size: 13,
+                size: 14,
                 weight: 'bold',
                 family: 'Arial'
               }
@@ -159,37 +154,35 @@ const CLAUDE2 = () => {
         <div style={{
           background: '#8B5CF6',
           color: 'white',
-          padding: '15px 25px',
+          padding: '20px 30px',
           textAlign: 'center'
         }}>
           <h1 style={{
             margin: 0,
-            fontSize: '22px',
-            fontWeight: '300',
-            fontFamily: 'Arial, sans-serif'
+            fontSize: '24px',
+            fontWeight: '300'
           }}>
-            Regional Keno Adoption
+            Casino Section Distribution Chart
           </h1>
           <p style={{
-            margin: '6px 0 0 0',
+            margin: '8px 0 0 0',
             opacity: 0.9,
-            fontSize: '13px',
-            fontFamily: 'Arial, sans-serif'
+            fontSize: '14px'
           }}>
-            Note: Regions with negligible presence of Keno sections are excluded from this list
+            Note: The "Other" section contributing to 52.5% of all sections has been excluded from this illustration
           </p>
         </div>
         
         <div style={{
-          padding: '15px',
+          padding: '20px',
           position: 'relative',
-          height: 'calc(100% - 100px)'
+          height: 'calc(100% - 120px)'
         }}>
-          <canvas ref={chartRef} id="kenoChart"></canvas>
+          <canvas ref={chartRef} id="sectionChart"></canvas>
         </div>
       </div>
     </div>
   );
 };
 
-export default CLAUDE2;
+export default CLAUDE1;
