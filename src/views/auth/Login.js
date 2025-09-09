@@ -383,6 +383,7 @@ const Login = () => {
                         </>
                       ) : pageType === "SignIn" ? (
                         <>
+                          <a href="https://www.igamingcompass.com" target="_blank" style={{textDecoration: "none"}}>
                           <div className="login_title">
                             <img
                               src={WebsiteLogo}
@@ -400,6 +401,7 @@ const Login = () => {
                               Sign in
                             </h4>
                           </div>
+                          </a>
 
                           <div className="login_detail_inr">
                             <form onSubmit={handleEmailSubmit}>
@@ -438,6 +440,7 @@ const Login = () => {
                         </>
                       ) : (
                         <>
+                        <a href="https://www.igamingcompass.com" target="_blank" style={{textDecoration: "none"}}>
                           <div className="login_title">
                             <img
                               src={WebsiteLogo}
@@ -454,8 +457,9 @@ const Login = () => {
                             <h4 className="fw-bold mb-0" style={{ color: "#392f6c" }}>
                               Sign Up
                             </h4>
-                            <p style={{fontSize: "14px"}}>*Use your professional email</p>
+                            {/* <p style={{fontSize: "14px"}}>*Use your professional email</p> */}
                           </div>
+                          </a>
 
                           <div className="login_detail_inr">
                             <form
@@ -470,7 +474,7 @@ const Login = () => {
                                     type="email"
                                     keyfilter="email"
                                     required
-                                    placeholder="Email"
+                                    placeholder="Use a professional email"
                                     className="w-100"
                                   />
                                 </IconField>
@@ -491,6 +495,7 @@ const Login = () => {
                                   options={providerData}
                                   className="w-100"
                                 />
+                                <p style={{fontSize: "10px"}}>*required for configuration. To know more click <a href="https://igamingcompass.com/faqs/" target="_blank">here</a></p>
                               </div>
 
                               <div className="auth_login_btn">

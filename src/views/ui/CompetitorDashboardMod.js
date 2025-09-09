@@ -113,6 +113,7 @@ const CompetitorDashboardMod = () => {
     const payload = {
       game_provider: user_company,
       operator_id: selectedOperator,
+      geography: selectedRegion
     };
 
     CompetitorData.get_operator_sites_list(payload)
