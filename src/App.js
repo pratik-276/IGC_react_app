@@ -1,15 +1,16 @@
-import React from "react";
 import { Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 // import Layout from "./views/Layout";
 import Layout from "./views/AntdLayout";
 import Home from "./views/Home";
-import GameTracking from "./views/ui/GameTrackingMod";
 import Compass from "./views/ui/Compass";
 import CompassMod from "./views/ui/CompassMod";
 import Login from "./views/auth/Login";
-import Verify from "./views/auth/Verify";
-import Signup from "./views/auth/Signup";
+
+import LoginPage from "./views/auth/LoginPage";
+import SignupPage from "./views/auth/SignupPage";
+import OtpVerification from "./views/auth/OtpVerification";
+
 import ProtectedRoute from "./utils/ProtectedRoute";
 import ProfileMenu from "./views/profile/ProfileMenu";
 import ProfileProvider from "./context/ProfileContext";
@@ -18,7 +19,6 @@ import ScrollToTop from "./layouts/ScrollToTop";
 import { CasinoProvider } from "./context/casinoContext";
 import { GameProvider } from "./context/gameContext";
 
-import Dashboard from "./views/ui/Dashboard";
 import DashboardMod from "./views/ui/DashboardMod";
 import CompetitorDashboardMod from "./views/ui/CompetitorDashboardMod";
 import GameDetailsMod from "./views/ui/GameDetailsMod";
@@ -29,49 +29,28 @@ import GameRankL2 from "./views/ui/GameRankL2";
 import GameProvideMarketshare from "./views/ui/GameProvideMarketshare";
 import GameProvideMarketshareL2 from "./views/ui/GameProvideMarketshareL2";
 import CasinoRequests from "./views/ui/CasinoRequests";
-import GameTrackingDetails from "./views/ui/GameTrackingDetails";
-import CompetitorDashboard from "./views/ui/CompetitorDashboard";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
-import DailyDashboard from "./views/ui/DailyDashboard";
 
 // BLOGS
-import BubbleChart from './views/blogs/claude';
-import CLAUDE1 from './views/blogs/claude_1';
-import CLAUDE2 from './views/blogs/claude_2';
-import CLAUDE3 from './views/blogs/claude_3';
+import CLAUDE1 from "./views/blogs/claude_1";
+import CLAUDE2 from "./views/blogs/claude_2";
+import CLAUDE3 from "./views/blogs/claude_3";
+// import SignupPage from "./views/auth/SignupPage";
 
 const App = () => {
   return (
     <>
-    <Routes>
-
-                  <Route
-                    path="blog/id_1"
-                    element={
-                      <CLAUDE1 />
-                    }
-                  />
-    </Routes>
-    <Routes>
-
-                  <Route
-                    path="blog/id_2"
-                    element={
-                      <CLAUDE2 />
-                    }
-                  />
-    </Routes>
-    <Routes>
-
-                  <Route
-                    path="blog/id_3"
-                    element={
-                      <CLAUDE3 />
-                    }
-                  />
-    </Routes>
+      <Routes>
+        <Route path="blog/id_1" element={<CLAUDE1 />} />
+      </Routes>
+      <Routes>
+        <Route path="blog/id_2" element={<CLAUDE2 />} />
+      </Routes>
+      <Routes>
+        <Route path="blog/id_3" element={<CLAUDE3 />} />
+      </Routes>
       <ProfileProvider>
         <CasinoProvider>
           <ContactSalesProvider>
@@ -271,10 +250,13 @@ const App = () => {
                   }
                 /> */}
                 </Route>
-                <Route path="/login" element={<Login />} />
+                {/* <Route path="/login" element={<Login />} /> */}
                 {/* <Route path="/verify" element={<Verify />} /> */}
                 {/* <Route path="/signup" element={<Signup />} /> */}
                 {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
+                <Route path="/login" element={<LoginPage />} />
+                <Route path="/signup" element={<SignupPage />} />
+                <Route path="/verify-otp" element={<OtpVerification />} />
               </Routes>
             </GameProvider>
           </ContactSalesProvider>

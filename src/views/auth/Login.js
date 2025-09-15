@@ -126,11 +126,11 @@ const Login = () => {
           toast.success(res.message);
           setEmail(formData.user_email);
           setOtpSent(true);
-        }else{
+        } else {
           console.log(res);
-          if(res?.message === 'Only professional email allowed'){
-            toast.error('Only professional email allowed', {
-              duration: 2000
+          if (res?.message === "Only professional email allowed") {
+            toast.error("Only professional email allowed", {
+              duration: 2000,
             });
           }
         }
@@ -150,195 +150,15 @@ const Login = () => {
     <>
       <div className="auth_main">
         <div className="auth_inr">
-          <div className="auth_left row justify-content-center align-items-center h-100" style={{width: "100.9%"}}>
+          <div
+            className="auth_left row justify-content-center align-items-center h-100"
+            style={{ width: "100.9%" }}
+          >
             <div className="auth_right">
               <div className="login_main">
                 <div className="row justify-content-center align-items-center h-100">
                   <div className="col-10 col-sm-10 col-md-10">
                     <div className="login_detail">
-                      {/* {pageType === "SignIn" ? (
-                        !otpSent ? (
-                          <>
-                            <div className="login_title">
-                              <img
-                                src={WebsiteLogo}
-                                alt="IGC"
-                                style={{
-                                  height: "80px",
-                                }}
-                              />
-                              <h3
-                                className="fw-bold"
-                                style={{ color: "#392f6c" }}
-                              >
-                                Sign in
-                              </h3>
-                              <p>Your partner in gaming insights !</p>
-                            </div>
-
-                            <div className="login_detail_inr">
-                              <form onSubmit={handleEmailSubmit}>
-                                <div className="form-group">
-                                  <IconField iconPosition="left">
-                                    <InputIcon className="pi pi-envelope"></InputIcon>
-                                    <InputText
-                                      name="user_email"
-                                      type="email"
-                                      keyfilter="email"
-                                      required
-                                      placeholder="Email"
-                                      className="w-100"
-                                    />
-                                  </IconField>
-                                </div>
-
-                                <div className="auth_login_btn">
-                                  <Button className="login_btn" loading={loading}>
-                                    Send OTP
-                                    <i className="pi pi-send ms-2" />
-                                  </Button>
-                                </div>
-                              </form>
-
-                              <div className="auth_signup_link">
-                                <p>Don't have an account ?</p>
-                                <span
-                                  className="ms-2 signup-text"
-                                  onClick={() => setPageType("SignUp")}
-                                >
-                                  Sign up
-                                </span>
-                              </div>
-                            </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="login_title">
-                              <img
-                                src={WebsiteLogo}
-                                alt="IGC"
-                                style={{
-                                  height: "80px",
-                                }}
-                              />
-                              <h3
-                                className="fw-bold"
-                                style={{ color: "#392f6c" }}
-                              >
-                                Enter OTP
-                              </h3>
-                              <p>OTP is sent to {email}</p>
-                            </div>
-
-                            <div className="login_detail_inr">
-                              <form onSubmit={handleOtpSubmit}>
-                                <div className="form-group">
-                                  <InputOtp
-                                    name="otp"
-                                    integerOnly
-                                    length={6}
-                                    className="w-100"
-                                    value={otp}
-                                    onChange={(e) => setOtp(e.value)}
-                                  />
-                                </div>
-
-                                <div className="auth_login_btn">
-                                  <Button
-                                    className="login_btn"
-                                    loading={loading}
-                                    disabled={!otp || otp.length < 6}
-                                  >
-                                    Verify OTP
-                                    <i className="pi pi-check ms-2" />
-                                  </Button>
-                                </div>
-                              </form>
-                            </div>
-                          </>
-                        )
-                      ) : (
-                        <>
-                          <div className="login_title">
-                            <img
-                              src={WebsiteLogo}
-                              alt="IGC"
-                              style={{
-                                height: "80px",
-                              }}
-                            />
-                            <h3 className="fw-bold" style={{ color: "#392f6c" }}>
-                              Sign Up
-                            </h3>
-                            <p>Your partner in gaming insights !</p>
-                          </div>
-
-                          <div className="login_detail_inr">
-                            <form
-                              ref={signUpFormRef}
-                              onSubmit={handleSignUpSubmit}
-                            >
-                              <div className="form-group">
-                                <IconField iconPosition="left">
-                                  <InputIcon className="pi pi-envelope"></InputIcon>
-                                  <InputText
-                                    name="user_email"
-                                    type="email"
-                                    keyfilter="email"
-                                    required
-                                    placeholder="Email"
-                                    className="w-100"
-                                  />
-                                </IconField>
-                              </div>
-
-                              <div className="form-group">
-                                <Dropdown
-                                  name="provider"
-                                  optionLabel="label"
-                                  optionValue="value"
-                                  filter
-                                  placeholder="Select Provider"
-                                  loading={providerLoading}
-                                  value={selectedProvider}
-                                  onChange={(e) => {
-                                    setSelectedProvider(e.value);
-                                  }}
-                                  options={providerData}
-                                  className="w-100"
-                                />
-                              </div>
-
-                              <div className="auth_login_btn">
-                                <Button
-                                  className="login_btn"
-                                  loading={loading}
-                                  disabled={!selectedProvider}
-                                >
-                                  Send OTP
-                                  <i className="pi pi-send ms-2" />
-                                </Button>
-                              </div>
-                            </form>
-
-                            <div className="auth_signup_link">
-                              <p>Already have an account ?</p>
-                              <span
-                                className="ms-2 signup-text"
-                                onClick={() => {
-                                  signUpFormRef.current?.reset();
-                                  setSelectedProvider(null);
-                                  setPageType("SignIn");
-                                  setOtpSent(false);
-                                }}
-                              >
-                                Sign in
-                              </span>
-                            </div>
-                          </div>
-                        </>
-                      )} */}
-
                       {otpSent ? (
                         <>
                           <div className="login_title">
@@ -349,7 +169,10 @@ const Login = () => {
                                 height: "80px",
                               }}
                             />
-                            <h3 className="fw-bold" style={{ color: "#392f6c" }}>
+                            <h3
+                              className="fw-bold"
+                              style={{ color: "#392f6c" }}
+                            >
                               Enter OTP
                             </h3>
                             <p>OTP is sent to {email}</p>
@@ -383,24 +206,36 @@ const Login = () => {
                         </>
                       ) : pageType === "SignIn" ? (
                         <>
-                          <a href="https://www.igamingcompass.com" target="_blank" style={{textDecoration: "none"}}>
-                          <div className="login_title">
-                            <img
-                              src={WebsiteLogo}
-                              alt="IGC"
-                              style={{
-                                height: "80px",
-                              }}
-                            />
-                            <h3 className="fw-bold" style={{ color: "#392f6c" }}>
-                              IGamingCompass
-                            </h3>
-                            <p>Your partner in gaming insights !</p>
-                            <br /><br /><br />
-                            <h4 className="fw-bold" style={{ color: "#392f6c" }}>
-                              Sign in
-                            </h4>
-                          </div>
+                          <a
+                            href="https://www.igamingcompass.com"
+                            target="_blank"
+                            style={{ textDecoration: "none" }}
+                          >
+                            <div className="login_title">
+                              <img
+                                src={WebsiteLogo}
+                                alt="IGC"
+                                style={{
+                                  height: "80px",
+                                }}
+                              />
+                              <h3
+                                className="fw-bold"
+                                style={{ color: "#392f6c" }}
+                              >
+                                IGamingCompass
+                              </h3>
+                              <p>Your partner in gaming insights !</p>
+                              <br />
+                              <br />
+                              <br />
+                              <h4
+                                className="fw-bold"
+                                style={{ color: "#392f6c" }}
+                              >
+                                Sign in
+                              </h4>
+                            </div>
                           </a>
 
                           <div className="login_detail_inr">
@@ -440,25 +275,37 @@ const Login = () => {
                         </>
                       ) : (
                         <>
-                        <a href="https://www.igamingcompass.com" target="_blank" style={{textDecoration: "none"}}>
-                          <div className="login_title">
-                            <img
-                              src={WebsiteLogo}
-                              alt="IGC"
-                              style={{
-                                height: "80px",
-                              }}
-                            />
-                            <h3 className="fw-bold" style={{ color: "#392f6c" }}>
-                              IGamingCompass
-                            </h3>
-                            <p>Your partner in gaming insights !</p>
-                            <br /><br /><br />
-                            <h4 className="fw-bold mb-0" style={{ color: "#392f6c" }}>
-                              Sign Up
-                            </h4>
-                            {/* <p style={{fontSize: "14px"}}>*Use your professional email</p> */}
-                          </div>
+                          <a
+                            href="https://www.igamingcompass.com"
+                            target="_blank"
+                            style={{ textDecoration: "none" }}
+                          >
+                            <div className="login_title">
+                              <img
+                                src={WebsiteLogo}
+                                alt="IGC"
+                                style={{
+                                  height: "80px",
+                                }}
+                              />
+                              <h3
+                                className="fw-bold"
+                                style={{ color: "#392f6c" }}
+                              >
+                                IGamingCompass
+                              </h3>
+                              <p>Your partner in gaming insights !</p>
+                              <br />
+                              <br />
+                              <br />
+                              <h4
+                                className="fw-bold mb-0"
+                                style={{ color: "#392f6c" }}
+                              >
+                                Sign Up
+                              </h4>
+                              {/* <p style={{fontSize: "14px"}}>*Use your professional email</p> */}
+                            </div>
                           </a>
 
                           <div className="login_detail_inr">
@@ -495,7 +342,16 @@ const Login = () => {
                                   options={providerData}
                                   className="w-100"
                                 />
-                                <p style={{fontSize: "10px"}}>*required for configuration. To know more click <a href="https://igamingcompass.com/faqs/" target="_blank">here</a></p>
+                                <p style={{ fontSize: "10px" }}>
+                                  *required for configuration. To know more
+                                  click{" "}
+                                  <a
+                                    href="https://igamingcompass.com/faqs/"
+                                    target="_blank"
+                                  >
+                                    here
+                                  </a>
+                                </p>
                               </div>
 
                               <div className="auth_login_btn">
