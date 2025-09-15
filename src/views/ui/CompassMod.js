@@ -7,14 +7,15 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { FloatLabel } from "primereact/floatlabel";
 import { Calendar } from "primereact/calendar";
-import { Tooltip } from 'primereact/tooltip';
-import { MdInfoOutline } from 'react-icons/md';
+import { Tooltip } from "primereact/tooltip";
+import { MdInfoOutline } from "react-icons/md";
 
 import { Spin } from "antd";
 
 import CompassDataPage from "../modules/CompassDataPage";
 import CompassData from "../../services/CompassApi";
 import { ProfileSystem } from "../../context/ProfileContext";
+import RequestCasinoModal from "./RequestCasinoModal";
 
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -42,6 +43,8 @@ const CompassMod = () => {
   const [open, setOpen] = useState(false);
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
+
+  const [requestCasinoVisible, setRequestCasinoVisible] = useState(false);
 
   const [activeStep, setActiveStep] = useState(0);
   const [compassRead, setCompassRead] = useState([]);
@@ -79,7 +82,6 @@ const CompassMod = () => {
   const [minPosition, setMinPosition] = useState(1);
   const [maxPosition, setMaxPosition] = useState(50);
 
-  
   const [selectAllGames, setSelectAllGames] = useState(false);
 
   const onStartDateChange = (e) => {
@@ -206,15 +208,14 @@ const CompassMod = () => {
       });
   };
 
-
-    const settingMinPosition = (e) => {
+  const settingMinPosition = (e) => {
     const min_position_val = e.target.value;
-    if(min_position_val){
-      if(min_position_val < 1){
+    if (min_position_val) {
+      if (min_position_val < 1) {
         toast.error("Minimum Position can't be less than 1");
         return;
       }
-      if(min_position_val > 100){
+      if (min_position_val > 100) {
         toast.error("Minimum Position can't be more than 100");
         return;
       }
@@ -225,48 +226,45 @@ const CompassMod = () => {
       // }
     }
     setMinPosition(e.target.value);
-  }
-  
+  };
+
   const settingMaxPosition = (e) => {
     const max_position_val = e.target.value;
-    if(max_position_val){
-      if(max_position_val < 1){
+    if (max_position_val) {
+      if (max_position_val < 1) {
         toast.error("Maximum Position can't be less than 1");
         return;
       }
-      if(max_position_val > 100){
+      if (max_position_val > 100) {
         toast.error("Maximum Position can't be more than 100");
         return;
       }
-      // if(minimum_position && max_position_val < minimum_position){
-      //   toast.error("Maximum Position can't be less than minimum position");
-      //   return;
-      // }
     }
     setMaxPosition(e.target.value);
-  }
+  };
+
   const handleSaveCompass = () => {
     setSubmitLoading(true);
     const data = [];
 
     const min_postion_int = parseInt(minPosition);
     const max_position_int = parseInt(maxPosition);
-    if(min_postion_int > max_position_int){
+    if (min_postion_int > max_position_int) {
       toast.error("Minimum position can't be more than maximum position");
       setSubmitLoading(false);
       return;
     }
-    if(!startDate){
+    if (!startDate) {
       toast.error("Start Date is required");
       setSubmitLoading(false);
       return;
     }
-    if(!endDate){
+    if (!endDate) {
       toast.error("End Date is required");
       setSubmitLoading(false);
       return;
     }
-    if(startDate > endDate){
+    if (startDate > endDate) {
       toast.error("Start date can't be after End date");
       setSubmitLoading(false);
       return;
@@ -309,7 +307,13 @@ const CompassMod = () => {
           setSelectedGame([]);
           setSelectAllGames(false);
           setDisplayedGames({});
-          CompassData.compass_create_mail({"user_id": user_id}).then((res) => {console.log("Compass Mailed")}).catch((err) => {console.log("Compass mail error")});
+          CompassData.compass_create_mail({ user_id: user_id })
+            .then((res) => {
+              console.log("Compass Mailed");
+            })
+            .catch((err) => {
+              console.log("Compass mail error");
+            });
         }
       })
       .catch((err) => {
@@ -325,10 +329,6 @@ const CompassMod = () => {
     if (!selectedCasino?.length || !selectedGame?.length) return [];
 
     const rows = [];
-
-    // if (selectedCasino.length > 0) {
-    //   getSectionTitleData(selectedCasino[0].id);
-    // }
 
     for (const casino of selectedCasino) {
       for (const gameItem of selectedGame) {
@@ -488,17 +488,21 @@ const CompassMod = () => {
 
   const handleSelectAllGames = () => {
     setSelectAllGames((prev) => {
-      if(prev){
+      if (prev) {
         setSelectedGame([]);
-      }else{
-        setSelectedGame([...gameData.map((item, index) => ({
-                ...item,
-                id: index + 1,
-              })).slice(0, 10)]);
+      } else {
+        setSelectedGame([
+          ...gameData
+            .map((item, index) => ({
+              ...item,
+              id: index + 1,
+            }))
+            .slice(0, 10),
+        ]);
       }
       return !prev;
     });
-  }
+  };
 
   const renderStepContent = () => {
     switch (activeStep) {
@@ -575,9 +579,22 @@ const CompassMod = () => {
                   </div>
                 </div>
               ))}
+
               {loadingMoreCasinos && (
                 <div className="text-center py-2">
                   <Spin size="small" />
+                </div>
+              )}
+
+              {casinoData.length === 0 && !loadingMoreCasinos && (
+                <div className="text-center py-2">
+                  <button
+                    className="btn btn-link"
+                    style={{ color: "#392f6c", fontWeight: 600 }}
+                    onClick={() => setRequestCasinoVisible(true)}
+                  >
+                    + Request new casino
+                  </button>
                 </div>
               )}
             </div>
@@ -627,37 +644,34 @@ const CompassMod = () => {
                 }
               }}
             >
-              
               <div
-                  className="casino-data-display rounded-1"
-                  key="game_id_select_all"
-                >
-                  <input
-                    type="checkbox"
-                    className="casino-checkbox"
-                    id="game_id_select_all"
-                    checked={selectAllGames}
-                    onChange={() => handleSelectAllGames()}
-                  />
-                  <div className="casino-data-bar">
-                    <label htmlFor="game_id_select_all">
-                      Select All
-                    </label>
-                    <span
-                      style={{
-                        display: "inline-block",
-                        maxWidth: "400px",
-                        color: "#392f6c",
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                      }}
-                      title={" "}
-                    >
-                      {" "}
-                    </span>
-                  </div>
+                className="casino-data-display rounded-1"
+                key="game_id_select_all"
+              >
+                <input
+                  type="checkbox"
+                  className="casino-checkbox"
+                  id="game_id_select_all"
+                  checked={selectAllGames}
+                  onChange={() => handleSelectAllGames()}
+                />
+                <div className="casino-data-bar">
+                  <label htmlFor="game_id_select_all">Select All</label>
+                  <span
+                    style={{
+                      display: "inline-block",
+                      maxWidth: "400px",
+                      color: "#392f6c",
+                      whiteSpace: "nowrap",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                    }}
+                    title={" "}
+                  >
+                    {" "}
+                  </span>
                 </div>
+              </div>
               {gameData.map((data) => (
                 <div
                   className="casino-data-display rounded-1"
@@ -703,7 +717,7 @@ const CompassMod = () => {
         return (
           <div className="d-flex flex-column h-full">
             {/* Header */}
-            
+
             <div className="px-3">
               <h4
                 className="m-md-0"
@@ -769,21 +783,22 @@ const CompassMod = () => {
                         <div className="d-flex align-items-center justify-content-start">
                           {/* <label htmlFor="minPosition">Min Position 
                           </label> */}
-                          <p style={{fontWeight:"bold"}} className="mb-0">Tracking starts on
+                          <p style={{ fontWeight: "bold" }} className="mb-0">
+                            Tracking starts on
                           </p>
                           <MdInfoOutline
-                              className="tracking-start-tooltip-target m-2"
-                              style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                              }}
+                            className="tracking-start-tooltip-target m-2"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
                           />
                           <Tooltip
-                              target=".tracking-start-tooltip-target"
-                              content="Date when tracking for the casino game pair starts"
-                              position="top"
-                              className="custom-tooltip"
+                            target=".tracking-start-tooltip-target"
+                            content="Date when tracking for the casino game pair starts"
+                            position="top"
+                            className="custom-tooltip"
                           />
                         </div>
                         <Calendar
@@ -806,21 +821,22 @@ const CompassMod = () => {
                         <div className="d-flex align-items-center justify-content-start">
                           {/* <label htmlFor="minPosition">Min Position 
                           </label> */}
-                          <p style={{fontWeight:"bold"}} className="mb-0">Tracking ends on
+                          <p style={{ fontWeight: "bold" }} className="mb-0">
+                            Tracking ends on
                           </p>
                           <MdInfoOutline
-                              className="tracking-end-tooltip-target m-2"
-                              style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                              }}
+                            className="tracking-end-tooltip-target m-2"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
                           />
                           <Tooltip
-                              target=".tracking-end-tooltip-target"
-                              content="Date when tracking for the casino game pair ends"
-                              position="top"
-                              className="custom-tooltip"
+                            target=".tracking-end-tooltip-target"
+                            content="Date when tracking for the casino game pair ends"
+                            position="top"
+                            className="custom-tooltip"
                           />
                         </div>
                         <Calendar
@@ -835,8 +851,8 @@ const CompassMod = () => {
                         {/* <label htmlFor="tracking_end">Tracking ends on</label> */}
                       </FloatLabel>
                     </div>
-</div>
-<div
+                  </div>
+                  <div
                     className="tracking-grid mt-4"
                     style={{
                       display: "grid",
@@ -849,21 +865,22 @@ const CompassMod = () => {
                         <div className="d-flex align-items-center justify-content-start">
                           {/* <label htmlFor="minPosition">Min Position 
                           </label> */}
-                          <p style={{fontWeight:"bold"}} className="mb-0">Section Title 
+                          <p style={{ fontWeight: "bold" }} className="mb-0">
+                            Section Title
                           </p>
                           <MdInfoOutline
-                              className="section-title-tooltip-target m-2"
-                              style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                              }}
+                            className="section-title-tooltip-target m-2"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
                           />
                           <Tooltip
-                              target=".section-title-tooltip-target"
-                              content="Section within the casino where the selected games are expected to be present"
-                              position="top"
-                              className="custom-tooltip"
+                            target=".section-title-tooltip-target"
+                            content="Section within the casino where the selected games are expected to be present"
+                            position="top"
+                            className="custom-tooltip"
                           />
                         </div>
                         <Dropdown
@@ -881,28 +898,27 @@ const CompassMod = () => {
                       </FloatLabel>
                     </div>
 
-                    
                     <div className="form-group credit-field">
-                      
                       <FloatLabel>
                         <div className="d-flex align-items-center justify-content-start">
                           {/* <label htmlFor="minPosition">Min Position 
                           </label> */}
-                          <p style={{fontWeight:"bold"}} className="mb-0">Min Position 
+                          <p style={{ fontWeight: "bold" }} className="mb-0">
+                            Min Position
                           </p>
                           <MdInfoOutline
-                              className="min-tooltip-target m-2"
-                              style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                              }}
+                            className="min-tooltip-target m-2"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
                           />
                           <Tooltip
-                              target=".min-tooltip-target"
-                              content="Minimum position within the section that the games can have"
-                              position="top"
-                              className="custom-tooltip"
+                            target=".min-tooltip-target"
+                            content="Minimum position within the section that the games can have"
+                            position="top"
+                            className="custom-tooltip"
                           />
                         </div>
 
@@ -920,21 +936,22 @@ const CompassMod = () => {
                         <div className="d-flex align-items-center justify-content-start">
                           {/* <label htmlFor="minPosition">Min Position 
                           </label> */}
-                          <p style={{fontWeight:"bold"}} className="mb-0">Max Position 
+                          <p style={{ fontWeight: "bold" }} className="mb-0">
+                            Max Position
                           </p>
                           <MdInfoOutline
-                              className="max-tooltip-target m-2"
-                              style={{
-                                  fontSize: "16px",
-                                  cursor: "pointer",
-                                  flexShrink: 0,
-                              }}
+                            className="max-tooltip-target m-2"
+                            style={{
+                              fontSize: "16px",
+                              cursor: "pointer",
+                              flexShrink: 0,
+                            }}
                           />
                           <Tooltip
-                              target=".max-tooltip-target"
-                              content="Maximum position within the section that the games can have"
-                              position="top"
-                              className="custom-tooltip"
+                            target=".max-tooltip-target"
+                            content="Maximum position within the section that the games can have"
+                            position="top"
+                            className="custom-tooltip"
                           />
                         </div>
                         <InputText
@@ -1037,6 +1054,16 @@ const CompassMod = () => {
           </div>
         </div>
       </Sidebar>
+
+      <RequestCasinoModal
+        visible={requestCasinoVisible}
+        onHide={() => setRequestCasinoVisible(false)}
+        onSubmit={async (payload) => {
+          // call API here
+          console.log("Requesting casino with data:", payload);
+          // await CompassData.request_new_casino(payload);
+        }}
+      />
     </>
   );
 };

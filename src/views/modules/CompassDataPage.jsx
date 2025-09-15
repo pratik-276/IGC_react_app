@@ -90,9 +90,8 @@ const CompassDataPage = ({
   };
 
   const showFirstDrawer = () => {
-    if(filteredData.length >= 50){
-      //toast.error("Your quota for compass calibration is reached. Contact administrator at info@igamingcompass.com");
-      
+    if (filteredData.length >= 50) {
+
       toast.current?.show({
         severity: 'error',
         summary: 'Error',
@@ -180,7 +179,6 @@ const CompassDataPage = ({
     );
   };
 
-
   const headerWithTooltip = (headerText, tooltipText, id) => (
     <div
       className="d-flex align-items-center justify-content-between"
@@ -219,26 +217,26 @@ const CompassDataPage = ({
   }));
 
   const actionBodyTemplate = (rowData) => {
-      return (
-        <MdArrowForwardIos
-          style={{ fontSize: "16px" }}
-          onClick={() => {
-            console.log(rowData);
-            navigate("/compass-details", {
-              state: {
-                operator_site_id: rowData.operator_site_id,
-                game_name: rowData.game_original_name,
-                casino_name: rowData.name,
-                country_name: rowData.geography,
-                state_name: rowData.state,
-                start_date: rowData.start_date,
-                end_date: rowData.end_date
-              },
-            });
-          }}
-        />
-      );
-    };
+    return (
+      <MdArrowForwardIos
+        style={{ fontSize: "16px" }}
+        onClick={() => {
+          console.log(rowData);
+          navigate("/compass-details", {
+            state: {
+              operator_site_id: rowData.operator_site_id,
+              game_name: rowData.game_original_name,
+              casino_name: rowData.name,
+              country_name: rowData.geography,
+              state_name: rowData.state,
+              start_date: rowData.start_date,
+              end_date: rowData.end_date
+            },
+          });
+        }}
+      />
+    );
+  };
 
   return (
     <>

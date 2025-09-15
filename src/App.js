@@ -5,7 +5,6 @@ import Layout from "./views/AntdLayout";
 import Home from "./views/Home";
 import Compass from "./views/ui/Compass";
 import CompassMod from "./views/ui/CompassMod";
-import Login from "./views/auth/Login";
 
 import LoginPage from "./views/auth/LoginPage";
 import SignupPage from "./views/auth/SignupPage";
@@ -37,7 +36,6 @@ import "primeicons/primeicons.css";
 import CLAUDE1 from "./views/blogs/claude_1";
 import CLAUDE2 from "./views/blogs/claude_2";
 import CLAUDE3 from "./views/blogs/claude_3";
-// import SignupPage from "./views/auth/SignupPage";
 
 const App = () => {
   return (
@@ -272,10 +270,11 @@ const App = () => {
                     }
                   /> */}
                 </Route>
-                {/* <Route path="/login" element={<Login />} /> */}
-                {/* <Route path="/verify" element={<Verify />} /> */}
-                {/* <Route path="/signup" element={<Signup />} /> */}
-                {/* <Route path="/forget-password" element={<ForgotPass />} /> */}
+                {/* <Route path="/login" element={<Login />} />
+                <Route path="/verify" element={<Verify />} />
+                <Route path="/signup" element={<Signup />} />
+                <Route path="/forget-password" element={<ForgotPass />} /> */}
+
                 <Route path="/login" element={<LoginPage />} />
                 <Route path="/signup" element={<SignupPage />} />
                 <Route path="/verify-otp" element={<OtpVerification />} />
