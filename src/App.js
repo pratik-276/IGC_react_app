@@ -71,22 +71,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-                  {/* <Route
-                    path="/game-tracking"
-                    element={
-                      <ProtectedRoute>
-                        <GameTracking />
-                      </ProtectedRoute>
-                    }
-                  />
-                  <Route
-                    path="/game-tracking-details"
-                    element={
-                      <ProtectedRoute>
-                        <GameTrackingDetails />
-                      </ProtectedRoute>
-                    }
-                  /> */}
+
                   <Route
                     path="calibrate-compass-mod"
                     element={
@@ -95,6 +80,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="calibrate-compass"
                     element={
@@ -103,6 +89,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="compass-details"
                     element={
@@ -111,22 +98,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-                  {/* <Route
-                    path="priority-casinos"
-                    element={
-                      <ProtectedRoute>
-                        <DailyDashboard />
-                      </ProtectedRoute>
-                    }
-                  /> */}
-                  {/* <Route
-                    path="dashboard"
-                    element={
-                      <ProtectedRoute>
-                        <Dashboard />
-                      </ProtectedRoute>
-                    }
-                  /> */}
+
                   {/* added by akshay */}
                   <Route
                     path="position-details"
@@ -136,6 +108,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="dashboard"
                     element={
@@ -144,6 +117,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="competitor-dashboard"
                     element={
@@ -152,6 +126,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="game-rank-report"
                     element={
@@ -160,6 +135,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="game-rank-details"
                     element={
@@ -168,6 +144,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="game-provider-marketshare"
                     element={
@@ -176,6 +153,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="game-provider-marketshare-details"
                     element={
@@ -185,14 +163,6 @@ const App = () => {
                     }
                   />
 
-                  {/* <Route
-                    path="competitor-dashboard-mod"
-                    element={
-                      <ProtectedRoute>
-                        <CompetitorDashboard />
-                      </ProtectedRoute>
-                    }
-                  /> */}
                   <Route
                     path="all-data-dashboard"
                     element={
@@ -201,6 +171,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="my-account"
                     element={
@@ -209,6 +180,7 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
+
                   <Route
                     path="casino-requests"
                     element={
@@ -217,38 +189,88 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-                  {/* <Route 
-                  path="game-track-details"
-                  element={
-                    <ProtectedRoute>
-                      <TrackerDetails trackingDetails={null} />
-                    </ProtectedRoute>
-                  }
-                /> */}
-                  {/* <Route
-                  path="billing-section"
-                  element={
-                    <ProtectedRoute>
-                      <Billing />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="help-support"
-                  element={
-                    <ProtectedRoute>
-                      <HelpSupport />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path="refer-earn"
-                  element={
-                    <ProtectedRoute>
-                      <ReferEarn />
-                    </ProtectedRoute>
-                  }
-                /> */}
+
+                  {/*
+                  <Route
+                    path="/game-tracking"
+                    element={
+                      <ProtectedRoute>
+                        <GameTracking />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="/game-tracking-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameTrackingDetails />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="priority-casinos"
+                    element={
+                      <ProtectedRoute>
+                        <DailyDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="competitor-dashboard-mod"
+                    element={
+                      <ProtectedRoute>
+                        <CompetitorDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  
+                  <Route
+                    path="game-track-details"
+                    element={
+                      <ProtectedRoute>
+                        <TrackerDetails trackingDetails={null} />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="billing-section"
+                    element={
+                      <ProtectedRoute>
+                        <Billing />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="help-support"
+                    element={
+                      <ProtectedRoute>
+                        <HelpSupport />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="refer-earn"
+                    element={
+                      <ProtectedRoute>
+                        <ReferEarn />
+                      </ProtectedRoute>
+                    }
+                  /> */}
                 </Route>
                 {/* <Route path="/login" element={<Login />} /> */}
                 {/* <Route path="/verify" element={<Verify />} /> */}
