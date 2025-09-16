@@ -1,6 +1,7 @@
 import React, { useRef, useState } from "react";
 import Loader from "../../layouts/loader/Loader";
 import { FaPlus } from "react-icons/fa6";
+import { FaPen } from "react-icons/fa6";
 import CompassData from "../../services/CompassApi";
 import { useNavigate } from "react-router-dom";
 
@@ -102,6 +103,7 @@ const CompassDataPage = ({
     }
     setOpen(true);
   }
+
   const sortIconTemplate = (options) => {
     let icon = options.sorted ? (
       options.sortOrder < 0 ? (
@@ -235,6 +237,24 @@ const CompassDataPage = ({
           });
         }}
       />
+    );
+  };
+
+  const editBodyTemplate = (rowData) => {
+    return (
+      <span className="p-overlay-badge" style={{ cursor: "pointer" }}>
+        <FaPen
+          style={{ fontSize: "16px", color: "#392f6c" }}
+          data-pr-tooltip="Edit Compass"
+          onClick={() => {
+            setOpen({
+              mode: "edit",
+              data: rowData
+            });
+          }}
+        />
+        <Tooltip target=".pi-pencil" content="Edit Compass" />
+      </span>
     );
   };
 
@@ -469,7 +489,18 @@ const CompassDataPage = ({
                     body={LastScanDateBodyTemplate}
                   ></Column>
 
-                  {/* <Column
+                  <Column
+                    field="edit"
+                    header={headerWithTooltip(
+                      "Edit",
+                      "Edit Compass Configuration",
+                      "edit"
+                    )}
+                    className="text-center"
+                    body={editBodyTemplate}
+                  ></Column>
+
+                  <Column
                     field="details"
                     header={headerWithTooltip(
                       "Details",
@@ -478,7 +509,7 @@ const CompassDataPage = ({
                     )}
                     className="text-center"
                     body={actionBodyTemplate}
-                  ></Column> */}
+                  ></Column>
 
                 </DataTable>
               </div>

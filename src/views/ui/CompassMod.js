@@ -84,6 +84,34 @@ const CompassMod = () => {
 
   const [selectAllGames, setSelectAllGames] = useState(false);
 
+  const [mode, setMode] = useState("create"); // create | edit
+  const [editData, setEditData] = useState(null);
+
+  useEffect(() => {
+    if (mode === "edit" && editData) {
+      // Pre-fill Casino
+      setSelectedCasino([
+        { id: editData.operator_site_id, name: editData.name, site_url: "" },
+      ]);
+
+      // Pre-fill Game
+      setSelectedGame([
+        {
+          game_id: editData.game_id,
+          game_original_name: editData.game_original_name,
+          game_provider_name: editData.game_provider,
+        },
+      ]);
+
+      // Pre-fill details
+      setStartDate(new Date(editData.start_date));
+      setEndDate(new Date(editData.end_date));
+      setSectionTitle(editData.section_name);
+      setMinPosition(editData.min_position);
+      setMaxPosition(editData.max_position);
+    }
+  }, [editData, mode]);
+
   const onStartDateChange = (e) => {
     setStartDate(e.target.value);
   };
@@ -245,6 +273,38 @@ const CompassMod = () => {
 
   const handleSaveCompass = () => {
     setSubmitLoading(true);
+
+    if (mode === "edit") {
+      const payload = {
+        id: editData.id,
+        game_id: selectedGame[0].game_id,
+        operator_id: selectedCasino[0].id,
+        game_name: selectedGame[0].game_original_name,
+        game_provider: selectedGame[0].game_provider_name,
+        start_date: startDate,
+        end_date: endDate,
+        section_name: sectionTitle,
+        min_position: minPosition,
+        max_position: maxPosition,
+      };
+
+      console.log("Edit Payload : ", payload);
+      // CompassData.compass_edit(payload)
+      //   .then((res) => {
+      //     if (res?.success) {
+      //       toast.success("Compass updated successfully!");
+      //       getCompassReadData();
+      //       setOpen(false);
+      //     }
+      //   })
+      //   .catch((err) => {
+      //     console.error(err);
+      //     toast.error("Failed to update Compass");
+      //   })
+      //   .finally(() => setSubmitLoading(false));
+      return;
+    }
+
     const data = [];
 
     const min_postion_int = parseInt(minPosition);
@@ -980,7 +1040,18 @@ const CompassMod = () => {
       <div className={`w-100 h-100 ${isPlanExpired ? "overlay active" : ""}`}>
         <CompassDataPage
           open={open}
-          setOpen={setOpen}
+          // setOpen={setOpen}
+          setOpen={(payload) => {
+            if (typeof payload === "object") {
+              setMode(payload.mode);
+              setEditData(payload.data);
+              setOpen(true);
+            } else {
+              setMode("create");
+              setEditData(null);
+              setOpen(payload);
+            }
+          }}
           compassRead={compassRead}
           loading={loading}
           getCompassReadData={getCompassReadData}

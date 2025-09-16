@@ -240,8 +240,9 @@ const DashboardMod = () => {
   const evidanceTemplate = (rowData) => {
     //setVideoURL(rowData?.video_url);
     //console.log(rowData?.video_url);
-    const label = "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
-    if(rowData?.video_url){
+    const label =
+      "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
+    if (rowData?.video_url) {
       return (
         <Button
           label={label}
@@ -253,7 +254,7 @@ const DashboardMod = () => {
           }}
         />
       );
-    }else{
+    } else {
       return (
         <Button
           label={"No video"}
@@ -475,6 +476,7 @@ const DashboardMod = () => {
                         sortOrder={-1}
                       >
                         <Column
+                          frozen
                           field="game_name"
                           header={headerWithTooltip(
                             "Game",
@@ -486,6 +488,7 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          frozen
                           field="casino_name"
                           header={headerWithTooltip(
                             "Casino",
@@ -496,6 +499,7 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          frozen
                           field="country_name"
                           header={headerWithTooltip(
                             "Country",
@@ -503,17 +507,6 @@ const DashboardMod = () => {
                             "country_name"
                           )}
                           sortable
-                        ></Column>
-
-                        <Column
-                          field="details"
-                          header={headerWithTooltip(
-                            "Details",
-                            "Check historical movement of the game",
-                            "details"
-                          )}
-                          className="text-center"
-                          body={actionBodyTemplate}
                         ></Column>
 
                         <Column
@@ -636,7 +629,18 @@ const DashboardMod = () => {
                           style={{ minWidth: "13rem" }}
                         ></Column> */}
 
-                        
+                        <Column
+                          frozen
+                          alignFrozen="right"
+                          field="details"
+                          header={headerWithTooltip(
+                            "Details",
+                            "Check historical movement of the game",
+                            "details"
+                          )}
+                          className="text-center"
+                          body={actionBodyTemplate}
+                        ></Column>
                       </DataTable>
 
                       {isPlanExpired && (

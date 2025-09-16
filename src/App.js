@@ -6,6 +6,7 @@ import Home from "./views/Home";
 import Compass from "./views/ui/Compass";
 import CompassMod from "./views/ui/CompassMod";
 
+import Login from "./views/auth/Login";
 import LoginPage from "./views/auth/LoginPage";
 import SignupPage from "./views/auth/SignupPage";
 import OtpVerification from "./views/auth/OtpVerification";
@@ -270,8 +271,8 @@ const App = () => {
                     }
                   /> */}
                 </Route>
-                {/* <Route path="/login" element={<Login />} />
-                <Route path="/verify" element={<Verify />} />
+                {/* <Route path="/login" element={<Login />} /> */}
+                {/* <Route path="/verify" element={<Verify />} />
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/forget-password" element={<ForgotPass />} /> */}
 
