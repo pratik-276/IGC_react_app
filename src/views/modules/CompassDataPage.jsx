@@ -226,13 +226,19 @@ const CompassDataPage = ({
           console.log(rowData);
           navigate("/compass-details", {
             state: {
+              compass_id: rowData.id,
               operator_site_id: rowData.operator_site_id,
               game_name: rowData.game_original_name,
               casino_name: rowData.name,
               country_name: rowData.geography,
-              state_name: rowData.state,
               start_date: rowData.start_date,
-              end_date: rowData.end_date
+              end_date: rowData.end_date,
+              min_position: rowData.min_position,
+              max_position: rowData.max_position,
+              section_name: rowData.section_name,
+              days_inside: rowData.days_inside,
+              days_outside: rowData.days_outside,
+              scan_status: rowData.scan_status,
             },
           });
         }}

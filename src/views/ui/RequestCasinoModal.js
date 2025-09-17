@@ -2,25 +2,18 @@
 import { useState } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
-import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import toast from "react-hot-toast";
+import CompassData from "../../services/CompassApi";
 
 const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
   const [casinoName, setCasinoName] = useState("");
   const [casinoUrl, setCasinoUrl] = useState("");
-  const [country, setCountry] = useState(null);
   const [loading, setLoading] = useState(false);
   const user_id = localStorage.getItem("user_id");
 
-  const countries = [
-    { label: "India", value: "India" },
-    { label: "USA", value: "USA" },
-    { label: "UK", value: "UK" },
-  ];
-
   const handleSubmit = async () => {
-    if (!casinoName || !casinoUrl || !country) {
+    if (!casinoName || !casinoUrl) {
       toast.error("Please fill all fields");
       return;
     }
@@ -29,23 +22,20 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
       user_id: parseInt(user_id),
       operator_name: casinoName,
       operator_url: casinoUrl,
-      country: country,
     };
 
     setLoading(true);
-    try {
-      await onSubmit(payload);
-      toast.success("Casino request submitted");
-      onHide();
-      setCasinoName("");
-      setCasinoUrl("");
-      setCountry(null);
-    } catch (error) {
-      console.error(error);
-      toast.error("Failed to submit request");
-    } finally {
-      setLoading(false);
-    }
+    CompassData.request_new_casino(payload)
+      .then((res) => {
+        if (res?.success) {
+          toast.success("Casino request submitted");
+          onHide();
+          setCasinoName("");
+          setCasinoUrl("");
+        }
+      })
+      .catch(console.error)
+      .finally(() => setLoading(false));
   };
 
   const footer = (
@@ -68,37 +58,30 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
       onHide={onHide}
       footer={footer}
     >
-      <div className="flex flex-column gap-3 p-2">
-        <span className="p-float-label">
+      <div className="flex flex-column gap-2 p-2">
+        <div>
+          <label className="fs-6" htmlFor="casinoName">
+            Casino Name
+          </label>
           <InputText
             id="casinoName"
             value={casinoName}
             onChange={(e) => setCasinoName(e.target.value)}
             className="w-full"
           />
-          <label htmlFor="casinoName">Enter Casino Name</label>
-        </span>
+        </div>
 
-        <span className="p-float-label">
+        <div>
+          <label className="fs-6" htmlFor="casinoUrl">
+            URL
+          </label>
           <InputText
             id="casinoUrl"
             value={casinoUrl}
             onChange={(e) => setCasinoUrl(e.target.value)}
             className="w-full"
           />
-          <label htmlFor="casinoUrl">Enter URL</label>
-        </span>
-
-        <span className="p-float-label">
-          <Dropdown
-            id="country"
-            value={country}
-            options={countries}
-            onChange={(e) => setCountry(e.value)}
-            className="w-full"
-          />
-          <label htmlFor="country">Select Country</label>
-        </span>
+        </div>
       </div>
     </Dialog>
   );

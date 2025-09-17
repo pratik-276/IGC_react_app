@@ -281,27 +281,28 @@ const CompassMod = () => {
         operator_id: selectedCasino[0].id,
         game_name: selectedGame[0].game_original_name,
         game_provider: selectedGame[0].game_provider_name,
-        start_date: startDate,
-        end_date: endDate,
+        start_date: formatDate(startDate),
+        end_date: formatDate(endDate),
         section_name: sectionTitle,
         min_position: minPosition,
         max_position: maxPosition,
       };
 
-      console.log("Edit Payload : ", payload);
-      // CompassData.compass_edit(payload)
-      //   .then((res) => {
-      //     if (res?.success) {
-      //       toast.success("Compass updated successfully!");
-      //       getCompassReadData();
-      //       setOpen(false);
-      //     }
-      //   })
-      //   .catch((err) => {
-      //     console.error(err);
-      //     toast.error("Failed to update Compass");
-      //   })
-      //   .finally(() => setSubmitLoading(false));
+      // console.log("Edit Payload : ", payload);
+      CompassData.compass_edit(payload)
+        .then((res) => {
+          if (res?.success) {
+            toast.success("Compass updated successfully!");
+            getCompassReadData();
+            setOpen(false);
+            resetForm();
+          }
+        })
+        .catch((err) => {
+          console.error(err);
+          toast.error("Failed to update Compass");
+        })
+        .finally(() => setSubmitLoading(false));
       return;
     }
 
@@ -360,13 +361,15 @@ const CompassMod = () => {
         if (res?.success === true) {
           toast.success("Combination Create Successfully!");
           setOpen(false);
-          setStartDate(formatDate(today));
-          setEndDate(formatDate(sevenDaysLater));
-          getCompassReadData();
-          setSelectedCasino([]);
-          setSelectedGame([]);
-          setSelectAllGames(false);
-          setDisplayedGames({});
+          // setStartDate(formatDate(today));
+          // setEndDate(formatDate(sevenDaysLater));
+          // getCompassReadData();
+          // setSelectedCasino([]);
+          // setSelectedGame([]);
+          // setSelectAllGames(false);
+          // setDisplayedGames({});
+          resetForm();
+
           CompassData.compass_create_mail({ user_id: user_id })
             .then((res) => {
               console.log("Compass Mailed");
@@ -383,6 +386,18 @@ const CompassMod = () => {
         handleFinish();
         setSubmitLoading(false);
       });
+  };
+
+  const resetForm = () => {
+    setStartDate(today);
+    setEndDate(sevenDaysLater);
+    setSelectedCasino([]);
+    setSelectedGame([]);
+    setSelectAllGames(false);
+    setDisplayedGames({});
+    getCompassReadData();
+    setMode("create");
+    setEditData(null);
   };
 
   const tableRows = useMemo(() => {
@@ -517,6 +532,7 @@ const CompassMod = () => {
     setActiveStep(0);
     setCasinoSearch("");
     setGameSearch("");
+    resetForm();
   };
 
   // Custom renderer for step icons
@@ -1061,7 +1077,11 @@ const CompassMod = () => {
       <Sidebar
         visible={open}
         position="right"
-        onHide={() => setOpen(false)}
+        onHide={() => {
+          setOpen(false);
+          setActiveStep(0);
+          resetForm();
+        }}
         className="p-sidebar-md text-sm"
         header={
           <h4

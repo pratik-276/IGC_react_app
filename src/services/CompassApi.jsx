@@ -108,6 +108,33 @@ const section_name_by_operator_site_id = async (data) => {
   return d;
 };
 
+const compass_edit = async (data) => {
+  let d = await Call({
+    path: "compass_edit",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
+const compass_details_graph = async (data) => {
+  let d = await Call({
+    path: "compass_details_graph",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
+
+const compass_game_sections = async (data) => {
+  let d = await Call({
+    path: "compass_game_sections",
+    method: "POST",
+    data,
+  });
+  return d;
+};
 const exportObject = {
   compass_read,
   compass_create,
@@ -121,6 +148,9 @@ const exportObject = {
   get_game_by_provider,
   request_new_casino,
   section_name_by_operator_site_id,
+  compass_edit,
+  compass_details_graph,
+  compass_game_sections,
 };
 
 export default exportObject;

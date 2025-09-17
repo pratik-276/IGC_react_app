@@ -113,7 +113,7 @@ const CompetitorDashboardMod = () => {
     const payload = {
       game_provider: user_company,
       operator_id: selectedOperator,
-      geography: selectedRegion
+      geography: selectedRegion,
     };
 
     CompetitorData.get_operator_sites_list(payload)
@@ -241,7 +241,13 @@ const CompetitorDashboardMod = () => {
     data.forEach((item) => {
       const section = item.section_title;
       const pos = item.game_position.toFixed(1);
-      const displayText = item.game_name;
+
+      const gameName = item.game_name?.trim() || "-";
+      const providerName = item.provider_name?.trim() || "-";
+      const displayText =
+        gameName === "-" && providerName === "-"
+          ? "-"
+          : `${gameName} (${providerName})`;
 
       if (!sectionMap[section]) {
         sectionMap[section] = { section_title: section };
@@ -557,7 +563,9 @@ const CompetitorDashboardMod = () => {
                   <div className="d-flex justify-content-between pl-2 mb-2">
                     <div>
                       <strong>Site URL : </strong>
-                      <a href={selectedSiteDetails.label}>{selectedSiteDetails.label}</a>
+                      <a href={selectedSiteDetails.label}>
+                        {selectedSiteDetails.label}
+                      </a>
                     </div>
                     <div>
                       <strong>Period : </strong>
