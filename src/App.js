@@ -34,9 +34,15 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 // BLOGS
+import BubbleChart from "./views/blogs/claude";
 import CLAUDE1 from "./views/blogs/claude_1";
 import CLAUDE2 from "./views/blogs/claude_2";
 import CLAUDE3 from "./views/blogs/claude_3";
+import CLAUDE4 from "./views/blogs/claude_4";
+import CLAUDE5 from "./views/blogs/claude_5";
+import CLAUDE7 from "./views/blogs/claude_7";
+import CLAUDE8 from "./views/blogs/claude_8";
+import CLAUDE6 from "./views/blogs/claude_6";
 
 const App = () => {
   return (

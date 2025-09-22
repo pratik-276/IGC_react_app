@@ -1,59 +1,37 @@
 import React from 'react';
 
-const CLAUDE3 = () => {
-  // Data from the previous analysis
+const CLAUDE6 = () => {
+  // Crash Games Provider Data
   const providerData = [
-    { provider: "Pixiu Gaming", totalGames: 22, kenoGames: 11, kenoPercentage: 50.00 },
-    { provider: "TV Bet", totalGames: 12, kenoGames: 3, kenoPercentage: 25.00 },
-    { provider: "Concept Gaming", totalGames: 11, kenoGames: 1, kenoPercentage: 9.09 },
-    { provider: "Bragg Gaming", totalGames: 13, kenoGames: 1, kenoPercentage: 7.69 },
-    { provider: "Gromada Games", totalGames: 13, kenoGames: 1, kenoPercentage: 7.69 },
-    { provider: "Galaxsys", totalGames: 40, kenoGames: 3, kenoPercentage: 7.50 },
-    { provider: "Spribe", totalGames: 28, kenoGames: 2, kenoPercentage: 7.14 },
-    { provider: "NeoGames", totalGames: 51, kenoGames: 3, kenoPercentage: 5.88 },
-    { provider: "Caleta Gaming", totalGames: 146, kenoGames: 8, kenoPercentage: 5.48 },
-    { provider: "Kiron Interactive", totalGames: 37, kenoGames: 2, kenoPercentage: 5.41 },
-    { provider: "Pascal Gaming", totalGames: 65, kenoGames: 3, kenoPercentage: 4.62 },
-    { provider: "7777 Gaming", totalGames: 128, kenoGames: 5, kenoPercentage: 3.91 },
-    { provider: "Bwin.Party", totalGames: 28, kenoGames: 1, kenoPercentage: 3.57 },
-    { provider: "InOut Games", totalGames: 31, kenoGames: 1, kenoPercentage: 3.23 },
-    { provider: "Nsoft", totalGames: 32, kenoGames: 1, kenoPercentage: 3.13 },
-    { provider: "Expanse Studios", totalGames: 66, kenoGames: 2, kenoPercentage: 3.03 },
-    { provider: "Realistic", totalGames: 66, kenoGames: 2, kenoPercentage: 3.03 },
-    { provider: "TaDa Gaming", totalGames: 105, kenoGames: 3, kenoPercentage: 2.86 },
-    { provider: "Smartsoft Gaming", totalGames: 106, kenoGames: 3, kenoPercentage: 2.83 },
-    { provider: "ZeusPlay", totalGames: 36, kenoGames: 1, kenoPercentage: 2.78 },
-    { provider: "PlayPearls", totalGames: 36, kenoGames: 1, kenoPercentage: 2.78 },
-    { provider: "Mascot Gaming", totalGames: 151, kenoGames: 4, kenoPercentage: 2.65 },
-    { provider: "1X2gaming", totalGames: 191, kenoGames: 5, kenoPercentage: 2.62 },
-    { provider: "InBet Games", totalGames: 280, kenoGames: 7, kenoPercentage: 2.50 },
-    { provider: "Atomic Slot Lab", totalGames: 42, kenoGames: 1, kenoPercentage: 2.38 },
-    { provider: "G.Games", totalGames: 97, kenoGames: 2, kenoPercentage: 2.06 },
-    { provider: "Turbo Games", totalGames: 50, kenoGames: 1, kenoPercentage: 2.00 },
-    { provider: "Funky Games", totalGames: 102, kenoGames: 2, kenoPercentage: 1.96 },
-    { provider: "Woohoo", totalGames: 53, kenoGames: 1, kenoPercentage: 1.89 },
-    { provider: "Genii", totalGames: 140, kenoGames: 2, kenoPercentage: 1.43 },
-    { provider: "Air Dice", totalGames: 74, kenoGames: 1, kenoPercentage: 1.35 },
-    { provider: "Aristocrat", totalGames: 78, kenoGames: 1, kenoPercentage: 1.28 },
-    { provider: "Wizard Games", totalGames: 164, kenoGames: 2, kenoPercentage: 1.22 },
-    { provider: "OneTouch", totalGames: 82, kenoGames: 1, kenoPercentage: 1.22 },
-    { provider: "Amusnet", totalGames: 333, kenoGames: 4, kenoPercentage: 1.20 },
-    { provider: "Lightning Box", totalGames: 90, kenoGames: 1, kenoPercentage: 1.11 },
-    { provider: "AGT Software", totalGames: 94, kenoGames: 1, kenoPercentage: 1.06 },
-    { provider: "Playtech Origins", totalGames: 105, kenoGames: 1, kenoPercentage: 0.95 },
-    { provider: "Tom Horn Gaming", totalGames: 112, kenoGames: 1, kenoPercentage: 0.89 },
-    { provider: "Spinoro", totalGames: 117, kenoGames: 1, kenoPercentage: 0.85 },
-    { provider: "Rival Gaming", totalGames: 121, kenoGames: 1, kenoPercentage: 0.83 },
-    { provider: "Skywind Group", totalGames: 276, kenoGames: 2, kenoPercentage: 0.72 },
-    { provider: "High 5 Games", totalGames: 330, kenoGames: 2, kenoPercentage: 0.61 },
-    { provider: "Evoplay", totalGames: 362, kenoGames: 2, kenoPercentage: 0.55 },
-    { provider: "RTG", totalGames: 197, kenoGames: 1, kenoPercentage: 0.51 },
-    { provider: "IGT", totalGames: 496, kenoGames: 2, kenoPercentage: 0.40 },
-    { provider: "NYX Gaming Group", totalGames: 284, kenoGames: 1, kenoPercentage: 0.35 },
-    { provider: "PariPlay", totalGames: 292, kenoGames: 1, kenoPercentage: 0.34 },
-    { provider: "Play'n Go", totalGames: 667, kenoGames: 2, kenoPercentage: 0.30 },
-    { provider: "KA Gaming", totalGames: 681, kenoGames: 1, kenoPercentage: 0.15 },
-    { provider: "Playtech", totalGames: 922, kenoGames: 1, kenoPercentage: 0.11 }
+    { provider: "KA Gaming", totalGames: 610, crashGames: 15, crashPercentage: 2.46 },
+    { provider: "Onlyplay", totalGames: 129, crashGames: 11, crashPercentage: 8.53 },
+    { provider: "Evoplay", totalGames: 260, crashGames: 10, crashPercentage: 3.85 },
+    { provider: "Popok Gaming", totalGames: 70, crashGames: 10, crashPercentage: 14.29 },
+    { provider: "Darwin Gaming", totalGames: 44, crashGames: 10, crashPercentage: 22.73 },
+    { provider: "Smartsoft Gaming", totalGames: 72, crashGames: 9, crashPercentage: 12.50 },
+    { provider: "Pascal Gaming", totalGames: 52, crashGames: 9, crashPercentage: 17.31 },
+    { provider: "Mascot Gaming", totalGames: 116, crashGames: 8, crashPercentage: 6.90 },
+    { provider: "Turbo Games", totalGames: 43, crashGames: 8, crashPercentage: 18.60 },
+    { provider: "Play'n Go", totalGames: 447, crashGames: 7, crashPercentage: 1.57 },
+    { provider: "BGAMING", totalGames: 208, crashGames: 7, crashPercentage: 3.37 },
+    { provider: "Gaming Corps", totalGames: 73, crashGames: 7, crashPercentage: 9.59 },
+    { provider: "iMoon", totalGames: 10, crashGames: 7, crashPercentage: 70.00 },
+    { provider: "Spinmatic", totalGames: 94, crashGames: 7, crashPercentage: 7.45 },
+    { provider: "Playtech Origins", totalGames: 84, crashGames: 6, crashPercentage: 7.14 },
+    { provider: "InOut Games", totalGames: 16, crashGames: 6, crashPercentage: 37.50 },
+    { provider: "Skywind Group", totalGames: 183, crashGames: 5, crashPercentage: 2.73 },
+    { provider: "Caleta Gaming", totalGames: 121, crashGames: 5, crashPercentage: 4.13 },
+    { provider: "Elbet", totalGames: 6, crashGames: 5, crashPercentage: 83.33 },
+    { provider: "Galaxsys", totalGames: 29, crashGames: 4, crashPercentage: 13.79 },
+    { provider: "Buck Stakes Entertainment", totalGames: 12, crashGames: 4, crashPercentage: 33.33 },
+    { provider: "Atlas-V", totalGames: 10, crashGames: 4, crashPercentage: 40.00 },
+    { provider: "100HP Gaming", totalGames: 5, crashGames: 4, crashPercentage: 80.00 },
+    { provider: "Spribe", totalGames: 11, crashGames: 3, crashPercentage: 27.27 },
+    { provider: "Pragmatic Play", totalGames: 643, crashGames: 3, crashPercentage: 0.47 },
+    { provider: "Split The Pot", totalGames: 7, crashGames: 3, crashPercentage: 42.86 },
+    { provider: "Jogo Global", totalGames: 3, crashGames: 3, crashPercentage: 100.00 },
+    { provider: "FunFair", totalGames: 4, crashGames: 3, crashPercentage: 75.00 },
+    { provider: "Ethereal Gaming", totalGames: 5, crashGames: 3, crashPercentage: 60.00 }
   ];
 
   // Tooltip state
@@ -72,7 +50,7 @@ const CLAUDE3 = () => {
     setTooltip(null);
   };
 
-  // Color scale based on Keno percentage - matching your image
+  // Color scale based on Crash percentage
   const getColor = (percentage) => {
     if (percentage >= 20) return '#ef4444'; // Red
     if (percentage >= 10) return '#f97316'; // Orange  
@@ -85,7 +63,7 @@ const CLAUDE3 = () => {
     <div style={{ 
       fontFamily: 'Arial, sans-serif', 
       height: '800px', 
-      width: '100%',
+      width: '800px',
       backgroundColor: '#ffffff',
       padding: '20px',
       display: 'flex',
@@ -100,7 +78,7 @@ const CLAUDE3 = () => {
           margin: '0 0 8px 0',
           fontFamily: 'Arial, sans-serif'
         }}>
-          Keno Game Providers Analysis
+          Crash Game Providers Analysis
         </h1>
         <p style={{ 
           fontSize: '14px', 
@@ -108,45 +86,45 @@ const CLAUDE3 = () => {
           margin: '0',
           fontFamily: 'Arial, sans-serif'
         }}>
-          Bubble size = Total Games | X-axis = % Keno Games | Y-axis = Total Keno Games
+          Bubble size = Total Games | X-axis = % Crash Games | Y-axis = Total Crash Games
         </p>
       </div>
 
       {/* Chart */}
       <div style={{ flex: 1, position: 'relative', display: 'flex', justifyContent: 'center', marginBottom: '0px' }}>
-        <svg width="800" height="500" style={{ border: '1px solid #e5e7eb', borderRadius: '8px' }}>
+        <svg width="760" height="500" style={{ border: '1px solid #e5e7eb', borderRadius: '8px' }}>
           {/* Background grid */}
           <defs>
             <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
               <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#f3f4f6" strokeWidth="1"/>
             </pattern>
           </defs>
-          <rect width="700" height="400" x="80" y="40" fill="url(#grid)" />
+          <rect width="660" height="380" x="80" y="40" fill="url(#grid)" />
 
           {/* X-axis */}
           <g>
-            <line x1="80" y1="440" x2="780" y2="440" stroke="#374151" strokeWidth="2"/>
-            {[0, 10, 20, 30, 40, 50].map(tick => {
-              const x = 80 + (tick / 50) * 700;
+            <line x1="80" y1="420" x2="740" y2="420" stroke="#374151" strokeWidth="2"/>
+            {[0, 20, 40, 60, 80, 100].map(tick => {
+              const x = 80 + (tick / 100) * 660;
               return (
                 <g key={tick}>
-                  <line x1={x} y1="440" x2={x} y2="446" stroke="#374151" strokeWidth="1"/>
-                  <text x={x} y="460" textAnchor="middle" fontSize="12" fontFamily="Arial" fill="#6b7280">
+                  <line x1={x} y1="420" x2={x} y2="426" stroke="#374151" strokeWidth="1"/>
+                  <text x={x} y="440" textAnchor="middle" fontSize="12" fontFamily="Arial" fill="#6b7280">
                     {tick}%
                   </text>
                 </g>
               );
             })}
-            <text x="430" y="485" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151">
-              % Keno Games by Provider
+            <text x="410" y="465" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151">
+              % Crash Games by Provider
             </text>
           </g>
 
           {/* Y-axis */}
           <g>
-            <line x1="80" y1="40" x2="80" y2="440" stroke="#374151" strokeWidth="2"/>
-            {[0, 2, 4, 6, 8, 10, 12].map(tick => {
-              const y = 440 - (tick / 12) * 400;
+            <line x1="80" y1="40" x2="80" y2="420" stroke="#374151" strokeWidth="2"/>
+            {[0, 3, 6, 9, 12, 15].map(tick => {
+              const y = 420 - (tick / 15) * 380;
               return (
                 <g key={tick}>
                   <line x1="74" y1={y} x2="80" y2={y} stroke="#374151" strokeWidth="1"/>
@@ -156,18 +134,18 @@ const CLAUDE3 = () => {
                 </g>
               );
             })}
-            <text x="30" y="240" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151"
-                  transform="rotate(-90, 30, 240)">
-              Total Keno Games
+            <text x="30" y="230" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151"
+                  transform="rotate(-90, 30, 230)">
+              Total Crash Games
             </text>
           </g>
 
           {/* Data points */}
           <g>
             {providerData.map((provider, i) => {
-              const x = 80 + (provider.kenoPercentage / 50) * 700;
-              const y = 440 - (provider.kenoGames / 12) * 400;
-              const radius = Math.sqrt(provider.totalGames / 922) * 40 + 3; // Scale based on max (Playtech: 922)
+              const x = 80 + (provider.crashPercentage / 100) * 660;
+              const y = 420 - (provider.crashGames / 15) * 380;
+              const radius = Math.sqrt(provider.totalGames / 643) * 35 + 4; // Scale based on max (Pragmatic Play: 643)
               
               return (
                 <circle
@@ -175,7 +153,7 @@ const CLAUDE3 = () => {
                   cx={x}
                   cy={y}
                   r={radius}
-                  fill={getColor(provider.kenoPercentage)}
+                  fill={getColor(provider.crashPercentage)}
                   fillOpacity="0.8"
                   stroke="#000000"
                   strokeWidth="1.5"
@@ -191,13 +169,13 @@ const CLAUDE3 = () => {
           <g>
             {providerData.map((provider, i) => {
               // Only show labels for providers with significant presence
-              const shouldShowLabel = provider.kenoGames >= 4 || provider.kenoPercentage >= 7;
+              const shouldShowLabel = provider.crashGames >= 7 || provider.crashPercentage >= 15;
               
               if (!shouldShowLabel) return null;
               
-              const x = 80 + (provider.kenoPercentage / 50) * 700;
-              const y = 440 - (provider.kenoGames / 12) * 400;
-              const radius = Math.sqrt(provider.totalGames / 922) * 40 + 3;
+              const x = 80 + (provider.crashPercentage / 100) * 660;
+              const y = 420 - (provider.crashGames / 15) * 380;
+              const radius = Math.sqrt(provider.totalGames / 643) * 35 + 4;
               
               let labelY = y - radius - 8;
               let labelX = x;
@@ -255,15 +233,15 @@ const CLAUDE3 = () => {
               zIndex: 10,
               fontFamily: 'Arial, sans-serif',
               fontSize: '14px',
-              transform: tooltip.x > 600 ? 'translateX(-100%)' : 'none'
+              transform: tooltip.x > 500 ? 'translateX(-100%)' : 'none'
             }}
           >
             <div style={{ fontWeight: '600', marginBottom: '4px' }}>
               {tooltip.provider.provider}
             </div>
             <div>Total Games: {tooltip.provider.totalGames}</div>
-            <div>Keno Games: {tooltip.provider.kenoGames}</div>
-            <div>Keno %: {tooltip.provider.kenoPercentage}%</div>
+            <div>Crash Games: {tooltip.provider.crashGames}</div>
+            <div>Crash %: {tooltip.provider.crashPercentage}%</div>
           </div>
         )}
       </div>
@@ -282,14 +260,14 @@ const CLAUDE3 = () => {
           margin: '8px 0 16px 0',
           fontFamily: 'Arial, sans-serif'
         }}>
-          Keno Focus Level (Bubble Color)
+          Crash Focus Level (Bubble Color)
         </h3>
         <div style={{ 
           display: 'flex', 
           justifyContent: 'center', 
           alignItems: 'center', 
-          gap: '32px',
-          flexWrap: 'wrap'
+          gap: '24px',
+          flexWrap: 'nowrap'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
             <div style={{ 
@@ -357,4 +335,4 @@ const CLAUDE3 = () => {
   );
 };
 
-export default CLAUDE3;
+export default CLAUDE6;

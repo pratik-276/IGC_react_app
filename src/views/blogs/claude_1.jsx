@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
+import { Helmet } from 'react-helmet';
 
 const CLAUDE1 = () => {
   const chartRef = useRef(null);
@@ -9,12 +10,10 @@ const CLAUDE1 = () => {
     const ctx = chartRef.current?.getContext('2d');
     if (!ctx) return;
 
-    // Destroy existing chart if it exists
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
-    // Register Chart.js components
     Chart.Chart.register(
       Chart.CategoryScale,
       Chart.LinearScale,
@@ -24,17 +23,16 @@ const CLAUDE1 = () => {
       Chart.Legend
     );
 
-    // Data for selected casino sections
     const sectionData = {
       labels: [
-        'Slots', 'Popular Games', 'Table Games', 'Jackpots', 'New Games', 
-        'Live Casino', 'Megaways', 'Crash Games', 'Scratch Games', 
+        'Slots', 'Popular Games', 'Table Games', 'Jackpots', 'New Games',
+        'Live Casino', 'Megaways', 'Crash Games', 'Scratch Games',
         'Bingo', 'Keno'
       ],
       datasets: [{
-        label: 'Percentage of Total Sections',
+        label: 'Total Sections %',
         data: [8.1, 7.4, 5.8, 5.0, 3.5, 3.3, 2.7, 2.5, 1.9, 0.6, 0.6],
-        backgroundColor: '#917AFD',
+        backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
         borderRadius: 0,
@@ -49,12 +47,8 @@ const CLAUDE1 = () => {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: {
-            display: false
-          },
-          legend: {
-            display: false
-          },
+          title: { display: false },
+          legend: { display: false },
           tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             titleColor: 'white',
@@ -63,7 +57,7 @@ const CLAUDE1 = () => {
             borderWidth: 1,
             cornerRadius: 8,
             callbacks: {
-              label: function(context) {
+              label: function (context) {
                 const percentage = context.parsed.y;
                 return `${context.label}: ${percentage}% of all sections`;
               }
@@ -72,17 +66,25 @@ const CLAUDE1 = () => {
         },
         scales: {
           x: {
-            grid: {
-              display: false
-            },
+            grid: { display: false },
             ticks: {
               color: '#64748b',
               font: {
                 size: 14,
-                family: 'Arial'
+                family: 'Syne, sans-serif'
               },
               maxRotation: 45,
               minRotation: 45
+            },
+            title: {
+              display: true,
+              text: 'Section Groups',
+              color: '#374151',
+              font: {
+                size: 16,
+                weight: 'bold',
+                family: 'Syne, sans-serif'
+              }
             }
           },
           y: {
@@ -95,20 +97,18 @@ const CLAUDE1 = () => {
               color: '#64748b',
               font: {
                 size: 12,
-                family: 'Arial'
+                family: 'Syne, sans-serif'
               },
-              callback: function(value) {
-                return value + '%';
-              }
+              callback: (value) => value + '%'
             },
             title: {
               display: true,
-              text: 'Percentage of Total Sections (%)',
+              text: 'Percentage of Total Section (%)',
               color: '#374151',
               font: {
                 size: 14,
                 weight: 'bold',
-                family: 'Arial'
+                family: 'Syne, sans-serif'
               }
             }
           }
@@ -124,7 +124,6 @@ const CLAUDE1 = () => {
       }
     };
 
-    // Create the chart
     chartInstance.current = new Chart.Chart(ctx, config);
 
     return () => {
@@ -136,12 +135,20 @@ const CLAUDE1 = () => {
 
   return (
     <div style={{
-      fontFamily: 'Arial, sans-serif',
+      fontFamily: 'Syne, sans-serif',
       background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
       margin: 0,
       padding: '20px',
       minHeight: '100vh'
     }}>
+      {/* Import Syne font */}
+      <Helmet>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
+
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
@@ -152,7 +159,7 @@ const CLAUDE1 = () => {
         height: '400px'
       }}>
         <div style={{
-          background: '#8B5CF6',
+          background: '#37DBD1',
           color: 'white',
           padding: '20px 30px',
           textAlign: 'center'
@@ -160,19 +167,23 @@ const CLAUDE1 = () => {
           <h1 style={{
             margin: 0,
             fontSize: '24px',
-            fontWeight: '300'
+            fontWeight: '300',
+            fontFamily: 'Syne, sans-serif',
+            color: '#000'
           }}>
             Casino Section Distribution Chart
           </h1>
           <p style={{
             margin: '8px 0 0 0',
             opacity: 0.9,
-            fontSize: '14px'
+            fontSize: '14px',
+            fontFamily: 'Syne, sans-serif',
+            color: '#000'
           }}>
             Note: The "Other" section contributing to 52.5% of all sections has been excluded from this illustration
           </p>
         </div>
-        
+
         <div style={{
           padding: '20px',
           position: 'relative',
