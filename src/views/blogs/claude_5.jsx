@@ -2,7 +2,7 @@ import React, { useEffect, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import * as Chart from 'chart.js/auto';
 
-const CLAUDE2 = () => {
+const CLAUDE5 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -25,12 +25,12 @@ const CLAUDE2 = () => {
       Chart.Legend
     );
 
-    // Data for regional Keno adoption (regions with meaningful Keno presence)
-    const kenoData = {
-      labels: ['Africa', 'Eastern Europe', 'Western Europe', 'North America', 'Southeast Asia', 'South Asia', 'Latin America'],
+    // Data for regional Crash adoption (regions with meaningful Crash presence)
+    const crashData = {
+      labels: ['Latin America', 'North America', 'Oceania', 'Middle East', 'Western Europe', 'Nordic Region', 'South East Asia', 'East Asia', 'Africa', 'South Asia', 'Eastern Europe','Central Asia'],
       datasets: [{
-        label: 'Percentage of Casinos with Keno',
-        data: [18.4, 14.3, 4.9, 4.9, 3.2, 1.8, 1.0],
+        label: 'Percentage of Casinos with Crash',
+        data: [38.7, 24.3, 21.4, 20.0, 19.4, 18.9, 17.8, 16.7, 16.3, 13.6, 13.3, 0.0],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -41,7 +41,7 @@ const CLAUDE2 = () => {
 
     const config = {
       type: 'bar',
-      data: kenoData,
+      data: crashData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -62,7 +62,7 @@ const CLAUDE2 = () => {
             callbacks: {
               label: function(context) {
                 const percentage = context.parsed.y;
-                return `${context.label}: ${percentage}% of casinos have Keno sections`;
+                return `${context.label}: ${percentage}% of casinos have Crash sections`;
               }
             }
           }
@@ -109,7 +109,7 @@ const CLAUDE2 = () => {
             },
             title: {
               display: true,
-              text: 'Percentage of Casinos with Keno (%)',
+              text: 'Percentage of Casinos with Crash (%)',
               color: '#374151',
               font: {
                 size: 13,
@@ -175,7 +175,7 @@ const CLAUDE2 = () => {
             fontWeight: '300',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Regional Keno Adoption
+            Regional Crash Adoption
           </h1>
           <p style={{
             margin: '6px 0 0 0',
@@ -183,7 +183,7 @@ const CLAUDE2 = () => {
             fontSize: '13px',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Note: Regions with negligible presence of Keno sections are excluded from this list
+            Note: Regions with negligible presence of Crash sections are excluded from this list
           </p>
         </div>
         
@@ -192,11 +192,11 @@ const CLAUDE2 = () => {
           position: 'relative',
           height: 'calc(100% - 100px)'
         }}>
-          <canvas ref={chartRef} id="kenoChart"></canvas>
+          <canvas ref={chartRef} id="crashChart"></canvas>
         </div>
       </div>
     </div>
   );
 };
 
-export default CLAUDE2;
+export default CLAUDE5;
