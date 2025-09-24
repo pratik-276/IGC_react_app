@@ -139,8 +139,8 @@ const CompassDetails = () => {
               </div>
             </div>
 
-            {/* <div className="d-flex gap-2">
-              <div>
+            <div className="d-flex gap-2">
+              {/* <div>
                 <Calendar
                   value={startDate}
                   onChange={(e) => setStartDate(e.value)}
@@ -160,8 +160,25 @@ const CompassDetails = () => {
                   placeholder="Select End Date"
                   disabled
                 />
-              </div>
-            </div> */}
+              </div> */}
+              <button
+                className="btn-filter"
+                label="View Position Details"
+                onClick={() => {
+                  navigate("/position-details", {
+                    state: {
+                      operator_site_id: operator_site_id,
+                      game_name: game_name,
+                      casino_name: casino_name,
+                      country_name: country_name,
+                      state_name: state,
+                    },
+                  });
+                }}
+              >
+                View Position Details
+              </button>
+            </div>
           </div>
         </div>
 
