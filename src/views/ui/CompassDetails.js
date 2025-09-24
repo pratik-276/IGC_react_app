@@ -165,7 +165,7 @@ const CompassDetails = () => {
           </div>
         </div>
 
-        <div className="mt-3">
+        <div className="border border-secondary p-3 rounded-3 mt-3">
           <h5 className="font-semibold pl-2">Compass Details</h5>
           <div className="flex gap-2 mt-2">
             <InfoCard
@@ -226,10 +226,8 @@ const CompassDetails = () => {
               value={max_position}
             />
           </div>
-        </div>
 
-        <div className="mt-3">
-          <h5 className="font-semibold pl-2">Compass Status</h5>
+          <h5 className="font-semibold pl-2 mt-3">Compass Status</h5>
           <div className="flex gap-2 mt-2">
             <InfoCard
               header="Days Inside"
@@ -254,7 +252,7 @@ const CompassDetails = () => {
           </div>
         </div>
 
-        <div className="mt-3">
+        <div className="border border-secondary p-3 rounded-3 mt-3">
           <h5 className="font-semibold pl-2">Daywise Status</h5>
           <CompassGraph
             graphDetails={graphDetails}
