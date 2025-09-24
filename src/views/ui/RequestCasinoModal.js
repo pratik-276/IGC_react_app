@@ -1,16 +1,22 @@
 // src/components/RequestCasinoModal.js
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Button } from "primereact/button";
+import { Dropdown } from "primereact/dropdown";
 import toast from "react-hot-toast";
 import CompassData from "../../services/CompassApi";
+import countryList from "react-select-country-list";
 
 const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
   const [casinoName, setCasinoName] = useState("");
   const [casinoUrl, setCasinoUrl] = useState("");
+  const [operator_country, setOperator_country] = useState("");
+
   const [loading, setLoading] = useState(false);
   const user_id = localStorage.getItem("user_id");
+
+  const country_options = useMemo(() => countryList().getData(), []);
 
   const handleSubmit = async () => {
     if (!casinoName || !casinoUrl) {
@@ -22,6 +28,7 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
       user_id: parseInt(user_id),
       operator_name: casinoName,
       operator_url: casinoUrl,
+      operator_country: operator_country,
     };
 
     setLoading(true);
@@ -32,6 +39,7 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
           onHide();
           setCasinoName("");
           setCasinoUrl("");
+          setOperator_country("");
         }
       })
       .catch(console.error)
@@ -79,6 +87,23 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
             id="casinoUrl"
             value={casinoUrl}
             onChange={(e) => setCasinoUrl(e.target.value)}
+            className="w-full"
+          />
+        </div>
+
+        <div>
+          <label className="fs-6" htmlFor="country">
+            Select Country (if applicable)
+          </label>
+          <Dropdown
+            id="country"
+            placeholder="Country to access this casino from"
+            value={operator_country}
+            options={country_options}
+            optionLabel="label"
+            optionValue="value"
+            filter
+            onChange={(e) => setOperator_country(e.value)}
             className="w-full"
           />
         </div>

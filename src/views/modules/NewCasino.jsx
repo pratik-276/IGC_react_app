@@ -61,9 +61,8 @@ const NewCasino = (props) => {
             </button>
             <button
               style={{ marginRight: 8 }}
-              className={`compass-sidebar-back ${
-                !operator_name || !operator_url ? "btn-disabled" : ""
-              }`}
+              className={`compass-sidebar-back ${!operator_name || !operator_url ? "btn-disabled" : ""
+                }`}
               onClick={handleSubmit}
               disabled={!operator_name || !operator_url}
             >
@@ -86,6 +85,7 @@ const NewCasino = (props) => {
                     onChange={(e) => setOperator_Name(e.target.value)}
                   />
                 </div>
+
                 <div className="form-group">
                   <label htmlFor="">Enter URL</label>
                   <input
@@ -96,12 +96,13 @@ const NewCasino = (props) => {
                     onChange={(e) => setOperator_URl(e.target.value)}
                   />
                 </div>
+
                 <div className="form-group">
                   <label htmlFor="">Select Country (if applicable)</label>
-                  <select 
+                  <select
                     className="form-control"
-                    options={country_options} 
-                    value={operator_country} 
+                    options={country_options}
+                    value={operator_country}
                     onChange={(e) => setOperator_country(e.target.value)}
                     placeholder="Country to access this casino from"
                   >
