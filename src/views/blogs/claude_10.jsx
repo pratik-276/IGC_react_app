@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
-import { Helmet } from 'react-helmet';
 
-const CLAUDE4 = () => {
+const CLAUDE10 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -10,10 +9,12 @@ const CLAUDE4 = () => {
     const ctx = chartRef.current?.getContext('2d');
     if (!ctx) return;
 
+    // Destroy existing chart if it exists
     if (chartInstance.current) {
       chartInstance.current.destroy();
     }
 
+    // Register Chart.js components
     Chart.Chart.register(
       Chart.CategoryScale,
       Chart.LinearScale,
@@ -23,15 +24,12 @@ const CLAUDE4 = () => {
       Chart.Legend
     );
 
-    const sectionData = {
-      labels: [
-         'Popular Games', 'Slots', 'New Games', 'Jackpots', 'Live Casino',
-        'Table Games', 'Crash Games', 'Megaways', 'All Games', 'Roulette',
-        'Blackjack', 'Video Poker', 'Bingo', 'Keno', 'Mine Games', 'Plinko Games'
-      ],
+    // Data for regional Megaways adoption (regions with meaningful Crash presence)
+    const crashData = {
+      labels: ['Nordic', 'Western Europe','Latin America', 'Oceania', 'South Asia', 'MENA', 'North America', 'Central Asia & Eastern Europe', 'East Asia', 'Africa', 'Southeast Asia'],
       datasets: [{
-        label: 'Total Sections %',
-        data: [8.8, 8.2, 6.9, 5.0, 4.5, 3.4, 2.9, 2.5, 1.4, 1.2, 1.0, 0.7, 0.7, 0.7, 0.6, 0.5],
+        label: 'Percentage of Casinos with Crash',
+        data: [39.6, 36.5, 35.5, 35.3, 34.1, 33.3, 29.5, 27.6, 22.2, 12.8, 10.3],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -42,13 +40,17 @@ const CLAUDE4 = () => {
 
     const config = {
       type: 'bar',
-      data: sectionData,
+      data: crashData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
-          title: { display: false },
-          legend: { display: false },
+          title: {
+            display: false
+          },
+          legend: {
+            display: false
+          },
           tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
             titleColor: 'white',
@@ -57,41 +59,25 @@ const CLAUDE4 = () => {
             borderWidth: 1,
             cornerRadius: 8,
             callbacks: {
-              label: function (context) {
+              label: function(context) {
                 const percentage = context.parsed.y;
-                return `${context.label}: ${percentage}% of all sections`;
+                return `${context.label}: ${percentage}% of casinos have Megaways sections`;
               }
             }
           }
         },
+        layout: {
+          padding: {
+            left: 10,
+            right: 10,
+            top: 10,
+            bottom: 20
+          }
+        },
         scales: {
           x: {
-            grid: { display: false },
-            ticks: {
-              color: '#64748b',
-              font: {
-                size: 14,
-                family: 'Syne, sans-serif'
-              },
-              maxRotation: 45,
-              minRotation: 45
-            },
-            title: {
-              display: true,
-              text: 'Section Groups',
-              color: '#374151',
-              font: {
-                size: 16,
-                weight: 'bold',
-                family: 'Syne, sans-serif'
-              }
-            }
-          },
-          y: {
-            beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.1)',
-              drawBorder: false
+              display: false
             },
             ticks: {
               color: '#64748b',
@@ -99,14 +85,33 @@ const CLAUDE4 = () => {
                 size: 12,
                 family: 'Syne, sans-serif'
               },
-              callback: (value) => value + '%'
+              maxRotation: 35,
+              minRotation: 35
+            }
+          },
+          y: {
+            beginAtZero: true,
+            max: 45,
+            grid: {
+              color: 'rgba(0, 0, 0, 0.1)',
+              drawBorder: false
+            },
+            ticks: {
+              color: '#64748b',
+              font: {
+                size: 11,
+                family: 'Syne, sans-serif'
+              },
+              callback: function(value) {
+                return value + '%';
+              }
             },
             title: {
               display: true,
-              text: '% Sections',
+              text: '% Casinos',
               color: '#374151',
               font: {
-                size: 14,
+                size: 13,
                 weight: 'bold',
                 family: 'Syne, sans-serif'
               }
@@ -124,6 +129,7 @@ const CLAUDE4 = () => {
       }
     };
 
+    // Create the chart
     chartInstance.current = new Chart.Chart(ctx, config);
 
     return () => {
@@ -141,14 +147,6 @@ const CLAUDE4 = () => {
       padding: '20px',
       minHeight: '100vh'
     }}>
-      {/* Import Syne font */}
-      <Helmet>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </Helmet>
-
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
@@ -160,40 +158,38 @@ const CLAUDE4 = () => {
       }}>
         <div style={{
           background: '#37DBD1',
-          color: 'white',
-          padding: '20px 30px',
+          color: '#000',
+          padding: '15px 25px',
           textAlign: 'center'
         }}>
           <h1 style={{
             margin: 0,
-            fontSize: '24px',
+            fontSize: '22px',
             fontWeight: '300',
-            fontFamily: 'Syne, sans-serif',
-            color: '#000'
+            fontFamily: 'Syne, sans-serif'
           }}>
-            Casino Section Distribution Chart
+            Regional Megaways Adoption
           </h1>
           <p style={{
-            margin: '8px 0 0 0',
+            margin: '6px 0 0 0',
             opacity: 0.9,
-            fontSize: '14px',
-            fontFamily: 'Syne, sans-serif',
-            color: '#000'
+            fontSize: '13px',
+            fontFamily: 'Syne, sans-serif'
           }}>
-            Note: The "Other" section contributing to 52.5% of all sections has been excluded from this illustration
+            Note: Regions with negligible presence of Megawas sections are excluded from this list
           </p>
         </div>
-
+        
         <div style={{
-          padding: '20px',
+          padding: '15px',
           position: 'relative',
-          height: 'calc(100% - 120px)'
+          height: 'calc(100% - 100px)'
         }}>
-          <canvas ref={chartRef} id="sectionChart"></canvas>
+          <canvas ref={chartRef} id="crashChart"></canvas>
         </div>
       </div>
     </div>
   );
 };
 
-export default CLAUDE4;
+export default CLAUDE10;

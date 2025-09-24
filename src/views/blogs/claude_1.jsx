@@ -103,7 +103,7 @@ const CLAUDE1 = () => {
             },
             title: {
               display: true,
-              text: 'Percentage of Total Section (%)',
+              text: '% Section',
               color: '#374151',
               font: {
                 size: 14,
@@ -153,7 +153,7 @@ const CLAUDE1 = () => {
         maxWidth: '1200px',
         margin: '0 auto',
         background: 'white',
-        borderRadius: '15px',
+        borderRadius: '0px',
         boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
         overflow: 'hidden',
         height: '400px'

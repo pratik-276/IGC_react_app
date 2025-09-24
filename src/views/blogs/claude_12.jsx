@@ -1,25 +1,23 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
 
-const CLAUDE7 = () => {
+const CLAUDE12 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
-  // Data from the crash games publishing trends table (2013-2025)
+  // Data from the Megaways games publishing trends table (2015-2025)
   const yearlyData = {
-    2013: 1,
-    2014: 0,
     2015: 1,
-    2016: 1,
-    2017: 3,
-    2018: 3,
-    2019: 7,
-    2020: 14,
-    2021: 38,
-    2022: 50,
-    2023: 74,
-    2024: 103,
-    2025: 55
+    2016: 4,
+    2017: 2,
+    2018: 14,
+    2019: 52,
+    2020: 66,
+    2021: 102,
+    2022: 78,
+    2023: 109,
+    2024: 85,
+    2025: 36
   };
 
   useEffect(() => {
@@ -53,7 +51,7 @@ const CLAUDE7 = () => {
         data: {
           labels: Object.keys(yearlyData),
           datasets: [{
-            label: 'Crash Games Released',
+            label: 'Megaways Games Released',
             data: Object.values(yearlyData),
             backgroundColor: '#37DBD1',
             borderColor: '#37DBD1',
@@ -84,7 +82,7 @@ const CLAUDE7 = () => {
                   const value = context.parsed.y;
                   
                   return [
-                    `Crash Games: ${value}`,
+                    `Megaways Games: ${value}`,
                     getYearInsight(year, value)
                   ];
                 }
@@ -110,7 +108,7 @@ const CLAUDE7 = () => {
             y: {
               title: {
                 display: true,
-                text: 'Crash Games Released',
+                text: 'Megaways Games Released',
                 font: { size: 14, weight: 'bold', family: 'Syne, sans-serif' },
                 color: '#000000'
               },
@@ -169,12 +167,12 @@ const CLAUDE7 = () => {
 
   // Helper function for tooltip
   const getYearInsight = (year, value) => {
-    if (year == 2013) return "First crash game released";
-    if (year == 2024) return "Peak year for crash games";
+    if (year == 2015) return "First Megaways game released";
+    if (year == 2023) return "Peak year for Megaways games";
     if (year == 2021) return "Breakthrough year - mainstream adoption";
-    if (value == 0) return "No crash games released";
-    if (value >= 50) return "High activity year";
-    if (value >= 20) return "Growing adoption";
+    if (value == 0) return "No Megaways games released";
+    if (value >= 100) return "High activity year";
+    if (value >= 50) return "Growing adoption";
     return "Early development phase";
   };
 
@@ -199,10 +197,10 @@ const CLAUDE7 = () => {
         }}
       >
         <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
-          Crash Games Publishing Trends by Year
+          Megaways Games Publishing Trends by Year
         </h1>
         <p className="text-sm opacity-90" style={{ fontFamily: 'Syne, sans-serif' }}>
-          Note: Years that had negligible crash game releases are excluded from this chart.
+          Note: Years that had negligible megaways game releases are excluded from this chart.
         </p>
       </div>
 
@@ -216,4 +214,4 @@ const CLAUDE7 = () => {
   );
 };
 
-export default CLAUDE7;
+export default CLAUDE12;

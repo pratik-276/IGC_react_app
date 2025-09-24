@@ -1,8 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
-import { Helmet } from 'react-helmet';
 
-const CLAUDE4 = () => {
+const CLAUDE9 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -26,12 +25,12 @@ const CLAUDE4 = () => {
     const sectionData = {
       labels: [
          'Popular Games', 'Slots', 'New Games', 'Jackpots', 'Live Casino',
-        'Table Games', 'Crash Games', 'Megaways', 'All Games', 'Roulette',
-        'Blackjack', 'Video Poker', 'Bingo', 'Keno', 'Mine Games', 'Plinko Games'
+        'Crash Games', 'Table Games', 'Megaways', 'Scratch Games', 'All Games',
+        'Roulette', 'Blackjack', 'Baccarat'
       ],
       datasets: [{
         label: 'Total Sections %',
-        data: [8.8, 8.2, 6.9, 5.0, 4.5, 3.4, 2.9, 2.5, 1.4, 1.2, 1.0, 0.7, 0.7, 0.7, 0.6, 0.5],
+        data: [10.5, 8.1, 6.8, 4.7, 4.1, 3.8, 3.4, 2.4, 2.4, 2.1, 1.1, 1.0, 0.3],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -103,7 +102,7 @@ const CLAUDE4 = () => {
             },
             title: {
               display: true,
-              text: '% Sections',
+              text: '% Section',
               color: '#374151',
               font: {
                 size: 14,
@@ -141,14 +140,6 @@ const CLAUDE4 = () => {
       padding: '20px',
       minHeight: '100vh'
     }}>
-      {/* Import Syne font */}
-      <Helmet>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@300;400;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </Helmet>
-
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
@@ -180,7 +171,7 @@ const CLAUDE4 = () => {
             fontFamily: 'Syne, sans-serif',
             color: '#000'
           }}>
-            Note: The "Other" section contributing to 52.5% of all sections has been excluded from this illustration
+            Note: The "Other" section contributing to 53.7% of all sections has been excluded from this illustration
           </p>
         </div>
 
@@ -196,4 +187,4 @@ const CLAUDE4 = () => {
   );
 };
 
-export default CLAUDE4;
+export default CLAUDE9;
