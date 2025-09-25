@@ -504,19 +504,25 @@ const CompassMod = () => {
   };
 
   const handleGameCheckboxChange = (data) => {
-    setSelectedGame((prev) => {
-      const exists = prev.some((g) => g.game_id === data.game_id);
-      if (exists) {
-        return prev.filter((g) => g.game_id !== data.game_id);
-      } else {
-        if (prev.length < 10) {
-          return [...prev, data];
+    if (mode === "edit") {
+      // single select
+      setSelectedGame([data]);
+    } else {
+      // multi select (max 10)
+      setSelectedGame((prev) => {
+        const exists = prev.some((g) => g.game_id === data.game_id);
+        if (exists) {
+          return prev.filter((g) => g.game_id !== data.game_id);
         } else {
-          toast.error("Only 10 games can be selected at once");
-          return prev;
+          if (prev.length < 10) {
+            return [...prev, data];
+          } else {
+            toast.error("Only 10 games can be selected at once");
+            return prev;
+          }
         }
-      }
-    });
+      });
+    }
   };
 
   const handleNext = () => {
@@ -1088,7 +1094,7 @@ const CompassMod = () => {
             className="m-md-0 "
             style={{ color: "#392f6c", fontSize: "1.2rem" }}
           >
-            Calibrate Compass
+            {mode === "edit" ? "Edit Compass" : "Calibrate Compass"}
           </h4>
         }
       >

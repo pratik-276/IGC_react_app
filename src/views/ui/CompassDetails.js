@@ -21,14 +21,14 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 
-const graphDetailsTemp = [
-  { created_date: "2025-08-20", game_position: 2 },
-  { created_date: "2025-08-21", game_position: 2 },
-  { created_date: "2025-08-22", game_position: 8 },
-  { created_date: "2025-08-23", game_position: 8 },
-  { created_date: "2025-08-24", game_position: 8 },
-  { created_date: "2025-08-25", game_position: 8 },
-];
+// const graphDetailsTemp = [
+//   { created_date: "2025-08-20", game_position: 2 },
+//   { created_date: "2025-08-21", game_position: 2 },
+//   { created_date: "2025-08-22", game_position: 8 },
+//   { created_date: "2025-08-23", game_position: 8 },
+//   { created_date: "2025-08-24", game_position: 8 },
+//   { created_date: "2025-08-25", game_position: 8 },
+// ];
 
 const CompassDetails = () => {
   const navigate = useNavigate();
@@ -139,8 +139,8 @@ const CompassDetails = () => {
               </div>
             </div>
 
-            {/* <div className="d-flex gap-2">
-              <div>
+            <div className="d-flex gap-2">
+              {/* <div>
                 <Calendar
                   value={startDate}
                   onChange={(e) => setStartDate(e.value)}
@@ -160,12 +160,29 @@ const CompassDetails = () => {
                   placeholder="Select End Date"
                   disabled
                 />
-              </div>
-            </div> */}
+              </div> */}
+              <button
+                className="btn-filter"
+                label="View Position Details"
+                onClick={() => {
+                  navigate("/position-details", {
+                    state: {
+                      operator_site_id: operator_site_id,
+                      game_name: game_name,
+                      casino_name: casino_name,
+                      country_name: country_name,
+                      state_name: state,
+                    },
+                  });
+                }}
+              >
+                View Position Details
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="mt-3">
+        <div className="border border-secondary p-3 rounded-3 mt-3">
           <h5 className="font-semibold pl-2">Compass Details</h5>
           <div className="flex gap-2 mt-2">
             <InfoCard
@@ -226,10 +243,8 @@ const CompassDetails = () => {
               value={max_position}
             />
           </div>
-        </div>
 
-        <div className="mt-3">
-          <h5 className="font-semibold pl-2">Compass Status</h5>
+          <h5 className="font-semibold pl-2 mt-3">Compass Status</h5>
           <div className="flex gap-2 mt-2">
             <InfoCard
               header="Days Inside"
@@ -254,10 +269,10 @@ const CompassDetails = () => {
           </div>
         </div>
 
-        <div className="mt-3">
+        <div className="border border-secondary p-3 rounded-3 mt-3">
           <h5 className="font-semibold pl-2">Daywise Status</h5>
           <CompassGraph
-            graphDetails={graphDetailsTemp}
+            graphDetails={graphDetails}
             min_position={min_position}
             max_position={max_position}
           />

@@ -9,6 +9,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { FloatLabel } from "primereact/floatlabel";
+import { Slider } from "primereact/slider";
 
 import { Spin } from "antd";
 
@@ -30,7 +31,7 @@ import { useContactSales } from "../../context/confirmationContext";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
-
+  const [zoom, setZoom] = useState(1);
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
 
@@ -249,11 +250,17 @@ const CompetitorDashboardMod = () => {
           ? "-"
           : `${gameName} (${providerName})`;
 
+      const isHighlighted = providerName === user_company;
+
       if (!sectionMap[section]) {
         sectionMap[section] = { section_title: section };
       }
 
-      sectionMap[section][pos] = displayText;
+      //sectionMap[section][pos] = displayText;
+      sectionMap[section][pos] = {
+        text: displayText,
+        highlight: isHighlighted,
+      };
     });
 
     // Step 3: Convert to array and sort alphabetically by section_title
@@ -582,6 +589,22 @@ const CompetitorDashboardMod = () => {
                   </div>
                 )}
 
+                {/* <div className="flex align-items-center gap-3 mb-3">
+                  <label htmlFor="zoomSlider" style={{ minWidth: "80px" }}>
+                    Zoom
+                  </label>
+                  <Slider
+                    id="zoomSlider"
+                    value={zoom}
+                    onChange={(e) => setZoom(e.value)}
+                    step={0.1}
+                    min={0.5}
+                    max={2}
+                    style={{ width: "200px" }}
+                  />
+                  <span>{(zoom * 100).toFixed(0)}%</span>
+                </div> */}
+
                 <DataTable
                   value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                   scrollable
@@ -610,6 +633,17 @@ const CompetitorDashboardMod = () => {
                     }}
                   />
 
+                  {/* {uniquePositions.map((pos) => (
+                    <Column
+                      key={pos}
+                      field={pos}
+                      header={headerWithoutTooltip(pos)}
+                      style={{
+                        minWidth: "120px",
+                        whiteSpace: "normal",
+                      }}
+                    />
+                  ))} */}
                   {uniquePositions.map((pos) => (
                     <Column
                       key={pos}
@@ -618,6 +652,31 @@ const CompetitorDashboardMod = () => {
                       style={{
                         minWidth: "120px",
                         whiteSpace: "normal",
+                      }}
+                      body={(rowData) => {
+                        const cell = rowData[pos];
+
+                        if (!cell) return null;
+
+                        if (typeof cell === "string") {
+                          return <span>{cell}</span>;
+                        }
+
+                        return (
+                          <span
+                            style={{
+                              backgroundColor: cell.highlight
+                                ? "#ffeeba"
+                                : "transparent",
+
+                              padding: "2px 6px",
+                              borderRadius: "4px",
+                              display: "inline-block",
+                            }}
+                          >
+                            {cell.text}
+                          </span>
+                        );
                       }}
                     />
                   ))}
