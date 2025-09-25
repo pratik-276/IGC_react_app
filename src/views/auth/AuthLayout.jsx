@@ -33,8 +33,8 @@ const AuthLayout = ({ children }) => {
             <footer className="auth_footer text-center">
                 <p>
                     By continuing, you agree to our{" "}
-                    <a href="/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a> and{" "}
-                    <a href="/terms" target="_blank" rel="noopener noreferrer">Terms & Conditions</a>.
+                    <a href="https://igamingcompass.com/privacy-policy" target="_blank">Privacy Policy</a> and{" "}
+                    <a href="https://igamingcompass.com/terms-conditions/" target="_blank">Terms & Conditions</a>.
                 </p>
             </footer>
         </div>
