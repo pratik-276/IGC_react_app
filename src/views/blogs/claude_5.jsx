@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react';
-import { Helmet } from 'react-helmet';
 import * as Chart from 'chart.js/auto';
 
 const CLAUDE5 = () => {
@@ -25,17 +24,20 @@ const CLAUDE5 = () => {
       Chart.Legend
     );
 
-    // Data for regional Crash adoption (regions with meaningful Crash presence)
+    // Data for Regional Crash Games Adoption Chart (sorted by total casinos descending)
     const crashData = {
-      labels: ['Latin America', 'North America', 'Oceania', 'Middle East', 'Western Europe', 'Nordic Region', 'South East Asia', 'East Asia', 'Africa', 'South Asia', 'Eastern Europe','Central Asia'],
+      labels: ['Africa', 'Western Europe', 'North America', 'Nordic', 'South Asia', 'LatAM'],
       datasets: [{
         label: 'Percentage of Casinos with Crash',
-        data: [38.7, 24.3, 21.4, 20.0, 19.4, 18.9, 17.8, 16.7, 16.3, 13.6, 13.3, 0.0],
+        data: [60.4, 15.1, 9.2, 12.2, 33.9, 45.0],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
         borderRadius: 0,
         borderSkipped: false,
+        // Additional data for tooltips
+        totalCasinos: [111, 106, 87, 74, 56, 40],
+        casinosWithCrash: [67, 16, 8, 9, 19, 18]
       }]
     };
 
@@ -62,7 +64,16 @@ const CLAUDE5 = () => {
             callbacks: {
               label: function(context) {
                 const percentage = context.parsed.y;
-                return `${context.label}: ${percentage}% of casinos have Crash sections`;
+                const datasetIndex = context.datasetIndex;
+                const dataIndex = context.dataIndex;
+                const dataset = context.chart.data.datasets[datasetIndex];
+                const totalCasinos = dataset.totalCasinos[dataIndex];
+                const casinosWithCrash = dataset.casinosWithCrash[dataIndex];
+                
+                return [
+                  `${context.label}: ${percentage}%`,
+                  `${casinosWithCrash} out of ${totalCasinos} casinos have Crash sections`
+                ];
               }
             }
           }
@@ -92,7 +103,7 @@ const CLAUDE5 = () => {
           },
           y: {
             beginAtZero: true,
-            max: 40,
+            max: 70,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',
               drawBorder: false
@@ -148,12 +159,6 @@ const CLAUDE5 = () => {
       padding: '20px',
       minHeight: '100vh'
     }}>
-      <Helmet>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&display=swap"
-          rel="stylesheet"
-        />
-      </Helmet>
       <div style={{
         maxWidth: '1200px',
         margin: '0 auto',
@@ -175,7 +180,7 @@ const CLAUDE5 = () => {
             fontWeight: '300',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Regional Crash Adoption
+            Regional Crash Adoption Chart
           </h1>
           <p style={{
             margin: '6px 0 0 0',
@@ -183,7 +188,7 @@ const CLAUDE5 = () => {
             fontSize: '13px',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Note: Regions with negligible presence of Crash sections are excluded from this list
+            Note: Regions with negligible presence of Crash sections are excluded from this chart
           </p>
         </div>
         

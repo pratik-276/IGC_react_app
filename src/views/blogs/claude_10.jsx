@@ -24,23 +24,26 @@ const CLAUDE10 = () => {
       Chart.Legend
     );
 
-    // Data for regional Megaways adoption (regions with meaningful Crash presence)
-    const crashData = {
-      labels: ['Nordic', 'Western Europe','Latin America', 'Oceania', 'South Asia', 'MENA', 'North America', 'Central Asia & Eastern Europe', 'East Asia', 'Africa', 'Southeast Asia'],
+    // Data for Regional Megaways Adoption Chart (sorted by total casinos descending)
+    const megawaysData = {
+      labels: ['Africa', 'Western Europe', 'North America', 'Nordic', 'South Asia', 'Latin America'],
       datasets: [{
-        label: 'Percentage of Casinos with Crash',
-        data: [39.6, 36.5, 35.5, 35.3, 34.1, 33.3, 29.5, 27.6, 22.2, 12.8, 10.3],
+        label: 'Percentage of Casinos with Megaways',
+        data: [8.1, 25.5, 24.1, 33.8, 30.4, 22.5],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
         borderRadius: 0,
         borderSkipped: false,
+        // Additional data for tooltips
+        totalCasinos: [111, 106, 87, 74, 56, 40],
+        casinosWithMegaways: [9, 27, 21, 25, 17, 9]
       }]
     };
 
     const config = {
       type: 'bar',
-      data: crashData,
+      data: megawaysData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -61,7 +64,16 @@ const CLAUDE10 = () => {
             callbacks: {
               label: function(context) {
                 const percentage = context.parsed.y;
-                return `${context.label}: ${percentage}% of casinos have Megaways sections`;
+                const datasetIndex = context.datasetIndex;
+                const dataIndex = context.dataIndex;
+                const dataset = context.chart.data.datasets[datasetIndex];
+                const totalCasinos = dataset.totalCasinos[dataIndex];
+                const casinosWithMegaways = dataset.casinosWithMegaways[dataIndex];
+                
+                return [
+                  `${context.label}: ${percentage}%`,
+                  `${casinosWithMegaways} out of ${totalCasinos} casinos have Megaways sections`
+                ];
               }
             }
           }
@@ -91,7 +103,7 @@ const CLAUDE10 = () => {
           },
           y: {
             beginAtZero: true,
-            max: 45,
+            max: 40,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',
               drawBorder: false
@@ -168,7 +180,7 @@ const CLAUDE10 = () => {
             fontWeight: '300',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Regional Megaways Adoption
+            Regional Megaways Adoption Chart
           </h1>
           <p style={{
             margin: '6px 0 0 0',
@@ -176,7 +188,7 @@ const CLAUDE10 = () => {
             fontSize: '13px',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Note: Regions with negligible presence of Megawas sections are excluded from this list
+            Note: Regions with negligible presence of Megaways sections are excluded from this chart
           </p>
         </div>
         
@@ -185,7 +197,7 @@ const CLAUDE10 = () => {
           position: 'relative',
           height: 'calc(100% - 100px)'
         }}>
-          <canvas ref={chartRef} id="crashChart"></canvas>
+          <canvas ref={chartRef} id="megawaysChart"></canvas>
         </div>
       </div>
     </div>

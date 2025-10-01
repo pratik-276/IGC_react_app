@@ -1,6 +1,9 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
 
+// ✅ Import Syne font properly
+import { Helmet } from 'react-helmet';
+
 const CLAUDE9 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
@@ -24,13 +27,13 @@ const CLAUDE9 = () => {
 
     const sectionData = {
       labels: [
-         'Popular Games', 'Slots', 'New Games', 'Jackpots', 'Live Casino',
-        'Crash Games', 'Table Games', 'Megaways', 'Scratch Games', 'All Games',
-        'Roulette', 'Blackjack', 'Baccarat'
+        'Slots', 'Live Casino', 'Jackpots', 'Table Games', 'Crash Games',
+        'Megaways', 'Roulette', 'Poker', 'Bingo', 'Blackjack', 'Plinko',
+        'Keno', 'Mine Games'
       ],
       datasets: [{
         label: 'Total Sections %',
-        data: [10.5, 8.1, 6.8, 4.7, 4.1, 3.8, 3.4, 2.4, 2.4, 2.1, 1.1, 1.0, 0.3],
+        data: [7.8, 4.6, 4.1, 3.6, 3.5, 2.7, 1.0, 1.0, 0.6, 0.6, 0.4, 0.4, 0.3],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -133,57 +136,67 @@ const CLAUDE9 = () => {
   }, []);
 
   return (
-    <div style={{
-      fontFamily: 'Syne, sans-serif',
-      background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
-      margin: 0,
-      padding: '20px',
-      minHeight: '100vh'
-    }}>
+    <>
+      {/* ✅ Proper font import */}
+      <Helmet>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&display=swap"
+          rel="stylesheet"
+        />
+      </Helmet>
+
       <div style={{
-        maxWidth: '1200px',
-        margin: '0 auto',
-        background: 'white',
-        borderRadius: '0px',
-        boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
-        overflow: 'hidden',
-        height: '400px'
+        fontFamily: 'Syne, sans-serif',
+        background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
+        margin: 0,
+        padding: '20px',
+        minHeight: '100vh'
       }}>
         <div style={{
-          background: '#37DBD1',
-          color: 'white',
-          padding: '20px 30px',
-          textAlign: 'center'
+          maxWidth: '1200px',
+          margin: '0 auto',
+          background: 'white',
+          borderRadius: '0px',
+          boxShadow: '0 10px 30px rgba(0,0,0,0.1)',
+          overflow: 'hidden',
+          height: '400px'
         }}>
-          <h1 style={{
-            margin: 0,
-            fontSize: '24px',
-            fontWeight: '300',
-            fontFamily: 'Syne, sans-serif',
-            color: '#000'
+          <div style={{
+            background: '#37DBD1',
+            color: 'white',
+            padding: '20px 30px',
+            textAlign: 'center'
           }}>
-            Casino Section Distribution Chart
-          </h1>
-          <p style={{
-            margin: '8px 0 0 0',
-            opacity: 0.9,
-            fontSize: '14px',
-            fontFamily: 'Syne, sans-serif',
-            color: '#000'
-          }}>
-            Note: The "Other" section contributing to 53.7% of all sections has been excluded from this illustration
-          </p>
-        </div>
+            <h1 style={{
+              margin: 0,
+              fontSize: '24px',
+              fontWeight: '300',
+              fontFamily: 'Syne, sans-serif',
+              color: '#000'
+            }}>
+              Game Specific Section Distribution Chart
+            </h1>
+            <p style={{
+              margin: '8px 0 0 0',
+              opacity: 0.9,
+              fontSize: '14px',
+              fontFamily: 'Syne, sans-serif',
+              color: '#000'
+            }}>
+              Note: 69.3% of sections are game-specific sections with negligible presence and generic sections (like New Games, Popular Games etc.) which are excluded from this illustration.
+            </p>
+          </div>
 
-        <div style={{
-          padding: '20px',
-          position: 'relative',
-          height: 'calc(100% - 120px)'
-        }}>
-          <canvas ref={chartRef} id="sectionChart"></canvas>
+          <div style={{
+            padding: '20px',
+            position: 'relative',
+            height: 'calc(100% - 120px)'
+          }}>
+            <canvas ref={chartRef} id="sectionChart"></canvas>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
