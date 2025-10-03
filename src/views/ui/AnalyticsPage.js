@@ -64,6 +64,10 @@ const AnalyticsPage = () => {
   const [sectionMappingData, setSectionMappingData] = useState([]);
   const [casinoTableData, setCasinoTableData] = useState([]);
 
+  const [expandedRows, setExpandedRows] = useState(null);
+  const [rowDetails, setRowDetails] = useState({});
+  const [loadingRows, setLoadingRows] = useState({});
+
   const isPlanExpired = state?.plan === "trial_expired";
   // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
@@ -276,6 +280,32 @@ const AnalyticsPage = () => {
     getCasinoTableData(payload);
   };
 
+  const fetchCasinoSectionDetails = async (rowData) => {
+    const payload = {
+      provider_id: provider_id,
+      game: selectedGame,
+      region: selectedRegion,
+      country: selectedCountry,
+      casino_name: rowData.casino_name,
+    };
+
+    setLoadingRows((prev) => ({ ...prev, [rowData.casino_name]: true }));
+
+    try {
+      const res = await AnalyticsData.post_casino_section_details(payload);
+      if (res?.success) {
+        setRowDetails((prev) => ({
+          ...prev,
+          [rowData.casino_name]: res.data,
+        }));
+      }
+    } catch (err) {
+      console.error("Error fetching section details", err);
+    } finally {
+      setLoadingRows((prev) => ({ ...prev, [rowData.casino_name]: false }));
+    }
+  };
+
   useEffect(() => {
     getRegionsList();
   }, []);
@@ -302,6 +332,32 @@ const AnalyticsPage = () => {
       </div>
     </div>
   );
+
+  const rowExpansionTemplate = (rowData) => {
+    if (loadingRows[rowData.casino_name]) {
+      return (
+        <div className="text-center p-3">
+          <Spin size="default" />
+        </div>
+      );
+    }
+
+    const details = rowDetails[rowData.casino_name] || [];
+
+    return (
+      <DataTable
+        scrollable
+        scrollHeight="200px"
+        value={details}
+        size="small"
+        className="p-datatable-sm"
+      >
+        <Column field="scan_date" header="Scan Date" />
+        <Column field="section" header="Section" />
+        <Column field="game_position" header="Game Position" />
+      </DataTable>
+    );
+  };
 
   return (
     <>
@@ -495,8 +551,13 @@ const AnalyticsPage = () => {
               scrollable
               scrollHeight="300px"
               size="small"
+              expandedRows={expandedRows}
+              onRowToggle={(e) => setExpandedRows(e.data)}
+              onRowExpand={(e) => fetchCasinoSectionDetails(e.data)}
+              rowExpansionTemplate={rowExpansionTemplate}
               className="table-bordered p-component p-datatable custom-table small"
             >
+              <Column expander style={{ width: "3em" }} />
               <Column
                 header={headerWithTooltip("Casino Name")}
                 field="casino_name"
