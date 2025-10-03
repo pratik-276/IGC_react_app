@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
 
-const CLAUDE5 = () => {
+const CLAUDE10 = () => {
   const chartRef = useRef(null);
   const chartInstance = useRef(null);
 
@@ -24,12 +24,12 @@ const CLAUDE5 = () => {
       Chart.Legend
     );
 
-    // Data for Regional Crash Games Adoption Chart (sorted by total casinos descending)
-    const crashData = {
-      labels: ['Africa', 'Western Europe', 'North America', 'Nordic', 'South Asia', 'LatAM'],
+    // Data for Regional Megaways Adoption Chart (sorted by total casinos descending)
+    const megawaysData = {
+      labels: ['Africa', 'Western Europe', 'North America', 'Nordic', 'South Asia', 'Latin America'],
       datasets: [{
-        label: 'Percentage of Casinos with Crash',
-        data: [60.4, 15.1, 9.2, 12.2, 33.9, 45.0],
+        label: 'Percentage of Casinos with Megaways',
+        data: [8.1, 25.5, 24.1, 33.8, 30.4, 22.5],
         backgroundColor: '#37DBD1',
         borderColor: 'rgba(255, 255, 255, 0.8)',
         borderWidth: 2,
@@ -37,13 +37,13 @@ const CLAUDE5 = () => {
         borderSkipped: false,
         // Additional data for tooltips
         totalCasinos: [111, 106, 87, 74, 56, 40],
-        casinosWithCrash: [67, 16, 8, 9, 19, 18]
+        casinosWithMegaways: [9, 27, 21, 25, 17, 9]
       }]
     };
 
     const config = {
       type: 'bar',
-      data: crashData,
+      data: megawaysData,
       options: {
         responsive: true,
         maintainAspectRatio: false,
@@ -68,11 +68,11 @@ const CLAUDE5 = () => {
                 const dataIndex = context.dataIndex;
                 const dataset = context.chart.data.datasets[datasetIndex];
                 const totalCasinos = dataset.totalCasinos[dataIndex];
-                const casinosWithCrash = dataset.casinosWithCrash[dataIndex];
+                const casinosWithMegaways = dataset.casinosWithMegaways[dataIndex];
                 
                 return [
                   `${context.label}: ${percentage}%`,
-                  `${casinosWithCrash} out of ${totalCasinos} casinos have Crash sections`
+                  `${casinosWithMegaways} out of ${totalCasinos} casinos have Megaways sections`
                 ];
               }
             }
@@ -103,7 +103,7 @@ const CLAUDE5 = () => {
           },
           y: {
             beginAtZero: true,
-            max: 70,
+            max: 40,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',
               drawBorder: false
@@ -180,7 +180,7 @@ const CLAUDE5 = () => {
             fontWeight: '300',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Regional Crash Adoption Chart
+            Regional Megaways Adoption Chart
           </h1>
           <p style={{
             margin: '6px 0 0 0',
@@ -188,7 +188,7 @@ const CLAUDE5 = () => {
             fontSize: '13px',
             fontFamily: 'Syne, sans-serif'
           }}>
-            Note: Regions with negligible presence of Crash sections are excluded from this chart
+            Note: Regions with negligible presence of Megaways sections are excluded from this chart
           </p>
         </div>
         
@@ -197,11 +197,11 @@ const CLAUDE5 = () => {
           position: 'relative',
           height: 'calc(100% - 100px)'
         }}>
-          <canvas ref={chartRef} id="crashChart"></canvas>
+          <canvas ref={chartRef} id="megawaysChart"></canvas>
         </div>
       </div>
     </div>
   );
 };
 
-export default CLAUDE5;
+export default CLAUDE10;

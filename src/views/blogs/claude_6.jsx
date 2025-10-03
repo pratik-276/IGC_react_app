@@ -61,7 +61,7 @@ const CLAUDE6 = () => {
 
   return (
     <div style={{ 
-      fontFamily: 'Arial, sans-serif', 
+      fontFamily: 'Syne, sans-serif', 
       height: '800px', 
       width: '800px',
       backgroundColor: '#ffffff',
@@ -76,7 +76,7 @@ const CLAUDE6 = () => {
           fontWeight: 'bold', 
           color: '#1f2937',
           margin: '0 0 8px 0',
-          fontFamily: 'Arial, sans-serif'
+          fontFamily: 'Syne, sans-serif'
         }}>
           Crash Game Providers Analysis
         </h1>
@@ -84,7 +84,7 @@ const CLAUDE6 = () => {
           fontSize: '14px', 
           color: '#6b7280',
           margin: '0',
-          fontFamily: 'Arial, sans-serif'
+          fontFamily: 'Syne, sans-serif'
         }}>
           Bubble size = Total Games | X-axis = % Crash Games | Y-axis = Total Crash Games
         </p>
@@ -231,7 +231,7 @@ const CLAUDE6 = () => {
               boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
               pointerEvents: 'none',
               zIndex: 10,
-              fontFamily: 'Arial, sans-serif',
+              fontFamily: 'Syne, sans-serif',
               fontSize: '14px',
               transform: tooltip.x > 500 ? 'translateX(-100%)' : 'none'
             }}
@@ -258,7 +258,7 @@ const CLAUDE6 = () => {
           fontWeight: '600', 
           color: '#1f2937',
           margin: '8px 0 16px 0',
-          fontFamily: 'Arial, sans-serif'
+          fontFamily: 'Syne, sans-serif'
         }}>
           Crash Focus Level (Bubble Color)
         </h3>
@@ -277,7 +277,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#ef4444',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Arial, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
               ≥20% High Focus
             </span>
           </div>
@@ -289,7 +289,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#f97316',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Arial, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
               10-19% Medium-High
             </span>
           </div>
@@ -301,7 +301,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#eab308',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Arial, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
               5-9% Medium
             </span>
           </div>
@@ -313,7 +313,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#22c55e',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Arial, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
               2-4% Low-Medium
             </span>
           </div>
@@ -325,7 +325,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#3b82f6',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Arial, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
               &lt;2% Low Focus
             </span>
           </div>

@@ -343,7 +343,7 @@ const DashboardMod = () => {
                 placeholder="Select Casinos"
                 maxSelectedLabels={10}
               />
-              <MultiSelect
+              {/* <MultiSelect
                 value={selectedFreqs}
                 onChange={(e) => setSelectedFreqs(e.value)}
                 options={freqsList}
@@ -351,7 +351,7 @@ const DashboardMod = () => {
                 filter
                 placeholder="Scan Frequency"
                 maxSelectedLabels={3}
-              />
+              /> */}
             </div>
           </div>
         </div>
@@ -591,7 +591,7 @@ const DashboardMod = () => {
                           )}
                         ></Column>
 
-                        <Column
+                        {/* <Column
                           field="frequency"
                           header={headerWithTooltip(
                             "Site Freq",
@@ -600,7 +600,7 @@ const DashboardMod = () => {
                           )}
                           sortable
                           style={{ minWidth: "10rem" }}
-                        ></Column>
+                        ></Column> */}
 
                         <Column
                           field="last_observed_date"
