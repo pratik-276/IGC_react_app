@@ -43,19 +43,11 @@ import CLAUDE5 from "./views/blogs/claude_5";
 import CLAUDE7 from "./views/blogs/claude_7";
 import CLAUDE8 from "./views/blogs/claude_8";
 import CLAUDE6 from "./views/blogs/claude_6";
+import AnalyticsPage from "./views/ui/AnalyticsPage";
 
 const App = () => {
   return (
     <>
-      <Routes>
-        <Route path="blog/id_1" element={<CLAUDE1 />} />
-      </Routes>
-      <Routes>
-        <Route path="blog/id_2" element={<CLAUDE2 />} />
-      </Routes>
-      <Routes>
-        <Route path="blog/id_3" element={<CLAUDE3 />} />
-      </Routes>
       <ProfileProvider>
         <CasinoProvider>
           <ContactSalesProvider>
@@ -67,6 +59,10 @@ const App = () => {
               />
 
               <Routes>
+                <Route path="blog/id_1" element={<CLAUDE1 />} />
+                <Route path="blog/id_2" element={<CLAUDE2 />} />
+                <Route path="blog/id_3" element={<CLAUDE3 />} />
+
                 <Route path="/" element={<Layout />}>
                   <Route
                     index
@@ -191,6 +187,15 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <CasinoRequests />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="analytics"
+                    element={
+                      <ProtectedRoute>
+                        <AnalyticsPage />
                       </ProtectedRoute>
                     }
                   />

@@ -9,7 +9,7 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
-import { FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser } from "react-icons/fa6";
+import { FaChartBar, FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser } from "react-icons/fa6";
 import { FaSignOutAlt } from "react-icons/fa";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
@@ -90,6 +90,18 @@ const AppLayout = () => {
                     key: "/game-provider-marketshare",
                     icon: <FaChartPie />,
                     label: "Marketshare",
+                },
+            ],
+        },
+        {
+            key: "analytics",
+            label: "Analytics",
+            icon: <FaChartBar />,
+            children: [
+                {
+                    key: "/analytics",
+                    icon: <FaChartBar />,
+                    label: "Analytics",
                 },
             ],
         },
