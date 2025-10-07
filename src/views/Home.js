@@ -44,6 +44,7 @@ const Home = () => {
 
       setProfile(res.data);
       localStorage.setItem("is_admin", res.data.is_admin);
+      localStorage.setItem("provider_id", res.data.provider_id);
       // Patch for Admin Dashboard siderbar button visibility on first open
       navigate("/");
 
