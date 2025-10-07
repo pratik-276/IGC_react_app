@@ -346,7 +346,7 @@ const Login = () => {
                                   *required for configuration. To know more
                                   click{" "}
                                   <a
-                                    href="https://igamingcompass.com/faqs/"
+                                    href="https://igamingcompass.com/faqs/why-is-selecting-a-provider-required-when-signing-into-the-app/"
                                     target="_blank"
                                   >
                                     here
