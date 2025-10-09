@@ -21,12 +21,6 @@ const CLAUDE12 = () => {
   };
 
   useEffect(() => {
-    // Import Google Fonts - Syne
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
-
     // Register Chart.js components
     Chart.Chart.register(
       Chart.BarController,
@@ -94,7 +88,7 @@ const CLAUDE12 = () => {
               title: {
                 display: true,
                 text: 'Year',
-                font: { size: 14, weight: 'bold', family: 'Syne, sans-serif' },
+                font: { size: 14, weight: 'bold', family: 'sans-serif' },
                 color: '#000000'
               },
               grid: {
@@ -102,14 +96,14 @@ const CLAUDE12 = () => {
               },
               ticks: {
                 color: '#000000',
-                font: { size: 12, family: 'Syne, sans-serif' }
+                font: { size: 12, family: 'sans-serif' }
               }
             },
             y: {
               title: {
                 display: true,
                 text: 'Megaways Games Released',
-                font: { size: 14, weight: 'bold', family: 'Syne, sans-serif' },
+                font: { size: 14, weight: 'bold', family: 'sans-serif' },
                 color: '#000000'
               },
               grid: {
@@ -119,7 +113,7 @@ const CLAUDE12 = () => {
               beginAtZero: true,
               ticks: {
                 color: '#000000',
-                font: { size: 12, family: 'Syne, sans-serif' }
+                font: { size: 12, family: 'sans-serif' }
               }
             }
           },
@@ -144,7 +138,7 @@ const CLAUDE12 = () => {
                 const position = bar.getCenterPoint();
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 11px Syne, sans-serif';
+                ctx.font = 'bold 11px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 
@@ -180,7 +174,7 @@ const CLAUDE12 = () => {
     <div 
       className="bg-white shadow-lg overflow-hidden" 
       style={{ 
-        fontFamily: 'Syne, sans-serif',
+        fontFamily: 'sans-serif',
         width: '100%',
         maxWidth: '1200px',
         margin: '0 auto',
@@ -196,10 +190,10 @@ const CLAUDE12 = () => {
           color: 'black'
         }}
       >
-        <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'sans-serif' }}>
           Megaways Games Publishing Trends by Year
         </h1>
-        <p className="text-sm opacity-90" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <p className="text-sm opacity-90" style={{ fontFamily: 'sans-serif' }}>
           Note: Years that had negligible megaways game releases are excluded from this chart.
         </p>
       </div>

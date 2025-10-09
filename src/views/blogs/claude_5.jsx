@@ -95,7 +95,7 @@ const CLAUDE5 = () => {
               color: '#64748b',
               font: {
                 size: 12,
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               },
               maxRotation: 35,
               minRotation: 35
@@ -112,7 +112,7 @@ const CLAUDE5 = () => {
               color: '#64748b',
               font: {
                 size: 11,
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               },
               callback: function(value) {
                 return value + '%';
@@ -125,7 +125,7 @@ const CLAUDE5 = () => {
               font: {
                 size: 13,
                 weight: 'bold',
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               }
             }
           }
@@ -153,7 +153,7 @@ const CLAUDE5 = () => {
 
   return (
     <div style={{
-      fontFamily: 'Syne, sans-serif',
+      fontFamily: 'sans-serif',
       background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
       margin: 0,
       padding: '20px',
@@ -178,7 +178,7 @@ const CLAUDE5 = () => {
             margin: 0,
             fontSize: '22px',
             fontWeight: '300',
-            fontFamily: 'Syne, sans-serif'
+            fontFamily: 'sans-serif'
           }}>
             Regional Crash Adoption Chart
           </h1>
@@ -186,7 +186,7 @@ const CLAUDE5 = () => {
             margin: '6px 0 0 0',
             opacity: 0.9,
             fontSize: '13px',
-            fontFamily: 'Syne, sans-serif'
+            fontFamily: 'sans-serif'
           }}>
             Note: Regions with negligible presence of Crash sections are excluded from this chart
           </p>

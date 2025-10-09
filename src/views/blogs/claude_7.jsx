@@ -96,7 +96,7 @@ const CLAUDE7 = () => {
               title: {
                 display: true,
                 text: 'Year',
-                font: { size: 14, weight: 'bold', family: 'Syne, sans-serif' },
+                font: { size: 14, weight: 'bold', family: 'sans-serif' },
                 color: '#000000'
               },
               grid: {
@@ -104,14 +104,14 @@ const CLAUDE7 = () => {
               },
               ticks: {
                 color: '#000000',
-                font: { size: 12, family: 'Syne, sans-serif' }
+                font: { size: 12, family: 'sans-serif' }
               }
             },
             y: {
               title: {
                 display: true,
                 text: 'Crash Games Released',
-                font: { size: 14, weight: 'bold', family: 'Syne, sans-serif' },
+                font: { size: 14, weight: 'bold', family: 'sans-serif' },
                 color: '#000000'
               },
               grid: {
@@ -121,7 +121,7 @@ const CLAUDE7 = () => {
               beginAtZero: true,
               ticks: {
                 color: '#000000',
-                font: { size: 12, family: 'Syne, sans-serif' }
+                font: { size: 12, family: 'sans-serif' }
               }
             }
           },
@@ -146,7 +146,7 @@ const CLAUDE7 = () => {
                 const position = bar.getCenterPoint();
                 
                 ctx.fillStyle = '#000000';
-                ctx.font = 'bold 11px Syne, sans-serif';
+                ctx.font = 'bold 11px sans-serif';
                 ctx.textAlign = 'center';
                 ctx.textBaseline = 'bottom';
                 
@@ -182,7 +182,7 @@ const CLAUDE7 = () => {
     <div 
       className="bg-white shadow-lg overflow-hidden" 
       style={{ 
-        fontFamily: 'Syne, sans-serif',
+        fontFamily: 'sans-serif',
         width: '100%',
         maxWidth: '1200px',
         margin: '0 auto',
@@ -198,10 +198,10 @@ const CLAUDE7 = () => {
           color: 'black'
         }}
       >
-        <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <h1 className="text-2xl font-semibold mb-2" style={{ fontFamily: 'sans-serif' }}>
           Crash Games Publishing Trends by Year
         </h1>
-        <p className="text-sm opacity-90" style={{ fontFamily: 'Syne, sans-serif' }}>
+        <p className="text-sm opacity-90" style={{ fontFamily: 'sans-serif' }}>
           Note: Years that had negligible crash game releases are excluded from this chart.
         </p>
       </div>
