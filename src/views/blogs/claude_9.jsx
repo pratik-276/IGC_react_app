@@ -1,7 +1,5 @@
 import React, { useEffect, useRef } from 'react';
 import * as Chart from 'chart.js/auto';
-
-// ✅ Import Syne font properly
 import { Helmet } from 'react-helmet';
 
 const CLAUDE9 = () => {
@@ -73,7 +71,7 @@ const CLAUDE9 = () => {
               color: '#64748b',
               font: {
                 size: 14,
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               },
               maxRotation: 45,
               minRotation: 45
@@ -85,7 +83,7 @@ const CLAUDE9 = () => {
               font: {
                 size: 16,
                 weight: 'bold',
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               }
             }
           },
@@ -99,7 +97,7 @@ const CLAUDE9 = () => {
               color: '#64748b',
               font: {
                 size: 12,
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               },
               callback: (value) => value + '%'
             },
@@ -110,7 +108,7 @@ const CLAUDE9 = () => {
               font: {
                 size: 14,
                 weight: 'bold',
-                family: 'Syne, sans-serif'
+                family: 'sans-serif'
               }
             }
           }
@@ -137,16 +135,12 @@ const CLAUDE9 = () => {
 
   return (
     <>
-      {/* ✅ Proper font import */}
       <Helmet>
-        <link
-          href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700&display=swap"
-          rel="stylesheet"
-        />
+        {/* Font import removed since we’re using system sans-serif */}
       </Helmet>
 
       <div style={{
-        fontFamily: 'Syne, sans-serif',
+        fontFamily: 'sans-serif',
         background: 'linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%)',
         margin: 0,
         padding: '20px',
@@ -171,7 +165,7 @@ const CLAUDE9 = () => {
               margin: 0,
               fontSize: '24px',
               fontWeight: '300',
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'sans-serif',
               color: '#000'
             }}>
               Game Specific Section Distribution Chart
@@ -180,7 +174,7 @@ const CLAUDE9 = () => {
               margin: '8px 0 0 0',
               opacity: 0.9,
               fontSize: '14px',
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'sans-serif',
               color: '#000'
             }}>
               Note: 69.3% of sections are game-specific sections with negligible presence and generic sections (like New Games, Popular Games etc.) which are excluded from this illustration.

@@ -52,7 +52,7 @@ const CLAUDE11 = () => {
 
   return (
     <div style={{ 
-      fontFamily: 'Syne, sans-serif', 
+      fontFamily: 'sans-serif', 
       height: '800px', 
       width: '100%',
       backgroundColor: '#ffffff',
@@ -67,7 +67,7 @@ const CLAUDE11 = () => {
           fontWeight: 'bold', 
           color: '#1f2937',
           margin: '0 0 8px 0',
-          fontFamily: 'Syne, sans-serif'
+          fontFamily: 'sans-serif'
         }}>
           Megaways Providers Analysis
         </h1>
@@ -75,7 +75,7 @@ const CLAUDE11 = () => {
           fontSize: '14px', 
           color: '#6b7280',
           margin: '0',
-          fontFamily: 'Syne, sans-serif'
+          fontFamily: 'sans-serif'
         }}>
           Bubble size = Total Games | X-axis = % Megaways Games | Y-axis = Total Megaways Games
         </p>
@@ -100,13 +100,13 @@ const CLAUDE11 = () => {
               return (
                 <g key={tick}>
                   <line x1={x} y1="440" x2={x} y2="446" stroke="#374151" strokeWidth="1"/>
-                  <text x={x} y="460" textAnchor="middle" fontSize="12" fill="#6b7280" fontFamily="Syne, sans-serif">
+                  <text x={x} y="460" textAnchor="middle" fontSize="12" fill="#6b7280" fontFamily="sans-serif">
                     {tick}%
                   </text>
                 </g>
               );
             })}
-            <text x="430" y="485" textAnchor="middle" fontSize="14" fontWeight="600" fill="#374151" fontFamily="Syne, sans-serif">
+            <text x="430" y="485" textAnchor="middle" fontSize="14" fontWeight="600" fill="#374151" fontFamily="sans-serif">
               % Megaways Games by Provider
             </text>
           </g>
@@ -119,14 +119,14 @@ const CLAUDE11 = () => {
               return (
                 <g key={tick}>
                   <line x1="74" y1={y} x2="80" y2={y} stroke="#374151" strokeWidth="1"/>
-                  <text x="70" y={y + 4} textAnchor="end" fontSize="12" fill="#6b7280" fontFamily="Syne, sans-serif">
+                  <text x="70" y={y + 4} textAnchor="end" fontSize="12" fill="#6b7280" fontFamily="sans-serif">
                     {tick}
                   </text>
                 </g>
               );
             })}
             <text x="30" y="240" textAnchor="middle" fontSize="14" fontWeight="600" fill="#374151"
-                  transform="rotate(-90, 30, 240)" fontFamily="Syne, sans-serif">
+                  transform="rotate(-90, 30, 240)" fontFamily="sans-serif">
               Total Megaways Games
             </text>
           </g>
@@ -181,7 +181,7 @@ const CLAUDE11 = () => {
                   fontSize="11"
                   fontWeight="600"
                   fill="#1f2937"
-                  fontFamily="Syne, sans-serif"
+                  fontFamily="sans-serif"
                 >
                   {displayName}
                 </text>
@@ -204,7 +204,7 @@ const CLAUDE11 = () => {
               pointerEvents: 'none',
               fontSize: '14px',
               zIndex: 10,
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'sans-serif',
               transform: tooltip.x > 600 ? 'translateX(-100%)' : 'none'
             }}
           >
@@ -219,7 +219,7 @@ const CLAUDE11 = () => {
       </div>
 
       {/* Legend */}
-      <div style={{ marginTop: '10px', textAlign: 'center', fontFamily: 'Syne, sans-serif' }}>
+      <div style={{ marginTop: '10px', textAlign: 'center', fontFamily: 'sans-serif' }}>
         <h3 style={{ fontSize: '18px', fontWeight: '600', color: '#1f2937', margin: '8px 0 16px 0' }}>
           Megaways Focus Level (Bubble Color)
         </h3>

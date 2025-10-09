@@ -61,7 +61,7 @@ const CLAUDE6 = () => {
 
   return (
     <div style={{ 
-      fontFamily: 'Syne, sans-serif', 
+      fontFamily: 'sans-serif', 
       height: '800px', 
       width: '800px',
       backgroundColor: '#ffffff',
@@ -76,7 +76,7 @@ const CLAUDE6 = () => {
           fontWeight: 'bold', 
           color: '#1f2937',
           margin: '0 0 8px 0',
-          fontFamily: 'Syne, sans-serif'
+          fontFamily: 'sans-serif'
         }}>
           Crash Game Providers Analysis
         </h1>
@@ -84,7 +84,7 @@ const CLAUDE6 = () => {
           fontSize: '14px', 
           color: '#6b7280',
           margin: '0',
-          fontFamily: 'Syne, sans-serif'
+          fontFamily: 'sans-serif'
         }}>
           Bubble size = Total Games | X-axis = % Crash Games | Y-axis = Total Crash Games
         </p>
@@ -109,13 +109,13 @@ const CLAUDE6 = () => {
               return (
                 <g key={tick}>
                   <line x1={x} y1="420" x2={x} y2="426" stroke="#374151" strokeWidth="1"/>
-                  <text x={x} y="440" textAnchor="middle" fontSize="12" fontFamily="Arial" fill="#6b7280">
+                  <text x={x} y="440" textAnchor="middle" fontSize="12" fontFamily="sans-serif" fill="#6b7280">
                     {tick}%
                   </text>
                 </g>
               );
             })}
-            <text x="410" y="465" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151">
+            <text x="410" y="465" textAnchor="middle" fontSize="14" fontFamily="sans-serif" fontWeight="600" fill="#374151">
               % Crash Games by Provider
             </text>
           </g>
@@ -128,13 +128,13 @@ const CLAUDE6 = () => {
               return (
                 <g key={tick}>
                   <line x1="74" y1={y} x2="80" y2={y} stroke="#374151" strokeWidth="1"/>
-                  <text x="70" y={y + 4} textAnchor="end" fontSize="12" fontFamily="Arial" fill="#6b7280">
+                  <text x="70" y={y + 4} textAnchor="end" fontSize="12" fontFamily="sans-serif" fill="#6b7280">
                     {tick}
                   </text>
                 </g>
               );
             })}
-            <text x="30" y="230" textAnchor="middle" fontSize="14" fontFamily="Arial" fontWeight="600" fill="#374151"
+            <text x="30" y="230" textAnchor="middle" fontSize="14" fontFamily="sans-serif" fontWeight="600" fill="#374151"
                   transform="rotate(-90, 30, 230)">
               Total Crash Games
             </text>
@@ -168,7 +168,6 @@ const CLAUDE6 = () => {
           {/* Labels for key providers */}
           <g>
             {providerData.map((provider, i) => {
-              // Only show labels for providers with significant presence
               const shouldShowLabel = provider.crashGames >= 7 || provider.crashPercentage >= 15;
               
               if (!shouldShowLabel) return null;
@@ -180,7 +179,6 @@ const CLAUDE6 = () => {
               let labelY = y - radius - 8;
               let labelX = x;
               
-              // Adjust for edge cases
               if (labelY < 50) labelY = y + radius + 15;
               
               let displayName = provider.provider;
@@ -205,7 +203,7 @@ const CLAUDE6 = () => {
                     y={labelY}
                     textAnchor="middle"
                     fontSize="11"
-                    fontFamily="Arial"
+                    fontFamily="sans-serif"
                     fontWeight="600"
                     fill="#1f2937"
                   >
@@ -231,7 +229,7 @@ const CLAUDE6 = () => {
               boxShadow: '0 10px 15px rgba(0, 0, 0, 0.1)',
               pointerEvents: 'none',
               zIndex: 10,
-              fontFamily: 'Syne, sans-serif',
+              fontFamily: 'sans-serif',
               fontSize: '14px',
               transform: tooltip.x > 500 ? 'translateX(-100%)' : 'none'
             }}
@@ -258,7 +256,7 @@ const CLAUDE6 = () => {
           fontWeight: '600', 
           color: '#1f2937',
           margin: '8px 0 16px 0',
-          fontFamily: 'Syne, sans-serif'
+          fontFamily: 'sans-serif'
         }}>
           Crash Focus Level (Bubble Color)
         </h3>
@@ -277,7 +275,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#ef4444',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'sans-serif' }}>
               ≥20% High Focus
             </span>
           </div>
@@ -289,7 +287,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#f97316',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'sans-serif' }}>
               10-19% Medium-High
             </span>
           </div>
@@ -301,7 +299,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#eab308',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'sans-serif' }}>
               5-9% Medium
             </span>
           </div>
@@ -313,7 +311,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#22c55e',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'sans-serif' }}>
               2-4% Low-Medium
             </span>
           </div>
@@ -325,7 +323,7 @@ const CLAUDE6 = () => {
               backgroundColor: '#3b82f6',
               border: '2px solid #000000'
             }}></div>
-            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'Syne, sans-serif' }}>
+            <span style={{ fontSize: '14px', fontWeight: '500', fontFamily: 'sans-serif' }}>
               &lt;2% Low Focus
             </span>
           </div>
