@@ -93,18 +93,18 @@ const AppLayout = () => {
                 },
             ],
         },
-        {
-            key: "analytics",
-            label: "Analytics",
-            icon: <FaChartBar />,
-            children: [
-                {
-                    key: "/analytics",
-                    icon: <FaChartBar />,
-                    label: "Analytics",
-                },
-            ],
-        },
+        // {
+        //     key: "analytics",
+        //     label: "Analytics",
+        //     icon: <FaChartBar />,
+        //     children: [
+        //         {
+        //             key: "/analytics",
+        //             icon: <FaChartBar />,
+        //             label: "Analytics",
+        //         },
+        //     ],
+        // },
     ];
 
     const onMenuClick = ({ key }) => {

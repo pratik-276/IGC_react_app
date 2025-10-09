@@ -171,7 +171,6 @@ const DashboardMod = () => {
               state_name: rowData.state,
             },
           });
-          console.log(rowData.game_name, rowData.operator_site_id);
         }}
       />
     );

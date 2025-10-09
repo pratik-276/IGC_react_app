@@ -165,13 +165,14 @@ const CompassDetails = () => {
                 className="btn-filter"
                 label="View Position Details"
                 onClick={() => {
+                  console.log(operator_site_id, game_name, casino_name, country_name, state);
                   navigate("/position-details", {
                     state: {
                       operator_site_id: operator_site_id,
                       game_name: game_name,
                       casino_name: casino_name,
                       country_name: country_name,
-                      state_name: state,
+                      state_name: "",
                     },
                   });
                 }}
@@ -278,12 +279,13 @@ const CompassDetails = () => {
           />
         </div>
 
-        <div
+        {compassGameSection !== "No records as of now" && <div
           className="d-flex justify-content-center"
           style={{ marginTop: "5%" }}
         >
           <h4>Note : {compassGameSection}</h4>
         </div>
+        }
       </div>
     </>
   );

@@ -49,8 +49,8 @@ const LoginPage = () => {
                 </form>
 
                 <div className="auth_signup_link">
-                    <p>Don't have an account ?</p>
-                    <a href="/signup" className="ms-2 signup-text">Sign up</a>
+                    <p>Don't have an account?</p>
+                    <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ01Qc5mw4Gi3RaAfIAlxSmva4AYs35e3TPliUz2FbQx-gADjngNTYM5GPmAWD6_6FRQUwp-V7He" _target='blank' className="ms-2 signup-text">Book a Demo</a>
                 </div>
             </div>
 

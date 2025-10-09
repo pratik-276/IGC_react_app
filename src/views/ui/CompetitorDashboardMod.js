@@ -136,7 +136,9 @@ const CompetitorDashboardMod = () => {
     setProviderDataLoader(true);
 
     const payload = {
-      operator_site_id: siteId,
+      //operator_site_id: siteId,
+      operator_id: selectedOperator,
+      geography: selectedRegion,
     };
 
     CompetitorData.get_providers_by_site(payload)
@@ -159,7 +161,9 @@ const CompetitorDashboardMod = () => {
     setGameDataLoader(true);
 
     const payload = {
-      operator_site_id: siteId,
+      //operator_site_id: siteId,
+      operator_id: selectedOperator,
+      geography: selectedRegion,
     };
 
     CompetitorData.get_games_by_site(payload)
@@ -182,7 +186,9 @@ const CompetitorDashboardMod = () => {
     setLoader(true);
 
     const payload = {
-      operator_site_id: siteId,
+      //operator_site_id: siteId,
+      operator_id: selectedOperator,
+      geography: selectedRegion,
       ...(providersName?.length ? { provider_name: providersName } : {}),
       ...(gamesName?.length ? { game_name: gamesName } : {}),
     };
@@ -212,20 +218,20 @@ const CompetitorDashboardMod = () => {
     }
   }, [selectedRegion]);
 
-  useEffect(() => {
-    if (selectedOperator) {
-      siteDropdownData();
-    }
-  }, [selectedOperator]);
+  // useEffect(() => {
+  //   if (selectedOperator) {
+  //     siteDropdownData();
+  //   }
+  // }, [selectedOperator]);
 
   useEffect(() => {
-    if (siteId) {
+    if (selectedOperator) {
       setProvidersName(null);
       setGamesName(null);
       providerDropdownData();
       gameDropdownData();
     }
-  }, [siteId]);
+  }, [selectedOperator]);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
@@ -356,7 +362,7 @@ const CompetitorDashboardMod = () => {
 
             <div className="d-flex flex-column gap-4">
               <div className="row g-3">
-                <div className="col-md-4">
+                <div className="col-md-6">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
@@ -385,7 +391,7 @@ const CompetitorDashboardMod = () => {
                   </FloatLabel>
                 </div>
 
-                <div className="col-md-4">
+                <div className="col-md-6">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="operator_name"
@@ -414,7 +420,7 @@ const CompetitorDashboardMod = () => {
                   </FloatLabel>
                 </div>
 
-                <div className="col-md-4">
+                {/* <div className="col-md-4">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
@@ -440,7 +446,7 @@ const CompetitorDashboardMod = () => {
                       Site URL
                     </label>
                   </FloatLabel>
-                </div>
+                </div> */}
               </div>
 
               <div className="row g-3">
@@ -453,7 +459,7 @@ const CompetitorDashboardMod = () => {
                       loading={providerDataLoader}
                       placeholder="Select Providers"
                       filter
-                      disabled={!siteId}
+                      disabled={!selectedOperator}
                       maxSelectedLabels={1}
                       className="w-100"
                       inputId="providers"
@@ -473,7 +479,7 @@ const CompetitorDashboardMod = () => {
                       loading={gameDataLoader}
                       placeholder="Select Games"
                       filter
-                      disabled={!siteId}
+                      disabled={!selectedOperator}
                       maxSelectedLabels={1}
                       className="w-100"
                       inputId="game"
@@ -490,7 +496,7 @@ const CompetitorDashboardMod = () => {
                     label="Apply"
                     loading={loader}
                     icon="pi pi-filter"
-                    disabled={!siteId}
+                    disabled={!selectedOperator}
                     onClick={getCompitatorData}
                     className="btn-filter flex-1 h-100"
                     style={{ minWidth: "100px" }}
@@ -566,7 +572,7 @@ const CompetitorDashboardMod = () => {
                   )}
                 </div>
 
-                {selectedSiteDetails && (
+                {/* {selectedSiteDetails && (
                   <div className="d-flex justify-content-between pl-2 mb-2">
                     <div>
                       <strong>Site URL : </strong>
@@ -587,7 +593,7 @@ const CompetitorDashboardMod = () => {
                         : "N/A"}
                     </div>
                   </div>
-                )}
+                )} */}
 
                 {/* <div className="flex align-items-center gap-3 mb-3">
                   <label htmlFor="zoomSlider" style={{ minWidth: "80px" }}>

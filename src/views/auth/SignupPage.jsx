@@ -88,7 +88,7 @@ const SignupPage = () => {
                             className="w-100"
                         />
                         <p style={{ fontSize: "10px" }}>
-                            *required for configuration. Learn more <a href="https://igamingcompass.com/faqs/" target="_blank" rel="noreferrer">here</a>
+                            *required for configuration. Learn more <a href="https://igamingcompass.com/faqs/why-is-selecting-a-provider-required-when-signing-into-the-app/" target="_blank" rel="noreferrer">here</a>
                         </p>
                     </div>
 

@@ -79,6 +79,7 @@ const CompassMod = () => {
   const [endDate, setEndDate] = useState(sevenDaysLater);
 
   const [sectionTitle, setSectionTitle] = useState("");
+  const [sectionSiteId, setSectionSiteId] = useState(null);
   const [minPosition, setMinPosition] = useState(1);
   const [maxPosition, setMaxPosition] = useState(50);
 
@@ -91,7 +92,7 @@ const CompassMod = () => {
     if (mode === "edit" && editData) {
       // Pre-fill Casino
       setSelectedCasino([
-        { id: editData.operator_site_id, name: editData.name, site_url: "" },
+        { operator_id: editData.operator_id, id: editData.operator_site_id, name: editData.name, site_url: "", country: editData.geography },
       ]);
 
       // Pre-fill Game
@@ -109,6 +110,9 @@ const CompassMod = () => {
       setSectionTitle(editData.section_name);
       setMinPosition(editData.min_position);
       setMaxPosition(editData.max_position);
+    }else{
+      setSectionTitle("");
+      setSectionSiteId(null);
     }
   }, [editData, mode]);
 
@@ -217,13 +221,14 @@ const CompassMod = () => {
       });
   };
 
-  const getSectionTitleData = (operator_id) => {
-    CompassData.section_name_by_operator_site_id({ operator_id })
+  const getSectionTitleData = (operator_id, country) => {
+    CompassData.section_name_by_operator_site_id({ operator_id: operator_id, country: country })
       .then((res) => {
         if (res?.success) {
           const transformed = res.data.map((item) => ({
             label: item.game_collection_title,
             value: item.game_collection_title,
+            site_id: item.operator_site_id
           }));
 
           setSectionTitleData(transformed);
@@ -278,7 +283,7 @@ const CompassMod = () => {
       const payload = {
         id: editData.id,
         game_id: selectedGame[0].game_id,
-        operator_id: selectedCasino[0].id,
+        operator_id: sectionSiteId ? sectionSiteId : selectedCasino[0].id,
         game_name: selectedGame[0].game_original_name,
         game_provider: selectedGame[0].game_provider_name,
         start_date: formatDate(startDate),
@@ -288,7 +293,7 @@ const CompassMod = () => {
         max_position: maxPosition,
       };
 
-      // console.log("Edit Payload : ", payload);
+      console.log("Edit Payload : ", payload);
       CompassData.compass_edit(payload)
         .then((res) => {
           if (res?.success) {
@@ -337,7 +342,7 @@ const CompassMod = () => {
         if (displayedGames[uniqueId]) {
           data.push({
             user_id: user_id,
-            operator_id: casino.id,
+            operator_id: sectionSiteId,
             game_id: g.game_id,
             start_date: startDate,
             end_date: endDate,
@@ -491,11 +496,11 @@ const CompassMod = () => {
   };
 
   const isCasinoChecked = (casino) => {
-    return selectedCasino.some((selected) => selected.id === casino.id);
+    return selectedCasino.some((selected) => selected.operator_id === casino.operator_id && selected.country === casino.country);
   };
 
   const handleCasinoCheckboxChange = (data) => {
-    getSectionTitleData(data.id);
+    getSectionTitleData(data.operator_id, data.country);
     setSelectedCasino([data]);
   };
 
@@ -642,7 +647,7 @@ const CompassMod = () => {
                   />
                   <div className="casino-data-bar">
                     <label htmlFor={data.id}>{data.name}</label>
-                    <a
+                    {/* <a
                       href={data.site_url}
                       target="_blank"
                       rel="noopener noreferrer"
@@ -657,7 +662,7 @@ const CompassMod = () => {
                       title={data.site_url}
                     >
                       {data.site_url}
-                    </a>
+                    </a> */}
                   </div>
                 </div>
               ))}
@@ -972,7 +977,16 @@ const CompassMod = () => {
                           loading={sectionLoader}
                           value={sectionTitle}
                           options={sectionTitleData}
-                          onChange={(e) => setSectionTitle(e.value)}
+                          onChange={(e) => {
+                            setSectionTitle(e.value);
+                            const matchedOption = sectionTitleData.find(
+                              (item) => item.value === e.value
+                            );
+
+                            if (matchedOption) {
+                              setSectionSiteId(matchedOption.site_id);
+                            }
+                          }}
                           appendTo="self"
                           className="w-full"
                         />

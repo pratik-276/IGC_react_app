@@ -317,7 +317,7 @@ const App = () => {
                 <Route path="/forget-password" element={<ForgotPass />} /> */}
 
                 <Route path="/login" element={<LoginPage />} />
-                <Route path="/signup" element={<SignupPage />} />
+                {/* <Route path="/signup" element={<SignupPage />} /> */}
                 <Route path="/verify-otp" element={<OtpVerification />} />
               </Routes>
             </GameProvider>

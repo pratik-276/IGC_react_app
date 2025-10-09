@@ -163,7 +163,7 @@ const Home = () => {
             <Card className="p-3">
               <CardBody>
                 <h5 style={{ fontWeight: "600", marginBottom: "0px" }}>
-                  Find and Track casinos Now!
+                  Find and Track Casinos Now!
                 </h5>
                 <div className="compass-data pb-5">
                   <span>we have kept all your reports ready for you</span>
@@ -189,7 +189,7 @@ const Home = () => {
                     renderInput={(params) => (
                       <TextField
                         {...params}
-                        label="Search (type and press enter)"
+                        label="Search Casino (type and press enter)"
                       />
                     )}
                   />
