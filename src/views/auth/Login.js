@@ -32,6 +32,13 @@ const Login = () => {
 
   useEffect(() => {
     localStorage.clear();
+    localStorage.removeItem("email");
+    localStorage.removeItem("password");
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+    localStorage.removeItem("user_company");
+    localStorage.removeItem("user_id");
+    console.log('test');
     getProviderData();
   }, []);
 

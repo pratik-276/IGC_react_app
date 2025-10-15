@@ -441,7 +441,7 @@ const AnalyticsPage = () => {
                       inputId="game"
                     />
                     <label className="fs-6" htmlFor="game">
-                      Country
+                      Game
                     </label>
                   </FloatLabel>
                 </div>

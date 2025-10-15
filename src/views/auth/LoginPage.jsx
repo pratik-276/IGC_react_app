@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "./AuthLayout";
 import { IconField } from "primereact/iconfield";
@@ -12,6 +12,17 @@ import "./Auth.css";
 const LoginPage = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
+
+    useEffect(() => {
+        localStorage.removeItem("email");
+        localStorage.removeItem("password");
+        localStorage.removeItem("access_token");
+        localStorage.removeItem("refresh_token");
+        localStorage.removeItem("user_company");
+        localStorage.removeItem("user_id");
+        localStorage.removeItem("user_email");
+        localStorage.removeItem("provider_id");
+      }, []);
 
     const handleEmailSubmit = (e) => {
         e.preventDefault();
@@ -50,7 +61,7 @@ const LoginPage = () => {
 
                 <div className="auth_signup_link">
                     <p>Don't have an account?</p>
-                    <a href="https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ01Qc5mw4Gi3RaAfIAlxSmva4AYs35e3TPliUz2FbQx-gADjngNTYM5GPmAWD6_6FRQUwp-V7He" _target='blank' className="ms-2 signup-text">Book a Demo</a>
+                    <a href="https://calendar.app.google/5BdgCHYWn5gkSveLA" _target='blank' className="ms-2 signup-text">Book a Demo</a>
                 </div>
             </div>
 

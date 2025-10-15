@@ -5,6 +5,7 @@ import Axios from "axios";
 const api = "https://backend.igamingcompass.io/";
 //const api = "http://localhost:8000/";
 //const api = "https://backend.igamingcompass.com/";
+//const api = "http://128.199.23.223:6500/"
 
 export default function call({ path, method, data }) {
   // var cookie = new Cookies();
