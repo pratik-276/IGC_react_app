@@ -536,10 +536,10 @@ const ProfileMenu = () => {
                   value={companyFormik.values.category || ""}
                 >
                   <option value="" label="Select company category" />
-                  <option value="Healthcare">Healthcare</option>
-                  <option value="Finance">Finance</option>
-                  <option value="Manufacturing">Manufacturing</option>
-                  <option value="Real Estate">Real Estate</option>
+                  <option value="Game Supplier">Game Supplier</option>
+                  <option value="Affiliate">Affiliate</option>
+                  <option value="Operator">Operator</option>
+                  <option value="Aggregator">Aggregator</option>
                 </Input>
               </div>
             </div>

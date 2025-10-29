@@ -17,6 +17,7 @@ import { Tag } from 'primereact/tag';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import { Dialog } from "primereact/dialog";
 
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import "../ui/Compass.css";
@@ -34,6 +35,9 @@ const CompassDataPage = ({
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
+  
+  const [videoDialogVisible, setVideoDialogVisible] = useState(false);
+  const [videoURL, setVideoURL] = useState(null);
   const navigate = useNavigate();
 
   const [operatorFilter, setOperatorFilter] = useState(null);
@@ -263,6 +267,36 @@ const CompassDataPage = ({
       </span>
     );
   };
+
+  const evidanceTemplate = (rowData) => {
+      //setVideoURL(rowData?.video_url);
+      //console.log(rowData?.video_url);
+      const label =
+        "Check Evidence";
+      if (rowData?.video_url) {
+        return (
+          <Button
+            label={label}
+            icon="pi pi-play"
+            className="p-button-text"
+            onClick={() => {
+              setVideoURL(rowData?.video_url);
+              setVideoDialogVisible(true);
+            }}
+          />
+        );
+      } else {
+        return (
+          <Button
+            label={"No video"}
+            icon="pi pi-play"
+            className="p-button-text"
+            disabled
+          />
+        );
+      }
+    };
+  
 
   return (
     <>
@@ -494,6 +528,16 @@ const CompassDataPage = ({
                     style={{ minWidth: "8rem" }}
                     body={LastScanDateBodyTemplate}
                   ></Column>
+                  <Column
+                    field="video_url"
+                    header={headerWithTooltip(
+                      "Evidence",
+                      "Evidence",
+                      "video_url"
+                    )}
+                    body={evidanceTemplate}
+                    style={{ minWidth: "13rem" }}
+                  ></Column>
 
                   <Column
                     field="edit"
@@ -524,6 +568,20 @@ const CompassDataPage = ({
           )}
         </div>
       )}
+      
+      
+            <Dialog
+              header="Evidence Video"
+              visible={videoDialogVisible}
+              style={{ width: "60vw" }}
+              modal
+              onHide={() => setVideoDialogVisible(false)}
+            >
+              <video width="100%" height="auto" controls>
+                <source src={videoURL} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+            </Dialog>
     </>
   );
 };

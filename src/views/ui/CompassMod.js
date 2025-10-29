@@ -282,6 +282,7 @@ const CompassMod = () => {
     if (mode === "edit") {
       const payload = {
         id: editData.id,
+        user_id: user_id,
         game_id: selectedGame[0].game_id,
         operator_id: sectionSiteId ? sectionSiteId : selectedCasino[0].id,
         game_name: selectedGame[0].game_original_name,

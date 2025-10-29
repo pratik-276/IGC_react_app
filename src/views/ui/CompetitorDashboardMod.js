@@ -331,7 +331,7 @@ const CompetitorDashboardMod = () => {
       };
 
       uniquePositions.forEach((pos) => {
-        formattedRow[pos] = row[pos] || "";
+        formattedRow[pos] = (typeof row[pos] === "string") ? row[pos] : row[pos] ? row[pos]['text'] : "";
       });
 
       return formattedRow;

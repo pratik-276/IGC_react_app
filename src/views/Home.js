@@ -28,6 +28,7 @@ const Home = () => {
   const [isSearchMenuOpen, setIsSearchMenuOpen] = useState(null);
   const { showContactSalesConfirmation } = useContactSales();
   const [requestCasinoVisible, setRequestCasinoVisible] = useState(false);
+  const [showNoCasino, setShowNoCasino] = useState(false);
 
   async function getData() {
     setLoading(true);
@@ -181,10 +182,24 @@ const Home = () => {
                     onClose={(e) => setIsSearchMenuOpen(false)}
                     value={searchText}
                     onChange={(e) => {
-                      console.log(e);
+                      //console.log(e);
                       if (e._reactName == "onClick")
                         setSearchText(e.target.textContent);
                       else setSearchText(e.target.value);
+                    }}
+                    onInputChange={(e) => {
+                      //console.log(e);
+                      try{
+                        const sText = e ? e.target ? e.target.value : "" : "";
+                        setSearchText(e ? e.target ? e.target.value : "" : "");
+                        if(!operators.some(op => op.name.toLowerCase().includes(sText.toLowerCase())) && sText !== ""){
+                          setShowNoCasino(true);
+                        }else{
+                          setShowNoCasino(false);
+                        }
+                      } catch (error) {
+                        console.error("Error in onChange handler:", error);
+                      }
                     }}
                     renderInput={(params) => (
                       <TextField
@@ -208,6 +223,18 @@ const Home = () => {
                               o.name.toLowerCase() == searchText.toLowerCase()
                           )[0].name
                         }
+                        name_show={
+                          operators
+                          .filter(
+                            (o) => o.name.toLowerCase() === searchText.toLowerCase()
+                          )[0]
+                          ? `${operators.filter(
+                              (o) => o.name.toLowerCase() === searchText.toLowerCase()
+                            )[0].name} (${operators.filter(
+                              (o) => o.name.toLowerCase() === searchText.toLowerCase()
+                            )[0].geographies} and more)`
+                          : ""
+                        }
                         url={
                           operators.filter(
                             (o) =>
@@ -224,7 +251,13 @@ const Home = () => {
                     <div>
                       <NoTrackerFound navigate={navigate} />
                     </div>
-                  ) : (
+                  )
+                   : showNoCasino ? (
+                    <div>
+                      <NoTrackerFound navigate={navigate} />
+                    </div>
+                  )
+                  : (
                     ""
                   )
                 }
@@ -316,7 +349,7 @@ const ReportCard = ({ title, onButtonPress }) => {
   );
 };
 
-const TrackDetail = ({ name, url, navigate }) => {
+const TrackDetail = ({ name, name_show, url, navigate }) => {
   return (
     <Card
       className="mt-5"
@@ -332,7 +365,7 @@ const TrackDetail = ({ name, url, navigate }) => {
         <div>
           <h5>
             <strong>{localStorage.getItem("user_company")}</strong> games are
-            available on <strong>{name}</strong>
+            available on <strong>{name_show}</strong>
           </h5>
           <p>
             Example URL: <Link>{url}</Link>

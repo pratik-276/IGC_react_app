@@ -300,7 +300,20 @@ const DashboardMod = () => {
   };
 
   const exportCSV = (filteredData) => {
-    const csv = Papa.unparse(filteredData);
+    const filteredDataMod = filteredData.map(row => ({
+      'Casino Name': row.casino_name,
+      'Country': row.country_name,
+      'Site URL': row.site_url,
+      'Game Name': row.game_name,
+      'Section Name': row.section_name,
+      'Section Position': row.section_position,
+      'Sectional Game Position': row.sectional_game_position,
+      'Overall Position': row.overall_position,
+      'Previous Overall Position': row.previous_overall_position,
+      'Growth': row.growth,
+      'Last Observed Date': row.last_observed_date ? row.last_observed_date.split('T')[0] : '',
+    }));
+    const csv = Papa.unparse(filteredDataMod);
     const link = document.createElement("a");
     link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
     link.download = "game_tracker_data.csv";
