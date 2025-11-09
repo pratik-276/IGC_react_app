@@ -56,6 +56,7 @@ import CLAUDE18 from "./views/blogs/claude_18";
 import CLAUDE19 from "./views/blogs/claude_19";
 import CLAUDE20 from "./views/blogs/claude_20";
 import AnalyticsPage from "./views/ui/AnalyticsPage";
+import RequestedCasinos from "./views/ui/RequestedCasinos";
 
 const App = () => {
   return (
@@ -153,6 +154,16 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <CompetitorDashboardMod />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  
+                  <Route
+                    path="requested-casinos"
+                    element={
+                      <ProtectedRoute>
+                        <RequestedCasinos />
                       </ProtectedRoute>
                     }
                   />

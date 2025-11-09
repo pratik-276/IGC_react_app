@@ -2,10 +2,10 @@ import React from 'react';
 import { Tooltip } from 'primereact/tooltip';
 import { MdInfoOutline } from 'react-icons/md';
 
-const InfoCard = ({ header, tooltip, tooltipTarget, value }) => {
+const InfoCard = ({ header, tooltip, tooltipTarget, value, widthMod }) => {
 
     return (
-        <div className="flex-1">
+        <div className="flex-1" style={widthMod ? { width: "25%" } : {}}>
             <div
                 className="d-flex flex-column justify-content-center gap-1 w-100 h-100 pl-3 pt-2"
                 style={{

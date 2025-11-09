@@ -10,9 +10,15 @@ import {
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
 import { FaChartBar, FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser } from "react-icons/fa6";
+import { FaCompass } from "react-icons/fa6";
+import { GiPositionMarker } from "react-icons/gi";
+import { FaRankingStar } from "react-icons/fa6";
+import { MdDashboard } from "react-icons/md";
+import { MdCasino } from "react-icons/md";
 import { FaSignOutAlt } from "react-icons/fa";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
+import { IoMdHelp } from "react-icons/io";
 import toast from "react-hot-toast";
 
 const { Header, Sider, Content } = Layout;
@@ -41,29 +47,39 @@ const AppLayout = () => {
             label: "Home",
         },
         {
-            key: "position",
-            label: "⁠Game Positions",
-            icon: <DashboardOutlined />,
-            children: [
-                {
-                    key: "/dashboard",
-                    icon: <DashboardOutlined />,
-                    label: "Positions Dashboard",
-                },
-            ],
+            key: "/dashboard",
+            icon: <GiPositionMarker />,
+            label: "Positions Dashboard",
         },
         {
-            key: "calibrate",
-            label: "Calibrate",
-            icon: <FaCompassDrafting />,
-            children: [
-                {
-                    key: "/calibrate-compass",
-                    icon: <FaCompassDrafting />,
-                    label: "Calibrate Compass",
-                },
-            ],
+            key: "/calibrate-compass",
+            icon: <FaCompass />,
+            label: "Calibrate Compass",
         },
+        // {
+        //     key: "position",
+        //     label: "⁠Game Positions",
+        //     icon: <DashboardOutlined />,
+        //     children: [
+        //         {
+        //             key: "/dashboard",
+        //             icon: <GiPositionMarker />,
+        //             label: "Positions Dashboard",
+        //         },
+        //     ],
+        // },
+        // {
+        //     key: "calibrate",
+        //     label: "Calibrate",
+        //     icon: <FaCompassDrafting />,
+        //     children: [
+        //         {
+        //             key: "/calibrate-compass",
+        //             icon: <FaCompass />,
+        //             label: "Calibrate Compass",
+        //         },
+        //     ],
+        // },
         {
             key: "casino",
             label: "Casino",
@@ -71,8 +87,25 @@ const AppLayout = () => {
             children: [
                 {
                     key: "/competitor-dashboard",
-                    icon: <FaChartLine />,
-                    label: "Casino View",
+                    icon: <MdDashboard />,
+                    label: "View Casino Data",
+                },
+                // {
+                //     key: "/requested-casinos",
+                //     icon: <MdCasino />,
+                //     label: "Requested Casinos",
+                // },
+            ],
+        },
+        {
+            key: "request",
+            label: "Requests",
+            icon: <IoMdHelp />,
+            children: [
+                {
+                    key: "/requested-casinos",
+                    icon: <MdCasino />,
+                    label: "Requested Casinos",
                 },
             ],
         },
@@ -83,7 +116,7 @@ const AppLayout = () => {
             children: [
                 {
                     key: "/game-rank-report",
-                    icon: <FaRegStar />,
+                    icon: <FaRankingStar />,
                     label: "Game Rank",
                 },
                 {
@@ -93,18 +126,18 @@ const AppLayout = () => {
                 },
             ],
         },
-        {
-            key: "analytics",
-            label: "Analytics",
-            icon: <FaChartBar />,
-            children: [
-                {
-                    key: "/analytics",
-                    icon: <FaChartBar />,
-                    label: "Analytics",
-                },
-            ],
-        },
+        // {
+        //     key: "analytics",
+        //     label: "Analytics",
+        //     icon: <FaChartBar />,
+        //     children: [
+        //         {
+        //             key: "/analytics",
+        //             icon: <FaChartBar />,
+        //             label: "Game Analysis",
+        //         },
+        //     ],
+        // },
     ];
 
     const onMenuClick = ({ key }) => {
@@ -180,7 +213,7 @@ const AppLayout = () => {
             >
                 <div className="sidebar-logo">
                     <img src={logo} alt="Logo" className="sidebar-logo-img" />
-                    {!collapsed && <span className="sidebar-logo-text">iGaming Compass</span>}
+                    {!collapsed && <span className="sidebar-logo-text">IGamingCompass</span>}
                 </div>
                 <Menu
                     theme="dark"

@@ -33,8 +33,6 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
       operator_country: operator_country_labels,
     };
 
-    console.log(payload);
-
     setLoading(true);
     CompassData.request_new_casino(payload)
       .then((res) => {
@@ -45,6 +43,7 @@ const RequestCasinoModal = ({ visible, onHide, onSubmit }) => {
           setCasinoUrl("");
           setOperator_country("");
           setOperator_country_labels("");
+          onSubmit('completed');
         }
       })
       .catch(console.error)

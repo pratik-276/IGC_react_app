@@ -99,6 +99,26 @@ const request_new_casino = async (data) => {
   return d;
 };
 
+
+const get_casino_requests = async (data) => {
+  let d = await Call({
+    path: "get_casino_requests",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
+
+const delete_casinos_request = async (data) => {
+  let d = await Call({
+    path: "delete_casino_requests",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
 const section_name_by_operator_site_id = async (data) => {
   let d = await Call({
     path: "section_name",
@@ -147,6 +167,8 @@ const exportObject = {
   get_game,
   get_game_by_provider,
   request_new_casino,
+  get_casino_requests,
+  delete_casinos_request,
   section_name_by_operator_site_id,
   compass_edit,
   compass_details_graph,

@@ -169,6 +169,7 @@ const DashboardMod = () => {
               casino_name: rowData.casino_name,
               country_name: rowData.country_name,
               state_name: rowData.state,
+              site_url: rowData.site_url
             },
           });
         }}
