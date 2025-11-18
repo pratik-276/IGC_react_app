@@ -36,9 +36,9 @@ const get_providers_by_site = async (data) => {
     return d;
 };
 
-const get_competitor_data = async (data) => {
+const get_casino_data = async (data) => {
     let d = await Call({
-        path: "get_competitor_data",
+        path: "get_casino_data",
         method: "post",
         data,
     });
@@ -50,7 +50,7 @@ const exportObject = {
     post_operator_by_geography_lists,
     get_games_by_site,
     get_providers_by_site,
-    get_competitor_data,
+    get_casino_data,
 };
 
 export default exportObject;

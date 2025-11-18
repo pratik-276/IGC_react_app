@@ -193,7 +193,7 @@ const CompetitorDashboardMod = () => {
       ...(gamesName?.length ? { game_name: gamesName } : {}),
     };
 
-    CompetitorData.get_competitor_data(payload)
+    CompetitorData.get_casino_data(payload)
       .then((res) => {
         if (res?.success?.success === true) {
           setData(res.success.data || null);

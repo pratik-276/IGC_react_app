@@ -150,7 +150,7 @@ const App = () => {
                   />
 
                   <Route
-                    path="competitor-dashboard"
+                    path="casino-view"
                     element={
                       <ProtectedRoute>
                         <CompetitorDashboardMod />

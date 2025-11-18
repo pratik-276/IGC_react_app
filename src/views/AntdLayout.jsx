@@ -81,20 +81,20 @@ const AppLayout = () => {
         //     ],
         // },
         {
-            key: "casino",
-            label: "Casino",
+            key: "dataview",
+            label: "Data View",
             icon: <FaChartLine />,
             children: [
                 {
-                    key: "/competitor-dashboard",
+                    key: "/casino-view",
                     icon: <MdDashboard />,
                     label: "View Casino Data",
                 },
-                // {
-                //     key: "/requested-casinos",
-                //     icon: <MdCasino />,
-                //     label: "Requested Casinos",
-                // },
+                {
+                    key: "/competitor-dashboard",
+                    icon: <MdCasino />,
+                    label: "Competitor Dashboard",
+                },
             ],
         },
         {
