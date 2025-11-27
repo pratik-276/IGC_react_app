@@ -192,6 +192,18 @@ const AppLayout = () => {
         //setProfile({ name, email });
     }, []);
 
+    const selectedKeys = [location.pathname];
+    if (location.pathname === '/calibrate-compass' || location.pathname === '/compass-details') {
+        selectedKeys.push('/calibrate-compass');
+    }
+    else if (location.pathname === '/game-rank-report' || location.pathname === '/game-rank-details') {
+        selectedKeys.push('/game-rank-report');
+    }
+    else if (location.pathname === '/game-provider-marketshare' || location.pathname === '/game-provider-marketshare-details') {
+        selectedKeys.push('/game-provider-marketshare');
+    }
+
+
     return (
 
         <Layout style={{ marginLeft: collapsed ? 80 : 250, transition: "margin-left 0.2s" }}>
@@ -218,7 +230,7 @@ const AppLayout = () => {
                 <Menu
                     theme="dark"
                     mode="inline"
-                    selectedKeys={[location.pathname]}
+                    selectedKeys={selectedKeys}
                     onClick={onMenuClick}
                     items={menuItems}
                 />

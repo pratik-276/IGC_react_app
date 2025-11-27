@@ -1,8 +1,15 @@
 import React from 'react';
 import { Tooltip } from 'primereact/tooltip';
-import { MdInfoOutline } from 'react-icons/md';
+import { MdInfoOutline, MdContentCopy } from 'react-icons/md';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import toast from 'react-hot-toast';
+
 
 const InfoCard = ({ header, tooltip, tooltipTarget, value, widthMod }) => {
+
+    const handleCopy = () => {
+        toast.success("Copied to clipboard!");
+    };
 
     return (
         <div className="flex-1" style={widthMod ? { width: "25%" } : {}}>
@@ -32,7 +39,28 @@ const InfoCard = ({ header, tooltip, tooltipTarget, value, widthMod }) => {
                         }}
                     />
                 </div>
-                <h5 className="font-semibold">{value}</h5>
+                <h5 className="font-semibold">
+                    {header === "URL" ? (
+                        <div className="d-flex align-items-center justify-content-between">
+                            <span style={{
+                                flex: 1,
+                                whiteSpace: "nowrap", // Prevents wrapping
+                                overflow: "hidden",  // Hides overflowing content
+                                textOverflow: "ellipsis",  // Adds the "..."
+                            }}
+                                title={value}
+                            >{value}</span>
+                            <CopyToClipboard text={value} onCopy={handleCopy}>
+                                <MdContentCopy
+                                    className="ml-2 cursor-pointer"
+                                    style={{ fontSize: "20px", color: "#392f6c", paddingRight: "5px" }}
+                                />
+                            </CopyToClipboard>
+                        </div>
+                    ) : (
+                        value
+                    )}
+                </h5>
             </div>
         </div>
     );

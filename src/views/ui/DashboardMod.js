@@ -22,6 +22,7 @@ import GameData from "../../services/GameTracker";
 import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
+import VerticalBarChart from "../../charts/PositionDashbaordPage/VerticalBarChart";
 
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -44,6 +45,10 @@ const DashboardMod = () => {
   const [loader, setLoader] = useState(true);
   const [providerSummary, setProviderSummary] = useState(null);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
+
+  const [casinoWiseCountData, setCasinoWiseCountData] = useState([]);
+  const [gameWiseCountData, setGameWiseCountData] = useState([]);
+
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
   const [selectedFreqs, setSelectedFreqs] = useState(null);
@@ -142,6 +147,8 @@ const DashboardMod = () => {
 
       if (detailsRes?.success === true) {
         setProviderLatestDetails(detailsRes?.data || []);
+        setCasinoWiseCountData(detailsRes?.extra_data?.casino_wise_count || []);
+        setGameWiseCountData(detailsRes?.extra_data?.game_wise_count || []);
       } else {
         console.log("Failed to fetch latest details");
       }
@@ -156,26 +163,26 @@ const DashboardMod = () => {
     overviewDashboard();
   }, [user_id, user_company]);
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "16px" }}
-        onClick={() => {
-          console.log(rowData);
-          navigate("/position-details", {
-            state: {
-              operator_site_id: rowData.operator_site_id,
-              game_name: rowData.game_name,
-              casino_name: rowData.casino_name,
-              country_name: rowData.country_name,
-              state_name: rowData.state,
-              site_url: rowData.site_url
-            },
-          });
-        }}
-      />
-    );
-  };
+  // const actionBodyTemplate = (rowData) => {
+  //   return (
+  //     <MdArrowForwardIos
+  //       style={{ fontSize: "16px" }}
+  //       onClick={() => {
+  //         console.log(rowData);
+  //         navigate("/position-details", {
+  //           state: {
+  //             operator_site_id: rowData.operator_site_id,
+  //             game_name: rowData.game_name,
+  //             casino_name: rowData.casino_name,
+  //             country_name: rowData.country_name,
+  //             state_name: rowData.state,
+  //             site_url: rowData.site_url,
+  //           },
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   const changeTemplate = (row) => {
     let growth = ";";
@@ -301,18 +308,20 @@ const DashboardMod = () => {
   };
 
   const exportCSV = (filteredData) => {
-    const filteredDataMod = filteredData.map(row => ({
-      'Casino Name': row.casino_name,
-      'Country': row.country_name,
-      'Site URL': row.site_url,
-      'Game Name': row.game_name,
-      'Section Name': row.section_name,
-      'Section Position': row.section_position,
-      'Sectional Game Position': row.sectional_game_position,
-      'Overall Position': row.overall_position,
-      'Previous Overall Position': row.previous_overall_position,
-      'Growth': row.growth,
-      'Last Observed Date': row.last_observed_date ? row.last_observed_date.split('T')[0] : '',
+    const filteredDataMod = filteredData.map((row) => ({
+      "Casino Name": row.casino_name,
+      Country: row.country_name,
+      "Site URL": row.site_url,
+      "Game Name": row.game_name,
+      "Section Name": row.section_name,
+      "Section Position": row.section_position,
+      "Sectional Game Position": row.sectional_game_position,
+      "Overall Position": row.overall_position,
+      "Previous Overall Position": row.previous_overall_position,
+      Growth: row.growth,
+      "Last Observed Date": row.last_observed_date
+        ? row.last_observed_date.split("T")[0]
+        : "",
     }));
     const csv = Papa.unparse(filteredDataMod);
     const link = document.createElement("a");
@@ -431,6 +440,31 @@ const DashboardMod = () => {
                     </div>
                   </div>
 
+                  <div className="row mt-4">
+                    <div className="col-md-6 mb-3">
+                      <h5 className="font-semibold pl-2">Casino wise Count</h5>
+                      <VerticalBarChart
+                        data={casinoWiseCountData}
+                        loading={loader}
+                        xKey="casino_name_mod"
+                        yKey="game_count"
+                        xLabel="Game Count"
+                        barColor="#B069DB"
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <h5 className="font-semibold pl-2">Game wise Count</h5>
+                      <VerticalBarChart
+                        data={gameWiseCountData}
+                        loading={loader}
+                        xKey="game_name"
+                        yKey="casino_count"
+                        xLabel="Casino Count"
+                        barColor="#6E00B3"
+                      />
+                    </div>
+                  </div>
+
                   {/* Tracker Details Table */}
                   <div className="mt-3">
                     <div className="d-flex align-items-center justify-content-between">
@@ -487,6 +521,19 @@ const DashboardMod = () => {
                         sortIcon={sortIconTemplate}
                         sortField="last_observed_date"
                         sortOrder={-1}
+                        onRowClick={(e) => {
+                          const rowData = e.data;
+                          navigate("/position-details", {
+                            state: {
+                              operator_site_id: rowData.operator_site_id,
+                              game_name: rowData.game_name,
+                              casino_name: rowData.casino_name,
+                              country_name: rowData.country_name,
+                              state_name: rowData.state,
+                              site_url: rowData.site_url,
+                            },
+                          });
+                        }}
                       >
                         <Column
                           frozen
@@ -640,7 +687,7 @@ const DashboardMod = () => {
                           )}
                           body={evidanceTemplate}
                           style={{ minWidth: "13rem" }}
-                        ></Column> */}
+                        ></Column>
 
                         <Column
                           frozen
@@ -653,7 +700,7 @@ const DashboardMod = () => {
                           )}
                           className="text-center"
                           body={actionBodyTemplate}
-                        ></Column>
+                        ></Column> */}
                       </DataTable>
 
                       {isPlanExpired && (

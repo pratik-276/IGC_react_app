@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
 import { Column } from "primereact/column";
@@ -19,9 +19,11 @@ import { useContactSales } from "../../context/confirmationContext";
 
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+import { MdArrowBackIos } from "react-icons/md";
 
 const GameProvideMarketshareL2 = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const regionName = location?.state?.regionName || null;
   const providerId = location?.state?.providerId || null;
   const provider_details = location?.state?.provider_details || null;
@@ -33,11 +35,17 @@ const GameProvideMarketshareL2 = () => {
   const [providerLoading, setProviderLoading] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [markets, setMarkets] = useState([{label: passed_market, value: passed_market}]);
+  const [markets, setMarkets] = useState([
+    { label: passed_market, value: passed_market },
+  ]);
   const [selectedMarket, setSelectedMarket] = useState(passed_market);
-  const [regions, setRegions] = useState([{label: regionName, value: regionName}]);
+  const [regions, setRegions] = useState([
+    { label: regionName, value: regionName },
+  ]);
   const [selectedRegion, setSelectedRegion] = useState(regionName);
-  const [providers, setProviders] = useState([{label: provider_details.game_provider, value: providerId}]);
+  const [providers, setProviders] = useState([
+    { label: provider_details.game_provider, value: providerId },
+  ]);
   const [selectedProvider, setSelectedProvider] = useState(providerId);
 
   const [data, setData] = useState({});
@@ -131,7 +139,7 @@ const GameProvideMarketshareL2 = () => {
     const payload = {
       provider_id: selectedProvider,
       region: selectedRegion,
-      market: selectedMarket
+      market: selectedMarket,
     };
 
     setLoading(true);
@@ -224,16 +232,26 @@ const GameProvideMarketshareL2 = () => {
           <div className="compass-data">
             <div className="d-flex flex-column gap-3 justify-content-between">
               <div className="d-flex align-items-center justify-content-between pt-3">
-                <div>
-                  <h4
-                    className="m-md-0 font-semibold"
-                    style={{ color: "#392f6c" }}
-                  >
-                    Provider Details
-                  </h4>
-                  <span className="text-black" style={{ fontSize: "1rem" }}>
-                    Details of the game provider in the selected region
-                  </span>
+                <div className="d-flex gap-2 align-items-center">
+                  <MdArrowBackIos
+                    style={{
+                      fontSize: "30px",
+                      cursor: "pointer",
+                    }}
+                    // onClick={() => navigate("/dashboard")}
+                    onClick={() => navigate(-1)}
+                  />
+                  <div>
+                    <h4
+                      className="m-md-0 font-semibold"
+                      style={{ color: "#392f6c" }}
+                    >
+                      Provider Details
+                    </h4>
+                    <span className="text-black" style={{ fontSize: "1rem" }}>
+                      Details of the game provider in the selected region
+                    </span>
+                  </div>
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
@@ -246,7 +264,7 @@ const GameProvideMarketshareL2 = () => {
                       loading={regionLoading}
                       value={selectedMarket}
                       options={markets}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                       disabled
                     />
                     {/* <label className="fs-6" htmlFor="region">
@@ -267,7 +285,7 @@ const GameProvideMarketshareL2 = () => {
                         GetProvidersList(e.value);
                       }}
                       options={regions}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                       disabled
                     />
                     {/* <label className="fs-6" htmlFor="region">
@@ -285,7 +303,7 @@ const GameProvideMarketshareL2 = () => {
                       value={selectedProvider}
                       onChange={(e) => setSelectedProvider(e.value)}
                       options={providers}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                       disabled
                     />
                     {/* <label className="fs-6" htmlFor="provider">

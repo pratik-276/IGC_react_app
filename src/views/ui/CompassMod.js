@@ -92,7 +92,13 @@ const CompassMod = () => {
     if (mode === "edit" && editData) {
       // Pre-fill Casino
       setSelectedCasino([
-        { operator_id: editData.operator_id, id: editData.operator_site_id, name: editData.name, site_url: "", country: editData.geography },
+        {
+          operator_id: editData.operator_id,
+          id: editData.operator_site_id,
+          name: editData.name,
+          site_url: "",
+          country: editData.geography,
+        },
       ]);
 
       // Pre-fill Game
@@ -110,7 +116,7 @@ const CompassMod = () => {
       setSectionTitle(editData.section_name);
       setMinPosition(editData.min_position);
       setMaxPosition(editData.max_position);
-    }else{
+    } else {
       setSectionTitle("");
       setSectionSiteId(null);
     }
@@ -222,13 +228,16 @@ const CompassMod = () => {
   };
 
   const getSectionTitleData = (operator_id, country) => {
-    CompassData.section_name_by_operator_site_id({ operator_id: operator_id, country: country })
+    CompassData.section_name_by_operator_site_id({
+      operator_id: operator_id,
+      country: country,
+    })
       .then((res) => {
         if (res?.success) {
           const transformed = res.data.map((item) => ({
             label: item.game_collection_title,
             value: item.game_collection_title,
-            site_id: item.operator_site_id
+            site_id: item.operator_site_id,
           }));
 
           setSectionTitleData(transformed);
@@ -497,7 +506,11 @@ const CompassMod = () => {
   };
 
   const isCasinoChecked = (casino) => {
-    return selectedCasino.some((selected) => selected.operator_id === casino.operator_id && selected.country === casino.country);
+    return selectedCasino.some(
+      (selected) =>
+        selected.operator_id === casino.operator_id &&
+        selected.country === casino.country
+    );
   };
 
   const handleCasinoCheckboxChange = (data) => {
@@ -1090,7 +1103,7 @@ const CompassMod = () => {
             }
           }}
           compassRead={compassRead}
-          loading={loading}
+          loader={loading}
           getCompassReadData={getCompassReadData}
         />
       </div>
