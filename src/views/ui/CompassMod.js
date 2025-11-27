@@ -658,6 +658,7 @@ const CompassMod = () => {
                     id={data.id}
                     checked={isCasinoChecked(data)}
                     onChange={() => handleCasinoCheckboxChange(data)}
+                    disabled={mode === "edit"}
                   />
                   <div className="casino-data-bar">
                     <label htmlFor={data.id}>{data.name}</label>
@@ -755,6 +756,7 @@ const CompassMod = () => {
                   id="game_id_select_all"
                   checked={selectAllGames}
                   onChange={() => handleSelectAllGames()}
+                  disabled={mode === "edit"}
                 />
                 <div className="casino-data-bar">
                   <label htmlFor="game_id_select_all">Select All</label>
@@ -784,6 +786,7 @@ const CompassMod = () => {
                     id={data.game_id}
                     checked={isGameChecked(data)}
                     onChange={() => handleGameCheckboxChange(data)}
+                    disabled={mode === "edit"}
                   />
                   <div className="casino-data-bar">
                     <label htmlFor={data.game_id}>
@@ -910,6 +913,7 @@ const CompassMod = () => {
                           className="w-full"
                           appendTo="self"
                           minDate={addDays(new Date(), 1)}
+                          disabled={mode === "edit"}
                         />
                         {/* <label htmlFor="tracking_start">
                           Tracking starts on
