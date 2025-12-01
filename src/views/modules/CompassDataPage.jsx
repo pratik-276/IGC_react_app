@@ -35,7 +35,7 @@ const CompassDataPage = ({
 
   const [selectedRows, setSelectedRows] = useState([]);
   const [deleteLoader, setDeleteLoader] = useState(false);
-  
+
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
   const navigate = useNavigate();
@@ -222,81 +222,83 @@ const CompassDataPage = ({
     label: name,
   }));
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "16px" }}
-        onClick={() => {
-          console.log(rowData);
-          navigate("/compass-details", {
-            state: {
-              compass_id: rowData.id,
-              operator_site_id: rowData.operator_site_id,
-              game_name: rowData.game_original_name,
-              casino_name: rowData.name,
-              country_name: rowData.geography,
-              start_date: rowData.start_date,
-              end_date: rowData.end_date,
-              min_position: rowData.min_position,
-              max_position: rowData.max_position,
-              section_name: rowData.section_name,
-              days_inside: rowData.days_inside,
-              days_outside: rowData.days_outside,
-              scan_status: rowData.scan_status,
-            },
-          });
-        }}
-      />
-    );
-  };
+  // const actionBodyTemplate = (rowData) => {
+  //   return (
+  //     <MdArrowForwardIos
+  //       style={{ fontSize: "16px" }}
+  //       onClick={() => {
+  //         console.log(rowData);
+  //         navigate("/compass-details", {
+  //           state: {
+  //             compass_id: rowData.id,
+  //             operator_site_id: rowData.operator_site_id,
+  //             game_name: rowData.game_original_name,
+  //             casino_name: rowData.name,
+  //             country_name: rowData.geography,
+  //             start_date: rowData.start_date,
+  //             end_date: rowData.end_date,
+  //             min_position: rowData.min_position,
+  //             max_position: rowData.max_position,
+  //             section_name: rowData.section_name,
+  //             days_inside: rowData.days_inside,
+  //             days_outside: rowData.days_outside,
+  //             scan_status: rowData.scan_status,
+  //           },
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   const editBodyTemplate = (rowData) => {
     return (
-      <span className="p-overlay-badge" style={{ cursor: "pointer" }}>
-        <FaPen
-          style={{ fontSize: "16px", color: "#392f6c" }}
-          data-pr-tooltip="Edit Compass"
-          onClick={() => {
-            setOpen({
-              mode: "edit",
-              data: rowData
-            });
-          }}
-        />
-        <Tooltip target=".pi-pencil" content="Edit Compass" />
-      </span>
+      <div className="edit-cell">
+        <span className="p-overlay-badge" style={{ cursor: "pointer" }}>
+          <FaPen
+            style={{ fontSize: "16px", color: "#392f6c" }}
+            data-pr-tooltip="Edit Compass"
+            onClick={() => {
+              setOpen({
+                mode: "edit",
+                data: rowData
+              });
+            }}
+          />
+          <Tooltip target=".pi-pencil" content="Edit Compass" />
+        </span>
+      </div>
     );
   };
 
   const evidanceTemplate = (rowData) => {
-      //setVideoURL(rowData?.video_url);
-      //console.log(rowData?.video_url);
-      const label =
-        "Check Evidence";
-      if (rowData?.video_url) {
-        return (
-          <Button
-            label={label}
-            icon="pi pi-play"
-            className="p-button-text"
-            onClick={() => {
-              setVideoURL(rowData?.video_url);
-              setVideoDialogVisible(true);
-            }}
-          />
-        );
-      } else {
-        return (
-          <Button
-            label={"No video"}
-            icon="pi pi-play"
-            className="p-button-text"
-            disabled
-          />
-        );
-      }
-    };
-  
+    //setVideoURL(rowData?.video_url);
+    //console.log(rowData?.video_url);
+    const label =
+      "Check Evidence";
+    if (rowData?.video_url) {
+      return (
+        <Button
+          label={label}
+          icon="pi pi-play"
+          className="p-button-text"
+          onClick={() => {
+            setVideoURL(rowData?.video_url);
+            setVideoDialogVisible(true);
+          }}
+        />
+      );
+    } else {
+      return (
+        <Button
+          label={"No video"}
+          icon="pi pi-play"
+          className="p-button-text"
+          disabled
+        />
+      );
+    }
+  };
+
 
   return (
     <>
@@ -397,6 +399,7 @@ const CompassDataPage = ({
                   ref={dt}
                   value={filteredData}
                   selection={selectedRows}
+                  selectionMode='checkbox'
                   onSelectionChange={(e) => setSelectedRows(e.value)}
                   dataKey="id"
                   removableSort
@@ -409,7 +412,34 @@ const CompassDataPage = ({
                   sortIcon={sortIconTemplate}
                   size="small"
                   className="table-bordered p-component p-datatable custom-calibrate-table small"
+                  onRowClick={(e) => {
+                    const clickedElement = e.originalEvent.target;
 
+                    // Prevent if click is on checkbox or edit column
+                    if (
+                      !clickedElement.closest(".p-checkbox") && // selection column
+                      !clickedElement.closest(".edit-cell")
+                    ) {
+                      const rowData = e.data;
+                      navigate("/compass-details", {
+                        state: {
+                          compass_id: rowData.id,
+                          operator_site_id: rowData.operator_site_id,
+                          game_name: rowData.game_original_name,
+                          casino_name: rowData.name,
+                          country_name: rowData.geography,
+                          start_date: rowData.start_date,
+                          end_date: rowData.end_date,
+                          min_position: rowData.min_position,
+                          max_position: rowData.max_position,
+                          section_name: rowData.section_name,
+                          days_inside: rowData.days_inside,
+                          days_outside: rowData.days_outside,
+                          scan_status: rowData.scan_status,
+                        },
+                      });
+                    }
+                  }}
                 >
                   <Column
                     selectionMode="multiple"
@@ -541,6 +571,8 @@ const CompassDataPage = ({
 
                   <Column
                     field="edit"
+                    frozen
+                    alignFrozen="right"
                     header={headerWithTooltip(
                       "Edit",
                       "Edit Compass Configuration",
@@ -550,8 +582,10 @@ const CompassDataPage = ({
                     body={editBodyTemplate}
                   ></Column>
 
-                  <Column
+                  {/* <Column
                     field="details"
+                    frozen
+                    alignFrozen="right"
                     header={headerWithTooltip(
                       "Details",
                       "Check historical movement of the game",
@@ -559,7 +593,7 @@ const CompassDataPage = ({
                     )}
                     className="text-center"
                     body={actionBodyTemplate}
-                  ></Column>
+                  ></Column> */}
 
                 </DataTable>
               </div>
@@ -568,20 +602,20 @@ const CompassDataPage = ({
           )}
         </div>
       )}
-      
-      
-            <Dialog
-              header="Evidence Video"
-              visible={videoDialogVisible}
-              style={{ width: "60vw" }}
-              modal
-              onHide={() => setVideoDialogVisible(false)}
-            >
-              <video width="100%" height="auto" controls>
-                <source src={videoURL} type="video/mp4" />
-                Your browser does not support the video tag.
-              </video>
-            </Dialog>
+
+
+      <Dialog
+        header="Evidence Video"
+        visible={videoDialogVisible}
+        style={{ width: "60vw" }}
+        modal
+        onHide={() => setVideoDialogVisible(false)}
+      >
+        <video width="100%" height="auto" controls>
+          <source src={videoURL} type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
+      </Dialog>
     </>
   );
 };

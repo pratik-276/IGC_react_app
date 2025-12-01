@@ -49,14 +49,14 @@ const GameRank = () => {
 
   async function getGameRank(updated_market, updated_region) {
     setLoading(true);
-    
+
     call({
       path: "get_game_rank",
       method: "POST",
       data: {
         region: updated_region,
         search_term: "",
-        market: updated_market
+        market: updated_market,
       },
     })
       .then((res) => {
@@ -96,7 +96,7 @@ const GameRank = () => {
       .finally(() => {
         setLoading(false);
       });
-  };
+  }
 
   // useEffect(() => {
   //   getRegions(selectedMarket);
@@ -122,7 +122,7 @@ const GameRank = () => {
       setSelectedMarket(savedMarket);
       getRegions(savedMarket);
       getGameRank(savedMarket, "All");
-    }else{
+    } else {
       setSelectedMarket("North America");
       getRegions("North America");
       getGameRank("North America", "All");
@@ -132,16 +132,16 @@ const GameRank = () => {
   async function getMarkets() {
     GameRankAPI.get_markets().then((res) => {
       console.log(res);
-      if(res?.data && Array.isArray(res.data)){
+      if (res?.data && Array.isArray(res.data)) {
         const cleaned = res.data
           .filter((region) => region !== null && typeof region === "string")
           .map((region) => ({ label: region, value: region }));
 
         setMarkets(cleaned);
-      }else{
+      } else {
         setMarkets([]);
       }
-    })
+    });
   }
 
   async function getRegions(updated_market) {
@@ -150,8 +150,8 @@ const GameRank = () => {
       path: "get_regions_by_market",
       method: "POST",
       data: {
-        region: updated_market
-      }
+        region: updated_market,
+      },
     });
 
     if (res?.data && Array.isArray(res.data)) {
@@ -333,23 +333,23 @@ const GameRank = () => {
     return icon;
   };
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "24px" }}
-        onClick={() => {
-          console.log(rowData);
-          navigate("/game-rank-details", {
-            state: {
-              passed_region: selectedRegion,
-              passed_market: selectedMarket,
-              game_details: rowData
-            },
-          });
-        }}
-      />
-    );
-  };
+  // const actionBodyTemplate = (rowData) => {
+  //   return (
+  //     <MdArrowForwardIos
+  //       style={{ fontSize: "24px" }}
+  //       onClick={() => {
+  //         console.log(rowData);
+  //         navigate("/game-rank-details", {
+  //           state: {
+  //             passed_region: selectedRegion,
+  //             passed_market: selectedMarket,
+  //             game_details: rowData
+  //           },
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   return (
     <>
@@ -493,6 +493,16 @@ const GameRank = () => {
                   sortIcon={sortIconTemplate}
                   sortField="country_rank"
                   sortOrder={1}
+                  onRowClick={(e) => {
+                    const rowData = e.data;
+                    navigate("/game-rank-details", {
+                      state: {
+                        passed_region: selectedRegion,
+                        passed_market: selectedMarket,
+                        game_details: rowData,
+                      },
+                    });
+                  }}
                 >
                   <Column
                     field="country_rank"
@@ -574,7 +584,7 @@ const GameRank = () => {
                     body={changeTemplate}
                   ></Column>
 
-                  <Column
+                  {/* <Column
                     field="details"
                     header={headerWithTooltip(
                       "Details",
@@ -583,7 +593,7 @@ const GameRank = () => {
                     )}
                     className="text-center"
                     body={actionBodyTemplate}
-                  ></Column>
+                  ></Column> */}
                 </DataTable>
               </div>
             </>

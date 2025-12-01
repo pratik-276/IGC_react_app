@@ -92,7 +92,13 @@ const CompassMod = () => {
     if (mode === "edit" && editData) {
       // Pre-fill Casino
       setSelectedCasino([
-        { operator_id: editData.operator_id, id: editData.operator_site_id, name: editData.name, site_url: "", country: editData.geography },
+        {
+          operator_id: editData.operator_id,
+          id: editData.operator_site_id,
+          name: editData.name,
+          site_url: "",
+          country: editData.geography,
+        },
       ]);
 
       // Pre-fill Game
@@ -110,7 +116,7 @@ const CompassMod = () => {
       setSectionTitle(editData.section_name);
       setMinPosition(editData.min_position);
       setMaxPosition(editData.max_position);
-    }else{
+    } else {
       setSectionTitle("");
       setSectionSiteId(null);
     }
@@ -222,13 +228,16 @@ const CompassMod = () => {
   };
 
   const getSectionTitleData = (operator_id, country) => {
-    CompassData.section_name_by_operator_site_id({ operator_id: operator_id, country: country })
+    CompassData.section_name_by_operator_site_id({
+      operator_id: operator_id,
+      country: country,
+    })
       .then((res) => {
         if (res?.success) {
           const transformed = res.data.map((item) => ({
             label: item.game_collection_title,
             value: item.game_collection_title,
-            site_id: item.operator_site_id
+            site_id: item.operator_site_id,
           }));
 
           setSectionTitleData(transformed);
@@ -497,7 +506,11 @@ const CompassMod = () => {
   };
 
   const isCasinoChecked = (casino) => {
-    return selectedCasino.some((selected) => selected.operator_id === casino.operator_id && selected.country === casino.country);
+    return selectedCasino.some(
+      (selected) =>
+        selected.operator_id === casino.operator_id &&
+        selected.country === casino.country
+    );
   };
 
   const handleCasinoCheckboxChange = (data) => {
@@ -645,6 +658,7 @@ const CompassMod = () => {
                     id={data.id}
                     checked={isCasinoChecked(data)}
                     onChange={() => handleCasinoCheckboxChange(data)}
+                    disabled={mode === "edit"}
                   />
                   <div className="casino-data-bar">
                     <label htmlFor={data.id}>{data.name}</label>
@@ -742,6 +756,7 @@ const CompassMod = () => {
                   id="game_id_select_all"
                   checked={selectAllGames}
                   onChange={() => handleSelectAllGames()}
+                  disabled={mode === "edit"}
                 />
                 <div className="casino-data-bar">
                   <label htmlFor="game_id_select_all">Select All</label>
@@ -771,6 +786,7 @@ const CompassMod = () => {
                     id={data.game_id}
                     checked={isGameChecked(data)}
                     onChange={() => handleGameCheckboxChange(data)}
+                    disabled={mode === "edit"}
                   />
                   <div className="casino-data-bar">
                     <label htmlFor={data.game_id}>
@@ -897,6 +913,7 @@ const CompassMod = () => {
                           className="w-full"
                           appendTo="self"
                           minDate={addDays(new Date(), 1)}
+                          disabled={mode === "edit"}
                         />
                         {/* <label htmlFor="tracking_start">
                           Tracking starts on
@@ -1090,7 +1107,7 @@ const CompassMod = () => {
             }
           }}
           compassRead={compassRead}
-          loading={loading}
+          loader={loading}
           getCompassReadData={getCompassReadData}
         />
       </div>

@@ -65,7 +65,7 @@ const GameProvideMarketshare = () => {
       setSelectedMarket(savedMarket);
       getRegions(savedMarket);
       getMarketshareData(savedMarket, "All");
-    }else{
+    } else {
       setSelectedMarket("North America");
       getRegions("North America");
       getMarketshareData("North America", "All");
@@ -87,27 +87,27 @@ const GameProvideMarketshare = () => {
   async function getMarkets() {
     GameRankAPI.get_markets().then((res) => {
       console.log(res);
-      if(res?.data && Array.isArray(res.data)){
+      if (res?.data && Array.isArray(res.data)) {
         const cleaned = res.data
           .filter((region) => region !== null && typeof region === "string")
           .map((region) => ({ label: region, value: region }));
 
         setMarkets(cleaned);
-      }else{
+      } else {
         setMarkets([]);
       }
-    })
+    });
   }
 
   async function getRegions(updated_market) {
-      setLoading(true);
-      const res = await call({
-        path: "get_regions_by_market",
-        method: "POST",
-        data: {
-          region: updated_market
-        }
-      });
+    setLoading(true);
+    const res = await call({
+      path: "get_regions_by_market",
+      method: "POST",
+      data: {
+        region: updated_market,
+      },
+    });
 
     if (res?.data && Array.isArray(res.data)) {
       const cleaned = res.data
@@ -307,23 +307,23 @@ const GameProvideMarketshare = () => {
     return icon;
   };
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "16px" }}
-        onClick={() => {
-          navigate("/game-provider-marketshare-details", {
-            state: {
-              regionName: selectedRegion,
-              providerId: rowData.provider_id,
-              passed_market: selectedMarket,
-              provider_details: rowData
-            },
-          });
-        }}
-      />
-    );
-  };
+  // const actionBodyTemplate = (rowData) => {
+  //   return (
+  //     <MdArrowForwardIos
+  //       style={{ fontSize: "16px" }}
+  //       onClick={() => {
+  //         navigate("/game-provider-marketshare-details", {
+  //           state: {
+  //             regionName: selectedRegion,
+  //             providerId: rowData.provider_id,
+  //             passed_market: selectedMarket,
+  //             provider_details: rowData
+  //           },
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   return (
     <>
@@ -375,26 +375,26 @@ const GameProvideMarketshare = () => {
 
                 <div className="d-flex flex-wrap gap-2">
                   <FloatLabel>
-                                      <Dropdown
-                                        optionLabel="label"
-                                        optionValue="value"
-                                        filter
-                                        placeholder="Select Region"
-                                        loading={loading}
-                                        value={selectedMarket}
-                                        onChange={(e) => {
-                                          const region = e.value;
-                                          setSelectedMarket(region);
-                                          localStorage.setItem("marketshareMarket", region);
-                                          getRegions(region);
-                                        }}
-                                        options={markets}
-                                        style={{ width: "200px" }}
-                                      />
-                                      {/* <label className="fs-6" htmlFor="market">
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Region"
+                      loading={loading}
+                      value={selectedMarket}
+                      onChange={(e) => {
+                        const region = e.value;
+                        setSelectedMarket(region);
+                        localStorage.setItem("marketshareMarket", region);
+                        getRegions(region);
+                      }}
+                      options={markets}
+                      style={{ width: "150px" }}
+                    />
+                    {/* <label className="fs-6" htmlFor="market">
                                         Select Market
                                       </label> */}
-                                    </FloatLabel>
+                  </FloatLabel>
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
@@ -410,7 +410,7 @@ const GameProvideMarketshare = () => {
                         getMarketshareData(selectedMarket, region);
                       }}
                       options={regions}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                     />
                     {/* <label className="fs-6" htmlFor="region">
                       Select Country
@@ -429,7 +429,7 @@ const GameProvideMarketshare = () => {
                           global: { ...f.global, value: e.target.value },
                         }))
                       }
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                     />
                   </IconField>
                 </div>
@@ -480,6 +480,17 @@ const GameProvideMarketshare = () => {
                   sortField="market_share"
                   sortOrder={0}
                   globalFilterFields={["game_provider"]}
+                  onRowClick={(e) => {
+                    const rowData = e.data;
+                    navigate("/game-provider-marketshare-details", {
+                      state: {
+                        regionName: selectedRegion,
+                        providerId: rowData.provider_id,
+                        passed_market: selectedMarket,
+                        provider_details: rowData,
+                      },
+                    });
+                  }}
                 >
                   <Column
                     field="provider_rank"
@@ -554,7 +565,7 @@ const GameProvideMarketshare = () => {
                     body={changeTemplate}
                   ></Column>
 
-                  <Column
+                  {/* <Column
                     field="details"
                     header={headerWithTooltip(
                       "Details",
@@ -563,7 +574,7 @@ const GameProvideMarketshare = () => {
                     )}
                     className="text-center"
                     body={actionBodyTemplate}
-                  ></Column>
+                  ></Column> */}
                 </DataTable>
               </div>
             </>

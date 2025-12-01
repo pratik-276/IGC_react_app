@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 import { DataTable } from "primereact/datatable";
 import { Dropdown } from "primereact/dropdown";
@@ -11,7 +11,7 @@ import { FloatLabel } from "primereact/floatlabel";
 import { Spin } from "antd";
 
 import { FaGem, FaLock } from "react-icons/fa6";
-import { MdInfoOutline } from "react-icons/md";
+import { MdArrowBackIos, MdInfoOutline } from "react-icons/md";
 
 import GameTrendChart from "../../charts/GameTrendChart";
 import GameRankData from "../../services/GameRank";
@@ -24,6 +24,7 @@ import "./DashboardMod.css";
 import "./AccessBlur.css";
 
 const GameRankL2 = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const { passed_region, passed_market, game_details } = location.state || {};
   console.log(game_details);
@@ -35,9 +36,15 @@ const GameRankL2 = () => {
   const [regionLoading, setRegionLoading] = useState(false);
   const [gameLoading, setGameLoading] = useState(false);
 
-  const [regions, setRegions] = useState([{label: passed_region, value: passed_region}]);
-  const [markets, setMarkets] = useState([{label: passed_market, value: passed_market}]);
-  const [games, setGames] = useState([{game_id: game_details.game_id, game: game_details.game_name}]);
+  const [regions, setRegions] = useState([
+    { label: passed_region, value: passed_region },
+  ]);
+  const [markets, setMarkets] = useState([
+    { label: passed_market, value: passed_market },
+  ]);
+  const [games, setGames] = useState([
+    { game_id: game_details.game_id, game: game_details.game_name },
+  ]);
   const [selectedRegion, setSelectedRegion] = useState(passed_region);
   const [selectedMarket, setSelectedMarket] = useState(passed_market);
   const [selectedGame, setSelectedGame] = useState(game_details.game_id);
@@ -87,7 +94,7 @@ const GameRankL2 = () => {
 
   async function getGamesList() {
     setGameLoading(true);
-    setGames([{value: game_details.game_id, label: game_details.game_name}]);
+    setGames([{ value: game_details.game_id, label: game_details.game_name }]);
 
     // const payload = {
     //   region: selectedRegion,
@@ -117,7 +124,7 @@ const GameRankL2 = () => {
     const payload = {
       game_id: selectedGame,
       region: selectedRegion,
-      market: selectedMarket
+      market: selectedMarket,
     };
 
     getGameRankDetails(payload);
@@ -204,16 +211,26 @@ const GameRankL2 = () => {
           <div className="compass-data">
             <div className="d-flex flex-column gap-3 justify-content-between">
               <div className="d-flex align-items-center justify-content-between pt-3">
-                <div>
-                  <h4
-                    className="m-md-0 font-semibold"
-                    style={{ color: "#392f6c" }}
-                  >
-                    Game Details
-                  </h4>
-                  <span className="text-black" style={{ fontSize: "1rem" }}>
-                    Details of the game rank in the selected region
-                  </span>
+                <div className="d-flex gap-2 align-items-center">
+                  <MdArrowBackIos
+                    style={{
+                      fontSize: "30px",
+                      cursor: "pointer",
+                    }}
+                    // onClick={() => navigate("/dashboard")}
+                    onClick={() => navigate(-1)}
+                  />
+                  <div>
+                    <h4
+                      className="m-md-0 font-semibold"
+                      style={{ color: "#392f6c" }}
+                    >
+                      Game Details
+                    </h4>
+                    <span className="text-black" style={{ fontSize: "1rem" }}>
+                      Details of the game rank in the selected region
+                    </span>
+                  </div>
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
@@ -227,7 +244,7 @@ const GameRankL2 = () => {
                       value={selectedMarket}
                       onChange={(e) => setSelectedMarket(e.value)}
                       options={markets}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                       disabled
                     />
                     {/* <label className="fs-6" htmlFor="region">
@@ -244,7 +261,7 @@ const GameRankL2 = () => {
                       value={selectedRegion}
                       onChange={(e) => setSelectedRegion(e.value)}
                       options={regions}
-                      style={{ width: "200px" }}
+                      style={{ width: "150px" }}
                       disabled
                     />
                     {/* <label className="fs-6" htmlFor="region">
@@ -261,7 +278,7 @@ const GameRankL2 = () => {
                     value={selectedGame}
                     onChange={(e) => setSelectedGame(e.value)}
                     options={games}
-                    style={{ width: "200px" }}
+                    style={{ width: "150px" }}
                     disabled
                   />
                 </div>

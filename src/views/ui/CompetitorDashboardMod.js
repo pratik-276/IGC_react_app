@@ -10,6 +10,7 @@ import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { FloatLabel } from "primereact/floatlabel";
 import { Slider } from "primereact/slider";
+import { InputSwitch } from "primereact/inputswitch";
 
 import { Spin } from "antd";
 
@@ -28,6 +29,8 @@ import Papa from "papaparse";
 import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
+
+const DEFAULT_GAME_IMAGE = "https://via.placeholder.com/60?text=No+Image";
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
@@ -59,6 +62,7 @@ const CompetitorDashboardMod = () => {
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
+  const [showImage, setShowImage] = useState(false);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -266,6 +270,7 @@ const CompetitorDashboardMod = () => {
       sectionMap[section][pos] = {
         text: displayText,
         highlight: isHighlighted,
+        image: item.stored_alias_url || DEFAULT_GAME_IMAGE,
       };
     });
 
@@ -275,6 +280,7 @@ const CompetitorDashboardMod = () => {
     );
 
     setTableData(sortedTableData);
+    console.log("sortedTableData", sortedTableData);
   }, [data]);
 
   const headerWithTooltip = (headerText, tooltipText, id) => (
@@ -331,7 +337,12 @@ const CompetitorDashboardMod = () => {
       };
 
       uniquePositions.forEach((pos) => {
-        formattedRow[pos] = (typeof row[pos] === "string") ? row[pos] : row[pos] ? row[pos]['text'] : "";
+        formattedRow[pos] =
+          typeof row[pos] === "string"
+            ? row[pos]
+            : row[pos]
+            ? row[pos]["text"]
+            : "";
       });
 
       return formattedRow;
@@ -362,7 +373,7 @@ const CompetitorDashboardMod = () => {
 
             <div className="d-flex flex-column gap-4">
               <div className="row g-3">
-                <div className="col-md-6">
+                <div className="col-md-3">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="label"
@@ -391,7 +402,7 @@ const CompetitorDashboardMod = () => {
                   </FloatLabel>
                 </div>
 
-                <div className="col-md-6">
+                <div className="col-md-3">
                   <FloatLabel>
                     <Dropdown
                       optionLabel="operator_name"
@@ -420,37 +431,7 @@ const CompetitorDashboardMod = () => {
                   </FloatLabel>
                 </div>
 
-                {/* <div className="col-md-4">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="label"
-                      optionValue="value"
-                      filter
-                      placeholder="Select Site URL"
-                      loading={siteDataLoader}
-                      disabled={!selectedOperator}
-                      value={siteId}
-                      onChange={(e) => {
-                        setSiteId(e.value);
-                        const site = siteData.find((s) => s.value === e.value);
-                        setSelectedSiteDetails(site || null);
-                      }}
-                      options={siteData}
-                      itemTemplate={(option) => (
-                        <div title={option.label}>{option.label}</div>
-                      )}
-                      className="w-100"
-                      inputId="siteUrl"
-                    />
-                    <label className="fs-6" htmlFor="siteUrl">
-                      Site URL
-                    </label>
-                  </FloatLabel>
-                </div> */}
-              </div>
-
-              <div className="row g-3">
-                <div className="col-md-4">
+                <div className="col-md-3">
                   <FloatLabel>
                     <MultiSelect
                       value={providersName}
@@ -470,27 +451,7 @@ const CompetitorDashboardMod = () => {
                   </FloatLabel>
                 </div>
 
-                <div className="col-md-4">
-                  <FloatLabel>
-                    <MultiSelect
-                      value={gamesName}
-                      onChange={(e) => setGamesName(e.value)}
-                      options={gameData}
-                      loading={gameDataLoader}
-                      placeholder="Select Games"
-                      filter
-                      disabled={!selectedOperator}
-                      maxSelectedLabels={1}
-                      className="w-100"
-                      inputId="game"
-                    />
-                    <label className="fs-6" htmlFor="game">
-                      Games
-                    </label>
-                  </FloatLabel>
-                </div>
-
-                <div className="col-md-4 d-flex align-items-start gap-3">
+                <div className="col-md-3 d-flex align-items-start gap-3">
                   <Button
                     type="button"
                     label="Apply"
@@ -522,6 +483,56 @@ const CompetitorDashboardMod = () => {
                   />
                 </div>
               </div>
+
+              {/* <div className="row g-3">
+                <div className="col-md-4">
+                  <FloatLabel>
+                    <Dropdown
+                      optionLabel="label"
+                      optionValue="value"
+                      filter
+                      placeholder="Select Site URL"
+                      loading={siteDataLoader}
+                      disabled={!selectedOperator}
+                      value={siteId}
+                      onChange={(e) => {
+                        setSiteId(e.value);
+                        const site = siteData.find((s) => s.value === e.value);
+                        setSelectedSiteDetails(site || null);
+                      }}
+                      options={siteData}
+                      itemTemplate={(option) => (
+                        <div title={option.label}>{option.label}</div>
+                      )}
+                      className="w-100"
+                      inputId="siteUrl"
+                    />
+                    <label className="fs-6" htmlFor="siteUrl">
+                      Site URL
+                    </label>
+                  </FloatLabel>
+                </div>
+
+                <div className="col-md-4">
+                  <FloatLabel>
+                    <MultiSelect
+                      value={gamesName}
+                      onChange={(e) => setGamesName(e.value)}
+                      options={gameData}
+                      loading={gameDataLoader}
+                      placeholder="Select Games"
+                      filter
+                      disabled={!selectedOperator}
+                      maxSelectedLabels={1}
+                      className="w-100"
+                      inputId="game"
+                    />
+                    <label className="fs-6" htmlFor="game">
+                      Games
+                    </label>
+                  </FloatLabel>
+                </div>
+              </div> */}
             </div>
           </div>
         </div>
@@ -543,6 +554,7 @@ const CompetitorDashboardMod = () => {
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
                   <h5 className="font-semibold pl-2">Latest Details</h5>
+
                   {isPlanExpired ? (
                     <>
                       <span
@@ -563,12 +575,22 @@ const CompetitorDashboardMod = () => {
                       />
                     </>
                   ) : (
-                    <span
-                      className="text-primary cursor-pointer"
-                      onClick={() => exportCSV(tableData)}
-                    >
-                      Download Report
-                    </span>
+                    <div className="d-flex align-items-center gap-2">
+                      <div className="d-flex align-items-center gap-2">
+                        <span style={{ fontSize: "14px" }}>Show Images</span>
+                        <InputSwitch
+                          checked={showImage}
+                          onChange={(e) => setShowImage(e.value)}
+                        />
+                      </div>
+
+                      <span
+                        className="text-primary cursor-pointer"
+                        onClick={() => exportCSV(tableData)}
+                      >
+                        Download Report
+                      </span>
+                    </div>
                   )}
                 </div>
 
@@ -669,19 +691,53 @@ const CompetitorDashboardMod = () => {
                         }
 
                         return (
-                          <span
-                            style={{
-                              backgroundColor: cell.highlight
-                                ? "#ffeeba"
-                                : "transparent",
+                          // <>
+                          //   <span
+                          //     style={{
+                          //       backgroundColor: cell.highlight
+                          //         ? "#ffeeba"
+                          //         : "transparent",
 
-                              padding: "2px 6px",
-                              borderRadius: "4px",
-                              display: "inline-block",
-                            }}
+                          //       padding: "2px 6px",
+                          //       borderRadius: "4px",
+                          //       display: "inline-block",
+                          //     }}
+                          //   >
+                          //     {cell.text}
+                          //   </span>
+                          // </>
+                          <div
+                            className="d-flex flex-column justify-content-center align-items-center"
+                            style={{ width: "100%", textAlign: "center" }}
                           >
-                            {cell.text}
-                          </span>
+                            {/* SHOW IMAGE WHEN TOGGLE IS ON */}
+                            {showImage && (
+                              <img
+                                src={cell.image}
+                                alt={cell.text}
+                                style={{
+                                  width: "60px",
+                                  height: "60px",
+                                  objectFit: "contain",
+                                  marginBottom: "6px",
+                                }}
+                              />
+                            )}
+
+                            {/* Text (always visible) */}
+                            <span
+                              style={{
+                                backgroundColor: cell.highlight
+                                  ? "#ffeeba"
+                                  : "transparent",
+                                padding: "2px 6px",
+                                borderRadius: "4px",
+                                display: "inline-block",
+                              }}
+                            >
+                              {cell.text}
+                            </span>
+                          </div>
                         );
                       }}
                     />

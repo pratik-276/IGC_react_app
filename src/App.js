@@ -57,6 +57,7 @@ import CLAUDE19 from "./views/blogs/claude_19";
 import CLAUDE20 from "./views/blogs/claude_20";
 import AnalyticsPage from "./views/ui/AnalyticsPage";
 import RequestedCasinos from "./views/ui/RequestedCasinos";
+import BullsharkReportPage from "./views/ui/BullsharkReportPage";
 
 const App = () => {
   return (
@@ -158,7 +159,6 @@ const App = () => {
                     }
                   />
 
-                  
                   <Route
                     path="requested-casinos"
                     element={
@@ -236,6 +236,15 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <AnalyticsPage />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="bullshark-report"
+                    element={
+                      <ProtectedRoute>
+                        <BullsharkReportPage />
                       </ProtectedRoute>
                     }
                   />

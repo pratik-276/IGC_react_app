@@ -37,8 +37,14 @@ const GameDetailsMod = () => {
 
   const location = useLocation();
   console.log("location.state", location.state);
-  const { operator_site_id, game_name, casino_name, country_name, state_name, site_url } =
-    location.state || {};
+  const {
+    operator_site_id,
+    game_name,
+    casino_name,
+    country_name,
+    state_name,
+    site_url,
+  } = location.state || {};
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -115,7 +121,8 @@ const GameDetailsMod = () => {
                   fontSize: "30px",
                   cursor: "pointer",
                 }}
-                onClick={() => navigate("/dashboard")}
+                // onClick={() => navigate("/dashboard")}
+                onClick={() => navigate(-1)}
               />
               <div>
                 <h4
@@ -174,20 +181,20 @@ const GameDetailsMod = () => {
             <div className="mt-3">
               <h5 className="font-semibold pl-2">Indicators</h5>
               <div className="flex gap-2 mt-2">
-                  <InfoCard
-                    header="Selected Game"
-                    tooltip="Shows selected game name"
-                    tooltipTarget="game_name"
-                    value={game_name}
-                    widthMod={true}
-                  />
+                <InfoCard
+                  header="Selected Game"
+                  tooltip="Shows selected game name"
+                  tooltipTarget="game_name"
+                  value={game_name}
+                  widthMod={true}
+                />
 
                 <InfoCard
                   header="Selected Casino"
                   tooltip="Shows selected casino name"
                   tooltipTarget="casino_name"
                   value={casino_name}
-                    widthMod={true}
+                  widthMod={true}
                 />
 
                 <InfoCard
@@ -195,15 +202,15 @@ const GameDetailsMod = () => {
                   tooltip="Shows country name"
                   tooltipTarget="country_name"
                   value={country_name}
-                    widthMod={true}
+                  widthMod={true}
                 />
 
                 <InfoCard
                   header="URL"
                   tooltip="Shows site url for the selected casino"
                   tooltipTarget="site_url"
-                  value={site_url.length > 26 ? site_url.slice(0, 26) + ".." : site_url}
-                    widthMod={true}
+                  value={site_url}
+                  widthMod={true}
                 />
               </div>
             </div>
