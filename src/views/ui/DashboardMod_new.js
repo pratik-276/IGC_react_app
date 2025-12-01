@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { MultiSelect } from "primereact/multiselect";
@@ -7,6 +7,7 @@ import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { Carousel } from "primereact/carousel";
 
 import { Spin } from "antd";
 
@@ -19,7 +20,6 @@ import Papa from "papaparse";
 import InfoCard from "../../charts/InfoCard";
 import GameData from "../../services/GameTracker";
 
-import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 
@@ -29,6 +29,16 @@ import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+
+const VIDEO_URL =
+  "https://igc-videos.blr1.cdn.digitaloceanspaces.com/browser_recording_6.mp4";
+
+// Dummy insights used until the real API (Claude) is wired in
+const DUMMY_INSIGHTS = [
+  `Top performing games this week are concentrated in a few casinos in Malta and Sweden — consider prioritising monitoring for these markets.`,
+  `Certain games are repeatedly appearing in the "Featured" section across multiple sites; this suggests promotional activity or partnerships that could be affecting visibility.`,
+  `Games with a sudden positive growth often correlate with a recent UI change on the casino site. Flag these entries for evidence review.`,
+];
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
@@ -47,6 +57,12 @@ const DashboardMod = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
+
+  // --- New states for AI Insights ---
+  const [insights, setInsights] = useState([]); // array of { id, text }
+  const [currentInsightIndex, setCurrentInsightIndex] = useState(-1); // points to currently displayed insight
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsStarted, setInsightsStarted] = useState(false); // user has clicked Get AI Insights
 
   const arrayFromValues = Object.values(providerLatestDetails);
 
@@ -75,7 +91,6 @@ const DashboardMod = () => {
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
-  //const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
@@ -127,7 +142,6 @@ const DashboardMod = () => {
       );
     }
 
-    //console.log("filtered", filtered);
     setFilteredData(filtered);
   }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
 
@@ -166,7 +180,7 @@ const DashboardMod = () => {
               casino_name: rowData.casino_name,
               country_name: rowData.country_name,
               state_name: rowData.state,
-              site_url: rowData.site_url
+              site_url: rowData.site_url,
             },
           });
         }}
@@ -235,8 +249,6 @@ const DashboardMod = () => {
   };
 
   const evidanceTemplate = (rowData) => {
-    //setVideoURL(rowData?.video_url);
-    //console.log(rowData?.video_url);
     const label =
       "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
     if (rowData?.video_url) {
@@ -298,18 +310,18 @@ const DashboardMod = () => {
   };
 
   const exportCSV = (filteredData) => {
-    const filteredDataMod = filteredData.map(row => ({
-      'Casino Name': row.casino_name,
-      'Country': row.country_name,
-      'Site URL': row.site_url,
-      'Game Name': row.game_name,
-      'Section Name': row.section_name,
-      'Section Position': row.section_position,
-      'Sectional Game Position': row.sectional_game_position,
-      'Overall Position': row.overall_position,
-      'Previous Overall Position': row.previous_overall_position,
-      'Growth': row.growth,
-      'Last Observed Date': row.last_observed_date ? row.last_observed_date.split('T')[0] : '',
+    const filteredDataMod = filteredData.map((row) => ({
+      "Casino Name": row.casino_name,
+      "Country": row.country_name,
+      "Site URL": row.site_url,
+      "Game Name": row.game_name,
+      "Section Name": row.section_name,
+      "Section Position": row.section_position,
+      "Sectional Game Position": row.sectional_game_position,
+      "Overall Position": row.overall_position,
+      "Previous Overall Position": row.previous_overall_position,
+      "Growth": row.growth,
+      "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
     }));
     const csv = Papa.unparse(filteredDataMod);
     const link = document.createElement("a");
@@ -318,6 +330,59 @@ const DashboardMod = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // --- AI Insights logic ---
+  const resetInsights = () => {
+    setInsights([]);
+    setCurrentInsightIndex(-1);
+    setInsightsStarted(false);
+  };
+
+  const simulateFetchInsight = async (index) => {
+    // Placeholder for real API call to Claude. Replace this block with your API call.
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ id: index + 1, text: DUMMY_INSIGHTS[index] });
+      }, 900);
+    });
+  };
+
+  const startInsights = async () => {
+    // Start/Reset the insights workflow
+    resetInsights();
+    setInsightsStarted(true);
+    setInsightsLoading(true);
+    try {
+      const insight = await simulateFetchInsight(0);
+      setInsights([insight]);
+      setCurrentInsightIndex(0);
+    } catch (err) {
+      console.error("Insight fetch failed", err);
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
+
+  const loadNextInsight = async () => {
+    // load next insight in sequence (max 3)
+    const nextIndex = insights.length; // 0-based
+    if (nextIndex >= DUMMY_INSIGHTS.length) return; // nothing to load
+
+    setInsightsLoading(true);
+    try {
+      const insight = await simulateFetchInsight(nextIndex);
+      setInsights((prev) => [...prev, insight]);
+      setCurrentInsightIndex(nextIndex);
+    } catch (err) {
+      console.error("Insight fetch failed", err);
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
+
+  const onSelectInsightFromCarousel = (idx) => {
+    setCurrentInsightIndex(idx);
   };
 
   return (
@@ -353,15 +418,6 @@ const DashboardMod = () => {
                 placeholder="Select Casinos"
                 maxSelectedLabels={10}
               />
-              {/* <MultiSelect
-                value={selectedFreqs}
-                onChange={(e) => setSelectedFreqs(e.value)}
-                options={freqsList}
-                optionLabel="name"
-                filter
-                placeholder="Scan Frequency"
-                maxSelectedLabels={3}
-              /> */}
             </div>
           </div>
         </div>
@@ -389,7 +445,6 @@ const DashboardMod = () => {
                         header="Game Count"
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
-                        //value={providerSummary.game_count}
                         value={
                           new Set(filteredData.map((item) => item.game_name))
                             .size
@@ -400,7 +455,6 @@ const DashboardMod = () => {
                         header="Casino Count"
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
-                        //value={providerSummary.casino_count}
                         value={
                           new Set(
                             filteredData.map(
@@ -415,7 +469,6 @@ const DashboardMod = () => {
                         header="Casino-Game Combinations"
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
-                        //value={providerSummary.combination_count}
                         value={
                           new Set(
                             filteredData.map(
@@ -425,6 +478,97 @@ const DashboardMod = () => {
                           ).size
                         }
                       />
+                    </div>
+                  </div>
+
+                  {/* --- NEW AI INSIGHTS SECTION (placed directly below Summary) --- */}
+                  <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <h5 className="font-semibold">AI Insights</h5>
+                      {/* <div>
+                        {!insightsStarted ? (
+                          <Button
+                            label="Get AI Insights"
+                            icon="pi pi-robot"
+                            onClick={startInsights}
+                            className="p-button-primary"
+                          />
+                        ) : (
+                          <Button
+                            label="Reset Insights"
+                            icon="pi pi-refresh"
+                            onClick={resetInsights}
+                            className="p-button-text"
+                          />
+                        )}
+                      </div> */}
+                    </div>
+
+                    <div style={{ marginTop: 12 }}>
+                      {/* Main insight preview area */}
+                      {/* <div className="insight-preview p-3 rounded-2" style={{ minHeight: 100, transition: 'opacity 400ms ease' }}>
+                        {insightsLoading ? (
+                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                            <Spin />
+                          </div>
+                        ) : insights.length === 0 && !insightsStarted ? (
+                          <div className="text-muted">Click "Get AI Insights" to generate 3 insights based on the data shown below.</div>
+                        ) : insights.length === 0 && insightsStarted ? (
+                          <div className="text-muted">Loading first insight...</div>
+                        ) : (
+                          <div>
+                            <h6 className="fw-bold">Insight #{currentInsightIndex + 1}</h6>
+                            <p style={{ margin: 0 }}>{insights[currentInsightIndex]?.text}</p>
+                          </div>
+                        )}
+                      </div> */}
+
+                      {insightsLoading ? (
+                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                            <Spin />
+                          </div>
+                        ) : insights.length >= 1 ? (
+                        <div style={{ marginTop: 16 }}>
+                          {/* <h6 className="mb-2">Previous Insights</h6> */}
+                          <Carousel value={insights} numVisible={1} numScroll={1} className="insights-carousel" autoplayInterval={0} circular={true} itemTemplate={(ins) => (
+                              <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
+                                <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
+                                <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
+                              </div>
+                            )} />
+                        </div>
+                      ) : (
+                        <span></span>
+                      )}
+
+                      <div className="d-flex justify-content-between align-items-center gap-2 mt-2">
+                        {/* <Button
+                          label="Previous Insight"
+                          icon="pi pi-angle-left"
+                          disabled={currentInsightIndex <= 0}
+                          onClick={() => setCurrentInsightIndex((i) => Math.max(0, i - 1))}
+                          className="p-button-text"
+                        /> */}
+                        <span style={{visibility: "hidden"}}>0/3 loaded</span>
+
+                        <Button
+                          label={
+                            insights.length === 3
+                              ? "All insights loaded"
+                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
+                          }
+                          // icon="pi pi-angle-right"
+                          onClick={loadNextInsight}
+                          disabled={insightsLoading || insights.length >= DUMMY_INSIGHTS.length}
+                        />
+
+                        <div>
+                          <span className="text-muted">{insights.length}/{DUMMY_INSIGHTS.length} loaded</span>
+                        </div>
+                      </div>
+
+                      {/* Carousel for already-loaded insights (Option B): show as soon as there are 2 insights loaded */}
+                      
                     </div>
                   </div>
 
@@ -463,7 +607,6 @@ const DashboardMod = () => {
                     <div>
                       <DataTable
                         ref={dt}
-                        //value={filteredData}
                         value={
                           isPlanExpired
                             ? filteredData.slice(0, 3)
@@ -601,17 +744,6 @@ const DashboardMod = () => {
                           )}
                         ></Column>
 
-                        {/* <Column
-                          field="frequency"
-                          header={headerWithTooltip(
-                            "Site Freq",
-                            "Frequency at which the site is scanned",
-                            "frequency"
-                          )}
-                          sortable
-                          style={{ minWidth: "10rem" }}
-                        ></Column> */}
-
                         <Column
                           field="last_observed_date"
                           header={headerWithTooltip(
@@ -627,17 +759,6 @@ const DashboardMod = () => {
                           }}
                           style={{ minWidth: "7rem" }}
                         ></Column>
-
-                        {/* <Column
-                          field="evidance"
-                          header={headerWithTooltip(
-                            "Evidence",
-                            "Evidence",
-                            "evidance"
-                          )}
-                          body={evidanceTemplate}
-                          style={{ minWidth: "13rem" }}
-                        ></Column> */}
 
                         <Column
                           frozen
