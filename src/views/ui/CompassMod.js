@@ -560,6 +560,12 @@ const CompassMod = () => {
     resetForm();
   };
 
+  useEffect(() => {
+    if (activeStep === 2 && mode === "edit") {
+      getSectionTitleData(compassRead[0].operator_id, compassRead[0].geography);
+    }
+  }, [activeStep, selectedCasino]);
+
   // Custom renderer for step icons
   const itemRenderer = (item, itemIndex) => {
     const isActive = activeStep === itemIndex;

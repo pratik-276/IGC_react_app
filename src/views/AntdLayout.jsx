@@ -202,6 +202,9 @@ const AppLayout = () => {
     else if (location.pathname === '/game-provider-marketshare' || location.pathname === '/game-provider-marketshare-details') {
         selectedKeys.push('/game-provider-marketshare');
     }
+    else if (location.pathname === '/dashboard' || location.pathname === '/position-details') {
+        selectedKeys.push('/dashboard');
+    }
 
 
     return (

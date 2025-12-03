@@ -28,9 +28,9 @@ export default function BullsharkReportPage() {
   const [providers, setProviders] = useState([]);
   const [providerLoading, setProviderLoading] = useState(false);
 
-  const [selectedMarket, setSelectedMarket] = useState(null);
-  const [selectedCountry, setSelectedCountry] = useState(null);
-  const [selectedCasino, setSelectedCasino] = useState(null);
+  const [selectedMarket, setSelectedMarket] = useState([]);
+  const [selectedCountry, setSelectedCountry] = useState([]);
+  const [selectedCasino, setSelectedCasino] = useState([]);
   const [selectedProvider, setSelectedProvider] = useState([]);
 
   const [data, setData] = useState([]);
@@ -64,11 +64,9 @@ export default function BullsharkReportPage() {
   const getCountryList = () => {
     setCountryLoading(true);
     const payload = {
-      provider_id: provider_id,
-      search_term: "",
-      region: selectedMarket,
+      markets: selectedMarket,
     };
-    BullsharkReport.post_country_by_region(payload)
+    BullsharkReport.get_country_for_multiple_market(payload)
       .then((res) => {
         if (res?.success === true) {
           const cleaned = res.data
@@ -92,9 +90,9 @@ export default function BullsharkReportPage() {
   const getCasinoList = () => {
     setCasinoLoading(true);
     const payload = {
-      region: selectedCountry,
+      countries: selectedCountry,
     };
-    BullsharkReport.post_operator_by_geography_lists(payload)
+    BullsharkReport.get_operator_for_multiple_country(payload)
       .then((res) => {
         if (res?.success === true) {
           setCasinos(res.data);
@@ -128,9 +126,9 @@ export default function BullsharkReportPage() {
   const getReportData = () => {
     setLoading(true);
     const payload = {
-      markets: [selectedMarket],
-      countries: [selectedCountry],
-      operator_ids: [selectedCasino],
+      markets: selectedMarket,
+      countries: selectedCountry,
+      operator_ids: selectedCasino,
       provider_ids: selectedProvider,
     };
     console.log("Payload sent:", payload);
@@ -174,19 +172,19 @@ export default function BullsharkReportPage() {
   }, []);
 
   useEffect(() => {
-    if (selectedMarket) {
+    if (selectedMarket.length > 0) {
       getCountryList();
     }
   }, [selectedMarket]);
 
   useEffect(() => {
-    if (selectedCountry) {
+    if (selectedCountry.length > 0) {
       getCasinoList();
     }
   }, [selectedCountry]);
 
   useEffect(() => {
-    if (selectedCasino) {
+    if (selectedCasino.length > 0) {
       getProvidersList();
     }
   }, [selectedCasino]);
@@ -225,6 +223,23 @@ export default function BullsharkReportPage() {
     return icon;
   };
 
+  const gameCountTemplate = (value) => {
+    const hasValue = value !== undefined && value !== null && value > 0;
+
+    return (
+      <div
+        style={{
+          backgroundColor: hasValue ? "#d4edda" : "#f8d7da",
+          padding: "4px 4px",
+          borderRadius: "4px",
+          textAlign: "center",
+        }}
+      >
+        {hasValue ? value : "-"}
+      </div>
+    );
+  };
+
   const sanitizeForClass = (str) => str.replace(/[^a-zA-Z0-9-_]/g, "-");
 
   return (
@@ -246,7 +261,7 @@ export default function BullsharkReportPage() {
                 {/* MARKET */}
                 <div className="col-md-4">
                   <FloatLabel>
-                    <Dropdown
+                    <MultiSelect
                       optionLabel="label"
                       optionValue="value"
                       filter
@@ -255,9 +270,9 @@ export default function BullsharkReportPage() {
                       value={selectedMarket}
                       onChange={(e) => {
                         setSelectedMarket(e.value);
-                        setSelectedCountry(null);
+                        setSelectedCountry([]);
                         setCountries([]);
-                        setSelectedCasino(null);
+                        setSelectedCasino([]);
                         setCasinos([]);
                         setSelectedProvider([]);
                         setProviders([]);
@@ -274,17 +289,17 @@ export default function BullsharkReportPage() {
 
                 <div className="col-md-4">
                   <FloatLabel>
-                    <Dropdown
+                    <MultiSelect
                       optionLabel="label"
                       optionValue="value"
                       filter
                       placeholder="Select Country"
                       loading={countryLoading}
-                      disabled={!selectedMarket}
+                      disabled={selectedMarket.length === 0}
                       value={selectedCountry}
                       onChange={(e) => {
                         setSelectedCountry(e.value);
-                        setSelectedCasino(null);
+                        setSelectedCasino([]);
                         setCasinos([]);
                         setSelectedProvider([]);
                         setProviders([]);
@@ -301,13 +316,13 @@ export default function BullsharkReportPage() {
 
                 <div className="col-md-4">
                   <FloatLabel>
-                    <Dropdown
+                    <MultiSelect
                       optionLabel="operator_name"
-                      optionValue="operator_id"
+                      optionValue="id"
                       filter
                       placeholder="Select Casino"
                       loading={casinoLoading}
-                      disabled={!selectedCountry}
+                      disabled={selectedCountry.length === 0}
                       value={selectedCasino}
                       onChange={(e) => {
                         setSelectedCasino(e.value);
@@ -335,14 +350,14 @@ export default function BullsharkReportPage() {
                       showClear
                       placeholder="Select Provider (Max 5)"
                       loading={providerLoading}
-                      disabled={!selectedCasino}
+                      disabled={selectedCasino.length === 0}
                       value={selectedProvider}
                       onChange={(e) => {
-                        // if (e.value.length <= 5) {
-                        setSelectedProvider(e.value);
-                        // } else {
-                        //   toast.error("You can select up to 5 providers only.");
-                        // }
+                        if (e.value.length <= 5) {
+                          setSelectedProvider(e.value);
+                        } else {
+                          toast.error("You can select up to 5 providers only.");
+                        }
                       }}
                       options={providers}
                       className="w-100"
@@ -374,9 +389,9 @@ export default function BullsharkReportPage() {
                     icon="pi pi-refresh"
                     disabled={!selectedMarket}
                     onClick={() => {
-                      setSelectedMarket(null);
-                      setSelectedCountry(null);
-                      setSelectedCasino(null);
+                      setSelectedMarket([]);
+                      setSelectedCountry([]);
+                      setSelectedCasino([]);
                       setSelectedProvider([]);
                       setCountries([]);
                       setCasinos([]);
@@ -447,9 +462,10 @@ export default function BullsharkReportPage() {
                     field={provider}
                     header={headerWithTooltip(
                       provider,
-                      `Game count for ${provider}`,
+                      `Count for ${provider}`,
                       provider
                     )}
+                    body={(rowData) => gameCountTemplate(rowData[provider])}
                   />
                 )
               )}

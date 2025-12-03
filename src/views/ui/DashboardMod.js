@@ -446,7 +446,11 @@ const DashboardMod = () => {
                         xKey="casino_name_mod"
                         yKey="game_count"
                         xLabel="Game Count"
-                        barColor="#B069DB"
+                        barColor="#9405eb"
+                        highlightKey="casino_name_mod"
+                        highlightValues={
+                          selectedCasinos?.map((x) => x.name) || []
+                        }
                       />
                     </div>
                     <div className="col-md-6 mb-3">
@@ -458,6 +462,10 @@ const DashboardMod = () => {
                         yKey="casino_count"
                         xLabel="Casino Count"
                         barColor="#6E00B3"
+                        highlightKey="game_name"
+                        highlightValues={
+                          selectedGames?.map((x) => x.name) || []
+                        }
                       />
                     </div>
                   </div>
