@@ -8,18 +8,18 @@ const get_all_markets = async () => {
     return d;
 };
 
-const post_country_by_region = async (data) => {
+const get_country_for_multiple_market = async (data) => {
     let d = await Call({
-        path: "post_country_by_region",
+        path: "get_country_for_multiple_market",
         method: "post",
         data,
     });
     return d;
 };
 
-const post_operator_by_geography_lists = async (data) => {
+const get_operator_for_multiple_country = async (data) => {
     let d = await Call({
-        path: "post_operator_by_geography_lists",
+        path: "get_operator_for_multiple_country",
         method: "post",
         data,
     });
@@ -47,8 +47,8 @@ const get_competitor_data = async (data) => {
 
 const exportObject = {
     get_all_markets,
-    post_country_by_region,
-    post_operator_by_geography_lists,
+    get_country_for_multiple_market,
+    get_operator_for_multiple_country,
     get_provider,
     get_competitor_data,
 };
