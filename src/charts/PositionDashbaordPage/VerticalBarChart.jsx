@@ -1,6 +1,7 @@
 import {
     BarChart,
     Bar,
+    Cell,
     XAxis,
     YAxis,
     CartesianGrid,
@@ -17,8 +18,17 @@ export default function VerticalBarChart({
     yKey,   // value
     xLabel,
     barColor = "#8884d8",
-    height = 250,
+    height = 350,
+    highlightKey,
+    highlightValues = []
 }) {
+    const isHighlighted = (val) => {
+        if (!highlightValues || highlightValues.length === 0) return true;
+        return highlightValues.some(
+            hv => val.toLowerCase().includes(hv.toLowerCase())
+        );
+    };
+
     return loading ? (
         <div style={{ display: "flex", justifyContent: "center", alignItems: "center", height }}>
             <Spin size="default" />
@@ -42,11 +52,18 @@ export default function VerticalBarChart({
                     // interval={0}
                     />
                     <Tooltip />
-                    <Bar
-                        dataKey={yKey}
-                        name={xLabel}
-                        fill={barColor}
-                    />
+                    <Bar dataKey={yKey} name={xLabel}>
+                        {data.map((entry, index) => (
+                            <Cell
+                                key={index}
+                                fill={
+                                    isHighlighted(entry[highlightKey])
+                                        ? barColor
+                                        : "#e8d0f7" // light gray
+                                }
+                            />
+                        ))}
+                    </Bar>
                 </BarChart>
             </ResponsiveContainer>
         </div>

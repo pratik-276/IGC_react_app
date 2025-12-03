@@ -31,9 +31,6 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 
-const VIDEO_URL =
-  "https://igc-videos.blr1.cdn.digitaloceanspaces.com/browser_recording_6.mp4";
-
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
@@ -449,7 +446,11 @@ const DashboardMod = () => {
                         xKey="casino_name_mod"
                         yKey="game_count"
                         xLabel="Game Count"
-                        barColor="#B069DB"
+                        barColor="#9405eb"
+                        highlightKey="casino_name_mod"
+                        highlightValues={
+                          selectedCasinos?.map((x) => x.name) || []
+                        }
                       />
                     </div>
                     <div className="col-md-6 mb-3">
@@ -461,6 +462,10 @@ const DashboardMod = () => {
                         yKey="casino_count"
                         xLabel="Casino Count"
                         barColor="#6E00B3"
+                        highlightKey="game_name"
+                        highlightValues={
+                          selectedGames?.map((x) => x.name) || []
+                        }
                       />
                     </div>
                   </div>
