@@ -83,6 +83,18 @@ const DashboardMod = () => {
   //const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
+  const handleGameBarClick = (entry) => {
+    const gameName = entry.game_name;
+
+    setSelectedGames([{ name: gameName, code: gameName }]);
+  };
+
+  const handleCasinoBarClick = (entry) => {
+    const casinoName = entry.casino_name;
+
+    setSelectedCasinos([{ name: casinoName, code: casinoName }]);
+  };
+
   useEffect(() => {
     const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
     const savedCasinos = JSON.parse(localStorage.getItem("selectedCasinos"));
@@ -451,6 +463,7 @@ const DashboardMod = () => {
                         highlightValues={
                           selectedCasinos?.map((x) => x.name) || []
                         }
+                        onBarClick={(entry) => handleCasinoBarClick(entry)}
                       />
                     </div>
                     <div className="col-md-6 mb-3">
@@ -466,6 +479,7 @@ const DashboardMod = () => {
                         highlightValues={
                           selectedGames?.map((x) => x.name) || []
                         }
+                        onBarClick={(entry) => handleGameBarClick(entry)}
                       />
                     </div>
                   </div>

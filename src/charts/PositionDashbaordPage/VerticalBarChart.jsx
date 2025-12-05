@@ -20,7 +20,8 @@ export default function VerticalBarChart({
     barColor = "#8884d8",
     height = 350,
     highlightKey,
-    highlightValues = []
+    highlightValues = [],
+    onBarClick
 }) {
     const isHighlighted = (val) => {
         if (!highlightValues || highlightValues.length === 0) return true;
@@ -56,12 +57,19 @@ export default function VerticalBarChart({
                         {data.map((entry, index) => (
                             <Cell
                                 key={index}
+                                cursor="pointer"
+                                onClick={() => {
+                                    if (typeof onBarClick === "function") {
+                                        onBarClick(entry);
+                                    }
+                                }}
                                 fill={
                                     isHighlighted(entry[highlightKey])
                                         ? barColor
-                                        : "#e8d0f7" // light gray
+                                        : "#e8d0f7"
                                 }
                             />
+
                         ))}
                     </Bar>
                 </BarChart>
