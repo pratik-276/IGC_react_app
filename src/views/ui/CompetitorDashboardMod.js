@@ -176,7 +176,10 @@ const CompetitorDashboardMod = () => {
   }, []);
 
   useEffect(() => {
-    if (!initLoad || incomingState) return;
+    console.log("Selected Region changed:", selectedRegion);
+    console.log("Incoming State:", incomingState);
+    console.log("Init Load:", initLoad);
+    if (initLoad || incomingState) return;
 
     if (selectedRegion) {
       operatorDropdownData();
@@ -184,7 +187,10 @@ const CompetitorDashboardMod = () => {
   }, [selectedRegion]);
 
   useEffect(() => {
-    if (!initLoad || incomingState) return;
+    console.log("Selected Operator changed:", selectedOperator);
+    console.log("Incoming State:", incomingState);
+    console.log("Init Load:", initLoad);
+    if (initLoad || incomingState) return;
 
     if (selectedOperator) {
       setProvidersName([]);
@@ -192,7 +198,6 @@ const CompetitorDashboardMod = () => {
     }
   }, [selectedOperator]);
 
-  // 🔥 One clean initializer to handle incoming preloading
   useEffect(() => {
     if (!initLoad || !incomingState || regions.length === 0) return;
 
