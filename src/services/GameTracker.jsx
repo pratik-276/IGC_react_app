@@ -72,6 +72,15 @@ const provider_dashboard_mapper = async (data) => {
   return d;
 };
 
+const get_ai_insights = async (data) => {
+  let d = await Call({
+    path: "get_ai_insights",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const exportObject = {
   create_alert,
   tracker_summary,
@@ -80,7 +89,8 @@ const exportObject = {
   provider_summary,
   provider_latest_details,
   provider_dashboard_mapper,
-  mail_sales_team
+  mail_sales_team,
+  get_ai_insights
 };
 
 export default exportObject;

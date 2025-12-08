@@ -7,10 +7,12 @@ import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
+import { Carousel } from "primereact/carousel";
 
 import { Spin } from "antd";
 
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { RiAiGenerate } from "react-icons/ri";
 import { FaGem, FaLock, FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import dayjs from "dayjs";
@@ -30,6 +32,16 @@ import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+
+const VIDEO_URL =
+  "https://igc-videos.blr1.cdn.digitaloceanspaces.com/browser_recording_6.mp4";
+
+// Dummy insights used until the real API (Claude) is wired in
+const DUMMY_INSIGHTS = [
+  `Top performing games this week are concentrated in a few casinos in Malta and Sweden — consider prioritising monitoring for these markets.`,
+  `Certain games are repeatedly appearing in the "Featured" section across multiple sites; this suggests promotional activity or partnerships that could be affecting visibility.`,
+  `Games with a sudden positive growth often correlate with a recent UI change on the casino site. Flag these entries for evidence review.`,
+];
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
@@ -52,6 +64,14 @@ const DashboardMod = () => {
   const [filteredData, setFilteredData] = useState([]);
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
+
+  // --- New states for AI Insights ---
+  const [aiInsightsShow, setAiInsightsShow] = useState(false);
+  const [allInsightList, setAllInsightList] = useState([]);
+  const [insights, setInsights] = useState([]); // array of { id, text }
+  const [currentInsightIndex, setCurrentInsightIndex] = useState(-1); // points to currently displayed insight
+  const [insightsLoading, setInsightsLoading] = useState(false);
+  const [insightsStarted, setInsightsStarted] = useState(false); // user has clicked Get AI Insights
 
   const arrayFromValues = Object.values(providerLatestDetails);
 
@@ -158,6 +178,7 @@ const DashboardMod = () => {
 
   useEffect(() => {
     overviewDashboard();
+    startInsights();
   }, [user_id, user_company]);
 
   // const actionBodyTemplate = (rowData) => {
@@ -307,7 +328,7 @@ const DashboardMod = () => {
   const exportCSV = (filteredData) => {
     const filteredDataMod = filteredData.map((row) => ({
       "Casino Name": row.casino_name,
-      Country: row.country_name,
+      "Country": row.country_name,
       "Site URL": row.site_url,
       "Game Name": row.game_name,
       "Section Name": row.section_name,
@@ -315,10 +336,8 @@ const DashboardMod = () => {
       "Sectional Game Position": row.sectional_game_position,
       "Overall Position": row.overall_position,
       "Previous Overall Position": row.previous_overall_position,
-      Growth: row.growth,
-      "Last Observed Date": row.last_observed_date
-        ? row.last_observed_date.split("T")[0]
-        : "",
+      "Growth": row.growth,
+      "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
     }));
     const csv = Papa.unparse(filteredDataMod);
     const link = document.createElement("a");
@@ -327,6 +346,56 @@ const DashboardMod = () => {
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  // --- AI Insights logic ---
+  const resetInsights = () => {
+    setInsights([]);
+    setCurrentInsightIndex(-1);
+    setInsightsStarted(false);
+  };
+
+  const simulateFetchInsight = async (index) => {
+    // Placeholder for real API call to Claude. Replace this block with your API call.
+    return new Promise((resolve) => {
+      setTimeout(() => {
+        resolve({ id: index + 1, text: allInsightList[index] });
+      }, 900);
+    });
+  };
+
+  const startInsights = async () => {
+    // Start/Reset the insights workflow
+    const ai_insights = await GameData.get_ai_insights({
+        dashboard: "provider_dashboard_summary",
+        provider: user_company,
+    });
+    console.log(ai_insights);
+    setAllInsightList(ai_insights?.data?.ai_insights || []);
+  };
+
+  const loadNextInsight = async () => {
+    // load next insight in sequence (max 3)
+    const nextIndex = insights.length; // 0-based
+    if (nextIndex >= 3) return; // nothing to load
+    if (nextIndex === 0){
+      setAiInsightsShow(true);
+    }
+
+    setInsightsLoading(true);
+    try {
+      const insight = await simulateFetchInsight(nextIndex);
+      setInsights((prev) => [...prev, insight]);
+      setCurrentInsightIndex(nextIndex);
+    } catch (err) {
+      console.error("Insight fetch failed", err);
+    } finally {
+      setInsightsLoading(false);
+    }
+  };
+
+  const onSelectInsightFromCarousel = (idx) => {
+    setCurrentInsightIndex(idx);
   };
 
   return (
@@ -344,6 +413,17 @@ const DashboardMod = () => {
             </div>
 
             <div className="d-flex gap-2">
+              {/* <div className="d-flex mr-2">
+                <Button 
+                  className="p-0" 
+                  style={{fontSize: "18px", backgroundColor: "white", border: "0px", color: "#392f6c"}}
+                  onClick={loadNextInsight}
+                >
+                  <RiAiGenerate />
+                  <p className="mb-0 ml-1">Summarize with AI</p>
+                </Button>
+                
+              </div> */}
               <MultiSelect
                 value={selectedGames}
                 onChange={(e) => setSelectedGames(e.value)}
@@ -436,6 +516,110 @@ const DashboardMod = () => {
                       />
                     </div>
                   </div>
+                  
+                  {/* --- NEW AI INSIGHTS SECTION (placed directly below Summary) --- */}
+                  {aiInsightsShow && <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
+                    <div className="d-flex align-items-center justify-content-between">
+                      <h5 className="font-semibold">AI Insights</h5>
+                      <div>
+                        {/* {!insightsStarted ? (
+                          <Button
+                            label="Get AI Insights"
+                            icon="pi pi-robot"
+                            onClick={startInsights}
+                            className="p-button-primary"
+                          />
+                        ) : (
+                          <Button
+                            label="Reset Insights"
+                            icon="pi pi-refresh"
+                            onClick={resetInsights}
+                            className="p-button-text"
+                          />
+                        )} */}
+                        <Button
+                          label={
+                            insights.length === 3
+                              ? "All insights loaded"
+                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
+                          }
+                          // icon="pi pi-angle-right"
+                          onClick={loadNextInsight}
+                          className="mx-auto"
+                          disabled={insightsLoading || insights.length >= 3}
+                        />
+                      </div>
+                    </div>
+
+                    <div style={{ marginTop: 12 }}>
+                      {/* Main insight preview area */}
+                      {/* <div className="insight-preview p-3 rounded-2" style={{ minHeight: 100, transition: 'opacity 400ms ease' }}>
+                        {insightsLoading ? (
+                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                            <Spin />
+                          </div>
+                        ) : insights.length === 0 && !insightsStarted ? (
+                          <div className="text-muted">Click "Get AI Insights" to generate 3 insights based on the data shown below.</div>
+                        ) : insights.length === 0 && insightsStarted ? (
+                          <div className="text-muted">Loading first insight...</div>
+                        ) : (
+                          <div>
+                            <h6 className="fw-bold">Insight #{currentInsightIndex + 1}</h6>
+                            <p style={{ margin: 0 }}>{insights[currentInsightIndex]?.text}</p>
+                          </div>
+                        )}
+                      </div> */}
+
+                      {insightsLoading ? (
+                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                            <Spin />
+                          </div>
+                        ) : insights.length >= 1 ? (
+                        <div style={{ marginTop: 16 }}>
+                          {/* <h6 className="mb-2">Previous Insights</h6> */}
+                          <Carousel value={insights} numVisible={1} numScroll={1} className="insights-carousel" autoplayInterval={0} circular={true} itemTemplate={(ins) => (
+                              <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
+                                <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
+                                <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
+                              </div>
+                            )} />
+                        </div>
+                      ) : (
+                        <span></span>
+                      )}
+
+                      <div className="d-flex justify-content-between align-items-center gap-2 mt-2">
+                        {/* <Button
+                          label="Previous Insight"
+                          icon="pi pi-angle-left"
+                          disabled={currentInsightIndex <= 0}
+                          onClick={() => setCurrentInsightIndex((i) => Math.max(0, i - 1))}
+                          className="p-button-text"
+                        /> */}
+                        {/* <span style={{visibility: "hidden"}}>0/3 loaded</span> */}
+
+                        {/* <Button
+                          label={
+                            insights.length === 3
+                              ? "All insights loaded"
+                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
+                          }
+                          // icon="pi pi-angle-right"
+                          onClick={loadNextInsight}
+                          className="mx-auto"
+                          disabled={insightsLoading || insights.length >= DUMMY_INSIGHTS.length}
+                        /> */}
+
+                        {/* <div>
+                          <span className="text-muted">{insights.length}/{DUMMY_INSIGHTS.length} loaded</span>
+                        </div> */}
+                      </div>
+
+                      {/* Carousel for already-loaded insights (Option B): show as soon as there are 2 insights loaded */}
+                      
+                    </div>
+                  </div>}
+                  
 
                   <div className="row mt-4">
                     <div className="col-md-6 mb-3">
@@ -575,10 +759,21 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          frozen
+                          field="comb_occurence_count"
+                          header={headerWithTooltip(
+                            "Occurences",
+                            "Count of occurences of the game on this casino",
+                            "comb_occurence_count"
+                          )}
+                          sortable
+                        ></Column>
+
+                        <Column
                           field="section_name"
                           header={headerWithTooltip(
-                            "Sec Name",
-                            "Section within casino where game was found",
+                            "Best Secn",
+                            "Best section within casino where game was found",
                             "section_name"
                           )}
                           sortable
@@ -588,8 +783,8 @@ const DashboardMod = () => {
                         <Column
                           field="section_position"
                           header={headerWithTooltip(
-                            "Sec Pos",
-                            "Position of the section within casino page",
+                            "Best Sec Pos",
+                            "Position of the best section within casino page",
                             "section_position"
                           )}
                           sortable
@@ -599,8 +794,8 @@ const DashboardMod = () => {
                         <Column
                           field="sectional_game_position"
                           header={headerWithTooltip(
-                            "Game Pos",
-                            "Position of game within the section",
+                            "Best Game Pos",
+                            "Best position of game within the section",
                             "sectional_game_position"
                           )}
                           sortable
