@@ -44,7 +44,8 @@ const providerColors = [
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
   const location = useLocation();
-  const incoming = location.state;
+  const [incomingState, setIncomingState] = useState(location.state || null);
+  const [initLoad, setInitLoad] = useState(true);
 
   const [zoom, setZoom] = useState(1);
   const [regions, setRegions] = useState([]);
@@ -53,24 +54,15 @@ const CompetitorDashboardMod = () => {
   const [operators, setOperators] = useState([]);
   const [selectedOperator, setSelectedOperator] = useState("");
 
-  const [siteData, setSiteData] = useState([]);
-  const [siteId, setSiteId] = useState(null);
-  const [selectedSiteDetails, setSelectedSiteDetails] = useState(null);
-
   const [providerData, setProviderData] = useState([]);
   const [providersName, setProvidersName] = useState([]);
-
-  const [gameData, setGameData] = useState([]);
-  const [gamesName, setGamesName] = useState(null);
 
   const [data, setData] = useState([]);
 
   const [loader, setLoader] = useState(false);
   const [regionLoading, setRegionLoading] = useState(true);
   const [operatorDataLoader, setOperatorDataLoader] = useState(false);
-  const [siteDataLoader, setSiteDataLoader] = useState(false);
   const [providerDataLoader, setProviderDataLoader] = useState(false);
-  const [gameDataLoader, setGameDataLoader] = useState(false);
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -129,30 +121,6 @@ const CompetitorDashboardMod = () => {
       });
   };
 
-  const siteDropdownData = () => {
-    setSiteDataLoader(true);
-
-    const payload = {
-      game_provider: user_company,
-      operator_id: selectedOperator,
-      geography: selectedRegion,
-    };
-
-    CompetitorData.get_operator_sites_list(payload)
-      .then((res) => {
-        if (res?.success === true) {
-          setSiteData(res?.data || null);
-          setSiteDataLoader(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => {
-        setSiteDataLoader(false);
-      });
-  };
-
   const providerDropdownData = () => {
     setProviderDataLoader(true);
 
@@ -178,31 +146,6 @@ const CompetitorDashboardMod = () => {
       .finally(() => setProviderDataLoader(false));
   };
 
-  const gameDropdownData = () => {
-    setGameDataLoader(true);
-
-    const payload = {
-      //operator_site_id: siteId,
-      operator_id: selectedOperator,
-      geography: selectedRegion,
-    };
-
-    CompetitorData.get_games_by_site(payload)
-      .then((res) => {
-        if (res?.success?.success === true) {
-          const formatted = (res.success.data || [])
-            .map((item) => item.game_name)
-            .filter(Boolean);
-          setGameData(formatted);
-          setGameDataLoader(false);
-        }
-      })
-      .catch((err) => {
-        console.log(err);
-      })
-      .finally(() => setGameDataLoader(false));
-  };
-
   const getCompitatorData = () => {
     setLoader(true);
 
@@ -211,7 +154,6 @@ const CompetitorDashboardMod = () => {
       operator_id: selectedOperator,
       geography: selectedRegion,
       ...(providersName?.length ? { provider_name: providersName } : {}),
-      ...(gamesName?.length ? { game_name: gamesName } : {}),
     };
 
     CompetitorData.get_casino_data(payload)
@@ -234,34 +176,76 @@ const CompetitorDashboardMod = () => {
   }, []);
 
   useEffect(() => {
-    if (!incoming) return;
+    if (!initLoad || incomingState) return;
 
-    console.log("incoming data", incoming);
-    if (incoming.geography) setSelectedRegion(incoming.geography);
-    if (incoming.operator_id) setSelectedOperator(incoming.operator_id);
-    if (incoming.provider_name) setProvidersName(incoming.provider_name);
-  }, [incoming]);
-
-  useEffect(() => {
     if (selectedRegion) {
       operatorDropdownData();
     }
   }, [selectedRegion]);
 
-  // useEffect(() => {
-  //   if (selectedOperator) {
-  //     siteDropdownData();
-  //   }
-  // }, [selectedOperator]);
-
   useEffect(() => {
+    if (!initLoad || incomingState) return;
+
     if (selectedOperator) {
       setProvidersName([]);
-      setGamesName(null);
       providerDropdownData();
-      gameDropdownData();
     }
   }, [selectedOperator]);
+
+  // 🔥 One clean initializer to handle incoming preloading
+  useEffect(() => {
+    if (!initLoad || !incomingState || regions.length === 0) return;
+
+    const initializeFlow = async () => {
+      try {
+        console.log("INIT ► Step 1: set region");
+        setSelectedRegion(incomingState.geography);
+
+        // Wait for region → operators API
+        await CompetitorData.post_operator_by_geography_lists({
+          region: incomingState.geography,
+        }).then((res) => {
+          if (res?.success === true) setOperators(res.data);
+        });
+
+        console.log("INIT ► Step 2: set operator");
+        setSelectedOperator(incomingState.operator_id);
+
+        // Wait for operator → providers API
+        await CompetitorData.get_providers_by_site({
+          operator_id: incomingState.operator_id,
+          geography: incomingState.geography,
+        }).then((res) => {
+          if (res?.success?.success === true) {
+            setProviderData(res.success.data);
+          }
+        });
+
+        console.log("INIT ► Step 3: set providers");
+        setProvidersName(incomingState.provider_name);
+
+        console.log("INIT ► Step 4: fetch competitor data");
+        await CompetitorData.get_casino_data({
+          operator_id: incomingState.operator_id,
+          geography: incomingState.geography,
+          provider_name: incomingState.provider_name,
+        }).then((res) => {
+          if (res?.success?.success === true) {
+            setData(res.success.data);
+          }
+        });
+
+        console.log("INIT ► Completed!");
+
+        setInitLoad(false);
+        setIncomingState(null);
+      } catch (err) {
+        console.error("Incoming initialization failed", err);
+      }
+    };
+
+    initializeFlow();
+  }, [incomingState, regions, initLoad]);
 
   useEffect(() => {
     if (!data || data.length === 0) return;
@@ -412,12 +396,8 @@ const CompetitorDashboardMod = () => {
                       onChange={(e) => {
                         setSelectedRegion(e.value);
                         setSelectedOperator(null);
-                        setSiteData([]);
-                        setSiteId(null);
                         setProviderData([]);
                         setProvidersName([]);
-                        setGameData([]);
-                        setGamesName(null);
                       }}
                       options={regions}
                       className="w-100"
@@ -441,7 +421,6 @@ const CompetitorDashboardMod = () => {
                       value={selectedOperator}
                       onChange={(e) => {
                         setSelectedOperator(e.value);
-                        setSiteId(null);
                       }}
                       options={operators}
                       itemTemplate={(option) => (
@@ -505,10 +484,7 @@ const CompetitorDashboardMod = () => {
                     disabled={!selectedOperator}
                     onClick={() => {
                       setSelectedOperator(null);
-                      setSiteId(null);
                       setProvidersName([]);
-                      setGamesName(null);
-                      setSiteData([]);
                       setData([]);
                       setTableData([]);
                       setUniquePositions([]);
@@ -518,56 +494,6 @@ const CompetitorDashboardMod = () => {
                   />
                 </div>
               </div>
-
-              {/* <div className="row g-3">
-                <div className="col-md-4">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="label"
-                      optionValue="value"
-                      filter
-                      placeholder="Select Site URL"
-                      loading={siteDataLoader}
-                      disabled={!selectedOperator}
-                      value={siteId}
-                      onChange={(e) => {
-                        setSiteId(e.value);
-                        const site = siteData.find((s) => s.value === e.value);
-                        setSelectedSiteDetails(site || null);
-                      }}
-                      options={siteData}
-                      itemTemplate={(option) => (
-                        <div title={option.label}>{option.label}</div>
-                      )}
-                      className="w-100"
-                      inputId="siteUrl"
-                    />
-                    <label className="fs-6" htmlFor="siteUrl">
-                      Site URL
-                    </label>
-                  </FloatLabel>
-                </div>
-
-                <div className="col-md-4">
-                  <FloatLabel>
-                    <MultiSelect
-                      value={gamesName}
-                      onChange={(e) => setGamesName(e.value)}
-                      options={gameData}
-                      loading={gameDataLoader}
-                      placeholder="Select Games"
-                      filter
-                      disabled={!selectedOperator}
-                      maxSelectedLabels={1}
-                      className="w-100"
-                      inputId="game"
-                    />
-                    <label className="fs-6" htmlFor="game">
-                      Games
-                    </label>
-                  </FloatLabel>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>

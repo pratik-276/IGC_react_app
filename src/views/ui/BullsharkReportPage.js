@@ -454,13 +454,13 @@ export default function BullsharkReportPage() {
                 console.log("operator_id:", row.casino_id);
                 console.log("provider_name:", row.provider_ids);
 
-                // navigate("/casino-view", {
-                //   state: {
-                //     geography: row.country,
-                //     operator_id: row.casino_id,
-                //     provider_name: row.provider_ids,
-                //   },
-                // });
+                navigate("/casino-view", {
+                  state: {
+                    geography: row.country,
+                    operator_id: row.casino_id,
+                    provider_name: row.provider_ids,
+                  },
+                });
               }}
             >
               <Column
