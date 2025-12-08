@@ -241,7 +241,7 @@ const App = () => {
                   />
 
                   <Route
-                    path="bullshark-report"
+                    path="competitor-dashboard"
                     element={
                       <ProtectedRoute>
                         <BullsharkReportPage />

@@ -86,14 +86,14 @@ const AppLayout = () => {
             icon: <FaChartLine />,
             children: [
                 {
-                    key: "/casino-view",
-                    icon: <MdDashboard />,
-                    label: "View Casino Data",
-                },
-                {
                     key: "/competitor-dashboard",
                     icon: <MdCasino />,
                     label: "Competitor Dashboard",
+                },
+                {
+                    key: "/casino-view",
+                    icon: <MdDashboard />,
+                    label: "View Casino Data",
                 },
             ],
         },
