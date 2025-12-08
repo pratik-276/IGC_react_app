@@ -449,18 +449,18 @@ export default function BullsharkReportPage() {
               onRowClick={(e) => {
                 const row = e.data;
 
-                // console.log("Row clicked:", row);
-                // console.log("geography:", row.country);
-                // console.log("operator_id:", row.casino_id);
-                // console.log("provider_name:", row.provider_ids);
+                console.log("Row clicked:", row);
+                console.log("geography:", row.country);
+                console.log("operator_id:", row.casino_id);
+                console.log("provider_name:", row.provider_ids);
 
-                navigate("/casino-view", {
-                  state: {
-                    geography: row.country,
-                    operator_id: row.casino_id,
-                    provider_name: row.provider_ids,
-                  },
-                });
+                // navigate("/casino-view", {
+                //   state: {
+                //     geography: row.country,
+                //     operator_id: row.casino_id,
+                //     provider_name: row.provider_ids,
+                //   },
+                // });
               }}
             >
               <Column
