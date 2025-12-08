@@ -29,24 +29,36 @@ import Papa from "papaparse";
 import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
+import toast from "react-hot-toast";
+import { useLocation } from "react-router-dom";
 
 const DEFAULT_GAME_IMAGE = "https://via.placeholder.com/60?text=No+Image";
+const providerColors = [
+  "#FFB3BA", // light red
+  "#BAE1FF", // light blue
+  "#BAFFC9", // light green
+  "#FFFFBA", // light yellow
+  "#E2BAFF", // light purple
+];
 
 const CompetitorDashboardMod = () => {
   const user_company = localStorage.getItem("user_company");
+  const location = useLocation();
+  const incoming = location.state;
+
   const [zoom, setZoom] = useState(1);
   const [regions, setRegions] = useState([]);
   const [selectedRegion, setSelectedRegion] = useState("United States");
 
   const [operators, setOperators] = useState([]);
-  const [selectedOperator, setSelectedOperator] = useState(null);
+  const [selectedOperator, setSelectedOperator] = useState("");
 
   const [siteData, setSiteData] = useState([]);
   const [siteId, setSiteId] = useState(null);
   const [selectedSiteDetails, setSelectedSiteDetails] = useState(null);
 
   const [providerData, setProviderData] = useState([]);
-  const [providersName, setProvidersName] = useState(null);
+  const [providersName, setProvidersName] = useState([]);
 
   const [gameData, setGameData] = useState([]);
   const [gamesName, setGamesName] = useState(null);
@@ -68,6 +80,11 @@ const CompetitorDashboardMod = () => {
   const isPlanExpired = state?.plan === "trial_expired";
   // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
+
+  const providerColorMap = {};
+  providersName.forEach((provId, index) => {
+    providerColorMap[provId] = providerColors[index];
+  });
 
   const getRegionsList = () => {
     setRegionLoading(true);
@@ -148,10 +165,10 @@ const CompetitorDashboardMod = () => {
     CompetitorData.get_providers_by_site(payload)
       .then((res) => {
         if (res?.success?.success === true) {
-          const formatted = (res.success.data || [])
-            .map((item) => item.provider_name)
-            .filter(Boolean);
-          setProviderData(formatted);
+          // const formatted = (res.success.data || [])
+          //   .map((item) => item.provider_name)
+          //   .filter(Boolean);
+          setProviderData(res.success.data);
           setProviderDataLoader(false);
         }
       })
@@ -217,6 +234,15 @@ const CompetitorDashboardMod = () => {
   }, []);
 
   useEffect(() => {
+    if (!incoming) return;
+
+    console.log("incoming data", incoming);
+    if (incoming.geography) setSelectedRegion(incoming.geography);
+    if (incoming.operator_id) setSelectedOperator(incoming.operator_id);
+    if (incoming.provider_name) setProvidersName(incoming.provider_name);
+  }, [incoming]);
+
+  useEffect(() => {
     if (selectedRegion) {
       operatorDropdownData();
     }
@@ -230,7 +256,7 @@ const CompetitorDashboardMod = () => {
 
   useEffect(() => {
     if (selectedOperator) {
-      setProvidersName(null);
+      setProvidersName([]);
       setGamesName(null);
       providerDropdownData();
       gameDropdownData();
@@ -269,6 +295,7 @@ const CompetitorDashboardMod = () => {
       //sectionMap[section][pos] = displayText;
       sectionMap[section][pos] = {
         text: displayText,
+        provider_id: item.provider_id,
         highlight: isHighlighted,
         image: item.stored_alias_url || DEFAULT_GAME_IMAGE,
       };
@@ -388,7 +415,7 @@ const CompetitorDashboardMod = () => {
                         setSiteData([]);
                         setSiteId(null);
                         setProviderData([]);
-                        setProvidersName(null);
+                        setProvidersName([]);
                         setGameData([]);
                         setGamesName(null);
                       }}
@@ -434,8 +461,16 @@ const CompetitorDashboardMod = () => {
                 <div className="col-md-3">
                   <FloatLabel>
                     <MultiSelect
+                      optionLabel="provider_name"
+                      optionValue="provider_id"
                       value={providersName}
-                      onChange={(e) => setProvidersName(e.value)}
+                      onChange={(e) => {
+                        if (e.value.length <= 5) {
+                          setProvidersName(e.value);
+                        } else {
+                          toast.error("You can select up to 5 providers only.");
+                        }
+                      }}
                       options={providerData}
                       loading={providerDataLoader}
                       placeholder="Select Providers"
@@ -471,7 +506,7 @@ const CompetitorDashboardMod = () => {
                     onClick={() => {
                       setSelectedOperator(null);
                       setSiteId(null);
-                      setProvidersName(null);
+                      setProvidersName([]);
                       setGamesName(null);
                       setSiteData([]);
                       setData([]);
@@ -727,9 +762,9 @@ const CompetitorDashboardMod = () => {
                             {/* Text (always visible) */}
                             <span
                               style={{
-                                backgroundColor: cell.highlight
-                                  ? "#ffeeba"
-                                  : "transparent",
+                                backgroundColor:
+                                  providerColorMap[cell.provider_id] ||
+                                  "transparent",
                                 padding: "2px 6px",
                                 borderRadius: "4px",
                                 display: "inline-block",
@@ -743,6 +778,32 @@ const CompetitorDashboardMod = () => {
                     />
                   ))}
                 </DataTable>
+                {providersName.length > 0 && (
+                  <div className="mt-3 d-flex gap-4 flex-wrap">
+                    {providersName.map((provId) => {
+                      const provider = providerData.find(
+                        (p) => p.provider_id === provId
+                      );
+                      return (
+                        <div
+                          key={provId}
+                          className="d-flex align-items-center gap-2"
+                        >
+                          <div
+                            style={{
+                              width: "18px",
+                              height: "18px",
+                              borderRadius: "4px",
+                              backgroundColor: providerColorMap[provId],
+                              border: "1px solid #999",
+                            }}
+                          />
+                          <span>{provider?.provider_name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
 
                 {isPlanExpired && (
                   <div

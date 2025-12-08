@@ -12,8 +12,10 @@ import { MdInfoOutline } from "react-icons/md";
 import BullsharkReport from "../../services/BullsharkReport";
 import toast from "react-hot-toast";
 import { Spin } from "antd";
+import { useNavigate } from "react-router-dom";
 
 export default function BullsharkReportPage() {
+  const navigate = useNavigate();
   const provider_id = localStorage.getItem("provider_id");
 
   const [markets, setMarkets] = useState([]);
@@ -158,13 +160,23 @@ export default function BullsharkReportPage() {
         grouped[key] = {
           country: item.country,
           casino: item.casino,
+
+          casino_id: item.casino_id || item.operator_id,
+          provider_ids: new Set(),
         };
+      }
+
+      if (item.provider_id) {
+        grouped[key].provider_ids.add(item.provider_id);
       }
 
       grouped[key][item.provider_name] = item.game_count;
     });
 
-    return Object.values(grouped);
+    return Object.values(grouped).map((row) => ({
+      ...row,
+      provider_ids: Array.from(row.provider_ids),
+    }));
   };
 
   useEffect(() => {
@@ -434,6 +446,22 @@ export default function BullsharkReportPage() {
               sortIcon={sortIconTemplate}
               sortField="casino"
               sortOrder={1}
+              onRowClick={(e) => {
+                const row = e.data;
+
+                // console.log("Row clicked:", row);
+                // console.log("geography:", row.country);
+                // console.log("operator_id:", row.casino_id);
+                // console.log("provider_name:", row.provider_ids);
+
+                navigate("/casino-view", {
+                  state: {
+                    geography: row.country,
+                    operator_id: row.casino_id,
+                    provider_name: row.provider_ids,
+                  },
+                });
+              }}
             >
               <Column
                 field="casino"
