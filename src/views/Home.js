@@ -279,10 +279,10 @@ const Home = () => {
                 onButtonPress={() => navigate("dashboard")}
                 title="Positions Dashboard"
               />
-              <ReportCard
+              {/* <ReportCard
                 onButtonPress={() => navigate("game-provider-marketshare")}
                 title="Provider Marketshare"
-              />
+              /> */}
               <ReportCard
                 onButtonPress={() => navigate("game-rank-report")}
                 title="Game Rank"

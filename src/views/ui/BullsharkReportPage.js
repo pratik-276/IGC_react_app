@@ -261,10 +261,10 @@ export default function BullsharkReportPage() {
           <div className="d-flex flex-column gap-3 justify-content-between">
             <div className="pb-3">
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Bullshark Report test
+                Competitor Dashboard
               </h4>
               <span className="text-black" style={{ fontSize: "1rem" }}>
-                Sample description text for Bullshark Report page.
+                Check how your competitors are doing in various markets
               </span>
             </div>
 
@@ -437,7 +437,7 @@ export default function BullsharkReportPage() {
               removableSort
               paginator
               rows={10}
-              rowsPerPageOptions={[5, 10, 25]}
+              rowsPerPageOptions={[10, 25, 50]}
               paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
               currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
               size="small"
@@ -468,7 +468,7 @@ export default function BullsharkReportPage() {
                 sortable
                 header={headerWithTooltip(
                   "Casino",
-                  "The name of the game provider",
+                  "Name of the selected casinos",
                   "casino"
                 )}
               ></Column>
@@ -478,7 +478,7 @@ export default function BullsharkReportPage() {
                 sortable
                 header={headerWithTooltip(
                   "Country",
-                  "The name of the game",
+                  "Selected country for the casino",
                   "country"
                 )}
               ></Column>
@@ -488,9 +488,10 @@ export default function BullsharkReportPage() {
                   <Column
                     key={provider}
                     field={provider}
+                    sortable
                     header={headerWithTooltip(
                       provider,
-                      `Count for ${provider}`,
+                      `Count of games for ${provider}`,
                       provider
                     )}
                     body={(rowData) => gameCountTemplate(rowData[provider])}

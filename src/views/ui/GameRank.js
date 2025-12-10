@@ -484,7 +484,7 @@ const GameRank = () => {
                   removableSort
                   paginator
                   rows={10}
-                  rowsPerPageOptions={[5, 10, 25]}
+                  rowsPerPageOptions={[10, 25, 50]}
                   paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                   size="small"
