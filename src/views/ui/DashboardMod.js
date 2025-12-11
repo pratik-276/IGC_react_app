@@ -642,7 +642,7 @@ const DashboardMod = () => {
                         xKey="casino_name_mod"
                         yKey="game_count"
                         xLabel="Game Count"
-                        barColor="#9405eb"
+                        barColor="#392f6c"
                         highlightKey="casino_name_mod"
                         highlightValues={
                           selectedCasinos?.map((x) => x.name) || []
@@ -658,7 +658,7 @@ const DashboardMod = () => {
                         xKey="game_name"
                         yKey="casino_count"
                         xLabel="Casino Count"
-                        barColor="#6E00B3"
+                        barColor="#392f6c"
                         highlightKey="game_name"
                         highlightValues={
                           selectedGames?.map((x) => x.name) || []
@@ -776,8 +776,8 @@ const DashboardMod = () => {
                           frozen
                           field="comb_occurence_count"
                           header={headerWithTooltip(
-                            "Occurences",
-                            "Count of occurences of the game on this casino",
+                            "Sections",
+                            "Count of sections of this casino on which the game is found",
                             "comb_occurence_count"
                           )}
                           sortable

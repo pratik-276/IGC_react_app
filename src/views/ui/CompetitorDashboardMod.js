@@ -32,7 +32,7 @@ import { useContactSales } from "../../context/confirmationContext";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
-const DEFAULT_GAME_IMAGE = "https://via.placeholder.com/60?text=No+Image";
+const DEFAULT_GAME_IMAGE = "https://placehold.co/60?text=No+Image";
 const providerColors = [
   "#FFB3BA", // light red
   "#BAE1FF", // light blue
@@ -257,7 +257,7 @@ const CompetitorDashboardMod = () => {
 
     // Step 1: Extract unique sorted game positions
     const positions = [
-      ...new Set(data.map((item) => item.game_position.toFixed(1))),
+      ...new Set(data.map((item) => item.game_position.toFixed(0))),
     ].sort((a, b) => parseFloat(a) - parseFloat(b));
     setUniquePositions(positions);
 
@@ -266,7 +266,7 @@ const CompetitorDashboardMod = () => {
 
     data.forEach((item) => {
       const section = item.section_title;
-      const pos = item.game_position.toFixed(1);
+      const pos = item.game_position.toFixed(0);
 
       const gameName = item.game_name?.trim() || "-";
       const providerName = item.provider_name?.trim() || "-";
@@ -322,7 +322,7 @@ const CompetitorDashboardMod = () => {
 
   const headerWithoutTooltip = (headerText) => (
     <div
-      className="d-flex align-items-center justify-content-between"
+      className="d-flex align-items-center justify-content-center"
       style={{ width: "100%" }}
     >
       <div className="d-flex align-items-center m-1">
@@ -519,7 +519,7 @@ const CompetitorDashboardMod = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-2">Latest Details</h5>
+                  <h5 className="font-semibold pl-0">Latest Details</h5>
 
                   {isPlanExpired ? (
                     <>
@@ -558,6 +558,34 @@ const CompetitorDashboardMod = () => {
                       </span>
                     </div>
                   )}
+                </div>
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                  {providersName.length > 0 && (
+                  <div className="mt-3 d-flex gap-4 flex-wrap">
+                    {providersName.map((provId) => {
+                      const provider = providerData.find(
+                        (p) => p.provider_id === provId
+                      );
+                      return (
+                        <div
+                          key={provId}
+                          className="d-flex align-items-center gap-2"
+                        >
+                          <div
+                            style={{
+                              width: "18px",
+                              height: "18px",
+                              borderRadius: "4px",
+                              backgroundColor: providerColorMap[provId],
+                              border: "1px solid #999",
+                            }}
+                          />
+                          <span>{provider?.provider_name}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                )}
                 </div>
 
                 {/* {selectedSiteDetails && (
@@ -643,9 +671,10 @@ const CompetitorDashboardMod = () => {
                       key={pos}
                       field={pos}
                       header={headerWithoutTooltip(pos)}
+                      align="center"
                       style={{
                         minWidth: "120px",
-                        whiteSpace: "normal",
+                        whiteSpace: "normal"
                       }}
                       body={(rowData) => {
                         const cell = rowData[pos];
@@ -709,32 +738,7 @@ const CompetitorDashboardMod = () => {
                     />
                   ))}
                 </DataTable>
-                {providersName.length > 0 && (
-                  <div className="mt-3 d-flex gap-4 flex-wrap">
-                    {providersName.map((provId) => {
-                      const provider = providerData.find(
-                        (p) => p.provider_id === provId
-                      );
-                      return (
-                        <div
-                          key={provId}
-                          className="d-flex align-items-center gap-2"
-                        >
-                          <div
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              borderRadius: "4px",
-                              backgroundColor: providerColorMap[provId],
-                              border: "1px solid #999",
-                            }}
-                          />
-                          <span>{provider?.provider_name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                
 
                 {isPlanExpired && (
                   <div
