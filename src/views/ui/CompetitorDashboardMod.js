@@ -173,6 +173,10 @@ const CompetitorDashboardMod = () => {
 
   useEffect(() => {
     getRegionsList();
+    if (!setIncomingState){
+      setInitLoad(false);
+      setIncomingState(null);
+    }
   }, []);
 
   useEffect(() => {
