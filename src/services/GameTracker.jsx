@@ -51,12 +51,21 @@ const mail_sales_team = async (data) => {
     method: "post",
     data,
   });
-  return d; 
+  return d;
 }
 
 const provider_latest_details = async (data) => {
   let d = await Call({
     path: "provider_dashboard_details",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const provider_latest_details_mod = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_main",
     method: "post",
     data,
   });
@@ -88,6 +97,7 @@ const exportObject = {
   tracker_detail,
   provider_summary,
   provider_latest_details,
+  provider_latest_details_mod,
   provider_dashboard_mapper,
   mail_sales_team,
   get_ai_insights

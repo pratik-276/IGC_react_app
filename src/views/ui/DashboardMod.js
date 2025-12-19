@@ -58,9 +58,9 @@ const DashboardMod = () => {
   const [casinoWiseCountData, setCasinoWiseCountData] = useState([]);
   const [gameWiseCountData, setGameWiseCountData] = useState([]);
 
-  const [selectedGames, setSelectedGames] = useState(null);
-  const [selectedCasinos, setSelectedCasinos] = useState(null);
-  const [selectedFreqs, setSelectedFreqs] = useState(null);
+  const [selectedGames, setSelectedGames] = useState([]);
+  const [selectedCasinos, setSelectedCasinos] = useState([]);
+  const [selectedCountries, setSelectedCountries] = useState([]);
   const [filteredData, setFilteredData] = useState([]);
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
@@ -78,24 +78,26 @@ const DashboardMod = () => {
   const gamesList =
     providerLatestDetails.length > 0
       ? Array.from(new Set(providerLatestDetails.map((item) => item.game_name)))
-          .sort()
-          .map((gameName) => ({ name: gameName, code: gameName }))
+        .sort()
+        .map((gameName) => ({ name: gameName, code: gameName }))
       : [];
 
   const casinosList =
     providerLatestDetails.length > 0
       ? Array.from(
-          new Set(providerLatestDetails.map((item) => item.casino_name))
-        )
-          .sort()
-          .map((casinoName) => ({ name: casinoName, code: casinoName }))
+        new Set(providerLatestDetails.map((item) => item.casino_name))
+      )
+        .sort()
+        .map((casinoName) => ({ name: casinoName, code: casinoName }))
       : [];
 
-  const freqsList =
+  const countryList =
     providerLatestDetails.length > 0
-      ? Array.from(new Set(providerLatestDetails.map((item) => item.frequency)))
-          .sort()
-          .map((freq) => ({ name: freq, code: freq }))
+      ? Array.from(
+        new Set(providerLatestDetails.map((item) => item.country_name))
+      )
+        .sort()
+        .map((countryName) => ({ name: countryName, code: countryName }))
       : [];
 
   const { state } = useContext(ProfileSystem);
@@ -106,19 +108,39 @@ const DashboardMod = () => {
   const handleGameBarClick = (entry) => {
     const gameName = entry.game_name;
 
-    setSelectedGames([{ name: gameName, code: gameName }]);
+    setSelectedGames(prev => {
+      const exists = prev.some(c => c.name === gameName);
+
+      if (exists) {
+        // remove
+        return prev.filter(c => c.name !== gameName);
+      }
+
+      // append
+      return [...prev, { name: gameName, code: gameName }];
+    });
   };
 
   const handleCasinoBarClick = (entry) => {
     const casinoName = entry.casino_name;
 
-    setSelectedCasinos([{ name: casinoName, code: casinoName }]);
+    setSelectedCasinos(prev => {
+      const exists = prev.some(c => c.name === casinoName);
+
+      if (exists) {
+        // remove
+        return prev.filter(c => c.name !== casinoName);
+      }
+
+      // append
+      return [...prev, { name: casinoName, code: casinoName }];
+    });
   };
 
   useEffect(() => {
     const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
     const savedCasinos = JSON.parse(localStorage.getItem("selectedCasinos"));
-    const savedFreqs = JSON.parse(localStorage.getItem("selectedFreqs"));
+    const savedCountries = JSON.parse(localStorage.getItem("selectedCountries"));
 
     if (savedGames) {
       setSelectedGames(savedGames);
@@ -126,8 +148,8 @@ const DashboardMod = () => {
     if (savedCasinos) {
       setSelectedCasinos(savedCasinos);
     }
-    if (savedFreqs) {
-      setSelectedFreqs(savedFreqs);
+    if (savedCountries) {
+      setSelectedCountries(savedCountries);
     }
   }, []);
 
@@ -138,10 +160,10 @@ const DashboardMod = () => {
     if (selectedCasinos !== null) {
       localStorage.setItem("selectedCasinos", JSON.stringify(selectedCasinos));
     }
-    if (selectedFreqs !== null) {
-      localStorage.setItem("selectedFreqs", JSON.stringify(selectedFreqs));
+    if (selectedCountries !== null) {
+      localStorage.setItem("selectedCountries", JSON.stringify(selectedCountries));
     }
-  }, [selectedGames, selectedCasinos, selectedFreqs]);
+  }, [selectedGames, selectedCasinos, selectedCountries]);
 
   useEffect(() => {
     let filtered = [...providerLatestDetails];
@@ -158,19 +180,19 @@ const DashboardMod = () => {
       );
     }
 
-    if (selectedFreqs && selectedFreqs.length > 0) {
+    if (selectedCountries && selectedCountries.length > 0) {
       filtered = filtered.filter((item) =>
-        selectedFreqs.some((freq) => freq.name === item.frequency)
+        selectedCountries.some((country) => country.name === item.country_name)
       );
     }
 
     //console.log("filtered", filtered);
     setFilteredData(filtered);
-  }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
+  }, [providerLatestDetails, selectedGames, selectedCasinos, selectedCountries]);
 
   const overviewDashboard = async () => {
     try {
-      const detailsRes = await GameData.provider_latest_details({
+      const detailsRes = await GameData.provider_latest_details_mod({
         game_provider: user_company,
       });
 
@@ -190,29 +212,8 @@ const DashboardMod = () => {
 
   useEffect(() => {
     overviewDashboard();
-    startInsights();
+    //startInsights();
   }, [user_id, user_company]);
-
-  // const actionBodyTemplate = (rowData) => {
-  //   return (
-  //     <MdArrowForwardIos
-  //       style={{ fontSize: "16px" }}
-  //       onClick={() => {
-  //         console.log(rowData);
-  //         navigate("/position-details", {
-  //           state: {
-  //             operator_site_id: rowData.operator_site_id,
-  //             game_name: rowData.game_name,
-  //             casino_name: rowData.casino_name,
-  //             country_name: rowData.country_name,
-  //             state_name: rowData.state,
-  //             site_url: rowData.site_url,
-  //           },
-  //         });
-  //       }}
-  //     />
-  //   );
-  // };
 
   const changeTemplate = (row) => {
     let growth = ";";
@@ -274,34 +275,6 @@ const DashboardMod = () => {
     );
   };
 
-  const evidanceTemplate = (rowData) => {
-    //setVideoURL(rowData?.video_url);
-    //console.log(rowData?.video_url);
-    const label =
-      "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
-    if (rowData?.video_url) {
-      return (
-        <Button
-          label={label}
-          icon="pi pi-play"
-          className="p-button-text"
-          onClick={() => {
-            setVideoURL(rowData?.video_url);
-            setVideoDialogVisible(true);
-          }}
-        />
-      );
-    } else {
-      return (
-        <Button
-          label={"No video"}
-          icon="pi pi-play"
-          className="p-button-text"
-          disabled
-        />
-      );
-    }
-  };
 
   const headerWithTooltip = (headerText, tooltipText, id) => (
     <div
@@ -341,15 +314,17 @@ const DashboardMod = () => {
     const filteredDataMod = filteredData.map((row) => ({
       "Casino Name": row.casino_name,
       "Country": row.country_name,
-      "Site URL": row.site_url,
+      //"Site URL": row.site_url,
       "Game Name": row.game_name,
-      "Sections": row.comb_occurence_count,
-      "Best Section Name": row.section_name,
-      "Best Section Position": row.section_position,
-      "Best Sectional Game Position": row.sectional_game_position,
-      "Best Overall Position": row.overall_position,
-      "Previous Overall Position": row.previous_overall_position,
-      "Growth": row.growth,
+      // "Total Sections": row.comb_occurence_count,
+      // "Best Section Name": row.section_name,
+      // "Best Section Position": row.section_position,
+      // "Best Sectional Game Position": row.sectional_game_position,
+      // "Best Overall Position": row.overall_position,
+      // "Previous Overall Position": row.previous_overall_position,
+      // "Growth": row.growth,
+      "Total Pages": row.url_count,
+      //"Total Game Positions": row.game_positions_count,
       "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
     }));
     const csv = Papa.unparse(filteredDataMod);
@@ -380,8 +355,8 @@ const DashboardMod = () => {
   const startInsights = async () => {
     // Start/Reset the insights workflow
     const ai_insights = await GameData.get_ai_insights({
-        dashboard: "provider_dashboard_summary",
-        provider: user_company,
+      dashboard: "provider_dashboard_summary",
+      provider: user_company,
     });
     console.log(ai_insights);
     setAllInsightList(ai_insights?.data?.ai_insights || []);
@@ -391,7 +366,7 @@ const DashboardMod = () => {
     // load next insight in sequence (max 3)
     const nextIndex = insights.length; // 0-based
     if (nextIndex >= 3) return; // nothing to load
-    if (nextIndex === 0){
+    if (nextIndex === 0) {
       setAiInsightsShow(true);
     }
 
@@ -456,13 +431,13 @@ const DashboardMod = () => {
                 maxSelectedLabels={10}
               />
               {/* <MultiSelect
-                value={selectedFreqs}
-                onChange={(e) => setSelectedFreqs(e.value)}
-                options={freqsList}
+                value={selectedCountries}
+                onChange={(e) => setSelectedCountries(e.value)}
+                options={countryList}
                 optionLabel="name"
                 filter
-                placeholder="Scan Frequency"
-                maxSelectedLabels={3}
+                placeholder="Select Countries"
+                maxSelectedLabels={10}
               /> */}
             </div>
           </div>
@@ -529,7 +504,7 @@ const DashboardMod = () => {
                       />
                     </div>
                   </div>
-                  
+
                   {/* --- NEW AI INSIGHTS SECTION (placed directly below Summary) --- */}
                   {aiInsightsShow && <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
                     <div className="d-flex align-items-center justify-content-between">
@@ -584,18 +559,18 @@ const DashboardMod = () => {
                       </div> */}
 
                       {insightsLoading ? (
-                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
-                            <Spin />
-                          </div>
-                        ) : insights.length >= 1 ? (
+                        <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                          <Spin />
+                        </div>
+                      ) : insights.length >= 1 ? (
                         <div style={{ marginTop: 16 }}>
                           {/* <h6 className="mb-2">Previous Insights</h6> */}
                           <Carousel value={insights} numVisible={1} numScroll={1} className="insights-carousel" autoplayInterval={0} circular={true} itemTemplate={(ins) => (
-                              <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
-                                <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
-                                <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
-                              </div>
-                            )} />
+                            <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
+                              <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
+                              <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
+                            </div>
+                          )} />
                         </div>
                       ) : (
                         <span></span>
@@ -629,10 +604,10 @@ const DashboardMod = () => {
                       </div>
 
                       {/* Carousel for already-loaded insights (Option B): show as soon as there are 2 insights loaded */}
-                      
+
                     </div>
                   </div>}
-                  
+
 
                   <div className="row mt-4">
                     <div className="col-md-6 mb-3">
@@ -640,11 +615,11 @@ const DashboardMod = () => {
                       <VerticalBarChart
                         data={casinoWiseCountData}
                         loading={loader}
-                        xKey="casino_name_mod"
+                        xKey="casino_name"
                         yKey="game_count"
                         xLabel="Game Count"
                         barColor="#392f6c"
-                        highlightKey="casino_name_mod"
+                        highlightKey="casino_name"
                         highlightValues={
                           selectedCasinos?.map((x) => x.name) || []
                         }
@@ -729,12 +704,12 @@ const DashboardMod = () => {
                           const rowData = e.data;
                           navigate("/position-details", {
                             state: {
-                              operator_site_id: rowData.operator_site_id,
+                              game_id: rowData.game_id,
                               game_name: rowData.game_name,
+                              casino_id: rowData.casino_id,
                               casino_name: rowData.casino_name,
                               country_name: rowData.country_name,
-                              state_name: rowData.state,
-                              site_url: rowData.site_url,
+                              state_name: rowData.state
                             },
                           });
                         }}
@@ -774,6 +749,29 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          frozen
+                          field="url_count"
+                          header={headerWithTooltip(
+                            "Total Pages",
+                            "Total number of pages on the casino on which the game is found",
+                            "url_count"
+                          )}
+                          sortable
+                        ></Column>
+
+
+                        {/* <Column
+                          frozen
+                          field="game_positions_count"
+                          header={headerWithTooltip(
+                            "Total Game Positions",
+                            "Count of game positions on the casino on which the game is found",
+                            "game_positions_count"
+                          )}
+                          sortable
+                        ></Column> */}
+
+                        {/* <Column
                           frozen
                           field="comb_occurence_count"
                           header={headerWithTooltip(
@@ -864,7 +862,7 @@ const DashboardMod = () => {
                               {rowData.site_url}
                             </a>
                           )}
-                        ></Column>
+                        ></Column> */}
 
                         {/* <Column
                           field="frequency"

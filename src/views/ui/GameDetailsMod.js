@@ -38,12 +38,12 @@ const GameDetailsMod = () => {
   const location = useLocation();
   console.log("location.state", location.state);
   const {
-    operator_site_id,
-    game_name,
+    casino_id,
     casino_name,
+    game_id,
+    game_name,
     country_name,
-    state_name,
-    site_url,
+    state_name
   } = location.state || {};
 
   const { state } = useContext(ProfileSystem);
@@ -64,28 +64,23 @@ const GameDetailsMod = () => {
   }, []);
 
   useEffect(() => {
-    if (startDate && endDate && operator_site_id && game_name) {
+    if (casino_id && game_id) {
       setLoader(true);
       getDashboardData({
-        site_id: operator_site_id,
-        game_name: game_name,
-        start_date: startDate,
-        end_date: endDate,
+        casino_id: casino_id,
+        game_id: game_id
       });
     }
-  }, [user_id, startDate, endDate]);
+  }, [user_id, casino_id, game_id]);
 
-  const getDashboardData = ({ site_id, game_name, start_date, end_date }) => {
+  const getDashboardData = ({ casino_id, game_id }) => {
     const user_company_2 = localStorage.getItem("user_company");
     call({
-      path: "tracker_dashboard_details_2",
+      path: "tracker_dashboard_details_3",
       method: "POST",
       data: {
-        operator_site_id: site_id,
-        game_name: game_name,
-        game_provider: user_company_2,
-        start_date: start_date,
-        end_date: end_date,
+        casino_id: casino_id,
+        game_id: game_id,
       },
     })
       .then((res) => {
@@ -137,7 +132,7 @@ const GameDetailsMod = () => {
               </div>
             </div>
 
-            <div className="d-flex gap-2">
+            {/* <div className="d-flex gap-2">
               <div>
                 <Calendar
                   value={startDate}
@@ -161,7 +156,7 @@ const GameDetailsMod = () => {
                   maxDate={new Date()}
                 />
               </div>
-            </div>
+            </div> */}
           </div>
         </div>
 
@@ -176,7 +171,7 @@ const GameDetailsMod = () => {
               </div>
             </div>
           </div>
-        ) : trackingDetails && trackingDetails.latest_position ? (
+        ) : trackingDetails ? (
           <>
             <div className="mt-3">
               <h5 className="font-semibold pl-2">Indicators</h5>
@@ -206,70 +201,12 @@ const GameDetailsMod = () => {
                 />
 
                 <InfoCard
-                  header="URL"
-                  tooltip="Shows site url for the selected casino"
-                  tooltipTarget="site_url"
-                  value={site_url}
+                  header="State"
+                  tooltip="Shows state name"
+                  tooltipTarget="state_name"
+                  value={state_name}
                   widthMod={true}
                 />
-              </div>
-            </div>
-
-            <div className="border border-secondary p-3 rounded-3 mt-3">
-              {/* Tracker Details Table */}
-              <div>
-                <h5 className="font-semibold pl-2">Latest Details</h5>
-
-                <div className="flex gap-2 mt-2">
-                  <InfoCard
-                    header="Overall Position"
-                    tooltip="Overall Position of game on casino"
-                    tooltipTarget="overall_game_nonvisible_position"
-                    value={
-                      trackingDetails.latest_position
-                        .overall_game_nonvisible_position
-                    }
-                  />
-                  <InfoCard
-                    header="Section Name"
-                    tooltip="Section in which the game resides"
-                    tooltipTarget="section_name"
-                    value={trackingDetails.latest_position.section_name}
-                  />
-                  <InfoCard
-                    header="Sectional Position"
-                    tooltip="Shows position of section within casino"
-                    tooltipTarget="section_position"
-                    value={trackingDetails.latest_position.section_position}
-                  />
-                  <InfoCard
-                    header="Sectional Game Position"
-                    tooltip="Shows position of game within section"
-                    tooltipTarget="game_position"
-                    value={trackingDetails.latest_position.game_position}
-                  />
-                  <InfoCard
-                    header="Latest Date"
-                    tooltip="Last date when the game was observed on the casino"
-                    tooltipTarget="created_date"
-                    // value={trackingDetails.latest_position.created_date}
-                    value={
-                      trackingDetails.latest_position.created_date
-                        ? new Date(
-                            trackingDetails.latest_position.created_date
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "N/A"
-                    }
-                  />
-                </div>
-
-                <div className="mt-4">
-                  <AveragePositionChart trackingDetails={trackingDetails} />
-                </div>
               </div>
             </div>
 
