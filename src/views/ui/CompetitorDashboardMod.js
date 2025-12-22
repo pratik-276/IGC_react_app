@@ -88,6 +88,7 @@ const CompetitorDashboardMod = () => {
             .map((region) => ({ label: region, value: region }));
 
           setRegions(cleaned);
+          operatorDropdownData();
         }
       })
       .catch((err) => {
@@ -158,8 +159,8 @@ const CompetitorDashboardMod = () => {
 
     CompetitorData.get_casino_data(payload)
       .then((res) => {
-        if (res?.success?.success === true) {
-          setData(res.success.data || null);
+        if (res?.success === true) {
+          setData(res.data || null);
           setLoader(false);
         }
       })
@@ -173,7 +174,7 @@ const CompetitorDashboardMod = () => {
 
   useEffect(() => {
     getRegionsList();
-    if (!setIncomingState){
+    if (!incomingState) {
       setInitLoad(false);
       setIncomingState(null);
     }
@@ -239,8 +240,8 @@ const CompetitorDashboardMod = () => {
           geography: incomingState.geography,
           provider_name: incomingState.provider_name,
         }).then((res) => {
-          if (res?.success?.success === true) {
-            setData(res.success.data);
+          if (res?.success === true) {
+            setData(res.data);
           }
         });
 
@@ -361,8 +362,8 @@ const CompetitorDashboardMod = () => {
           typeof row[pos] === "string"
             ? row[pos]
             : row[pos]
-            ? row[pos]["text"]
-            : "";
+              ? row[pos]["text"]
+              : "";
       });
 
       return formattedRow;
@@ -376,6 +377,8 @@ const CompetitorDashboardMod = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const options = { year: "numeric", month: "short", day: "numeric" };
 
   return (
     <>
@@ -523,7 +526,7 @@ const CompetitorDashboardMod = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-0">Latest Details</h5>
+                  <h5 className="font-semibold pl-0">Latest Details {data ? "(Scan Date: " + new Date(data[0].created_date).toLocaleDateString("en-US", options) + ")" : ""}</h5>
 
                   {isPlanExpired ? (
                     <>
@@ -565,31 +568,31 @@ const CompetitorDashboardMod = () => {
                 </div>
                 <div className="d-flex align-items-center justify-content-between mb-3">
                   {providersName.length > 0 && (
-                  <div className="mt-3 d-flex gap-4 flex-wrap">
-                    {providersName.map((provId) => {
-                      const provider = providerData.find(
-                        (p) => p.provider_id === provId
-                      );
-                      return (
-                        <div
-                          key={provId}
-                          className="d-flex align-items-center gap-2"
-                        >
+                    <div className="mt-3 d-flex gap-4 flex-wrap">
+                      {providersName.map((provId) => {
+                        const provider = providerData.find(
+                          (p) => p.provider_id === provId
+                        );
+                        return (
                           <div
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              borderRadius: "4px",
-                              backgroundColor: providerColorMap[provId],
-                              border: "1px solid #999",
-                            }}
-                          />
-                          <span>{provider?.provider_name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+                            key={provId}
+                            className="d-flex align-items-center gap-2"
+                          >
+                            <div
+                              style={{
+                                width: "18px",
+                                height: "18px",
+                                borderRadius: "4px",
+                                backgroundColor: providerColorMap[provId],
+                                border: "1px solid #999",
+                              }}
+                            />
+                            <span>{provider?.provider_name}</span>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
 
                 {/* {selectedSiteDetails && (
@@ -742,7 +745,7 @@ const CompetitorDashboardMod = () => {
                     />
                   ))}
                 </DataTable>
-                
+
 
                 {isPlanExpired && (
                   <div
