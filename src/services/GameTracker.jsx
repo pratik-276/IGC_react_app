@@ -72,6 +72,15 @@ const provider_latest_details_mod = async (data) => {
   return d;
 };
 
+const provider_latest_details_download = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_download",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const provider_dashboard_mapper = async (data) => {
   let d = await Call({
     path: "get_dashboard_links",
@@ -98,6 +107,7 @@ const exportObject = {
   provider_summary,
   provider_latest_details,
   provider_latest_details_mod,
+  provider_latest_details_download,
   provider_dashboard_mapper,
   mail_sales_team,
   get_ai_insights

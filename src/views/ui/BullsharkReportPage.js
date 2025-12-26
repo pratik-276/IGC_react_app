@@ -261,7 +261,7 @@ export default function BullsharkReportPage() {
           <div className="d-flex flex-column gap-3 justify-content-between">
             <div className="pb-3">
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Competitor Dashboard
+                Provider Comparison
               </h4>
               <span className="text-black" style={{ fontSize: "1rem" }}>
                 Check how your competitors are doing in various markets
@@ -277,7 +277,7 @@ export default function BullsharkReportPage() {
                       optionLabel="label"
                       optionValue="value"
                       filter
-                      placeholder="Select Market"
+                      placeholder="Select Region"
                       loading={marketLoading}
                       value={selectedMarket}
                       onChange={(e) => {
@@ -294,7 +294,7 @@ export default function BullsharkReportPage() {
                       inputId="market"
                     />
                     <label className="fs-6" htmlFor="market">
-                      Market
+                      Region
                     </label>
                   </FloatLabel>
                 </div>
@@ -376,7 +376,7 @@ export default function BullsharkReportPage() {
                       inputId="provider"
                     />
                     <label className="fs-6" htmlFor="provider">
-                      Provider
+                      Provider (Select up to 5)
                     </label>
                   </FloatLabel>
                 </div>

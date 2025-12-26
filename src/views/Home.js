@@ -46,6 +46,7 @@ const Home = () => {
       setProfile(res.data);
       localStorage.setItem("is_admin", res.data.is_admin);
       localStorage.setItem("provider_id", res.data.provider_id);
+      localStorage.setItem("user_company_category", res.data.category);
       // Patch for Admin Dashboard siderbar button visibility on first open
       navigate("/");
 
@@ -189,12 +190,12 @@ const Home = () => {
                     }}
                     onInputChange={(e) => {
                       //console.log(e);
-                      try{
+                      try {
                         const sText = e ? e.target ? e.target.value : "" : "";
                         setSearchText(e ? e.target ? e.target.value : "" : "");
-                        if(!operators.some(op => op.name.toLowerCase().includes(sText.toLowerCase())) && sText !== ""){
+                        if (!operators.some(op => op.name.toLowerCase().includes(sText.toLowerCase())) && sText !== "") {
                           setShowNoCasino(true);
-                        }else{
+                        } else {
                           setShowNoCasino(false);
                         }
                       } catch (error) {
@@ -212,9 +213,9 @@ const Home = () => {
                 {
                   // Not first time and menu is closed
                   isSearchMenuOpen != null &&
-                  !isSearchMenuOpen &&
-                  searchText != "" &&
-                  operators.map((op) => op.name)?.includes(searchText) ? (
+                    !isSearchMenuOpen &&
+                    searchText != "" &&
+                    operators.map((op) => op.name)?.includes(searchText) ? (
                     <div>
                       <TrackDetail
                         name={
@@ -225,15 +226,15 @@ const Home = () => {
                         }
                         name_show={
                           operators
-                          .filter(
-                            (o) => o.name.toLowerCase() === searchText.toLowerCase()
-                          )[0]
-                          ? `${operators.filter(
+                            .filter(
+                              (o) => o.name.toLowerCase() === searchText.toLowerCase()
+                            )[0]
+                            ? `${operators.filter(
                               (o) => o.name.toLowerCase() === searchText.toLowerCase()
                             )[0].name} (${operators.filter(
                               (o) => o.name.toLowerCase() === searchText.toLowerCase()
                             )[0].geographies} and more)`
-                          : ""
+                            : ""
                         }
                         url={
                           operators.filter(
@@ -252,14 +253,14 @@ const Home = () => {
                       <NoTrackerFound navigate={navigate} />
                     </div>
                   )
-                   : showNoCasino ? (
-                    <div>
-                      <NoTrackerFound navigate={navigate} />
-                    </div>
-                  )
-                  : (
-                    ""
-                  )
+                    : showNoCasino ? (
+                      <div>
+                        <NoTrackerFound navigate={navigate} />
+                      </div>
+                    )
+                      : (
+                        ""
+                      )
                 }
               </CardBody>
             </Card>

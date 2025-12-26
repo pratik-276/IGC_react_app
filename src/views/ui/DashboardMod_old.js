@@ -634,7 +634,7 @@ const DashboardMod = () => {
                   </div>}
 
 
-                  <div className="row mt-4">
+                  {/* <div className="row mt-4">
                     <div className="col-md-6 mb-3">
                       <h5 className="font-semibold pl-2">Casino wise Count</h5>
                       <VerticalBarChart
@@ -667,7 +667,7 @@ const DashboardMod = () => {
                         onBarClick={(entry) => handleGameBarClick(entry)}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Tracker Details Table */}
                   <div className="mt-3">

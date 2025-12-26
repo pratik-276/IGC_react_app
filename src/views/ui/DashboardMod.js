@@ -310,30 +310,44 @@ const DashboardMod = () => {
     return icon;
   };
 
-  const exportCSV = (filteredData) => {
-    const filteredDataMod = filteredData.map((row) => ({
-      "Casino Name": row.casino_name,
-      "Country": row.country_name,
-      //"Site URL": row.site_url,
-      "Game Name": row.game_name,
-      // "Total Sections": row.comb_occurence_count,
-      // "Best Section Name": row.section_name,
-      // "Best Section Position": row.section_position,
-      // "Best Sectional Game Position": row.sectional_game_position,
-      // "Best Overall Position": row.overall_position,
-      // "Previous Overall Position": row.previous_overall_position,
-      // "Growth": row.growth,
-      "Total Pages": row.url_count,
-      //"Total Game Positions": row.game_positions_count,
-      "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
-    }));
-    const csv = Papa.unparse(filteredDataMod);
-    const link = document.createElement("a");
-    link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-    link.download = "game_tracker_data.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+  const exportCSV = async (filteredData) => {
+    const downloadData = {
+      game_provider: user_company,
+    };
+    const downloadRes = await GameData.provider_latest_details_download(downloadData);
+    //console.log("downloadRes", downloadRes?.data);
+    if (downloadRes?.success === true) {
+      const csv = Papa.unparse(downloadRes?.data);
+      const link = document.createElement("a");
+      link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+      link.download = "game_tracker_data.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+    // const filteredDataMod = filteredData.map((row) => ({
+    //   "Casino Name": row.casino_name,
+    //   "Country": row.country_name,
+    //   //"Site URL": row.site_url,
+    //   "Game Name": row.game_name,
+    //   // "Total Sections": row.comb_occurence_count,
+    //   // "Best Section Name": row.section_name,
+    //   // "Best Section Position": row.section_position,
+    //   // "Best Sectional Game Position": row.sectional_game_position,
+    //   // "Best Overall Position": row.overall_position,
+    //   // "Previous Overall Position": row.previous_overall_position,
+    //   // "Growth": row.growth,
+    //   "Total Pages": row.url_count,
+    //   //"Total Game Positions": row.game_positions_count,
+    //   "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
+    // }));
+    // const csv = Papa.unparse(filteredDataMod);
+    // const link = document.createElement("a");
+    // link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+    // link.download = "game_tracker_data.csv";
+    // document.body.appendChild(link);
+    // link.click();
+    // document.body.removeChild(link);
   };
 
   // --- AI Insights logic ---
@@ -464,7 +478,7 @@ const DashboardMod = () => {
                     <div className="flex gap-2 mt-2">
                       <InfoCard
                         header="Game Count"
-                        tooltip="Shows total game count"
+                        tooltip="Shows total count of unique games found across all casinos"
                         tooltipTarget="game_count"
                         //value={providerSummary.game_count}
                         value={
@@ -475,7 +489,7 @@ const DashboardMod = () => {
 
                       <InfoCard
                         header="Casino Count"
-                        tooltip="Shows total casino count"
+                        tooltip="Shows total count of unique casinos hosting your games"
                         tooltipTarget="casino_count"
                         //value={providerSummary.casino_count}
                         value={
@@ -489,17 +503,12 @@ const DashboardMod = () => {
                       />
 
                       <InfoCard
-                        header="Casino-Game Combinations"
-                        tooltip="Shows total Casino-Game Combinations"
+                        header="Total Positions"
+                        tooltip="Shows total count of unique game positions across all casinos"
                         tooltipTarget="combination_count"
                         //value={providerSummary.combination_count}
                         value={
-                          new Set(
-                            filteredData.map(
-                              (item) =>
-                                `${item.casino_name}|${item.country_name}|${item.game_name}`
-                            )
-                          ).size
+                          filteredData.reduce((sum, item) => sum + (item.url_count || 0), 0)
                         }
                       />
                     </div>
@@ -609,7 +618,7 @@ const DashboardMod = () => {
                   </div>}
 
 
-                  <div className="row mt-4">
+                  {/* <div className="row mt-4">
                     <div className="col-md-6 mb-3">
                       <h5 className="font-semibold pl-2">Casino wise Count</h5>
                       <VerticalBarChart
@@ -642,7 +651,7 @@ const DashboardMod = () => {
                         onBarClick={(entry) => handleGameBarClick(entry)}
                       />
                     </div>
-                  </div>
+                  </div> */}
 
                   {/* Tracker Details Table */}
                   <div className="mt-3">

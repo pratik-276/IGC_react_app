@@ -49,7 +49,7 @@ const CompetitorDashboardMod = () => {
 
   const [zoom, setZoom] = useState(1);
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   const [operators, setOperators] = useState([]);
   const [selectedOperator, setSelectedOperator] = useState("");
@@ -66,7 +66,7 @@ const CompetitorDashboardMod = () => {
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [showImage, setShowImage] = useState(false);
+  const [showImage, setShowImage] = useState(true);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -402,7 +402,7 @@ const CompetitorDashboardMod = () => {
                       optionLabel="label"
                       optionValue="value"
                       filter
-                      placeholder="Select Region"
+                      placeholder="Select Country"
                       loading={regionLoading}
                       value={selectedRegion}
                       onChange={(e) => {
@@ -416,7 +416,7 @@ const CompetitorDashboardMod = () => {
                       inputId="region"
                     />
                     <label className="fs-6" htmlFor="region">
-                      Region
+                      Country
                     </label>
                   </FloatLabel>
                 </div>
@@ -472,7 +472,7 @@ const CompetitorDashboardMod = () => {
                       inputId="providers"
                     />
                     <label className="fs-6" htmlFor="providers">
-                      Providers
+                      Providers (Select up to 5)
                     </label>
                   </FloatLabel>
                 </div>
@@ -549,13 +549,13 @@ const CompetitorDashboardMod = () => {
                     </>
                   ) : (
                     <div className="d-flex align-items-center gap-2">
-                      <div className="d-flex align-items-center gap-2">
+                      {/* <div className="d-flex align-items-center gap-2">
                         <span style={{ fontSize: "14px" }}>Show Images</span>
                         <InputSwitch
                           checked={showImage}
                           onChange={(e) => setShowImage(e.value)}
                         />
-                      </div>
+                      </div> */}
 
                       <span
                         className="text-primary cursor-pointer"
@@ -709,8 +709,18 @@ const CompetitorDashboardMod = () => {
                           //   </span>
                           // </>
                           <div
-                            className="d-flex flex-column justify-content-center align-items-center"
-                            style={{ width: "100%", textAlign: "center" }}
+                            //className="d-flex flex-column justify-content-center align-items-center"
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              textAlign: "center",
+                              width: "100%", textAlign: "center", height: "181px",
+                              //position: "absolute",
+                              //inset: 0,
+                              backgroundColor: providerColorMap[cell.provider_id] || "transparent"
+                            }}
                           >
                             {/* SHOW IMAGE WHEN TOGGLE IS ON */}
                             {showImage && (
