@@ -51,12 +51,39 @@ const mail_sales_team = async (data) => {
     method: "post",
     data,
   });
-  return d; 
+  return d;
 }
 
 const provider_latest_details = async (data) => {
   let d = await Call({
     path: "provider_dashboard_details",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const provider_dashboard_main_mod = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_main_mod",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const get_casinos_provider_dashboard = async (data) => {
+  let d = await Call({
+    path: "get_casinos_provider_dashboard",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const get_games_provider_dashboard = async (data) => {
+  let d = await Call({
+    path: "get_games_provider_dashboard",
     method: "post",
     data,
   });
@@ -88,6 +115,9 @@ const exportObject = {
   tracker_detail,
   provider_summary,
   provider_latest_details,
+  provider_dashboard_main_mod,
+  get_casinos_provider_dashboard,
+  get_games_provider_dashboard,
   provider_dashboard_mapper,
   mail_sales_team,
   get_ai_insights

@@ -1,8 +1,11 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { MultiSelect } from "primereact/multiselect";
 import { DataTable } from "primereact/datatable";
+import { IconField } from "primereact/iconfield";
+import { InputIcon } from "primereact/inputicon";
+import { InputText } from "primereact/inputtext";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { Button } from "primereact/button";
@@ -11,8 +14,7 @@ import { Carousel } from "primereact/carousel";
 
 import { Spin } from "antd";
 
-import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
-import { RiAiGenerate } from "react-icons/ri";
+import { MdInfoOutline } from "react-icons/md";
 import { FaGem, FaLock, FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import dayjs from "dayjs";
@@ -33,70 +35,136 @@ import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 
-const VIDEO_URL =
-  "https://igc-videos.blr1.cdn.digitaloceanspaces.com/browser_recording_6.mp4";
-
-// Dummy insights used until the real API (Claude) is wired in
-const DUMMY_INSIGHTS = [
-  `Top performing games this week are concentrated in a few casinos in Malta and Sweden — consider prioritising monitoring for these markets.`,
-  `Certain games are repeatedly appearing in the "Featured" section across multiple sites; this suggests promotional activity or partnerships that could be affecting visibility.`,
-  `Games with a sudden positive growth often correlate with a recent UI change on the casino site. Flag these entries for evidence review.`,
-];
-
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
-  console.log(user_company);
-  const dt = useRef(null);
-  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState(null);
-  const [loader, setLoader] = useState(true);
-  const [providerSummary, setProviderSummary] = useState(null);
+  const [loader, setLoader] = useState(false);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
 
   const [casinoWiseCountData, setCasinoWiseCountData] = useState([]);
   const [gameWiseCountData, setGameWiseCountData] = useState([]);
 
+  const [gamesList, setGamesList] = useState([]);
+  const [casinosList, setCasinosList] = useState([]);
+  const [gamesLoader, setGamesLoader] = useState(true);
+  const [casinosLoader, setCasinosLoader] = useState(true);
+
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
-  const [selectedFreqs, setSelectedFreqs] = useState(null);
-  const [filteredData, setFilteredData] = useState([]);
+
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
 
-  // --- New states for AI Insights ---
-  const [aiInsightsShow, setAiInsightsShow] = useState(false);
-  const [allInsightList, setAllInsightList] = useState([]);
-  const [insights, setInsights] = useState([]); // array of { id, text }
-  const [currentInsightIndex, setCurrentInsightIndex] = useState(-1); // points to currently displayed insight
-  const [insightsLoading, setInsightsLoading] = useState(false);
-  const [insightsStarted, setInsightsStarted] = useState(false); // user has clicked Get AI Insights
-
   const arrayFromValues = Object.values(providerLatestDetails);
 
-  const gamesList =
-    providerLatestDetails.length > 0
-      ? Array.from(new Set(providerLatestDetails.map((item) => item.game_name)))
-          .sort()
-          .map((gameName) => ({ name: gameName, code: gameName }))
-      : [];
+  const PAGE_SIZE = 20;
+  const tableWrapperRef = useRef(null);
 
-  const casinosList =
-    providerLatestDetails.length > 0
-      ? Array.from(
-          new Set(providerLatestDetails.map((item) => item.casino_name))
-        )
-          .sort()
-          .map((casinoName) => ({ name: casinoName, code: casinoName }))
-      : [];
+  const pageRef = useRef(1);
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
+  const searchRef = useRef("");
+  const searchDebounceRef = useRef(null);
+  const sortFieldRef = useRef("last_observed_date");
+  const sortOrderRef = useRef("desc");
 
-  const freqsList =
-    providerLatestDetails.length > 0
-      ? Array.from(new Set(providerLatestDetails.map((item) => item.frequency)))
-          .sort()
-          .map((freq) => ({ name: freq, code: freq }))
-      : [];
+  const [hasMore, setHasMore] = useState(true);
+  const [tableData, setTableData] = useState([]);
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [tableLoading, setTableLoading] = useState(false);
+
+  useEffect(() => {
+    const wrapper = tableWrapperRef.current?.querySelector(
+      ".p-datatable-wrapper"
+    );
+
+    if (!wrapper) return;
+
+    const handleScroll = (e) => {
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+      if (pageRef.current === 1) return;
+
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
+        fetchTableData();
+      }
+    };
+
+    wrapper.addEventListener("scroll", handleScroll);
+    return () => wrapper.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const fetchTableData = async ({ reset = false } = {}) => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+
+    loadingRef.current = true;
+    setTableLoading(true);
+
+    try {
+      const currentPage = reset ? 1 : pageRef.current;
+
+      const res = await GameData.provider_dashboard_main_mod({
+        game_provider: user_company,
+        limit: PAGE_SIZE,
+        page: currentPage,
+        search: searchRef.current,
+        sort_by: sortFieldRef.current,
+        order: sortOrderRef.current,
+        games: selectedGames || [],
+        casinos: selectedCasinos || [],
+      });
+
+      if (res?.success) {
+        setTotalRecords(res.pagination.total);
+
+        setTableData((prev) => (reset ? res.data : [...prev, ...res.data]));
+
+        hasMoreRef.current =
+          res.pagination.current_page < res.pagination.total_pages;
+
+        setHasMore(hasMoreRef.current);
+
+        pageRef.current = res.pagination.current_page + 1;
+      }
+    } finally {
+      loadingRef.current = false;
+      setTableLoading(false);
+    }
+  };
+
+  const onSort = (e) => {
+    sortFieldRef.current = e.sortField;
+    sortOrderRef.current = e.sortOrder === 1 ? "asc" : "desc";
+
+    // reset pagination
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+    setHasMore(true);
+    setTableData([]);
+
+    fetchTableData({ reset: true });
+  };
+
+  useEffect(() => {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    searchDebounceRef.current = setTimeout(() => {
+      searchRef.current = searchTerm.trim();
+
+      pageRef.current = 1;
+      hasMoreRef.current = true;
+      setHasMore(true);
+      setTableData([]);
+      fetchTableData({ reset: true });
+    }, 500);
+
+    return () => clearTimeout(searchDebounceRef.current);
+  }, [searchTerm, selectedGames, selectedCasinos]);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -116,103 +184,67 @@ const DashboardMod = () => {
   };
 
   useEffect(() => {
-    const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
-    const savedCasinos = JSON.parse(localStorage.getItem("selectedCasinos"));
-    const savedFreqs = JSON.parse(localStorage.getItem("selectedFreqs"));
-
-    if (savedGames) {
-      setSelectedGames(savedGames);
-    }
-    if (savedCasinos) {
-      setSelectedCasinos(savedCasinos);
-    }
-    if (savedFreqs) {
-      setSelectedFreqs(savedFreqs);
-    }
+    getCasinosProviders();
+    getGamesProviders();
   }, []);
 
-  useEffect(() => {
-    if (selectedGames !== null) {
-      localStorage.setItem("selectedGames", JSON.stringify(selectedGames));
-    }
-    if (selectedCasinos !== null) {
-      localStorage.setItem("selectedCasinos", JSON.stringify(selectedCasinos));
-    }
-    if (selectedFreqs !== null) {
-      localStorage.setItem("selectedFreqs", JSON.stringify(selectedFreqs));
-    }
-  }, [selectedGames, selectedCasinos, selectedFreqs]);
+  // const overviewDashboard = async () => {
+  //   try {
+  //     const detailsRes = await GameData.provider_latest_details({
+  //       game_provider: user_company,
+  //     });
 
-  useEffect(() => {
-    let filtered = [...providerLatestDetails];
+  //     if (detailsRes?.success === true) {
+  //       setProviderLatestDetails(detailsRes?.data || []);
+  //       setCasinoWiseCountData(detailsRes?.extra_data?.casino_wise_count || []);
+  //       setGameWiseCountData(detailsRes?.extra_data?.game_wise_count || []);
+  //     } else {
+  //       console.log("Failed to fetch latest details");
+  //     }
+  //   } catch (err) {
+  //     console.log(err);
+  //   } finally {
+  //     setLoader(false);
+  //   }
+  // };
 
-    if (selectedGames && selectedGames.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedGames.some((game) => game.name === item.game_name)
-      );
-    }
-
-    if (selectedCasinos && selectedCasinos.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedCasinos.some((casino) => casino.name === item.casino_name)
-      );
-    }
-
-    if (selectedFreqs && selectedFreqs.length > 0) {
-      filtered = filtered.filter((item) =>
-        selectedFreqs.some((freq) => freq.name === item.frequency)
-      );
-    }
-
-    //console.log("filtered", filtered);
-    setFilteredData(filtered);
-  }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
-
-  const overviewDashboard = async () => {
+  const getCasinosProviders = async () => {
     try {
-      const detailsRes = await GameData.provider_latest_details({
+      const response = await GameData.get_casinos_provider_dashboard({
         game_provider: user_company,
       });
 
-      if (detailsRes?.success === true) {
-        setProviderLatestDetails(detailsRes?.data || []);
-        setCasinoWiseCountData(detailsRes?.extra_data?.casino_wise_count || []);
-        setGameWiseCountData(detailsRes?.extra_data?.game_wise_count || []);
+      if (response?.success === true) {
+        console.log(response);
+        setCasinosList(response?.data || []);
       } else {
-        console.log("Failed to fetch latest details");
+        console.log("Failed to fetch casinos list");
       }
     } catch (err) {
       console.log(err);
     } finally {
-      setLoader(false);
+      setCasinosLoader(false);
     }
   };
 
-  useEffect(() => {
-    overviewDashboard();
-    startInsights();
-  }, [user_id, user_company]);
+  const getGamesProviders = async () => {
+    try {
+      const response = await GameData.get_games_provider_dashboard({
+        game_provider: user_company,
+      });
 
-  // const actionBodyTemplate = (rowData) => {
-  //   return (
-  //     <MdArrowForwardIos
-  //       style={{ fontSize: "16px" }}
-  //       onClick={() => {
-  //         console.log(rowData);
-  //         navigate("/position-details", {
-  //           state: {
-  //             operator_site_id: rowData.operator_site_id,
-  //             game_name: rowData.game_name,
-  //             casino_name: rowData.casino_name,
-  //             country_name: rowData.country_name,
-  //             state_name: rowData.state,
-  //             site_url: rowData.site_url,
-  //           },
-  //         });
-  //       }}
-  //     />
-  //   );
-  // };
+      if (response?.success === true) {
+        console.log(response);
+        setGamesList(response?.data || []);
+      } else {
+        console.log("Failed to fetch games list");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setGamesLoader(false);
+    }
+  };
 
   const changeTemplate = (row) => {
     let growth = ";";
@@ -337,78 +369,30 @@ const DashboardMod = () => {
     return icon;
   };
 
-  const exportCSV = (filteredData) => {
-    const filteredDataMod = filteredData.map((row) => ({
-      "Casino Name": row.casino_name,
-      "Country": row.country_name,
-      "Site URL": row.site_url,
-      "Game Name": row.game_name,
-      "Section Name": row.section_name,
-      "Section Position": row.section_position,
-      "Sectional Game Position": row.sectional_game_position,
-      "Overall Position": row.overall_position,
-      "Previous Overall Position": row.previous_overall_position,
-      "Growth": row.growth,
-      "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
-    }));
-    const csv = Papa.unparse(filteredDataMod);
-    const link = document.createElement("a");
-    link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-    link.download = "game_tracker_data.csv";
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
-
-  // --- AI Insights logic ---
-  const resetInsights = () => {
-    setInsights([]);
-    setCurrentInsightIndex(-1);
-    setInsightsStarted(false);
-  };
-
-  const simulateFetchInsight = async (index) => {
-    // Placeholder for real API call to Claude. Replace this block with your API call.
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({ id: index + 1, text: allInsightList[index] });
-      }, 900);
-    });
-  };
-
-  const startInsights = async () => {
-    // Start/Reset the insights workflow
-    const ai_insights = await GameData.get_ai_insights({
-        dashboard: "provider_dashboard_summary",
-        provider: user_company,
-    });
-    console.log(ai_insights);
-    setAllInsightList(ai_insights?.data?.ai_insights || []);
-  };
-
-  const loadNextInsight = async () => {
-    // load next insight in sequence (max 3)
-    const nextIndex = insights.length; // 0-based
-    if (nextIndex >= 3) return; // nothing to load
-    if (nextIndex === 0){
-      setAiInsightsShow(true);
-    }
-
-    setInsightsLoading(true);
-    try {
-      const insight = await simulateFetchInsight(nextIndex);
-      setInsights((prev) => [...prev, insight]);
-      setCurrentInsightIndex(nextIndex);
-    } catch (err) {
-      console.error("Insight fetch failed", err);
-    } finally {
-      setInsightsLoading(false);
-    }
-  };
-
-  const onSelectInsightFromCarousel = (idx) => {
-    setCurrentInsightIndex(idx);
-  };
+  // const exportCSV = (filteredData) => {
+  //   const filteredDataMod = filteredData.map((row) => ({
+  //     "Casino Name": row.casino_name,
+  //     Country: row.country_name,
+  //     "Site URL": row.site_url,
+  //     "Game Name": row.game_name,
+  //     "Section Name": row.section_name,
+  //     "Section Position": row.section_position,
+  //     "Sectional Game Position": row.sectional_game_position,
+  //     "Overall Position": row.overall_position,
+  //     "Previous Overall Position": row.previous_overall_position,
+  //     Growth: row.growth,
+  //     "Last Observed Date": row.last_observed_date
+  //       ? row.last_observed_date.split("T")[0]
+  //       : "",
+  //   }));
+  //   const csv = Papa.unparse(filteredDataMod);
+  //   const link = document.createElement("a");
+  //   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+  //   link.download = "game_tracker_data.csv";
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // };
 
   return (
     <>
@@ -424,45 +408,29 @@ const DashboardMod = () => {
               </span>
             </div>
 
-            <div className="d-flex gap-2">
-              {/* <div className="d-flex mr-2">
-                <Button 
-                  className="p-0" 
-                  style={{fontSize: "18px", backgroundColor: "white", border: "0px", color: "#392f6c"}}
-                  onClick={loadNextInsight}
-                >
-                  <RiAiGenerate />
-                  <p className="mb-0 ml-1">Summarize with AI</p>
-                </Button>
-                
-              </div> */}
+            <div className="d-flex gap-2 w-100 justify-content-end">
               <MultiSelect
-                value={selectedGames}
-                onChange={(e) => setSelectedGames(e.value)}
                 options={gamesList}
-                optionLabel="name"
+                optionLabel="game_name"
+                optionValue="game_id"
                 filter
                 placeholder="Select Games"
-                maxSelectedLabels={10}
+                loading={gamesLoader}
+                value={selectedGames}
+                onChange={(e) => setSelectedGames(e.value)}
+                className="w-12rem"
               />
               <MultiSelect
-                value={selectedCasinos}
-                onChange={(e) => setSelectedCasinos(e.value)}
                 options={casinosList}
-                optionLabel="name"
+                optionLabel="casino_name"
+                optionValue="operator_id"
                 filter
                 placeholder="Select Casinos"
-                maxSelectedLabels={10}
+                loading={casinosLoader}
+                value={selectedCasinos}
+                onChange={(e) => setSelectedCasinos(e.value)}
+                className="w-12rem"
               />
-              {/* <MultiSelect
-                value={selectedFreqs}
-                onChange={(e) => setSelectedFreqs(e.value)}
-                options={freqsList}
-                optionLabel="name"
-                filter
-                placeholder="Scan Frequency"
-                maxSelectedLabels={3}
-              /> */}
             </div>
           </div>
         </div>
@@ -490,151 +458,52 @@ const DashboardMod = () => {
                         header="Game Count"
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
-                        //value={providerSummary.game_count}
-                        value={
-                          new Set(filteredData.map((item) => item.game_name))
-                            .size
-                        }
+                        value={10}
+                        // value={providerSummary.game_count}
+                        // value={
+                        //   new Set(filteredData.map((item) => item.game_name))
+                        //     .size
+                        // }
                       />
 
                       <InfoCard
                         header="Casino Count"
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
-                        //value={providerSummary.casino_count}
-                        value={
-                          new Set(
-                            filteredData.map(
-                              (item) =>
-                                `${item.casino_name}|${item.country_name}`
-                            )
-                          ).size
-                        }
+                        value={10}
+                        // value={providerSummary.casino_count}
+                        // value={
+                        //   new Set(
+                        //     filteredData.map(
+                        //       (item) =>
+                        //         `${item.casino_name}|${item.country_name}`
+                        //     )
+                        //   ).size
+                        // }
                       />
 
                       <InfoCard
                         header="Casino-Game Combinations"
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
-                        //value={providerSummary.combination_count}
-                        value={
-                          new Set(
-                            filteredData.map(
-                              (item) =>
-                                `${item.casino_name}|${item.country_name}|${item.game_name}`
-                            )
-                          ).size
-                        }
+                        value={10}
+                        // value={providerSummary.combination_count}
+                        // value={
+                        //   new Set(
+                        //     filteredData.map(
+                        //       (item) =>
+                        //         `${item.casino_name}|${item.country_name}|${item.game_name}`
+                        //     )
+                        //   ).size
+                        // }
                       />
                     </div>
                   </div>
-                  
-                  {/* --- NEW AI INSIGHTS SECTION (placed directly below Summary) --- */}
-                  {aiInsightsShow && <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
-                    <div className="d-flex align-items-center justify-content-between">
-                      <h5 className="font-semibold">AI Insights</h5>
-                      <div>
-                        {/* {!insightsStarted ? (
-                          <Button
-                            label="Get AI Insights"
-                            icon="pi pi-robot"
-                            onClick={startInsights}
-                            className="p-button-primary"
-                          />
-                        ) : (
-                          <Button
-                            label="Reset Insights"
-                            icon="pi pi-refresh"
-                            onClick={resetInsights}
-                            className="p-button-text"
-                          />
-                        )} */}
-                        <Button
-                          label={
-                            insights.length === 3
-                              ? "All insights loaded"
-                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
-                          }
-                          // icon="pi pi-angle-right"
-                          onClick={loadNextInsight}
-                          className="mx-auto"
-                          disabled={insightsLoading || insights.length >= 3}
-                        />
-                      </div>
-                    </div>
+                </div>
 
-                    <div style={{ marginTop: 12 }}>
-                      {/* Main insight preview area */}
-                      {/* <div className="insight-preview p-3 rounded-2" style={{ minHeight: 100, transition: 'opacity 400ms ease' }}>
-                        {insightsLoading ? (
-                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
-                            <Spin />
-                          </div>
-                        ) : insights.length === 0 && !insightsStarted ? (
-                          <div className="text-muted">Click "Get AI Insights" to generate 3 insights based on the data shown below.</div>
-                        ) : insights.length === 0 && insightsStarted ? (
-                          <div className="text-muted">Loading first insight...</div>
-                        ) : (
-                          <div>
-                            <h6 className="fw-bold">Insight #{currentInsightIndex + 1}</h6>
-                            <p style={{ margin: 0 }}>{insights[currentInsightIndex]?.text}</p>
-                          </div>
-                        )}
-                      </div> */}
-
-                      {insightsLoading ? (
-                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
-                            <Spin />
-                          </div>
-                        ) : insights.length >= 1 ? (
-                        <div style={{ marginTop: 16 }}>
-                          {/* <h6 className="mb-2">Previous Insights</h6> */}
-                          <Carousel value={insights} numVisible={1} numScroll={1} className="insights-carousel" autoplayInterval={0} circular={true} itemTemplate={(ins) => (
-                              <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
-                                <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
-                                <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
-                              </div>
-                            )} />
-                        </div>
-                      ) : (
-                        <span></span>
-                      )}
-
-                      <div className="d-flex justify-content-between align-items-center gap-2 mt-2">
-                        {/* <Button
-                          label="Previous Insight"
-                          icon="pi pi-angle-left"
-                          disabled={currentInsightIndex <= 0}
-                          onClick={() => setCurrentInsightIndex((i) => Math.max(0, i - 1))}
-                          className="p-button-text"
-                        /> */}
-                        {/* <span style={{visibility: "hidden"}}>0/3 loaded</span> */}
-
-                        {/* <Button
-                          label={
-                            insights.length === 3
-                              ? "All insights loaded"
-                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
-                          }
-                          // icon="pi pi-angle-right"
-                          onClick={loadNextInsight}
-                          className="mx-auto"
-                          disabled={insightsLoading || insights.length >= DUMMY_INSIGHTS.length}
-                        /> */}
-
-                        {/* <div>
-                          <span className="text-muted">{insights.length}/{DUMMY_INSIGHTS.length} loaded</span>
-                        </div> */}
-                      </div>
-
-                      {/* Carousel for already-loaded insights (Option B): show as soon as there are 2 insights loaded */}
-                      
-                    </div>
-                  </div>}
-                  
-
-                  <div className="row mt-4">
-                    <div className="col-md-6 mb-3">
+                <div className="border border-secondary p-3 rounded-3 mt-3">
+                  <div className="row">
+                    <div className="col-md-6">
                       <h5 className="font-semibold pl-2">Casino wise Count</h5>
                       <VerticalBarChart
                         data={casinoWiseCountData}
@@ -644,13 +513,13 @@ const DashboardMod = () => {
                         xLabel="Game Count"
                         barColor="#9405eb"
                         highlightKey="casino_name_mod"
-                        highlightValues={
-                          selectedCasinos?.map((x) => x.name) || []
-                        }
+                        // highlightValues={
+                        //   selectedCasinos?.map((x) => x.name) || []
+                        // }
                         onBarClick={(entry) => handleCasinoBarClick(entry)}
                       />
                     </div>
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-6">
                       <h5 className="font-semibold pl-2">Game wise Count</h5>
                       <VerticalBarChart
                         data={gameWiseCountData}
@@ -660,83 +529,114 @@ const DashboardMod = () => {
                         xLabel="Casino Count"
                         barColor="#6E00B3"
                         highlightKey="game_name"
-                        highlightValues={
-                          selectedGames?.map((x) => x.name) || []
-                        }
+                        // highlightValues={
+                        //   selectedGames?.map((x) => x.name) || []
+                        // }
                         onBarClick={(entry) => handleGameBarClick(entry)}
                       />
                     </div>
                   </div>
+                </div>
 
+                <div className="border border-secondary p-3 rounded-3 mt-3">
                   {/* Tracker Details Table */}
-                  <div className="mt-3">
-                    <div className="d-flex align-items-center justify-content-between">
-                      <h5 className="font-semibold pl-2">Latest Details</h5>
-                      {isPlanExpired ? (
-                        <>
-                          <span
-                            className="text-muted"
-                            id="download-disabled"
-                            style={{
-                              cursor: "not-allowed",
-                              textDecoration: "underline dotted",
-                            }}
-                          >
-                            Download Report
-                          </span>
-                          <Tooltip
-                            target="#download-disabled"
-                            content="Upgrade your plan to download the report"
-                            position="top"
-                          />
-                        </>
-                      ) : (
+
+                  <div className="d-flex align-items-center justify-content-between">
+                    <h5 className="font-semibold pl-2">Latest Details</h5>
+                    {isPlanExpired ? (
+                      <>
                         <span
+                          className="text-muted"
+                          id="download-disabled"
+                          style={{
+                            cursor: "not-allowed",
+                            textDecoration: "underline dotted",
+                          }}
+                        >
+                          Download Report
+                        </span>
+                        <Tooltip
+                          target="#download-disabled"
+                          content="Upgrade your plan to download the report"
+                          position="top"
+                        />
+                      </>
+                    ) : (
+                      <div className="d-flex align-items-center gap-1 mb-2">
+                        <IconField iconPosition="left">
+                          <InputIcon className="pi pi-search"> </InputIcon>
+                          <InputText
+                            placeholder="Search..."
+                            className="w-12rem"
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                          />
+                        </IconField>
+                        <Button
+                          icon="pi pi-download"
+                          tooltip="Download Report"
+                          tooltipOptions={{ position: "top" }}
+                          rounded
+                          // onClick={() => exportCSV(filteredData)}
+                        />
+                        {/* <span
                           className="text-primary cursor-pointer"
                           onClick={() => exportCSV(filteredData)}
                         >
                           Download Report
-                        </span>
-                      )}
-                    </div>
+                        </span> */}
+                      </div>
+                    )}
+                  </div>
 
-                    <div>
+                  <div>
+                    {/* <DataTable
+                      ref={dt}
+                      // value={filteredData}
+                      value={
+                        isPlanExpired ? filteredData.slice(0, 3) : filteredData
+                      }
+                      selection={selectedRows}
+                      onSelectionChange={(e) => setSelectedRows(e.value)}
+                      dataKey="comb_id"
+                      removableSort
+                      paginator={!isPlanExpired}
+                      rows={10}
+                      rowsPerPageOptions={[5, 10, 25]}
+                      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                      size="small"
+                      className="table-bordered p-component p-datatable custom-table small"
+                      scrollable
+                      sortIcon={sortIconTemplate}
+                      sortField="last_observed_date"
+                      sortOrder={-1}
+                      onRowClick={(e) => {
+                        const rowData = e.data;
+                        navigate("/position-details", {
+                          state: {
+                            operator_site_id: rowData.operator_site_id,
+                            game_name: rowData.game_name,
+                            casino_name: rowData.casino_name,
+                            country_name: rowData.country_name,
+                            state_name: rowData.state,
+                            site_url: rowData.site_url,
+                          },
+                        });
+                      }}
+                    > */}
+                    <div ref={tableWrapperRef}>
                       <DataTable
-                        ref={dt}
-                        //value={filteredData}
-                        value={
-                          isPlanExpired
-                            ? filteredData.slice(0, 3)
-                            : filteredData
-                        }
-                        selection={selectedRows}
-                        onSelectionChange={(e) => setSelectedRows(e.value)}
+                        value={tableData}
                         dataKey="comb_id"
-                        removableSort
-                        paginator={!isPlanExpired}
-                        rows={10}
-                        rowsPerPageOptions={[5, 10, 25]}
-                        paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                        size="small"
-                        className="table-bordered p-component p-datatable custom-table small"
+                        lazy
                         scrollable
-                        sortIcon={sortIconTemplate}
-                        sortField="last_observed_date"
-                        sortOrder={-1}
-                        onRowClick={(e) => {
-                          const rowData = e.data;
-                          navigate("/position-details", {
-                            state: {
-                              operator_site_id: rowData.operator_site_id,
-                              game_name: rowData.game_name,
-                              casino_name: rowData.casino_name,
-                              country_name: rowData.country_name,
-                              state_name: rowData.state,
-                              site_url: rowData.site_url,
-                            },
-                          });
-                        }}
+                        scrollHeight="600px"
+                        loading={tableLoading}
+                        onSort={onSort}
+                        sortField={sortFieldRef.current}
+                        sortOrder={sortOrderRef.current === "asc" ? 1 : -1}
+                        className="table-bordered p-datatable custom-table small"
                       >
                         <Column
                           frozen
@@ -772,7 +672,7 @@ const DashboardMod = () => {
                           sortable
                         ></Column>
 
-                        <Column
+                        {/*  <Column
                           frozen
                           field="comb_occurence_count"
                           header={headerWithTooltip(
@@ -865,7 +765,7 @@ const DashboardMod = () => {
                           )}
                         ></Column>
 
-                        {/* <Column
+                        <Column
                           field="frequency"
                           header={headerWithTooltip(
                             "Site Freq",
@@ -916,37 +816,42 @@ const DashboardMod = () => {
                           body={actionBodyTemplate}
                         ></Column> */}
                       </DataTable>
-
-                      {isPlanExpired && (
-                        <div
-                          className="d-flex flex-column align-items-center justify-content-center py-4"
-                          style={{
-                            background: "#f8f8f8",
-                            borderRadius: "8px",
-                            border: "1px solid #ccc",
-                            marginTop: "1rem",
-                          }}
-                        >
-                          <FaLock
-                            style={{
-                              fontSize: "2rem",
-                              marginBottom: "0.5rem",
-                              color: "#392f6c",
-                            }}
-                          />
-                          <p className="fw-bold m-1">
-                            To access the complete data, please upgrade your
-                            plan.
-                          </p>
-                          <Button
-                            className="btn-upgrade"
-                            onClick={showContactSalesConfirmation}
-                          >
-                            <FaGem /> <span>Upgrade Plan</span>
-                          </Button>
-                        </div>
-                      )}
                     </div>
+
+                    {!hasMore && (
+                      <div className="text-center text-muted p-2">
+                        All records loaded
+                      </div>
+                    )}
+
+                    {isPlanExpired && (
+                      <div
+                        className="d-flex flex-column align-items-center justify-content-center py-4"
+                        style={{
+                          background: "#f8f8f8",
+                          borderRadius: "8px",
+                          border: "1px solid #ccc",
+                          marginTop: "1rem",
+                        }}
+                      >
+                        <FaLock
+                          style={{
+                            fontSize: "2rem",
+                            marginBottom: "0.5rem",
+                            color: "#392f6c",
+                          }}
+                        />
+                        <p className="fw-bold m-1">
+                          To access the complete data, please upgrade your plan.
+                        </p>
+                        <Button
+                          className="btn-upgrade"
+                          onClick={showContactSalesConfirmation}
+                        >
+                          <FaGem /> <span>Upgrade Plan</span>
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </>
