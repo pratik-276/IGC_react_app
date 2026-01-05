@@ -7,18 +7,22 @@ import { GoPencil } from "react-icons/go";
 import toast from "react-hot-toast";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { FormFeedback, Input, Label } from "reactstrap";
+import CompassData from "../../services/CompassApi";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { IoCheckmarkSharp } from "react-icons/io5";
 import Loader from "../../layouts/loader/Loader";
+import Select from "react-select";
 
 const ProfileMenu = () => {
   const user_id = localStorage.getItem("user_id");
+  const is_admin = localStorage.getItem("is_admin");
   const { dispatch: profilename, state: namestate } = useContext(ProfileSystem);
   const { dispatch: profileemail, state: emailstate } =
     useContext(ProfileSystem);
 
   const [profileData, setProfileData] = useState([]);
+  const [providerList, setProviderList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [editProfileData, setEditProfileData] = useState(null);
 
@@ -33,6 +37,7 @@ const ProfileMenu = () => {
       .then((res) => {
         if (res?.success === true) {
           setProfileData(res?.data);
+          localStorage.setItem("user_company", res?.data.company);
           setLoading(false);
         }
       })
@@ -43,6 +48,26 @@ const ProfileMenu = () => {
     if (user_id) {
       getProfile();
     }
+    CompassData.get_provider()
+      .then((res) => {
+        if (res?.success && Array.isArray(res.data)) {
+          const cleaned = res.data
+            .filter(
+              (record) =>
+                record?.game_provider_name &&
+                typeof record.game_provider_name === "string"
+            )
+            .map((record) => ({
+              label: record.game_provider_name,
+              value: record.game_provider_name,
+            }));
+
+          setProviderList(cleaned);
+        }
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, [user_id]);
 
   const profileMenuDrawer = (data) => {
@@ -386,11 +411,11 @@ const ProfileMenu = () => {
                   onChange={formik.handleChange}
                   onBlur={formik.handleBlur}
                   value={formik.values.first_name || ""}
-                  // invalid={
-                  //   formik.touched.first_name && formik.errors.first_name
-                  //     ? true
-                  //     : false
-                  // }
+                // invalid={
+                //   formik.touched.first_name && formik.errors.first_name
+                //     ? true
+                //     : false
+                // }
                 />
                 {/* {formik.touched.first_name && formik.errors.first_name ? (
                   <FormFeedback type="invalid">
@@ -482,17 +507,41 @@ const ProfileMenu = () => {
           <div className="row">
             <div className="col-md-7 mb-2">
               <div className="form-group">
-                <Label className="form-label">Company Name</Label>
-                <Input
-                  name="company"
-                  type="text"
-                  className="form-control"
-                  placeholder="Enter company name"
-                  onChange={companyFormik.handleChange}
-                  onBlur={companyFormik.handleBlur}
-                  value={companyFormik.values.company || ""}
-                  disabled
-                />
+                <Label className="form-label">Company Name12</Label>
+                {is_admin == 1 ? (
+                  <Select
+                    name="company"
+                    placeholder="Select company name"
+                    options={providerList}
+                    value={providerList.find(
+                      opt => opt.value === companyFormik.values.company
+                    )}
+                    onChange={(selected) =>
+                      companyFormik.setFieldValue(
+                        "company",
+                        selected ? selected.value : ""
+                      )
+                    }
+                    onBlur={() => companyFormik.setFieldTouched("company", true)}
+                    isClearable
+                    isSearchable
+                    menuPortalTarget={document.body}
+                    styles={{
+                      menuPortal: base => ({ ...base, zIndex: 9999 })
+                    }}
+                  />
+                ) : (
+                  <Input
+                    name="company"
+                    type="text"
+                    className="form-control"
+                    placeholder="Enter company name"
+                    onChange={companyFormik.handleChange}
+                    onBlur={companyFormik.handleBlur}
+                    value={companyFormik.values.company || ""}
+                    disabled
+                  />
+                )}
               </div>
             </div>
             <div className="col-md-7 mb-2">
