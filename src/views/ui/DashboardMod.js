@@ -459,11 +459,11 @@ const DashboardMod = () => {
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
                         value={10}
-                        // value={providerSummary.game_count}
-                        // value={
-                        //   new Set(filteredData.map((item) => item.game_name))
-                        //     .size
-                        // }
+                      // value={providerSummary.game_count}
+                      // value={
+                      //   new Set(filteredData.map((item) => item.game_name))
+                      //     .size
+                      // }
                       />
 
                       <InfoCard
@@ -471,15 +471,15 @@ const DashboardMod = () => {
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
                         value={10}
-                        // value={providerSummary.casino_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}`
-                        //     )
-                        //   ).size
-                        // }
+                      // value={providerSummary.casino_count}
+                      // value={
+                      //   new Set(
+                      //     filteredData.map(
+                      //       (item) =>
+                      //         `${item.casino_name}|${item.country_name}`
+                      //     )
+                      //   ).size
+                      // }
                       />
 
                       <InfoCard
@@ -487,21 +487,21 @@ const DashboardMod = () => {
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
                         value={10}
-                        // value={providerSummary.combination_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}|${item.game_name}`
-                        //     )
-                        //   ).size
-                        // }
+                      // value={providerSummary.combination_count}
+                      // value={
+                      //   new Set(
+                      //     filteredData.map(
+                      //       (item) =>
+                      //         `${item.casino_name}|${item.country_name}|${item.game_name}`
+                      //     )
+                      //   ).size
+                      // }
                       />
                     </div>
                   </div>
                 </div>
 
-                <div className="border border-secondary p-3 rounded-3 mt-3">
+                {/* <div className="border border-secondary p-3 rounded-3 mt-3">
                   <div className="row">
                     <div className="col-md-6">
                       <h5 className="font-semibold pl-2">Casino wise Count</h5>
@@ -536,7 +536,7 @@ const DashboardMod = () => {
                       />
                     </div>
                   </div>
-                </div>
+                </div> */}
 
                 <div className="border border-secondary p-3 rounded-3 mt-3">
                   {/* Tracker Details Table */}
@@ -577,7 +577,7 @@ const DashboardMod = () => {
                           tooltip="Download Report"
                           tooltipOptions={{ position: "top" }}
                           rounded
-                          // onClick={() => exportCSV(filteredData)}
+                        // onClick={() => exportCSV(filteredData)}
                         />
                         {/* <span
                           className="text-primary cursor-pointer"
