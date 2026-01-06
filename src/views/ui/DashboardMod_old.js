@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState, useContext } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { MultiSelect } from "primereact/multiselect";
@@ -12,6 +12,7 @@ import { Carousel } from "primereact/carousel";
 import { Spin } from "antd";
 
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
+import { RiAiGenerate } from "react-icons/ri";
 import { FaGem, FaLock, FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 import dayjs from "dayjs";
@@ -20,8 +21,10 @@ import Papa from "papaparse";
 import InfoCard from "../../charts/InfoCard";
 import GameData from "../../services/GameTracker";
 
+import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
+import VerticalBarChart from "../../charts/PositionDashbaordPage/VerticalBarChart";
 
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -51,6 +54,10 @@ const DashboardMod = () => {
   const [loader, setLoader] = useState(true);
   const [providerSummary, setProviderSummary] = useState(null);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
+
+  const [casinoWiseCountData, setCasinoWiseCountData] = useState([]);
+  const [gameWiseCountData, setGameWiseCountData] = useState([]);
+
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
   const [selectedFreqs, setSelectedFreqs] = useState(null);
@@ -59,6 +66,8 @@ const DashboardMod = () => {
   const [videoURL, setVideoURL] = useState(null);
 
   // --- New states for AI Insights ---
+  const [aiInsightsShow, setAiInsightsShow] = useState(false);
+  const [allInsightList, setAllInsightList] = useState([]);
   const [insights, setInsights] = useState([]); // array of { id, text }
   const [currentInsightIndex, setCurrentInsightIndex] = useState(-1); // points to currently displayed insight
   const [insightsLoading, setInsightsLoading] = useState(false);
@@ -69,29 +78,42 @@ const DashboardMod = () => {
   const gamesList =
     providerLatestDetails.length > 0
       ? Array.from(new Set(providerLatestDetails.map((item) => item.game_name)))
-          .sort()
-          .map((gameName) => ({ name: gameName, code: gameName }))
+        .sort()
+        .map((gameName) => ({ name: gameName, code: gameName }))
       : [];
 
   const casinosList =
     providerLatestDetails.length > 0
       ? Array.from(
-          new Set(providerLatestDetails.map((item) => item.casino_name))
-        )
-          .sort()
-          .map((casinoName) => ({ name: casinoName, code: casinoName }))
+        new Set(providerLatestDetails.map((item) => item.casino_name))
+      )
+        .sort()
+        .map((casinoName) => ({ name: casinoName, code: casinoName }))
       : [];
 
   const freqsList =
     providerLatestDetails.length > 0
       ? Array.from(new Set(providerLatestDetails.map((item) => item.frequency)))
-          .sort()
-          .map((freq) => ({ name: freq, code: freq }))
+        .sort()
+        .map((freq) => ({ name: freq, code: freq }))
       : [];
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
+  //const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
+
+  const handleGameBarClick = (entry) => {
+    const gameName = entry.game_name;
+
+    setSelectedGames([{ name: gameName, code: gameName }]);
+  };
+
+  const handleCasinoBarClick = (entry) => {
+    const casinoName = entry.casino_name;
+
+    setSelectedCasinos([{ name: casinoName, code: casinoName }]);
+  };
 
   useEffect(() => {
     const savedGames = JSON.parse(localStorage.getItem("selectedGames"));
@@ -142,6 +164,7 @@ const DashboardMod = () => {
       );
     }
 
+    //console.log("filtered", filtered);
     setFilteredData(filtered);
   }, [providerLatestDetails, selectedGames, selectedCasinos, selectedFreqs]);
 
@@ -153,6 +176,8 @@ const DashboardMod = () => {
 
       if (detailsRes?.success === true) {
         setProviderLatestDetails(detailsRes?.data || []);
+        setCasinoWiseCountData(detailsRes?.extra_data?.casino_wise_count || []);
+        setGameWiseCountData(detailsRes?.extra_data?.game_wise_count || []);
       } else {
         console.log("Failed to fetch latest details");
       }
@@ -165,28 +190,29 @@ const DashboardMod = () => {
 
   useEffect(() => {
     overviewDashboard();
+    //startInsights();
   }, [user_id, user_company]);
 
-  const actionBodyTemplate = (rowData) => {
-    return (
-      <MdArrowForwardIos
-        style={{ fontSize: "16px" }}
-        onClick={() => {
-          console.log(rowData);
-          navigate("/position-details", {
-            state: {
-              operator_site_id: rowData.operator_site_id,
-              game_name: rowData.game_name,
-              casino_name: rowData.casino_name,
-              country_name: rowData.country_name,
-              state_name: rowData.state,
-              site_url: rowData.site_url,
-            },
-          });
-        }}
-      />
-    );
-  };
+  // const actionBodyTemplate = (rowData) => {
+  //   return (
+  //     <MdArrowForwardIos
+  //       style={{ fontSize: "16px" }}
+  //       onClick={() => {
+  //         console.log(rowData);
+  //         navigate("/position-details", {
+  //           state: {
+  //             operator_site_id: rowData.operator_site_id,
+  //             game_name: rowData.game_name,
+  //             casino_name: rowData.casino_name,
+  //             country_name: rowData.country_name,
+  //             state_name: rowData.state,
+  //             site_url: rowData.site_url,
+  //           },
+  //         });
+  //       }}
+  //     />
+  //   );
+  // };
 
   const changeTemplate = (row) => {
     let growth = ";";
@@ -249,6 +275,8 @@ const DashboardMod = () => {
   };
 
   const evidanceTemplate = (rowData) => {
+    //setVideoURL(rowData?.video_url);
+    //console.log(rowData?.video_url);
     const label =
       "As on " + dayjs(rowData?.video_created_at).format("MMM D, YYYY");
     if (rowData?.video_url) {
@@ -315,10 +343,11 @@ const DashboardMod = () => {
       "Country": row.country_name,
       "Site URL": row.site_url,
       "Game Name": row.game_name,
-      "Section Name": row.section_name,
-      "Section Position": row.section_position,
-      "Sectional Game Position": row.sectional_game_position,
-      "Overall Position": row.overall_position,
+      "Sections": row.comb_occurence_count,
+      "Best Section Name": row.section_name,
+      "Best Section Position": row.section_position,
+      "Best Sectional Game Position": row.sectional_game_position,
+      "Best Overall Position": row.overall_position,
       "Previous Overall Position": row.previous_overall_position,
       "Growth": row.growth,
       "Last Observed Date": row.last_observed_date ? row.last_observed_date.split("T")[0] : "",
@@ -343,31 +372,28 @@ const DashboardMod = () => {
     // Placeholder for real API call to Claude. Replace this block with your API call.
     return new Promise((resolve) => {
       setTimeout(() => {
-        resolve({ id: index + 1, text: DUMMY_INSIGHTS[index] });
+        resolve({ id: index + 1, text: allInsightList[index] });
       }, 900);
     });
   };
 
   const startInsights = async () => {
     // Start/Reset the insights workflow
-    resetInsights();
-    setInsightsStarted(true);
-    setInsightsLoading(true);
-    try {
-      const insight = await simulateFetchInsight(0);
-      setInsights([insight]);
-      setCurrentInsightIndex(0);
-    } catch (err) {
-      console.error("Insight fetch failed", err);
-    } finally {
-      setInsightsLoading(false);
-    }
+    const ai_insights = await GameData.get_ai_insights({
+      dashboard: "provider_dashboard_summary",
+      provider: user_company,
+    });
+    console.log(ai_insights);
+    setAllInsightList(ai_insights?.data?.ai_insights || []);
   };
 
   const loadNextInsight = async () => {
     // load next insight in sequence (max 3)
     const nextIndex = insights.length; // 0-based
-    if (nextIndex >= DUMMY_INSIGHTS.length) return; // nothing to load
+    if (nextIndex >= 3) return; // nothing to load
+    if (nextIndex === 0) {
+      setAiInsightsShow(true);
+    }
 
     setInsightsLoading(true);
     try {
@@ -400,6 +426,17 @@ const DashboardMod = () => {
             </div>
 
             <div className="d-flex gap-2">
+              {/* <div className="d-flex mr-2">
+                <Button 
+                  className="p-0" 
+                  style={{fontSize: "18px", backgroundColor: "white", border: "0px", color: "#392f6c"}}
+                  onClick={loadNextInsight}
+                >
+                  <RiAiGenerate />
+                  <p className="mb-0 ml-1">Summarize with AI</p>
+                </Button>
+                
+              </div> */}
               <MultiSelect
                 value={selectedGames}
                 onChange={(e) => setSelectedGames(e.value)}
@@ -418,6 +455,15 @@ const DashboardMod = () => {
                 placeholder="Select Casinos"
                 maxSelectedLabels={10}
               />
+              {/* <MultiSelect
+                value={selectedFreqs}
+                onChange={(e) => setSelectedFreqs(e.value)}
+                options={freqsList}
+                optionLabel="name"
+                filter
+                placeholder="Scan Frequency"
+                maxSelectedLabels={3}
+              /> */}
             </div>
           </div>
         </div>
@@ -445,6 +491,7 @@ const DashboardMod = () => {
                         header="Game Count"
                         tooltip="Shows total game count"
                         tooltipTarget="game_count"
+                        //value={providerSummary.game_count}
                         value={
                           new Set(filteredData.map((item) => item.game_name))
                             .size
@@ -455,6 +502,7 @@ const DashboardMod = () => {
                         header="Casino Count"
                         tooltip="Shows total casino count"
                         tooltipTarget="casino_count"
+                        //value={providerSummary.casino_count}
                         value={
                           new Set(
                             filteredData.map(
@@ -469,6 +517,7 @@ const DashboardMod = () => {
                         header="Casino-Game Combinations"
                         tooltip="Shows total Casino-Game Combinations"
                         tooltipTarget="combination_count"
+                        //value={providerSummary.combination_count}
                         value={
                           new Set(
                             filteredData.map(
@@ -482,11 +531,11 @@ const DashboardMod = () => {
                   </div>
 
                   {/* --- NEW AI INSIGHTS SECTION (placed directly below Summary) --- */}
-                  <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
+                  {aiInsightsShow && <div className="mt-3 p-3 rounded-2 border" style={{ background: '#ffffff' }}>
                     <div className="d-flex align-items-center justify-content-between">
                       <h5 className="font-semibold">AI Insights</h5>
-                      {/* <div>
-                        {!insightsStarted ? (
+                      <div>
+                        {/* {!insightsStarted ? (
                           <Button
                             label="Get AI Insights"
                             icon="pi pi-robot"
@@ -500,8 +549,19 @@ const DashboardMod = () => {
                             onClick={resetInsights}
                             className="p-button-text"
                           />
-                        )}
-                      </div> */}
+                        )} */}
+                        <Button
+                          label={
+                            insights.length === 3
+                              ? "All insights loaded"
+                              : insights.length === 0 ? "Get AI Insights" : "Next Insight"
+                          }
+                          // icon="pi pi-angle-right"
+                          onClick={loadNextInsight}
+                          className="mx-auto"
+                          disabled={insightsLoading || insights.length >= 3}
+                        />
+                      </div>
                     </div>
 
                     <div style={{ marginTop: 12 }}>
@@ -524,18 +584,18 @@ const DashboardMod = () => {
                       </div> */}
 
                       {insightsLoading ? (
-                          <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
-                            <Spin />
-                          </div>
-                        ) : insights.length >= 1 ? (
+                        <div className="d-flex align-items-center justify-content-center" style={{ height: 80 }}>
+                          <Spin />
+                        </div>
+                      ) : insights.length >= 1 ? (
                         <div style={{ marginTop: 16 }}>
                           {/* <h6 className="mb-2">Previous Insights</h6> */}
                           <Carousel value={insights} numVisible={1} numScroll={1} className="insights-carousel" autoplayInterval={0} circular={true} itemTemplate={(ins) => (
-                              <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
-                                <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
-                                <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
-                              </div>
-                            )} />
+                            <div key={ins.id} className="p-3 rounded-2" style={{ border: '1px solid #e9e9e9', minHeight: 80, cursor: 'pointer' }} onClick={() => onSelectInsightFromCarousel(ins.id - 1)}>
+                              <h6 style={{ margin: 0 }}>Insight #{ins.id}</h6>
+                              <p style={{ margin: '4px 0 0 0', fontSize: '0.95rem' }}>{ins.text}</p>
+                            </div>
+                          )} />
                         </div>
                       ) : (
                         <span></span>
@@ -549,9 +609,9 @@ const DashboardMod = () => {
                           onClick={() => setCurrentInsightIndex((i) => Math.max(0, i - 1))}
                           className="p-button-text"
                         /> */}
-                        <span style={{visibility: "hidden"}}>0/3 loaded</span>
+                        {/* <span style={{visibility: "hidden"}}>0/3 loaded</span> */}
 
-                        <Button
+                        {/* <Button
                           label={
                             insights.length === 3
                               ? "All insights loaded"
@@ -559,18 +619,55 @@ const DashboardMod = () => {
                           }
                           // icon="pi pi-angle-right"
                           onClick={loadNextInsight}
+                          className="mx-auto"
                           disabled={insightsLoading || insights.length >= DUMMY_INSIGHTS.length}
-                        />
+                        /> */}
 
-                        <div>
+                        {/* <div>
                           <span className="text-muted">{insights.length}/{DUMMY_INSIGHTS.length} loaded</span>
-                        </div>
+                        </div> */}
                       </div>
 
                       {/* Carousel for already-loaded insights (Option B): show as soon as there are 2 insights loaded */}
-                      
+
                     </div>
-                  </div>
+                  </div>}
+
+
+                  {/* <div className="row mt-4">
+                    <div className="col-md-6 mb-3">
+                      <h5 className="font-semibold pl-2">Casino wise Count</h5>
+                      <VerticalBarChart
+                        data={casinoWiseCountData}
+                        loading={loader}
+                        xKey="casino_name_mod"
+                        yKey="game_count"
+                        xLabel="Game Count"
+                        barColor="#392f6c"
+                        highlightKey="casino_name_mod"
+                        highlightValues={
+                          selectedCasinos?.map((x) => x.name) || []
+                        }
+                        onBarClick={(entry) => handleCasinoBarClick(entry)}
+                      />
+                    </div>
+                    <div className="col-md-6 mb-3">
+                      <h5 className="font-semibold pl-2">Game wise Count</h5>
+                      <VerticalBarChart
+                        data={gameWiseCountData}
+                        loading={loader}
+                        xKey="game_name"
+                        yKey="casino_count"
+                        xLabel="Casino Count"
+                        barColor="#392f6c"
+                        highlightKey="game_name"
+                        highlightValues={
+                          selectedGames?.map((x) => x.name) || []
+                        }
+                        onBarClick={(entry) => handleGameBarClick(entry)}
+                      />
+                    </div>
+                  </div> */}
 
                   {/* Tracker Details Table */}
                   <div className="mt-3">
@@ -607,6 +704,7 @@ const DashboardMod = () => {
                     <div>
                       <DataTable
                         ref={dt}
+                        //value={filteredData}
                         value={
                           isPlanExpired
                             ? filteredData.slice(0, 3)
@@ -618,7 +716,7 @@ const DashboardMod = () => {
                         removableSort
                         paginator={!isPlanExpired}
                         rows={10}
-                        rowsPerPageOptions={[5, 10, 25]}
+                        rowsPerPageOptions={[10, 25, 50]}
                         paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                         currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                         size="small"
@@ -627,6 +725,19 @@ const DashboardMod = () => {
                         sortIcon={sortIconTemplate}
                         sortField="last_observed_date"
                         sortOrder={-1}
+                        onRowClick={(e) => {
+                          const rowData = e.data;
+                          navigate("/position-details", {
+                            state: {
+                              operator_site_id: rowData.operator_site_id,
+                              game_name: rowData.game_name,
+                              casino_name: rowData.casino_name,
+                              country_name: rowData.country_name,
+                              state_name: rowData.state,
+                              site_url: rowData.site_url,
+                            },
+                          });
+                        }}
                       >
                         <Column
                           frozen
@@ -663,10 +774,21 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
+                          frozen
+                          field="comb_occurence_count"
+                          header={headerWithTooltip(
+                            "Sections",
+                            "Count of sections of this casino on which the game is found",
+                            "comb_occurence_count"
+                          )}
+                          sortable
+                        ></Column>
+
+                        <Column
                           field="section_name"
                           header={headerWithTooltip(
-                            "Sec Name",
-                            "Section within casino where game was found",
+                            "Best Sec",
+                            "Best section within casino where game was found",
                             "section_name"
                           )}
                           sortable
@@ -676,8 +798,8 @@ const DashboardMod = () => {
                         <Column
                           field="section_position"
                           header={headerWithTooltip(
-                            "Sec Pos",
-                            "Position of the section within casino page",
+                            "Best Sec Pos",
+                            "Position of the best section within casino page",
                             "section_position"
                           )}
                           sortable
@@ -687,8 +809,8 @@ const DashboardMod = () => {
                         <Column
                           field="sectional_game_position"
                           header={headerWithTooltip(
-                            "Game Pos",
-                            "Position of game within the section",
+                            "Best Game Pos",
+                            "Best position of game within the section",
                             "sectional_game_position"
                           )}
                           sortable
@@ -744,6 +866,17 @@ const DashboardMod = () => {
                           )}
                         ></Column>
 
+                        {/* <Column
+                          field="frequency"
+                          header={headerWithTooltip(
+                            "Site Freq",
+                            "Frequency at which the site is scanned",
+                            "frequency"
+                          )}
+                          sortable
+                          style={{ minWidth: "10rem" }}
+                        ></Column> */}
+
                         <Column
                           field="last_observed_date"
                           header={headerWithTooltip(
@@ -760,6 +893,17 @@ const DashboardMod = () => {
                           style={{ minWidth: "7rem" }}
                         ></Column>
 
+                        {/* <Column
+                          field="evidance"
+                          header={headerWithTooltip(
+                            "Evidence",
+                            "Evidence",
+                            "evidance"
+                          )}
+                          body={evidanceTemplate}
+                          style={{ minWidth: "13rem" }}
+                        ></Column>
+
                         <Column
                           frozen
                           alignFrozen="right"
@@ -771,7 +915,7 @@ const DashboardMod = () => {
                           )}
                           className="text-center"
                           body={actionBodyTemplate}
-                        ></Column>
+                        ></Column> */}
                       </DataTable>
 
                       {isPlanExpired && (

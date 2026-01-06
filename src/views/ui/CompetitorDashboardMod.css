@@ -56,6 +56,11 @@
     transition: background-color 0.2s ease-in-out;
 }
 
+.custom-competitor-table .p-datatable-tbody>tr>td,
+.custom-competitor-table .p-datatable-thead>tr>th {
+    padding: 0;
+}
+
 .custom-tooltip .p-tooltip {
     z-index: 9999 !important;
     position: absolute;

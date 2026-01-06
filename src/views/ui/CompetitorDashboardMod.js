@@ -32,7 +32,7 @@ import { useContactSales } from "../../context/confirmationContext";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 
-const DEFAULT_GAME_IMAGE = "https://via.placeholder.com/60?text=No+Image";
+const DEFAULT_GAME_IMAGE = "https://placehold.co/60?text=No+Image";
 const providerColors = [
   "#FFB3BA", // light red
   "#BAE1FF", // light blue
@@ -49,7 +49,7 @@ const CompetitorDashboardMod = () => {
 
   const [zoom, setZoom] = useState(1);
   const [regions, setRegions] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState("United States");
+  const [selectedRegion, setSelectedRegion] = useState(null);
 
   const [operators, setOperators] = useState([]);
   const [selectedOperator, setSelectedOperator] = useState("");
@@ -66,7 +66,7 @@ const CompetitorDashboardMod = () => {
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
-  const [showImage, setShowImage] = useState(false);
+  const [showImage, setShowImage] = useState(true);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -88,6 +88,7 @@ const CompetitorDashboardMod = () => {
             .map((region) => ({ label: region, value: region }));
 
           setRegions(cleaned);
+          operatorDropdownData();
         }
       })
       .catch((err) => {
@@ -158,8 +159,8 @@ const CompetitorDashboardMod = () => {
 
     CompetitorData.get_casino_data(payload)
       .then((res) => {
-        if (res?.success?.success === true) {
-          setData(res.success.data || null);
+        if (res?.success === true) {
+          setData(res.data || null);
           setLoader(false);
         }
       })
@@ -173,6 +174,10 @@ const CompetitorDashboardMod = () => {
 
   useEffect(() => {
     getRegionsList();
+    if (!incomingState) {
+      setInitLoad(false);
+      setIncomingState(null);
+    }
   }, []);
 
   useEffect(() => {
@@ -235,8 +240,8 @@ const CompetitorDashboardMod = () => {
           geography: incomingState.geography,
           provider_name: incomingState.provider_name,
         }).then((res) => {
-          if (res?.success?.success === true) {
-            setData(res.success.data);
+          if (res?.success === true) {
+            setData(res.data);
           }
         });
 
@@ -257,7 +262,7 @@ const CompetitorDashboardMod = () => {
 
     // Step 1: Extract unique sorted game positions
     const positions = [
-      ...new Set(data.map((item) => item.game_position.toFixed(1))),
+      ...new Set(data.map((item) => item.game_position.toFixed(0))),
     ].sort((a, b) => parseFloat(a) - parseFloat(b));
     setUniquePositions(positions);
 
@@ -266,7 +271,7 @@ const CompetitorDashboardMod = () => {
 
     data.forEach((item) => {
       const section = item.section_title;
-      const pos = item.game_position.toFixed(1);
+      const pos = item.game_position.toFixed(0);
 
       const gameName = item.game_name?.trim() || "-";
       const providerName = item.provider_name?.trim() || "-";
@@ -322,7 +327,7 @@ const CompetitorDashboardMod = () => {
 
   const headerWithoutTooltip = (headerText) => (
     <div
-      className="d-flex align-items-center justify-content-between"
+      className="d-flex align-items-center justify-content-center"
       style={{ width: "100%" }}
     >
       <div className="d-flex align-items-center m-1">
@@ -357,8 +362,8 @@ const CompetitorDashboardMod = () => {
           typeof row[pos] === "string"
             ? row[pos]
             : row[pos]
-            ? row[pos]["text"]
-            : "";
+              ? row[pos]["text"]
+              : "";
       });
 
       return formattedRow;
@@ -372,6 +377,8 @@ const CompetitorDashboardMod = () => {
     link.click();
     document.body.removeChild(link);
   };
+
+  const options = { year: "numeric", month: "short", day: "numeric" };
 
   return (
     <>
@@ -395,7 +402,7 @@ const CompetitorDashboardMod = () => {
                       optionLabel="label"
                       optionValue="value"
                       filter
-                      placeholder="Select Region"
+                      placeholder="Select Country"
                       loading={regionLoading}
                       value={selectedRegion}
                       onChange={(e) => {
@@ -409,7 +416,7 @@ const CompetitorDashboardMod = () => {
                       inputId="region"
                     />
                     <label className="fs-6" htmlFor="region">
-                      Region
+                      Country
                     </label>
                   </FloatLabel>
                 </div>
@@ -465,7 +472,7 @@ const CompetitorDashboardMod = () => {
                       inputId="providers"
                     />
                     <label className="fs-6" htmlFor="providers">
-                      Providers
+                      Providers (Select up to 5)
                     </label>
                   </FloatLabel>
                 </div>
@@ -519,7 +526,7 @@ const CompetitorDashboardMod = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-2">Latest Details</h5>
+                  <h5 className="font-semibold pl-0">Latest Details {data ? "(Scan Date: " + new Date(data[0].created_date).toLocaleDateString("en-US", options) + ")" : ""}</h5>
 
                   {isPlanExpired ? (
                     <>
@@ -542,13 +549,13 @@ const CompetitorDashboardMod = () => {
                     </>
                   ) : (
                     <div className="d-flex align-items-center gap-2">
-                      <div className="d-flex align-items-center gap-2">
+                      {/* <div className="d-flex align-items-center gap-2">
                         <span style={{ fontSize: "14px" }}>Show Images</span>
                         <InputSwitch
                           checked={showImage}
                           onChange={(e) => setShowImage(e.value)}
                         />
-                      </div>
+                      </div> */}
 
                       <span
                         className="text-primary cursor-pointer"
@@ -556,6 +563,34 @@ const CompetitorDashboardMod = () => {
                       >
                         Download Report
                       </span>
+                    </div>
+                  )}
+                </div>
+                <div className="d-flex align-items-center justify-content-between mb-3">
+                  {providersName.length > 0 && (
+                    <div className="mt-3 d-flex gap-4 flex-wrap">
+                      {providersName.map((provId) => {
+                        const provider = providerData.find(
+                          (p) => p.provider_id === provId
+                        );
+                        return (
+                          <div
+                            key={provId}
+                            className="d-flex align-items-center gap-2"
+                          >
+                            <div
+                              style={{
+                                width: "18px",
+                                height: "18px",
+                                borderRadius: "4px",
+                                backgroundColor: providerColorMap[provId],
+                                border: "1px solid #999",
+                              }}
+                            />
+                            <span>{provider?.provider_name}</span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -604,7 +639,7 @@ const CompetitorDashboardMod = () => {
                   scrollable
                   paginator={!isPlanExpired}
                   rows={25}
-                  rowsPerPageOptions={[5, 10, 25]}
+                  rowsPerPageOptions={[10, 25, 50]}
                   paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
                   currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                   sortIcon={sortIconTemplate}
@@ -643,9 +678,10 @@ const CompetitorDashboardMod = () => {
                       key={pos}
                       field={pos}
                       header={headerWithoutTooltip(pos)}
+                      align="center"
                       style={{
                         minWidth: "120px",
-                        whiteSpace: "normal",
+                        whiteSpace: "normal"
                       }}
                       body={(rowData) => {
                         const cell = rowData[pos];
@@ -673,8 +709,18 @@ const CompetitorDashboardMod = () => {
                           //   </span>
                           // </>
                           <div
-                            className="d-flex flex-column justify-content-center align-items-center"
-                            style={{ width: "100%", textAlign: "center" }}
+                            //className="d-flex flex-column justify-content-center align-items-center"
+                            style={{
+                              display: "flex",
+                              flexDirection: "column",
+                              justifyContent: "center",
+                              alignItems: "center",
+                              textAlign: "center",
+                              width: "100%", textAlign: "center", height: "181px",
+                              //position: "absolute",
+                              //inset: 0,
+                              backgroundColor: providerColorMap[cell.provider_id] || "transparent"
+                            }}
                           >
                             {/* SHOW IMAGE WHEN TOGGLE IS ON */}
                             {showImage && (
@@ -709,32 +755,7 @@ const CompetitorDashboardMod = () => {
                     />
                   ))}
                 </DataTable>
-                {providersName.length > 0 && (
-                  <div className="mt-3 d-flex gap-4 flex-wrap">
-                    {providersName.map((provId) => {
-                      const provider = providerData.find(
-                        (p) => p.provider_id === provId
-                      );
-                      return (
-                        <div
-                          key={provId}
-                          className="d-flex align-items-center gap-2"
-                        >
-                          <div
-                            style={{
-                              width: "18px",
-                              height: "18px",
-                              borderRadius: "4px",
-                              backgroundColor: providerColorMap[provId],
-                              border: "1px solid #999",
-                            }}
-                          />
-                          <span>{provider?.provider_name}</span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
+
 
                 {isPlanExpired && (
                   <div

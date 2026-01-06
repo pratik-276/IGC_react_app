@@ -2,10 +2,9 @@ import Axios from "axios";
 // import Cookies from "universal-cookie";
 //const api = process.env.REACT_APP_API_KEY;
 //const api = "https://13.127.147.33/";
-//const api = "https://backend.igamingcompass.io/";
-// const api = "http://localhost:8000/";
-//const api = "https://backend.igamingcompass.com/";
-const api = "http://128.199.23.223:8000/"
+const api = "https://backend.igamingcompass.io/";
+//const api = "http://localhost:8000/";
+//const api = "http://128.199.23.223:8000/"
 
 export default function call({ path, method, data }) {
   // var cookie = new Cookies();

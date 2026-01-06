@@ -18,64 +18,33 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
     // Organizing data to group by section name and then by section position
     const groupedData = {};
     trackingDetails?.daywise_data?.forEach(entry => {
-        if (!groupedData[entry.site_url]) {
-            groupedData[entry.site_url] = dates.reduce((acc, date) => {
+        if (!groupedData[entry.section_name]) {
+            groupedData[entry.section_name] = {};
+        }
+
+        if (!groupedData[entry.section_name][entry.section_position]) {
+            groupedData[entry.section_name][entry.section_position] = dates.reduce((acc, date) => {
                 acc[date] = null;
                 return acc;
             }, {});
         }
-        // if (!groupedData[entry.site_url][entry.section_name]) {
-        //     groupedData[entry.site_url][entry.section_name] = {};
-        // }
 
-        // if (!groupedData[entry.site_url][entry.section_name][entry.section_position]) {
-        //     groupedData[entry.site_url][entry.section_name][entry.section_position] = dates.reduce((acc, date) => {
-        //         acc[date] = null;
-        //         return acc;
-        //     }, {});
-        // }
-
-        groupedData[entry.site_url][entry.created_date] = entry.game_position;
+        groupedData[entry.section_name][entry.section_position][entry.created_date] = entry.game_position;
     });
-    // trackingDetails?.daywise_data?.forEach(entry => {
-    //     if (!groupedData[entry.section_name]) {
-    //         groupedData[entry.section_name] = {};
-    //     }
-
-    //     if (!groupedData[entry.section_name][entry.section_position]) {
-    //         groupedData[entry.section_name][entry.section_position] = dates.reduce((acc, date) => {
-    //             acc[date] = null;
-    //             return acc;
-    //         }, {});
-    //     }
-
-    //     groupedData[entry.section_name][entry.section_position][entry.created_date] = entry.game_position;
-    // });
-    console.log(groupedData);
 
     // Flatten data for table rendering
     const tableData = [];
-    // Object.entries(groupedData).forEach(([section_name, positions]) => {
-    //     console.log(positions);
-    //     let firstRow = true;
-    //     Object.entries(positions).forEach(([section_position, gamePositions]) => {
-    //         tableData.push({
-    //             //site_url: firstRow ? site_url : null,
-    //             section_name: firstRow ? section_name : null,
-    //             section_position,
-    //             ...gamePositions
-    //         });
-    //         firstRow = true;
-    //     });
-    // });
-
-    Object.entries(groupedData).forEach(([site_url, site_positions]) => {
-        tableData.push({
-            site_url: site_url,
-            ...site_positions
+    Object.entries(groupedData).forEach(([section_name, positions]) => {
+        let firstRow = true;
+        Object.entries(positions).forEach(([section_position, gamePositions]) => {
+            tableData.push({
+                section_name: firstRow ? section_name : null,
+                section_position,
+                ...gamePositions
+            });
+            firstRow = false;
         });
     });
-    console.log(tableData);
 
     const getBackgroundColor = (value) => {
         if (value === null || value === undefined) return 'transparent';
@@ -88,14 +57,13 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
 
     return (
         <div>
-            <h5 className="font-semibold pl-0">Daily Page wise Game Positions</h5>
+            <h5 className="font-semibold pl-2">Daily Sectional Analytics</h5>
             <div className="mt-2 " style={{ overflowX: 'auto', maxHeight: '400px' }}>
                 <table style={{ overflowX: 'auto', overflowY: 'auto', maxWidth: '100%' }}>
                     <thead style={{ position: 'sticky', top: 0, background: '#fff', zIndex: 2, borderBottom: '2px solid #392f6c' }} >
                         <tr>
-                            <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Page</th>
-                            {/* <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Section Name</th>
-                            <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Section Position</th> */}
+                            <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Section Name</th>
+                            <th style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center' }}>Section Position</th>
                             {dates.map(date => (
                                 <th key={date} style={{ padding: '8px', border: '1px solid #392f6c', textAlign: 'center', minWidth: '80px' }}>
                                     {format(new Date(date), 'MMM dd')}
@@ -103,20 +71,20 @@ const DailySectionalAnalyticsChart = ({ trackingDetails }) => {
                             ))}
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody >
                         {tableData.map((row, index) => (
                             <tr key={index}>
-                                <td style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center' }}>
-                                    <a href={row.site_url} target="_blank" rel="noopener noreferrer">{row.site_url}</a>
-                                </td>
-                                {/* <td
-                                    style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center' }}
-                                >
-                                    {row.section_name}
-                                </td>
+                                {row.section_name !== null ? (
+                                    <td
+                                        rowSpan={Object.keys(groupedData[row.section_name]).length}
+                                        style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center' }}
+                                    >
+                                        {row.section_name}
+                                    </td>
+                                ) : null}
                                 <td style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center' }}>
                                     {row.section_position}
-                                </td> */}
+                                </td>
                                 {/* {dates.map(date => (
                                     <td key={date} style={{ padding: '4px', border: '1px solid #392f6c', textAlign: 'center', backgroundColor: row[date] ? '#DAD2FF' : 'transparent' }}>
                                         {row[date] || ''}

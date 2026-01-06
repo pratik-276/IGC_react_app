@@ -30,6 +30,7 @@ const AppLayout = () => {
     const [profile, setProfile] = useState({});
 
     const user_id = localStorage.getItem("user_id");
+    const user_company_category = localStorage.getItem("user_company_category");
 
     const { dispatch } = useContext(ProfileSystem);
 
@@ -40,7 +41,59 @@ const AppLayout = () => {
         navigate("/login");
     };
 
-    const menuItems = [
+    const menuItems = user_company_category === "Operator" || user_company_category === "Aggregator" ? [
+        {
+            key: "/",
+            icon: <FaHouse />,
+            label: "Home",
+        },
+        {
+            key: "dataview",
+            label: "Data View",
+            icon: <FaChartLine />,
+            children: [
+                {
+                    key: "/competitor-dashboard",
+                    icon: <MdCasino />,
+                    label: "Provider Comparison",
+                },
+                {
+                    key: "/casino-view",
+                    icon: <MdDashboard />,
+                    label: "View Casino Data",
+                },
+            ],
+        },
+        {
+            key: "request",
+            label: "Requests",
+            icon: <IoMdHelp />,
+            children: [
+                {
+                    key: "/requested-casinos",
+                    icon: <MdCasino />,
+                    label: "Requested Casinos",
+                },
+            ],
+        },
+        {
+            key: "game",
+            label: "Market Intelligence",
+            icon: <FaRegStar />,
+            children: [
+                {
+                    key: "/game-rank-report",
+                    icon: <FaRankingStar />,
+                    label: "Game Rank",
+                },
+                {
+                    key: "/game-provider-marketshare",
+                    icon: <FaChartPie />,
+                    label: "Marketshare",
+                },
+            ],
+        },
+    ] : [
         {
             key: "/",
             icon: <FaHouse />,
@@ -56,30 +109,6 @@ const AppLayout = () => {
             icon: <FaCompass />,
             label: "Calibrate Compass",
         },
-        // {
-        //     key: "position",
-        //     label: "⁠Game Positions",
-        //     icon: <DashboardOutlined />,
-        //     children: [
-        //         {
-        //             key: "/dashboard",
-        //             icon: <GiPositionMarker />,
-        //             label: "Positions Dashboard",
-        //         },
-        //     ],
-        // },
-        // {
-        //     key: "calibrate",
-        //     label: "Calibrate",
-        //     icon: <FaCompassDrafting />,
-        //     children: [
-        //         {
-        //             key: "/calibrate-compass",
-        //             icon: <FaCompass />,
-        //             label: "Calibrate Compass",
-        //         },
-        //     ],
-        // },
         {
             key: "dataview",
             label: "Data View",
@@ -88,7 +117,7 @@ const AppLayout = () => {
                 {
                     key: "/competitor-dashboard",
                     icon: <MdCasino />,
-                    label: "Competitor Dashboard",
+                    label: "Provider Comparison",
                 },
                 {
                     key: "/casino-view",
