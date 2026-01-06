@@ -99,6 +99,15 @@ const provider_dashboard_mapper = async (data) => {
   return d;
 };
 
+const provider_latest_details_download = async (data) => {
+  let d = await Call({
+    path: "provider_dashboard_download",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const get_ai_insights = async (data) => {
   let d = await Call({
     path: "get_ai_insights",
@@ -120,6 +129,7 @@ const exportObject = {
   get_games_provider_dashboard,
   provider_dashboard_mapper,
   mail_sales_team,
+  provider_latest_details_download,
   get_ai_insights
 };
 
