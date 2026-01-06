@@ -34,6 +34,7 @@ import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+import { Skeleton } from "primereact/skeleton";
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
@@ -103,29 +104,37 @@ const DashboardMod = () => {
     loadingRef.current = true;
     setTableLoading(true);
 
-    try {
-      const currentPage = reset ? 1 : pageRef.current;
+    setTableData((prev) => [
+      ...prev,
+      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        __skeleton: true,
+        comb_id: `skeleton-${pageRef.current}-${i}`,
+      })),
+    ]);
 
+    try {
       const res = await GameData.provider_dashboard_main_mod({
         game_provider: user_company,
         limit: PAGE_SIZE,
-        page: currentPage,
+        page: pageRef.current,
         search: searchRef.current,
         sort_by: sortFieldRef.current,
         order: sortOrderRef.current,
-        games: selectedGames || [],
-        casinos: selectedCasinos || [],
+        games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
+        casinos: Array.isArray(selectedCasinos)
+          ? selectedCasinos.map(String)
+          : [],
       });
 
       if (res?.success) {
-        setTotalRecords(res.pagination.total);
-
-        setTableData((prev) => (reset ? res.data : [...prev, ...res.data]));
+        setTableData((prev) => {
+          // remove skeleton rows
+          const clean = prev.filter((r) => !r.__skeleton);
+          return reset ? res.data : [...clean, ...res.data];
+        });
 
         hasMoreRef.current =
           res.pagination.current_page < res.pagination.total_pages;
-
-        setHasMore(hasMoreRef.current);
 
         pageRef.current = res.pagination.current_page + 1;
       }
@@ -369,30 +378,30 @@ const DashboardMod = () => {
     return icon;
   };
 
-  // const exportCSV = (filteredData) => {
-  //   const filteredDataMod = filteredData.map((row) => ({
-  //     "Casino Name": row.casino_name,
-  //     Country: row.country_name,
-  //     "Site URL": row.site_url,
-  //     "Game Name": row.game_name,
-  //     "Section Name": row.section_name,
-  //     "Section Position": row.section_position,
-  //     "Sectional Game Position": row.sectional_game_position,
-  //     "Overall Position": row.overall_position,
-  //     "Previous Overall Position": row.previous_overall_position,
-  //     Growth: row.growth,
-  //     "Last Observed Date": row.last_observed_date
-  //       ? row.last_observed_date.split("T")[0]
-  //       : "",
-  //   }));
-  //   const csv = Papa.unparse(filteredDataMod);
-  //   const link = document.createElement("a");
-  //   link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-  //   link.download = "game_tracker_data.csv";
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  // };
+  const skeletonBody = () => {
+    return (
+      <Skeleton width="80%" height="1rem" style={{ margin: "0.25rem 0" }} />
+    );
+  };
+
+  const exportCSV = async () => {
+    const downloadData = {
+      game_provider: user_company,
+    };
+    const downloadRes = await GameData.provider_latest_details_download(
+      downloadData
+    );
+    //console.log("downloadRes", downloadRes?.data);
+    if (downloadRes?.success === true) {
+      const csv = Papa.unparse(downloadRes?.data);
+      const link = document.createElement("a");
+      link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+      link.download = "game_tracker_data.csv";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
+  };
 
   return (
     <>
@@ -456,7 +465,7 @@ const DashboardMod = () => {
                     <div className="flex gap-2 mt-2">
                       <InfoCard
                         header="Game Count"
-                        tooltip="Shows total game count"
+                        tooltip="Shows total count of unique games found across all casinos"
                         tooltipTarget="game_count"
                         value={10}
                         // value={providerSummary.game_count}
@@ -468,7 +477,7 @@ const DashboardMod = () => {
 
                       <InfoCard
                         header="Casino Count"
-                        tooltip="Shows total casino count"
+                        tooltip="Shows total count of unique casinos hosting your games"
                         tooltipTarget="casino_count"
                         value={10}
                         // value={providerSummary.casino_count}
@@ -483,8 +492,8 @@ const DashboardMod = () => {
                       />
 
                       <InfoCard
-                        header="Casino-Game Combinations"
-                        tooltip="Shows total Casino-Game Combinations"
+                        header="Total Positions"
+                        tooltip="Shows total count of unique game positions across all casinos"
                         tooltipTarget="combination_count"
                         value={10}
                         // value={providerSummary.combination_count}
@@ -577,7 +586,7 @@ const DashboardMod = () => {
                           tooltip="Download Report"
                           tooltipOptions={{ position: "top" }}
                           rounded
-                          // onClick={() => exportCSV(filteredData)}
+                          onClick={() => exportCSV()}
                         />
                         {/* <span
                           className="text-primary cursor-pointer"
@@ -632,7 +641,7 @@ const DashboardMod = () => {
                         lazy
                         scrollable
                         scrollHeight="600px"
-                        loading={tableLoading}
+                        // loading={tableLoading}
                         onSort={onSort}
                         sortField={sortFieldRef.current}
                         sortOrder={sortOrderRef.current === "asc" ? 1 : -1}
@@ -647,6 +656,11 @@ const DashboardMod = () => {
                             "game_name"
                           )}
                           sortable
+                          body={(rowData) =>
+                            rowData.__skeleton
+                              ? skeletonBody()
+                              : rowData.game_name
+                          }
                           style={{ minWidth: "8rem" }}
                         ></Column>
 
@@ -658,6 +672,11 @@ const DashboardMod = () => {
                             "Name of casino",
                             "casino_name"
                           )}
+                          body={(rowData) =>
+                            rowData.__skeleton
+                              ? skeletonBody()
+                              : rowData.game_name
+                          }
                           sortable
                         ></Column>
 
@@ -670,6 +689,11 @@ const DashboardMod = () => {
                             "country_name"
                           )}
                           sortable
+                          body={(rowData) =>
+                            rowData.__skeleton
+                              ? skeletonBody()
+                              : rowData.game_name
+                          }
                         ></Column>
 
                         {/*  <Column
@@ -785,12 +809,16 @@ const DashboardMod = () => {
                           )}
                           sortable
                           body={(rowData) => {
+                            if (rowData.__skeleton) {
+                              return <Skeleton width="60%" height="1rem" />;
+                            }
+
                             return dayjs(rowData.last_observed_date).format(
                               "MMM D, YYYY"
                             );
                           }}
                           style={{ minWidth: "7rem" }}
-                        ></Column>
+                        />
 
                         {/* <Column
                           field="evidance"
@@ -817,12 +845,6 @@ const DashboardMod = () => {
                         ></Column> */}
                       </DataTable>
                     </div>
-
-                    {!hasMore && (
-                      <div className="text-center text-muted p-2">
-                        All records loaded
-                      </div>
-                    )}
 
                     {isPlanExpired && (
                       <div
