@@ -49,12 +49,19 @@ const DashboardMod = () => {
 
   const [gamesList, setGamesList] = useState([]);
   const [casinosList, setCasinosList] = useState([]);
+  const [countryList, setCountryList] = useState([]);
   const [gamesLoader, setGamesLoader] = useState(true);
   const [casinosLoader, setCasinosLoader] = useState(true);
+  const [countryLoader, setCountryLoader] = useState(true);
+
+  const [summaryGameCount, setSummaryGameCount] = useState(null);
+  const [summaryCasinoCount, setSummaryCasinoCount] = useState(null);
+  const [summaryTotalPositions, setSummaryTotalPositions] = useState(null);
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGames, setSelectedGames] = useState(null);
   const [selectedCasinos, setSelectedCasinos] = useState(null);
+  const [selectedCountry, setSelectedCountry] = useState(null);
 
   const [videoDialogVisible, setVideoDialogVisible] = useState(false);
   const [videoURL, setVideoURL] = useState(null);
@@ -121,9 +128,8 @@ const DashboardMod = () => {
         sort_by: sortFieldRef.current,
         order: sortOrderRef.current,
         games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
-        casinos: Array.isArray(selectedCasinos)
-          ? selectedCasinos.map(String)
-          : [],
+        casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
+        countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
       });
 
       if (res?.success) {
@@ -162,6 +168,8 @@ const DashboardMod = () => {
       clearTimeout(searchDebounceRef.current);
     }
 
+    getSummaryProviders();
+
     searchDebounceRef.current = setTimeout(() => {
       searchRef.current = searchTerm.trim();
 
@@ -173,7 +181,25 @@ const DashboardMod = () => {
     }, 500);
 
     return () => clearTimeout(searchDebounceRef.current);
-  }, [searchTerm, selectedGames, selectedCasinos]);
+  }, [selectedGames, selectedCasinos, selectedCountry]);
+
+  useEffect(() => {
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+    }
+
+    searchDebounceRef.current = setTimeout(() => {
+      searchRef.current = searchTerm.trim();
+
+      pageRef.current = 1;
+      hasMoreRef.current = true;
+      setHasMore(true);
+      setTableData([]);
+      fetchTableData({ reset: true });
+    }, 500);
+
+    return () => clearTimeout(searchDebounceRef.current);
+  }, [searchTerm]);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -193,6 +219,8 @@ const DashboardMod = () => {
   };
 
   useEffect(() => {
+    getSummaryProviders();
+    getCountryProviders();
     getCasinosProviders();
     getGamesProviders();
   }, []);
@@ -216,6 +244,47 @@ const DashboardMod = () => {
   //     setLoader(false);
   //   }
   // };
+
+  const getSummaryProviders = async () => {
+    try {
+      const response = await GameData.get_summary_provider_dashboard({
+        game_provider: user_company,
+        games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
+        casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
+        countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
+      });
+
+      if (response?.success === true) {
+        console.log(response);
+        setSummaryGameCount(response?.data?.game_count || null);
+        setSummaryCasinoCount(response?.data?.casino_count || null);
+        setSummaryTotalPositions(response?.data?.total_positions || null);
+      } else {
+        console.log("Failed to fetch summary data");
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
+
+  const getCountryProviders = async () => {
+    try {
+      const response = await GameData.get_countries_provider_dashboard({
+        game_provider: user_company,
+      });
+
+      if (response?.success === true) {
+        console.log(response);
+        setCountryList(response?.data || []);
+      } else {
+        console.log("Failed to fetch casinos list");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setCountryLoader(false);
+    }
+  };
 
   const getCasinosProviders = async () => {
     try {
@@ -387,6 +456,9 @@ const DashboardMod = () => {
   const exportCSV = async () => {
     const downloadData = {
       game_provider: user_company,
+      games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
+      casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
+      countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
     };
     const downloadRes = await GameData.provider_latest_details_download(
       downloadData
@@ -419,14 +491,14 @@ const DashboardMod = () => {
 
             <div className="d-flex gap-2 w-100 justify-content-end">
               <MultiSelect
-                options={gamesList}
-                optionLabel="game_name"
-                optionValue="game_id"
+                options={countryList}
+                optionLabel="country_name"
+                optionValue="country_name"
                 filter
-                placeholder="Select Games"
-                loading={gamesLoader}
-                value={selectedGames}
-                onChange={(e) => setSelectedGames(e.value)}
+                placeholder="Select Country"
+                loading={countryLoader}
+                value={selectedCountry}
+                onChange={(e) => setSelectedCountry(e.value)}
                 className="w-12rem"
               />
               <MultiSelect
@@ -438,6 +510,17 @@ const DashboardMod = () => {
                 loading={casinosLoader}
                 value={selectedCasinos}
                 onChange={(e) => setSelectedCasinos(e.value)}
+                className="w-12rem"
+              />
+              <MultiSelect
+                options={gamesList}
+                optionLabel="game_name"
+                optionValue="game_id"
+                filter
+                placeholder="Select Games"
+                loading={gamesLoader}
+                value={selectedGames}
+                onChange={(e) => setSelectedGames(e.value)}
                 className="w-12rem"
               />
             </div>
@@ -467,7 +550,7 @@ const DashboardMod = () => {
                         header="Game Count"
                         tooltip="Shows total count of unique games found across all casinos"
                         tooltipTarget="game_count"
-                        value={10}
+                        value={summaryGameCount}
                       // value={providerSummary.game_count}
                       // value={
                       //   new Set(filteredData.map((item) => item.game_name))
@@ -479,7 +562,7 @@ const DashboardMod = () => {
                         header="Casino Count"
                         tooltip="Shows total count of unique casinos hosting your games"
                         tooltipTarget="casino_count"
-                        value={10}
+                        value={summaryCasinoCount}
                       // value={providerSummary.casino_count}
                       // value={
                       //   new Set(
@@ -495,7 +578,7 @@ const DashboardMod = () => {
                         header="Total Positions"
                         tooltip="Shows total count of unique game positions across all casinos"
                         tooltipTarget="combination_count"
-                        value={10}
+                        value={summaryTotalPositions}
                       // value={providerSummary.combination_count}
                       // value={
                       //   new Set(
@@ -648,7 +731,6 @@ const DashboardMod = () => {
                         className="table-bordered p-datatable custom-table small"
                       >
                         <Column
-                          frozen
                           field="game_name"
                           header={headerWithTooltip(
                             "Game",
@@ -665,7 +747,6 @@ const DashboardMod = () => {
                         ></Column>
 
                         <Column
-                          frozen
                           field="casino_name"
                           header={headerWithTooltip(
                             "Casino",
@@ -675,13 +756,12 @@ const DashboardMod = () => {
                           body={(rowData) =>
                             rowData.__skeleton
                               ? skeletonBody()
-                              : rowData.game_name
+                              : rowData.casino_name
                           }
                           sortable
                         ></Column>
 
                         <Column
-                          frozen
                           field="country_name"
                           header={headerWithTooltip(
                             "Country",
@@ -692,7 +772,22 @@ const DashboardMod = () => {
                           body={(rowData) =>
                             rowData.__skeleton
                               ? skeletonBody()
-                              : rowData.game_name
+                              : rowData.country_name
+                          }
+                        ></Column>
+
+                        <Column
+                          field="url_count"
+                          header={headerWithTooltip(
+                            "Total Positions",
+                            "Count of pages where the game is found on this casino",
+                            "url_count"
+                          )}
+                          sortable
+                          body={(rowData) =>
+                            rowData.__skeleton
+                              ? skeletonBody()
+                              : rowData.url_count
                           }
                         ></Column>
 

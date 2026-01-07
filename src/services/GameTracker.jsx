@@ -72,6 +72,24 @@ const provider_dashboard_main_mod = async (data) => {
   return d;
 };
 
+const get_summary_provider_dashboard = async (data) => {
+  let d = await Call({
+    path: "get_summary_provider_dashboard",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
+const get_countries_provider_dashboard = async (data) => {
+  let d = await Call({
+    path: "get_countries_provider_dashboard",
+    method: "post",
+    data,
+  });
+  return d;
+};
+
 const get_casinos_provider_dashboard = async (data) => {
   let d = await Call({
     path: "get_casinos_provider_dashboard",
@@ -125,6 +143,8 @@ const exportObject = {
   provider_summary,
   provider_latest_details,
   provider_dashboard_main_mod,
+  get_summary_provider_dashboard,
+  get_countries_provider_dashboard,
   get_casinos_provider_dashboard,
   get_games_provider_dashboard,
   provider_dashboard_mapper,
