@@ -128,8 +128,12 @@ const DashboardMod = () => {
         sort_by: sortFieldRef.current,
         order: sortOrderRef.current,
         games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
-        casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
-        countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
+        casinos: Array.isArray(selectedCasinos)
+          ? selectedCasinos.map(String)
+          : [],
+        countries: Array.isArray(selectedCountry)
+          ? selectedCountry.map(String)
+          : [],
       });
 
       if (res?.success) {
@@ -250,8 +254,12 @@ const DashboardMod = () => {
       const response = await GameData.get_summary_provider_dashboard({
         game_provider: user_company,
         games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
-        casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
-        countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
+        casinos: Array.isArray(selectedCasinos)
+          ? selectedCasinos.map(String)
+          : [],
+        countries: Array.isArray(selectedCountry)
+          ? selectedCountry.map(String)
+          : [],
       });
 
       if (response?.success === true) {
@@ -457,8 +465,12 @@ const DashboardMod = () => {
     const downloadData = {
       game_provider: user_company,
       games: Array.isArray(selectedGames) ? selectedGames.map(String) : [],
-      casinos: Array.isArray(selectedCasinos) ? selectedCasinos.map(String) : [],
-      countries: Array.isArray(selectedCountry) ? selectedCountry.map(String) : [],
+      casinos: Array.isArray(selectedCasinos)
+        ? selectedCasinos.map(String)
+        : [],
+      countries: Array.isArray(selectedCountry)
+        ? selectedCountry.map(String)
+        : [],
     };
     const downloadRes = await GameData.provider_latest_details_download(
       downloadData
@@ -551,11 +563,11 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique games found across all casinos"
                         tooltipTarget="game_count"
                         value={summaryGameCount}
-                      // value={providerSummary.game_count}
-                      // value={
-                      //   new Set(filteredData.map((item) => item.game_name))
-                      //     .size
-                      // }
+                        // value={providerSummary.game_count}
+                        // value={
+                        //   new Set(filteredData.map((item) => item.game_name))
+                        //     .size
+                        // }
                       />
 
                       <InfoCard
@@ -563,15 +575,15 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique casinos hosting your games"
                         tooltipTarget="casino_count"
                         value={summaryCasinoCount}
-                      // value={providerSummary.casino_count}
-                      // value={
-                      //   new Set(
-                      //     filteredData.map(
-                      //       (item) =>
-                      //         `${item.casino_name}|${item.country_name}`
-                      //     )
-                      //   ).size
-                      // }
+                        // value={providerSummary.casino_count}
+                        // value={
+                        //   new Set(
+                        //     filteredData.map(
+                        //       (item) =>
+                        //         `${item.casino_name}|${item.country_name}`
+                        //     )
+                        //   ).size
+                        // }
                       />
 
                       <InfoCard
@@ -579,15 +591,15 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique game positions across all casinos"
                         tooltipTarget="combination_count"
                         value={summaryTotalPositions}
-                      // value={providerSummary.combination_count}
-                      // value={
-                      //   new Set(
-                      //     filteredData.map(
-                      //       (item) =>
-                      //         `${item.casino_name}|${item.country_name}|${item.game_name}`
-                      //     )
-                      //   ).size
-                      // }
+                        // value={providerSummary.combination_count}
+                        // value={
+                        //   new Set(
+                        //     filteredData.map(
+                        //       (item) =>
+                        //         `${item.casino_name}|${item.country_name}|${item.game_name}`
+                        //     )
+                        //   ).size
+                        // }
                       />
                     </div>
                   </div>

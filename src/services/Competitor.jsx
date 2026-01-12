@@ -45,12 +45,22 @@ const get_casino_data = async (data) => {
     return d;
 };
 
+const get_casino_dates = async (data) => {
+    let d = await Call({
+        path: "get_casino_dates",
+        method: "post",
+        data,
+    });
+    return d;
+};
+
 const exportObject = {
     get_operator_sites_list,
     post_operator_by_geography_lists,
     get_games_by_site,
     get_providers_by_site,
     get_casino_data,
+    get_casino_dates,
 };
 
 export default exportObject;
