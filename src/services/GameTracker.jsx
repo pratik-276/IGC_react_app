@@ -135,6 +135,7 @@ const get_ai_insights = async (data) => {
   return d;
 };
 
+
 const exportObject = {
   create_alert,
   tracker_summary,
@@ -150,7 +151,7 @@ const exportObject = {
   provider_dashboard_mapper,
   mail_sales_team,
   provider_latest_details_download,
-  get_ai_insights
+  get_ai_insights,
 };
 
 export default exportObject;

@@ -57,12 +57,16 @@ const CompetitorDashboardMod = () => {
   const [providerData, setProviderData] = useState([]);
   const [providersName, setProvidersName] = useState([]);
 
+  const [dateList, setDateList] = useState([]);
+  const [selectedDate, setSelectedDate] = useState(null);
+
   const [data, setData] = useState([]);
 
   const [loader, setLoader] = useState(false);
   const [regionLoading, setRegionLoading] = useState(true);
   const [operatorDataLoader, setOperatorDataLoader] = useState(false);
   const [providerDataLoader, setProviderDataLoader] = useState(false);
+  const [dateLoader, setDateLoader] = useState(false);
 
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
@@ -147,7 +151,29 @@ const CompetitorDashboardMod = () => {
       .finally(() => setProviderDataLoader(false));
   };
 
-  const getCompitatorData = () => {
+  const getCasinoDates = async () => {
+    setDateLoader(true);
+
+    try {
+      const response = await CompetitorData.get_casino_dates({
+        operator_id: selectedOperator,
+        geography: selectedRegion,
+      });
+
+      if (response?.success === true) {
+        console.log("getCasinoDates response : ", response);
+        setDateList(response?.data || []);
+      } else {
+        console.log("Failed to fetch dates list");
+      }
+    } catch (err) {
+      console.log(err);
+    } finally {
+      setDateLoader(false);
+    }
+  };
+
+  const getCompitatorData = (date = null) => {
     setLoader(true);
 
     const payload = {
@@ -155,6 +181,7 @@ const CompetitorDashboardMod = () => {
       operator_id: selectedOperator,
       geography: selectedRegion,
       ...(providersName?.length ? { provider_name: providersName } : {}),
+      ...(date ? { date_selected: date } : {}),
     };
 
     CompetitorData.get_casino_data(payload)
@@ -198,7 +225,9 @@ const CompetitorDashboardMod = () => {
     if (initLoad || incomingState) return;
 
     if (selectedOperator) {
+      getCasinoDates();
       setProvidersName([]);
+      setSelectedDate(null);
       providerDropdownData();
     }
   }, [selectedOperator]);
@@ -362,8 +391,8 @@ const CompetitorDashboardMod = () => {
           typeof row[pos] === "string"
             ? row[pos]
             : row[pos]
-              ? row[pos]["text"]
-              : "";
+            ? row[pos]["text"]
+            : "";
       });
 
       return formattedRow;
@@ -484,7 +513,9 @@ const CompetitorDashboardMod = () => {
                     loading={loader}
                     icon="pi pi-filter"
                     disabled={!selectedOperator}
-                    onClick={getCompitatorData}
+                    onClick={() => {
+                      getCompitatorData(null);
+                    }}
                     className="btn-filter flex-1 h-100"
                     style={{ minWidth: "100px" }}
                   />
@@ -526,7 +557,17 @@ const CompetitorDashboardMod = () => {
             <>
               <div className="border border-secondary p-3 rounded-3 mt-3">
                 <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-0">Latest Details {data ? "(Scan Date: " + new Date(data[0].created_date).toLocaleDateString("en-US", options) + ")" : ""}</h5>
+                  <h5 className="font-semibold pl-0">
+                    Latest Details{" "}
+                    {data
+                      ? "(Scan Date: " +
+                        new Date(data[0].created_date).toLocaleDateString(
+                          "en-US",
+                          options
+                        ) +
+                        ")"
+                      : ""}
+                  </h5>
 
                   {isPlanExpired ? (
                     <>
@@ -557,12 +598,34 @@ const CompetitorDashboardMod = () => {
                         />
                       </div> */}
 
-                      <span
+                      <div className="flex align-items-center gap-1">
+                        <label htmlFor="zoomSlider">Zoom</label>
+                        <Slider
+                          id="zoomSlider"
+                          value={zoom}
+                          onChange={(e) => setZoom(e.value)}
+                          step={0.1}
+                          min={0.5}
+                          max={2}
+                          style={{ width: "200px" }}
+                        />
+                        <span>{(zoom * 100).toFixed(0)}%</span>
+                      </div>
+
+                      <Button
+                        icon="pi pi-download"
+                        tooltip="Download Report"
+                        tooltipOptions={{ position: "top" }}
+                        rounded
+                        onClick={() => exportCSV(tableData)}
+                      />
+
+                      {/* <span
                         className="text-primary cursor-pointer"
                         onClick={() => exportCSV(tableData)}
                       >
                         Download Report
-                      </span>
+                      </span> */}
                     </div>
                   )}
                 </div>
@@ -618,51 +681,63 @@ const CompetitorDashboardMod = () => {
                   </div>
                 )} */}
 
-                {/* <div className="flex align-items-center gap-3 mb-3">
-                  <label htmlFor="zoomSlider" style={{ minWidth: "80px" }}>
-                    Zoom
-                  </label>
-                  <Slider
-                    id="zoomSlider"
-                    value={zoom}
-                    onChange={(e) => setZoom(e.value)}
-                    step={0.1}
-                    min={0.5}
-                    max={2}
-                    style={{ width: "200px" }}
-                  />
-                  <span>{(zoom * 100).toFixed(0)}%</span>
-                </div> */}
-
-                <DataTable
-                  value={isPlanExpired ? tableData.slice(0, 3) : tableData}
-                  scrollable
-                  paginator={!isPlanExpired}
-                  rows={25}
-                  rowsPerPageOptions={[10, 25, 50]}
-                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                  sortIcon={sortIconTemplate}
-                  size="small"
-                  className="table-bordered p-component p-datatable custom-competitor-table small fixed-row-height"
+                {dateList?.length > 0 && (
+                  <div className="d-flex flex-wrap gap-2 mb-3">
+                    {dateList.map((item) => (
+                      <Button
+                        key={item.dates}
+                        label={item.dates}
+                        size="small"
+                        outlined={selectedDate !== item.dates}
+                        severity={
+                          selectedDate === item.dates ? "primary" : "secondary"
+                        }
+                        onClick={() => {
+                          setSelectedDate(item.dates);
+                          getCompitatorData(item.dates);
+                        }}
+                      />
+                    ))}
+                  </div>
+                )}
+                <div
+                  style={{
+                    transform: `scale(${zoom})`,
+                    transformOrigin: "top left",
+                    width: `${100 / zoom}%`,
+                  }}
                 >
-                  <Column
-                    frozen
-                    header={headerWithTooltip(
-                      "Section Title",
-                      "Name of Section Title",
-                      "section_title"
-                    )}
-                    field="section_title"
-                    sortable
-                    body={(rowData) => <strong>{rowData.section_title}</strong>}
-                    style={{
-                      minWidth: "200px",
-                      whiteSpace: "normal",
-                    }}
-                  />
+                  <DataTable
+                    value={isPlanExpired ? tableData.slice(0, 3) : tableData}
+                    scrollable
+                    // paginator={!isPlanExpired}
+                    // rows={25}
+                    // rowsPerPageOptions={[10, 25, 50]}
+                    // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                    // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                    sortIcon={sortIconTemplate}
+                    size="small"
+                    className="table-bordered p-component p-datatable custom-competitor-table small fixed-row-height"
+                  >
+                    <Column
+                      frozen
+                      header={headerWithTooltip(
+                        "Section Title",
+                        "Name of Section Title",
+                        "section_title"
+                      )}
+                      field="section_title"
+                      sortable
+                      body={(rowData) => (
+                        <strong>{rowData.section_title}</strong>
+                      )}
+                      style={{
+                        minWidth: "200px",
+                        whiteSpace: "normal",
+                      }}
+                    />
 
-                  {/* {uniquePositions.map((pos) => (
+                    {/* {uniquePositions.map((pos) => (
                     <Column
                       key={pos}
                       field={pos}
@@ -673,89 +748,93 @@ const CompetitorDashboardMod = () => {
                       }}
                     />
                   ))} */}
-                  {uniquePositions.map((pos) => (
-                    <Column
-                      key={pos}
-                      field={pos}
-                      header={headerWithoutTooltip(pos)}
-                      align="center"
-                      style={{
-                        minWidth: "120px",
-                        whiteSpace: "normal"
-                      }}
-                      body={(rowData) => {
-                        const cell = rowData[pos];
+                    {uniquePositions.map((pos) => (
+                      <Column
+                        key={pos}
+                        field={pos}
+                        header={headerWithoutTooltip(pos)}
+                        align="center"
+                        style={{
+                          minWidth: "120px",
+                          whiteSpace: "normal",
+                        }}
+                        body={(rowData) => {
+                          const cell = rowData[pos];
 
-                        if (!cell) return null;
+                          if (!cell) return null;
 
-                        if (typeof cell === "string") {
-                          return <span>{cell}</span>;
-                        }
+                          if (typeof cell === "string") {
+                            return <span>{cell}</span>;
+                          }
 
-                        return (
-                          // <>
-                          //   <span
-                          //     style={{
-                          //       backgroundColor: cell.highlight
-                          //         ? "#ffeeba"
-                          //         : "transparent",
+                          return (
+                            // <>
+                            //   <span
+                            //     style={{
+                            //       backgroundColor: cell.highlight
+                            //         ? "#ffeeba"
+                            //         : "transparent",
 
-                          //       padding: "2px 6px",
-                          //       borderRadius: "4px",
-                          //       display: "inline-block",
-                          //     }}
-                          //   >
-                          //     {cell.text}
-                          //   </span>
-                          // </>
-                          <div
-                            //className="d-flex flex-column justify-content-center align-items-center"
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              justifyContent: "center",
-                              alignItems: "center",
-                              textAlign: "center",
-                              width: "100%", textAlign: "center", height: "181px",
-                              //position: "absolute",
-                              //inset: 0,
-                              backgroundColor: providerColorMap[cell.provider_id] || "transparent"
-                            }}
-                          >
-                            {/* SHOW IMAGE WHEN TOGGLE IS ON */}
-                            {showImage && (
-                              <img
-                                src={cell.image}
-                                alt={cell.text}
-                                style={{
-                                  width: "60px",
-                                  height: "60px",
-                                  objectFit: "contain",
-                                  marginBottom: "6px",
-                                }}
-                              />
-                            )}
-
-                            {/* Text (always visible) */}
-                            <span
+                            //       padding: "2px 6px",
+                            //       borderRadius: "4px",
+                            //       display: "inline-block",
+                            //     }}
+                            //   >
+                            //     {cell.text}
+                            //   </span>
+                            // </>
+                            <div
+                              //className="d-flex flex-column justify-content-center align-items-center"
                               style={{
+                                display: "flex",
+                                flexDirection: "column",
+                                justifyContent: "center",
+                                alignItems: "center",
+                                textAlign: "center",
+                                width: "100%",
+                                textAlign: "center",
+                                height: "181px",
+                                //position: "absolute",
+                                //inset: 0,
                                 backgroundColor:
                                   providerColorMap[cell.provider_id] ||
                                   "transparent",
-                                padding: "2px 6px",
-                                borderRadius: "4px",
-                                display: "inline-block",
                               }}
                             >
-                              {cell.text}
-                            </span>
-                          </div>
-                        );
-                      }}
-                    />
-                  ))}
-                </DataTable>
+                              {/* SHOW IMAGE WHEN TOGGLE IS ON */}
+                              {showImage && (
+                                <img
+                                  src={cell.image}
+                                  alt={cell.text}
+                                  style={{
+                                    width: "60px",
+                                    height: "60px",
+                                    objectFit: "contain",
+                                    marginBottom: "6px",
+                                  }}
+                                />
+                              )}
 
+                              {/* Text (always visible) */}
+                              <span
+                                style={{
+                                  backgroundColor:
+                                    providerColorMap[cell.provider_id] ||
+                                    "transparent",
+                                  padding: "2px 6px",
+                                  borderRadius: "4px",
+                                  display: "inline-block",
+                                }}
+                              >
+                                {cell.text}
+                              </span>
+                            </div>
+                          );
+                        }}
+                      />
+                    ))}
+                  </DataTable>
+                </div>
 
                 {isPlanExpired && (
                   <div
