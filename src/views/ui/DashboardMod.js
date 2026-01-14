@@ -39,6 +39,7 @@ import { Skeleton } from "primereact/skeleton";
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
+  const navigate = useNavigate();
 
   const [selectedRows, setSelectedRows] = useState(null);
   const [loader, setLoader] = useState(false);
@@ -670,6 +671,7 @@ const DashboardMod = () => {
                           tooltipOptions={{ position: "top" }}
                           rounded
                           onClick={() => exportCSV()}
+                          style={{ backgroundColor: "#392f6c", border: "none" }}
                         />
                         {/* <span
                           className="text-primary cursor-pointer"
@@ -729,6 +731,19 @@ const DashboardMod = () => {
                         sortField={sortFieldRef.current}
                         sortOrder={sortOrderRef.current === "asc" ? 1 : -1}
                         className="table-bordered p-datatable custom-table small"
+                        onRowClick={(e) => {
+                          const rowData = e.data;
+                          navigate("/position-details", {
+                            state: {
+                              game_id: rowData.game_id,
+                              game_name: rowData.game_name,
+                              casino_id: rowData.casino_id,
+                              casino_name: rowData.casino_name,
+                              country_name: rowData.country_name,
+                              state_name: rowData.state
+                            },
+                          });
+                        }}
                       >
                         <Column
                           field="game_name"

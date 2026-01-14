@@ -46,11 +46,13 @@ const Header = () => {
   };
 
   const handleLogin = () => {
+    console.log('header 1');
     navigate("/login");
   };
 
   const logOut = () => {
     localStorage.clear();
+    console.log('header 2');
     navigate("/login");
   };
 
@@ -73,6 +75,7 @@ const Header = () => {
       } else if (profileResponse?.error?.status === 401) {
         localStorage.clear();
         toast.error("Session expired. Please log in again.");
+        console.log('header 3');
         navigate("/login");
       }
     } catch (err) {
