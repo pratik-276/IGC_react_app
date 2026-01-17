@@ -11,6 +11,7 @@ import { Tooltip } from "primereact/tooltip";
 import { FloatLabel } from "primereact/floatlabel";
 import { Slider } from "primereact/slider";
 import { InputSwitch } from "primereact/inputswitch";
+import { ButtonGroup } from "primereact/buttongroup";
 
 import { Spin } from "antd";
 
@@ -71,6 +72,9 @@ const CompetitorDashboardMod = () => {
   const [uniquePositions, setUniquePositions] = useState([]);
   const [tableData, setTableData] = useState([]);
   const [showImage, setShowImage] = useState(true);
+
+  const DATE_WINDOW_SIZE = 6; // change to 5 if you want
+  const [dateStartIndex, setDateStartIndex] = useState(0);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -198,6 +202,10 @@ const CompetitorDashboardMod = () => {
         setLoader(false);
       });
   };
+
+  useEffect(() => {
+    setDateStartIndex(0);
+  }, [dateList]);
 
   useEffect(() => {
     getRegionsList();
@@ -598,7 +606,7 @@ const CompetitorDashboardMod = () => {
                         />
                       </div> */}
 
-                      <div className="flex align-items-center gap-1">
+                      {/* <div className="flex align-items-center gap-1">
                         <label htmlFor="zoomSlider">Zoom</label>
                         <Slider
                           id="zoomSlider"
@@ -610,7 +618,7 @@ const CompetitorDashboardMod = () => {
                           style={{ width: "200px" }}
                         />
                         <span>{(zoom * 100).toFixed(0)}%</span>
-                      </div>
+                      </div> */}
 
                       <Button
                         icon="pi pi-download"
@@ -618,6 +626,7 @@ const CompetitorDashboardMod = () => {
                         tooltipOptions={{ position: "top" }}
                         rounded
                         onClick={() => exportCSV(tableData)}
+                        className="btn-filter flex-1 h-100 px-4"
                       />
 
                       {/* <span
@@ -681,7 +690,7 @@ const CompetitorDashboardMod = () => {
                   </div>
                 )} */}
 
-                {dateList?.length > 0 && (
+                {/* {dateList?.length > 0 && (
                   <div className="d-flex flex-wrap gap-2 mb-3">
                     {dateList.map((item) => (
                       <Button
@@ -699,7 +708,96 @@ const CompetitorDashboardMod = () => {
                       />
                     ))}
                   </div>
-                )}
+                )} */}
+                <div className="d-flex w-100 justify-content-center align-items-center gap-2 mb-3">
+                  {dateList?.length > 0 && (
+                    <div className="d-flex align-items-center gap-2">
+                      {/* PREV BUTTON */}
+                      <Button
+                        icon="pi pi-chevron-left"
+                        rounded
+                        text
+                        disabled={dateStartIndex === 0}
+                        onClick={() =>
+                          setDateStartIndex((prev) => Math.max(prev - 1, 0))
+                        }
+                      />
+
+                      {/* DATE BUTTONS */}
+                      <div className="d-flex gap-2 overflow-hidden date-carousel">
+                        {dateList
+                          .slice(
+                            dateStartIndex,
+                            dateStartIndex + DATE_WINDOW_SIZE
+                          )
+                          .map((item) => (
+                            <Button
+                              key={item.dates}
+                              label={item.dates}
+                              size="small"
+                              outlined={selectedDate !== item.dates}
+                              severity={
+                                selectedDate === item.dates
+                                  ? "primary"
+                                  : "secondary"
+                              }
+                              onClick={() => {
+                                setSelectedDate(item.dates);
+                                getCompitatorData(item.dates);
+                              }}
+                            />
+                          ))}
+                      </div>
+
+                      {/* NEXT BUTTON */}
+                      <Button
+                        icon="pi pi-chevron-right"
+                        rounded
+                        text
+                        disabled={
+                          dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
+                        }
+                        onClick={() =>
+                          setDateStartIndex((prev) =>
+                            Math.min(
+                              prev + 1,
+                              dateList.length - DATE_WINDOW_SIZE
+                            )
+                          )
+                        }
+                      />
+                    </div>
+                  )}
+
+                  <ButtonGroup className="d-flex align-items-center">
+                    <Button
+                      icon="pi pi-search-minus"
+                      tooltip="Zoom Out"
+                      tooltipOptions={{ position: "top" }}
+                      rounded
+                      outlined
+                      disabled={zoom <= 0.5}
+                      onClick={() =>
+                        setZoom((prev) =>
+                          Math.max(0.5, +(prev - 0.1).toFixed(2))
+                        )
+                      }
+                    />
+
+                    <Button
+                      icon="pi pi-search-plus"
+                      tooltip="Zoom In"
+                      tooltipOptions={{ position: "top" }}
+                      rounded
+                      outlined
+                      disabled={zoom >= 2}
+                      onClick={() =>
+                        setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
+                      }
+                    />
+                  </ButtonGroup>
+                </div>
+
                 <div
                   style={{
                     transform: `scale(${zoom})`,

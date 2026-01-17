@@ -71,3 +71,7 @@
     position: relative;
     z-index: 10;
 }
+
+.date-carousel {
+    transition: transform 0.3s ease;
+}
