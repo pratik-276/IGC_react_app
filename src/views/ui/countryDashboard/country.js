@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 
 import { DataTable } from "primereact/datatable";
 import { BreadCrumb } from 'primereact/breadcrumb';
@@ -38,10 +38,25 @@ const CountryDashboard1 = () => {
     const user_company = localStorage.getItem("user_company");
     const navigate = useNavigate();
 
+    const location = useLocation();
+    const {
+        redirect_from,
+        operator_id_from_state,
+        operator_name_from_state,
+        game_id_from_state,
+        game_name_from_state
+    } = location.state || {};
+    var redirectFrom = "country";
+    if (redirect_from) {
+        redirectFrom = redirect_from;
+    }
+    console.log("Redirect FROM: " + redirectFrom);
+
     const [loader, setLoader] = useState(false);
 
     const [summaryCountryCount, setSummaryCountryCount] = useState(null);
     const [summaryCasinoCount, setSummaryCasinoCount] = useState(null);
+    const [summaryGameCount, setSummaryGameCount] = useState(null);
     const [summaryTotalPositions, setSummaryTotalPositions] = useState(null);
 
     const [searchTerm, setSearchTerm] = useState("");
@@ -62,8 +77,14 @@ const CountryDashboard1 = () => {
     //const [totalRecords, setTotalRecords] = useState(0);
     const [tableLoading, setTableLoading] = useState(false);
 
-    const items = [{ label: 'Countries' }];
-    const home = { icon: 'pi pi-home', url: '/country-dashboard' }
+    var items = [{ label: 'Countries' }];
+    if (redirectFrom === "operator") {
+        items = [{ label: 'Operators' }, { label: operator_name_from_state }, { label: 'Countries' }];
+    }
+    if (redirectFrom === "game") {
+        items = [{ label: 'Games' }, { label: game_name_from_state }, { label: 'Countries' }];
+    }
+    const home = { icon: 'pi pi-home' }
 
     useEffect(() => {
         const wrapper = tableWrapperRef.current?.querySelector(
@@ -84,7 +105,7 @@ const CountryDashboard1 = () => {
 
         wrapper.addEventListener("scroll", handleScroll);
         return () => wrapper.removeEventListener("scroll", handleScroll);
-    }, []);
+    }, [tableData.length]);
 
     const fetchTableData = async ({ reset = false } = {}) => {
         if (loadingRef.current || !hasMoreRef.current) return;
@@ -101,26 +122,76 @@ const CountryDashboard1 = () => {
         ]);
 
         try {
-            const res = await PositionDashboard.provider_country_dashboard_1({
-                game_provider: user_company,
-                limit: PAGE_SIZE,
-                page: pageRef.current,
-                search: searchRef.current,
-                sort_by: sortFieldRef.current,
-                order: sortOrderRef.current
-            });
-
-            if (res?.success) {
-                setTableData((prev) => {
-                    // remove skeleton rows
-                    const clean = prev.filter((r) => !r.__skeleton);
-                    return reset ? res.data : [...clean, ...res.data];
+            if (redirectFrom === "country") {
+                const res = await PositionDashboard.provider_country_dashboard_1({
+                    game_provider: user_company,
+                    limit: PAGE_SIZE,
+                    page: pageRef.current,
+                    search: searchRef.current,
+                    sort_by: sortFieldRef.current,
+                    order: sortOrderRef.current
                 });
 
-                hasMoreRef.current =
-                    res.pagination.current_page < res.pagination.total_pages;
+                if (res?.success) {
+                    setTableData((prev) => {
+                        // remove skeleton rows
+                        const clean = prev.filter((r) => !r.__skeleton);
+                        return reset ? res.data : [...clean, ...res.data];
+                    });
 
-                pageRef.current = res.pagination.current_page + 1;
+                    hasMoreRef.current =
+                        res.pagination.current_page < res.pagination.total_pages;
+
+                    pageRef.current = res.pagination.current_page + 1;
+                }
+            }
+            if (redirectFrom === "operator") {
+                const res = await PositionDashboard.provider_country_dashboard_2({
+                    game_provider: user_company,
+                    operator_id: operator_id_from_state,
+                    limit: PAGE_SIZE,
+                    page: pageRef.current,
+                    search: searchRef.current,
+                    sort_by: sortFieldRef.current,
+                    order: sortOrderRef.current
+                });
+
+                if (res?.success) {
+                    setTableData((prev) => {
+                        // remove skeleton rows
+                        const clean = prev.filter((r) => !r.__skeleton);
+                        return reset ? res.data : [...clean, ...res.data];
+                    });
+
+                    hasMoreRef.current =
+                        res.pagination.current_page < res.pagination.total_pages;
+
+                    pageRef.current = res.pagination.current_page + 1;
+                }
+            }
+            if (redirectFrom === "game") {
+                const res = await PositionDashboard.provider_country_dashboard_3({
+                    game_provider: user_company,
+                    game_id: game_id_from_state,
+                    limit: PAGE_SIZE,
+                    page: pageRef.current,
+                    search: searchRef.current,
+                    sort_by: sortFieldRef.current,
+                    order: sortOrderRef.current
+                });
+
+                if (res?.success) {
+                    setTableData((prev) => {
+                        // remove skeleton rows
+                        const clean = prev.filter((r) => !r.__skeleton);
+                        return reset ? res.data : [...clean, ...res.data];
+                    });
+
+                    hasMoreRef.current =
+                        res.pagination.current_page < res.pagination.total_pages;
+
+                    pageRef.current = res.pagination.current_page + 1;
+                }
             }
         } finally {
             loadingRef.current = false;
@@ -157,7 +228,7 @@ const CountryDashboard1 = () => {
         }, 500);
 
         return () => clearTimeout(searchDebounceRef.current);
-    }, [searchTerm]);
+    }, [searchTerm, redirectFrom]);
 
     const { state } = useContext(ProfileSystem);
     const isPlanExpired = state?.plan === "trial_expired";
@@ -168,20 +239,55 @@ const CountryDashboard1 = () => {
     useEffect(() => {
         getSummary();
     }, []);
+    useEffect(() => {
+        getSummary();
+    }, [redirectFrom]);
 
     const getSummary = async () => {
         try {
-            const response = await PositionDashboard.provider_country_dashboard_1_summary({
-                game_provider: user_company
-            });
+            if (redirectFrom === "country") {
+                const response = await PositionDashboard.provider_country_dashboard_1_summary({
+                    game_provider: user_company
+                });
 
-            if (response?.success === true) {
-                console.log(response);
-                setSummaryCountryCount(response?.data?.country_count || null);
-                setSummaryCasinoCount(response?.data?.casino_count || null);
-                setSummaryTotalPositions(response?.data?.game_positions_count || null);
-            } else {
-                console.log("Failed to fetch summary data");
+                if (response?.success === true) {
+                    console.log(response);
+                    setSummaryCountryCount(response?.data?.country_count || null);
+                    setSummaryCasinoCount(response?.data?.casino_count || null);
+                    setSummaryTotalPositions(response?.data?.game_positions_count || null);
+                } else {
+                    console.log("Failed to fetch summary data");
+                }
+            }
+            if (redirectFrom === "operator") {
+                const response = await PositionDashboard.provider_country_dashboard_2_summary({
+                    game_provider: user_company,
+                    operator_id: operator_id_from_state
+                });
+
+                if (response?.success === true) {
+                    console.log(response);
+                    setSummaryCountryCount(response?.data?.country_count || null);
+                    setSummaryGameCount(response?.data?.game_count || null);
+                    setSummaryTotalPositions(response?.data?.game_positions_count || null);
+                } else {
+                    console.log("Failed to fetch summary data");
+                }
+            }
+            if (redirectFrom === "game") {
+                const response = await PositionDashboard.provider_country_dashboard_3_summary({
+                    game_provider: user_company,
+                    game_id: game_id_from_state
+                });
+
+                if (response?.success === true) {
+                    console.log(response);
+                    setSummaryCountryCount(response?.data?.country_count || null);
+                    setSummaryCasinoCount(response?.data?.casino_count || null);
+                    setSummaryTotalPositions(response?.data?.game_positions_count || null);
+                } else {
+                    console.log("Failed to fetch summary data");
+                }
             }
         } catch (err) {
             console.log(err);
@@ -216,22 +322,64 @@ const CountryDashboard1 = () => {
     };
 
     const exportCSV = async () => {
-        const downloadData = {
-            game_provider: user_company,
-            search: searchTerm
-        };
-        const downloadRes = await PositionDashboard.provider_country_dashboard_1_download(
-            downloadData
-        );
-        //console.log("downloadRes", downloadRes?.data);
-        if (downloadRes?.success === true) {
-            const csv = Papa.unparse(downloadRes?.data);
-            const link = document.createElement("a");
-            link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
-            link.download = "game_tracker_data.csv";
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
+        if (redirectFrom === "country") {
+            const downloadData = {
+                game_provider: user_company,
+                search: searchTerm
+            };
+            const downloadRes = await PositionDashboard.provider_country_dashboard_1_download(
+                downloadData
+            );
+            //console.log("downloadRes", downloadRes?.data);
+            if (downloadRes?.success === true) {
+                const csv = Papa.unparse(downloadRes?.data);
+                const link = document.createElement("a");
+                link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                link.download = "game_tracker_data.csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+        if (redirectFrom === "operator") {
+            const downloadData = {
+                game_provider: user_company,
+                operator_id: operator_id_from_state,
+                search: searchTerm
+            };
+            const downloadRes = await PositionDashboard.provider_country_dashboard_2_download(
+                downloadData
+            );
+            //console.log("downloadRes", downloadRes?.data);
+            if (downloadRes?.success === true) {
+                const csv = Papa.unparse(downloadRes?.data);
+                const link = document.createElement("a");
+                link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                link.download = "game_tracker_data.csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        }
+        if (redirectFrom === "game") {
+            const downloadData = {
+                game_provider: user_company,
+                game_id: game_id_from_state,
+                search: searchTerm
+            };
+            const downloadRes = await PositionDashboard.provider_country_dashboard_3_download(
+                downloadData
+            );
+            //console.log("downloadRes", downloadRes?.data);
+            if (downloadRes?.success === true) {
+                const csv = Papa.unparse(downloadRes?.data);
+                const link = document.createElement("a");
+                link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
+                link.download = "game_tracker_data.csv";
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     };
 
@@ -283,12 +431,19 @@ const CountryDashboard1 = () => {
                                                 value={summaryCountryCount}
                                             />
 
-                                            <InfoCard
-                                                header="Casino Count"
-                                                tooltip="Shows total count of unique casinos hosting your games"
+                                            {(redirectFrom === "country" || redirectFrom === "game") && <InfoCard
+                                                header="Operator Count"
+                                                tooltip="Shows total count of unique operators hosting your games"
                                                 tooltipTarget="casino_count"
                                                 value={summaryCasinoCount}
-                                            />
+                                            />}
+
+                                            {redirectFrom === "operator" && <InfoCard
+                                                header="Game Count"
+                                                tooltip="Shows total count of unique games hosted by your operator"
+                                                tooltipTarget="game_count"
+                                                value={summaryGameCount}
+                                            />}
 
                                             <InfoCard
                                                 header="Total Positions"
@@ -361,15 +516,40 @@ const CountryDashboard1 = () => {
                                                 className="table-bordered p-datatable custom-table small"
                                                 onRowClick={(e) => {
                                                     const rowData = e.data;
-                                                    navigate("/operator-dashboard", {
-                                                        state: {
-                                                            country_name_from_state: rowData.country_name,
-                                                            state_name_from_state: rowData.state
-                                                        },
-                                                    });
+                                                    if (redirectFrom === "country") {
+                                                        navigate("/operator-dashboard", {
+                                                            state: {
+                                                                redirect_from: redirectFrom,
+                                                                country_name_from_state: rowData.country_name,
+                                                                state_name_from_state: rowData.state
+                                                            },
+                                                        });
+                                                    }
+                                                    if (redirectFrom === "operator") {
+                                                        navigate("/game-dashboard", {
+                                                            state: {
+                                                                redirect_from: redirectFrom,
+                                                                country_name_from_state: rowData.country_name,
+                                                                state_name_from_state: rowData.state,
+                                                                operator_id_from_state: operator_id_from_state,
+                                                                operator_name_from_state: operator_name_from_state,
+                                                            },
+                                                        });
+                                                    }
+                                                    if (redirectFrom === "game") {
+                                                        navigate("/operator-dashboard", {
+                                                            state: {
+                                                                redirect_from: redirectFrom,
+                                                                country_name_from_state: rowData.country_name,
+                                                                state_name_from_state: rowData.state,
+                                                                game_id_from_state: game_id_from_state,
+                                                                game_name_from_state: game_name_from_state,
+                                                            },
+                                                        });
+                                                    }
                                                 }}
                                             >
-                                                <Column
+                                                {/* <Column
                                                     field="region"
                                                     header={headerWithTooltip(
                                                         "Region",
@@ -383,7 +563,7 @@ const CountryDashboard1 = () => {
                                                             : rowData.region
                                                     }
                                                     style={{ minWidth: "8rem" }}
-                                                ></Column>
+                                                ></Column> */}
 
                                                 <Column
                                                     field="country_name"
@@ -400,7 +580,7 @@ const CountryDashboard1 = () => {
                                                     sortable
                                                 ></Column>
 
-                                                <Column
+                                                {/* <Column
                                                     field="state"
                                                     header={headerWithTooltip(
                                                         "State",
@@ -413,12 +593,12 @@ const CountryDashboard1 = () => {
                                                             ? skeletonBody()
                                                             : rowData.state
                                                     }
-                                                ></Column>
+                                                ></Column> */}
 
-                                                <Column
+                                                {(redirectFrom === "country" || redirectFrom === "game") && <Column
                                                     field="casino_count"
                                                     header={headerWithTooltip(
-                                                        "Casino Count",
+                                                        "Operator Count",
                                                         "Overall count of casinos in this country",
                                                         "casino_count"
                                                     )}
@@ -428,9 +608,9 @@ const CountryDashboard1 = () => {
                                                             ? skeletonBody()
                                                             : rowData.casino_count
                                                     }
-                                                />
+                                                />}
 
-                                                <Column
+                                                {(redirectFrom === "country" || redirectFrom === "operator") && <Column
                                                     field="game_count"
                                                     header={headerWithTooltip(
                                                         "Game Count",
@@ -443,7 +623,7 @@ const CountryDashboard1 = () => {
                                                             ? skeletonBody()
                                                             : rowData.game_count
                                                     }
-                                                />
+                                                />}
 
                                                 <Column
                                                     field="game_positions_count"

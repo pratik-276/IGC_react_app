@@ -564,11 +564,11 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique games found across all casinos"
                         tooltipTarget="game_count"
                         value={summaryGameCount}
-                        // value={providerSummary.game_count}
-                        // value={
-                        //   new Set(filteredData.map((item) => item.game_name))
-                        //     .size
-                        // }
+                      // value={providerSummary.game_count}
+                      // value={
+                      //   new Set(filteredData.map((item) => item.game_name))
+                      //     .size
+                      // }
                       />
 
                       <InfoCard
@@ -576,15 +576,15 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique casinos hosting your games"
                         tooltipTarget="casino_count"
                         value={summaryCasinoCount}
-                        // value={providerSummary.casino_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}`
-                        //     )
-                        //   ).size
-                        // }
+                      // value={providerSummary.casino_count}
+                      // value={
+                      //   new Set(
+                      //     filteredData.map(
+                      //       (item) =>
+                      //         `${item.casino_name}|${item.country_name}`
+                      //     )
+                      //   ).size
+                      // }
                       />
 
                       <InfoCard
@@ -592,15 +592,15 @@ const DashboardMod = () => {
                         tooltip="Shows total count of unique game positions across all casinos"
                         tooltipTarget="combination_count"
                         value={summaryTotalPositions}
-                        // value={providerSummary.combination_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}|${item.game_name}`
-                        //     )
-                        //   ).size
-                        // }
+                      // value={providerSummary.combination_count}
+                      // value={
+                      //   new Set(
+                      //     filteredData.map(
+                      //       (item) =>
+                      //         `${item.casino_name}|${item.country_name}|${item.game_name}`
+                      //     )
+                      //   ).size
+                      // }
                       />
                     </div>
                   </div>

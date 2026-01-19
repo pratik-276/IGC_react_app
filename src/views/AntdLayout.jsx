@@ -9,9 +9,9 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
-import { FaChartBar, FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser } from "react-icons/fa6";
+import { FaChartBar, FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser, FaBoltLightning, FaMapLocationDot } from "react-icons/fa6";
 import { FaCompass } from "react-icons/fa6";
-import { GiPositionMarker } from "react-icons/gi";
+import { GiPositionMarker, GiCardPickup } from "react-icons/gi";
 import { FaRankingStar } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { MdCasino } from "react-icons/md";
@@ -100,9 +100,31 @@ const AppLayout = () => {
             label: "Home",
         },
         {
-            key: "/dashboard",
+            key: "dashboard",
             icon: <GiPositionMarker />,
             label: "Positions Dashboard",
+            children: [
+                {
+                    key: "/country-dashboard",
+                    icon: <FaMapLocationDot />,
+                    label: "Country Dashboard",
+                },
+                {
+                    key: "/operator-dashboard",
+                    icon: <MdCasino />,
+                    label: "Operator Dashboard",
+                },
+                {
+                    key: "/game-dashboard",
+                    icon: <GiCardPickup />,
+                    label: "Games Dashboard",
+                },
+                {
+                    key: "/dashboard",
+                    icon: <FaBoltLightning />,
+                    label: "Quick Access",
+                }
+            ],
         },
         {
             key: "/calibrate-compass",

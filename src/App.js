@@ -23,6 +23,7 @@ import DashboardMod from "./views/ui/DashboardMod";
 import CompetitorDashboardMod from "./views/ui/CompetitorDashboardMod";
 import GameDetailsMod from "./views/ui/GameDetailsMod";
 import CompassDetails from "./views/ui/CompassDetails";
+import GameDetailsNew from "./views/ui/countryDashboard/GameDetailsNew";
 import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameRankL2 from "./views/ui/GameRankL2";
@@ -176,6 +177,15 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <GameDashboard1 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="page-position-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameDetailsNew />
                       </ProtectedRoute>
                     }
                   />
