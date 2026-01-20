@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { FloatLabel } from "primereact/floatlabel";
@@ -10,18 +11,13 @@ import { InputText } from "primereact/inputtext";
 import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { Button } from "primereact/button";
-import { FilterMatchMode } from "primereact/api";
-
-import { Spin } from "antd";
+import { Skeleton } from "primereact/skeleton";
 
 import { MdArrowForwardIos, MdInfoOutline } from "react-icons/md";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 import { FaGem, FaLock } from "react-icons/fa6";
 
 import call from "../../services/Call";
-import toast from "react-hot-toast";
-
-import { useContext } from "react";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import GameRankAPI from "../../services/GameRank";
@@ -32,6 +28,20 @@ import "./AccessBlur.css";
 const GameProvideMarketshare = () => {
   const navigate = useNavigate();
 
+  const PAGE_SIZE = 20;
+
+  const tableWrapperRef = useRef(null);
+
+  const pageRef = useRef(1);
+  const loadingRef = useRef(false);
+  const hasMoreRef = useRef(true);
+
+  const searchRef = useRef("");
+  const searchDebounceRef = useRef(null);
+
+  const sortFieldRef = useRef("market_share");
+  const sortOrderRef = useRef("desc");
+
   const [loading, setLoading] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [regions, setRegions] = useState([]);
@@ -41,48 +51,56 @@ const GameProvideMarketshare = () => {
   const [totalCasinos, setTotalCasinos] = useState(null);
   const [updatedOn, setUpdatedOn] = useState(null);
 
-  const [filters, setFilters] = useState({
-    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-  });
-
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
   // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
-    // const savedRegion = localStorage.getItem("marketshareRegion");
-    // if (savedRegion) {
-    //   setSelectedRegion(savedRegion);
-    // }
     const savedMarket = localStorage.getItem("marketshareMarket");
-    // if (savedRegion) {
-    //   setSelectedRegion(savedRegion);
-    // }
+
     setSelectedRegion("All");
     getMarkets();
-    if (savedMarket) {
-      setSelectedMarket(savedMarket);
-      getRegions(savedMarket);
-      getMarketshareData(savedMarket, "All");
-    } else {
-      setSelectedMarket("North America");
-      getRegions("North America");
-      getMarketshareData("North America", "All");
-    }
-  }, []);
 
-  // useEffect(() => {
-  //   getPageData();
-  // }, [selectedRegion]);
+    const market = savedMarket || "North America";
+    setSelectedMarket(market);
+    getRegions(market);
+
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+    setTableData([]);
+
+    fetchMarketshareData({ reset: true });
+  }, []);
 
   useEffect(() => {
     import("../../utils/DatatableBottomFix").then(
       ({ datatableBottomItemFix }) => {
         console.log(datatableBottomItemFix());
-      }
+      },
     );
   }, [tableData]);
+
+  useEffect(() => {
+    const wrapper = tableWrapperRef.current?.querySelector(
+      ".p-datatable-wrapper",
+    );
+
+    if (!wrapper) return;
+
+    const handleScroll = (e) => {
+      if (loadingRef.current) return;
+
+      const { scrollTop, scrollHeight, clientHeight } = e.target;
+
+      if (scrollTop + clientHeight >= scrollHeight - 50) {
+        fetchMarketshareData();
+      }
+    };
+
+    wrapper.addEventListener("scroll", handleScroll);
+    return () => wrapper.removeEventListener("scroll", handleScroll);
+  }, []);
 
   async function getMarkets() {
     GameRankAPI.get_markets().then((res) => {
@@ -115,69 +133,75 @@ const GameProvideMarketshare = () => {
         .map((region) => ({ label: region, value: region }));
 
       setRegions(cleaned);
+      // setSelectedRegion("All");
+      // getMarketshareData(updated_market, "All");
       setSelectedRegion("All");
-      getMarketshareData(updated_market, "All");
+
+      pageRef.current = 1;
+      hasMoreRef.current = true;
+      setTableData([]);
+
+      fetchMarketshareData({ reset: true });
     } else {
       setRegions([]);
       setLoading(false);
     }
   }
 
-  async function getMarketshareData(updated_market, updated_region) {
+  const fetchMarketshareData = async ({ reset = false } = {}) => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+
+    loadingRef.current = true;
     setLoading(true);
-    const data = await call({
-      path: `get_provider_marketshare`,
-      method: "POST",
-      data: {
-        region: updated_region,
-        market: updated_market,
-        month: "",
-        search_term: "",
-      },
-    });
 
-    const month = data?.data?.month;
-    const year = data?.data?.year;
+    // skeleton rows
+    setTableData((prev) => [
+      ...prev,
+      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        __skeleton: true,
+        provider_id: `skeleton-${pageRef.current}-${i}`,
+      })),
+    ]);
 
-    const monthNames = [
-      "January",
-      "February",
-      "March",
-      "April",
-      "May",
-      "June",
-      "July",
-      "August",
-      "September",
-      "October",
-      "November",
-      "December",
-    ];
-
-    const formattedDate =
-      month && year ? `${monthNames[month - 1]}, ${year}` : null;
-
-    setUpdatedOn(formattedDate);
-    setTotalCasinos(data?.data?.total_casinos || "-");
-
-    const marketData = data?.data?.data || [];
-    // console.log(Math.max(...marketData.map((d) => parseFloat(d.market_share))));
-    setTableData(marketData.sort((a, b) => b.market_share - a.market_share));
-    setLoading(false);
-  }
-
-  async function getPageData() {
-    setLoading(true);
     try {
-      await getRegions();
-      await getMarketshareData();
-    } catch (e) {
-      toast.error(e?.message || "Something went wrong");
-      setTableData([]);
-    }
+      const res = await call({
+        path: "get_provider_marketshare_mod",
+        method: "POST",
+        data: {
+          region: selectedRegion,
+          market: selectedMarket,
+          search_term: searchRef.current,
+          month: "",
+          limit: PAGE_SIZE,
+          page: pageRef.current,
+          sort_by: sortFieldRef.current,
+          order: sortOrderRef.current,
+        },
+      });
 
-    setLoading(false);
-  }
+      if (res?.data?.data) {
+        setTableData((prev) => {
+          const clean = prev.filter((r) => !r.__skeleton);
+          return reset ? res.data.data : [...clean, ...res.data.data];
+        });
+
+        console.log("res.data : ", res);
+
+        const pagination = res.pagination;
+        console.log("pagination : ", pagination);
+
+        hasMoreRef.current = pagination.current_page < pagination.total_pages;
+
+        pageRef.current = pagination.current_page + 1;
+
+        setTotalCasinos(res.data.total_casinos);
+        setUpdatedOn(res.data.month_year);
+      }
+    } finally {
+      loadingRef.current = false;
+      setLoading(false);
+    }
+  };
 
   const changeTemplate = (row) => {
     let change = 0;
@@ -307,24 +331,6 @@ const GameProvideMarketshare = () => {
     return icon;
   };
 
-  // const actionBodyTemplate = (rowData) => {
-  //   return (
-  //     <MdArrowForwardIos
-  //       style={{ fontSize: "16px" }}
-  //       onClick={() => {
-  //         navigate("/game-provider-marketshare-details", {
-  //           state: {
-  //             regionName: selectedRegion,
-  //             providerId: rowData.provider_id,
-  //             passed_market: selectedMarket,
-  //             provider_details: rowData
-  //           },
-  //         });
-  //       }}
-  //     />
-  //   );
-  // };
-
   return (
     <>
       <div className={`content ${isPlanExpired ? "show" : ""}`}>
@@ -391,9 +397,6 @@ const GameProvideMarketshare = () => {
                       options={markets}
                       style={{ width: "150px" }}
                     />
-                    {/* <label className="fs-6" htmlFor="market">
-                                        Select Market
-                                      </label> */}
                   </FloatLabel>
                   <FloatLabel>
                     <Dropdown
@@ -407,14 +410,16 @@ const GameProvideMarketshare = () => {
                         const region = e.value;
                         setSelectedRegion(region);
                         localStorage.setItem("marketshareRegion", region);
-                        getMarketshareData(selectedMarket, region);
+
+                        pageRef.current = 1;
+                        hasMoreRef.current = true;
+                        setTableData([]);
+
+                        fetchMarketshareData({ reset: true });
                       }}
                       options={regions}
                       style={{ width: "150px" }}
                     />
-                    {/* <label className="fs-6" htmlFor="region">
-                      Select Country
-                    </label> */}
                   </FloatLabel>
 
                   <IconField iconPosition="left" style={{ flex: 2 }}>
@@ -422,13 +427,23 @@ const GameProvideMarketshare = () => {
                     <InputText
                       disabled={loading}
                       placeholder="Search"
-                      value={filters.global.value}
-                      onChange={(e) =>
-                        setFilters((f) => ({
-                          ...f,
-                          global: { ...f.global, value: e.target.value },
-                        }))
-                      }
+                      onChange={(e) => {
+                        if (searchDebounceRef.current) {
+                          clearTimeout(searchDebounceRef.current);
+                        }
+
+                        const value = e.target.value.trim();
+
+                        searchDebounceRef.current = setTimeout(() => {
+                          searchRef.current = value;
+                          pageRef.current = 1;
+                          hasMoreRef.current = true;
+                          loadingRef.current = false;
+                          setTableData([]);
+
+                          fetchMarketshareData({ reset: true });
+                        }, 500);
+                      }}
                       style={{ width: "150px" }}
                     />
                   </IconField>
@@ -437,135 +452,172 @@ const GameProvideMarketshare = () => {
             </div>
           </div>
 
-          {loading ? (
-            <>
-              <div
-                className="row align-items-center justify-content-center"
-                style={{ height: "500px" }}
-              >
-                <div className="col-md-5">
-                  <div className="text-center">
-                    <Spin size="large" />
-                  </div>
-                </div>
+          <div className="border border-secondary p-3 rounded-3 mt-3">
+            <h5 className="font-semibold pl-2">Latest Details</h5>
+            <div className="d-flex justify-content-between pl-2 mb-2">
+              <div>
+                <strong>Total Casinos : </strong>
+                {totalCasinos}
               </div>
-            </>
-          ) : (
-            <>
-              <div className="border border-secondary p-3 rounded-3 mt-3">
-                <h5 className="font-semibold pl-2">Latest Details</h5>
-                <div className="d-flex justify-content-between pl-2 mb-2">
-                  <div>
-                    <strong>Total Casinos : </strong>
-                    {totalCasinos}
-                  </div>
-                  <div>
-                    <strong>Period : </strong>
-                    {updatedOn}
-                  </div>
-                </div>
-                <DataTable
-                  value={tableData}
-                  filters={filters}
-                  removableSort
-                  paginator
-                  rows={10}
-                  rowsPerPageOptions={[10, 25, 50]}
-                  paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                  size="small"
-                  className="table-bordered p-component p-datatable custom-table small"
-                  scrollable
-                  sortIcon={sortIconTemplate}
-                  sortField="market_share"
-                  sortOrder={0}
-                  globalFilterFields={["game_provider"]}
-                  onRowClick={(e) => {
-                    const rowData = e.data;
-                    navigate("/game-provider-marketshare-details", {
-                      state: {
-                        regionName: selectedRegion,
-                        providerId: rowData.provider_id,
-                        passed_market: selectedMarket,
-                        provider_details: rowData,
-                      },
-                    });
-                  }}
-                >
-                  <Column
-                    field="provider_rank"
-                    sortable
-                    header={headerWithTooltip(
-                      "Rank",
-                      "Rank of the game provider in the market",
-                      "rank"
-                    )}
-                  ></Column>
+              <div>
+                <strong>Period : </strong>
+                {updatedOn}
+              </div>
+            </div>
+            <div ref={tableWrapperRef}>
+              <DataTable
+                value={tableData}
+                // filters={filters}
+                // removableSort
+                // paginator
+                // rows={10}
+                // rowsPerPageOptions={[10, 25, 50]}
+                // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+                // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
+                // size="small"
+                // className="table-bordered p-component p-datatable custom-table small"
+                // scrollable
+                // sortIcon={sortIconTemplate}
+                // sortField="market_share"
+                // sortOrder={0}
+                // globalFilterFields={["game_provider"]}
 
-                  <Column
-                    field="game_provider"
-                    sortable
-                    header={headerWithTooltip(
-                      "Game Provider",
-                      "Name of the game provider",
-                      "game_provider"
-                    )}
-                  ></Column>
+                scrollable
+                scrollHeight="600px"
+                onSort={(e) => {
+                  sortFieldRef.current = e.sortField;
+                  sortOrderRef.current = e.sortOrder === 1 ? "asc" : "desc";
 
-                  <Column
-                    field="unique_games"
-                    sortable
-                    header={headerWithTooltip(
-                      "Unique Games",
-                      "Number of unique games provided by the provider",
-                      "unique_games"
-                    )}
-                  ></Column>
+                  pageRef.current = 1;
+                  hasMoreRef.current = true;
+                  setTableData([]);
 
-                  <Column
-                    field="unique_casinos"
-                    sortable
-                    header={headerWithTooltip(
-                      "Unique Casinos",
-                      "Number of unique casinos using the provider",
-                      "unique_casinos"
-                    )}
-                  ></Column>
+                  fetchMarketshareData({ reset: true });
+                }}
+                sortField={sortFieldRef.current}
+                sortOrder={sortOrderRef.current === "asc" ? 1 : -1}
+                className="table-bordered p-datatable custom-table small"
+                onRowClick={(e) => {
+                  const rowData = e.data;
+                  navigate("/game-provider-marketshare-details", {
+                    state: {
+                      regionName: selectedRegion,
+                      providerId: rowData.provider_id,
+                      passed_market: selectedMarket,
+                      provider_details: rowData,
+                    },
+                  });
+                }}
+              >
+                <Column
+                  field="provider_rank"
+                  sortable
+                  header={headerWithTooltip(
+                    "Rank",
+                    "Rank of the game provider in the market",
+                    "rank",
+                  )}
+                  body={(row) =>
+                    row.__skeleton ? (
+                      <Skeleton width="80%" height="1rem" />
+                    ) : (
+                      row.provider_rank
+                    )
+                  }
+                ></Column>
 
-                  <Column
-                    field="total_lobby_position"
-                    sortable
-                    header={headerWithTooltip(
-                      "Lobby Casinos",
-                      "Count of casinos where games in lobby",
-                      "total_lobby_position"
-                    )}
-                  ></Column>
+                <Column
+                  field="game_provider"
+                  sortable
+                  header={headerWithTooltip(
+                    "Game Provider",
+                    "Name of the game provider",
+                    "game_provider",
+                  )}
+                  body={(row) =>
+                    row.__skeleton ? (
+                      <Skeleton width="80%" height="1rem" />
+                    ) : (
+                      row.game_provider
+                    )
+                  }
+                ></Column>
 
-                  <Column
-                    field="market_share"
-                    sortable
-                    align="center"
-                    header={headerWithTooltip(
-                      "Market Share",
-                      "Market share of the provider in the selected region",
-                      "market_share"
-                    )}
-                    body={marketshareTemplate}
-                  ></Column>
+                <Column
+                  field="unique_games"
+                  sortable
+                  header={headerWithTooltip(
+                    "Unique Games",
+                    "Number of unique games provided by the provider",
+                    "unique_games",
+                  )}
+                  body={(row) =>
+                    row.__skeleton ? (
+                      <Skeleton width="80%" height="1rem" />
+                    ) : (
+                      row.unique_games
+                    )
+                  }
+                ></Column>
 
-                  <Column
-                    field="change"
-                    sortable
-                    header={headerWithTooltip(
-                      "Change (MoM)",
-                      "Change in market share",
-                      "change"
-                    )}
-                    body={changeTemplate}
-                  ></Column>
+                <Column
+                  field="unique_casinos"
+                  sortable
+                  header={headerWithTooltip(
+                    "Unique Casinos",
+                    "Number of unique casinos using the provider",
+                    "unique_casinos",
+                  )}
+                  body={(row) =>
+                    row.__skeleton ? (
+                      <Skeleton width="80%" height="1rem" />
+                    ) : (
+                      row.unique_casinos
+                    )
+                  }
+                ></Column>
 
-                  {/* <Column
+                <Column
+                  field="total_lobby_position"
+                  sortable
+                  header={headerWithTooltip(
+                    "Lobby Casinos",
+                    "Count of casinos where games in lobby",
+                    "total_lobby_position",
+                  )}
+                  body={(row) =>
+                    row.__skeleton ? (
+                      <Skeleton width="80%" height="1rem" />
+                    ) : (
+                      row.total_lobby_position
+                    )
+                  }
+                ></Column>
+
+                <Column
+                  field="market_share"
+                  sortable
+                  align="center"
+                  header={headerWithTooltip(
+                    "Market Share",
+                    "Market share of the provider in the selected region",
+                    "market_share",
+                  )}
+                  body={marketshareTemplate}
+                ></Column>
+
+                <Column
+                  field="change"
+                  sortable
+                  header={headerWithTooltip(
+                    "Change (MoM)",
+                    "Change in market share",
+                    "change",
+                  )}
+                  body={changeTemplate}
+                ></Column>
+
+                {/* <Column
                     field="details"
                     header={headerWithTooltip(
                       "Details",
@@ -575,10 +627,9 @@ const GameProvideMarketshare = () => {
                     className="text-center"
                     body={actionBodyTemplate}
                   ></Column> */}
-                </DataTable>
-              </div>
-            </>
-          )}
+              </DataTable>
+            </div>
+          </div>
         </div>
       </div>
     </>

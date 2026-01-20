@@ -155,6 +155,35 @@ const compass_game_sections = async (data) => {
   });
   return d;
 };
+
+//Updated pagination, lazy loading
+const compass_read_mod = async (data) => {
+  let d = await Call({
+    path: "compass_read_mod",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
+const compass_read_game_dashboard = async (data) => {
+  let d = await Call({
+    path: "compass_read_game_dashboard",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
+const compass_read_casino_dashboard = async (data) => {
+  let d = await Call({
+    path: "compass_read_casino_dashboard",
+    method: "POST",
+    data,
+  });
+  return d;
+};
+
 const exportObject = {
   compass_read,
   compass_create,
@@ -173,6 +202,9 @@ const exportObject = {
   compass_edit,
   compass_details_graph,
   compass_game_sections,
+  compass_read_mod,
+  compass_read_game_dashboard,
+  compass_read_casino_dashboard,
 };
 
 export default exportObject;

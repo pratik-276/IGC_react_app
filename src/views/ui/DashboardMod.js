@@ -11,6 +11,7 @@ import { Tooltip } from "primereact/tooltip";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Carousel } from "primereact/carousel";
+import { Skeleton } from "primereact/skeleton";
 
 import { Spin } from "antd";
 
@@ -34,7 +35,6 @@ import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
-import { Skeleton } from "primereact/skeleton";
 
 const DashboardMod = () => {
   const user_id = localStorage.getItem("user_id");
@@ -81,12 +81,11 @@ const DashboardMod = () => {
 
   const [hasMore, setHasMore] = useState(true);
   const [tableData, setTableData] = useState([]);
-  const [totalRecords, setTotalRecords] = useState(0);
   const [tableLoading, setTableLoading] = useState(false);
 
   useEffect(() => {
     const wrapper = tableWrapperRef.current?.querySelector(
-      ".p-datatable-wrapper"
+      ".p-datatable-wrapper",
     );
 
     if (!wrapper) return;
@@ -472,9 +471,8 @@ const DashboardMod = () => {
         ? selectedCountry.map(String)
         : [],
     };
-    const downloadRes = await GameData.provider_latest_details_download(
-      downloadData
-    );
+    const downloadRes =
+      await GameData.provider_latest_details_download(downloadData);
     //console.log("downloadRes", downloadRes?.data);
     if (downloadRes?.success === true) {
       const csv = Papa.unparse(downloadRes?.data);
@@ -736,7 +734,6 @@ const DashboardMod = () => {
                         lazy
                         scrollable
                         scrollHeight="600px"
-                        // loading={tableLoading}
                         onSort={onSort}
                         sortField={sortFieldRef.current}
                         sortOrder={sortOrderRef.current === "asc" ? 1 : -1}
@@ -747,7 +744,7 @@ const DashboardMod = () => {
                           header={headerWithTooltip(
                             "Game",
                             "Name of Game",
-                            "game_name"
+                            "game_name",
                           )}
                           sortable
                           body={(rowData) =>
@@ -763,7 +760,7 @@ const DashboardMod = () => {
                           header={headerWithTooltip(
                             "Casino",
                             "Name of casino",
-                            "casino_name"
+                            "casino_name",
                           )}
                           body={(rowData) =>
                             rowData.__skeleton
@@ -778,7 +775,7 @@ const DashboardMod = () => {
                           header={headerWithTooltip(
                             "Country",
                             "Country of Casino",
-                            "country_name"
+                            "country_name",
                           )}
                           sortable
                           body={(rowData) =>
@@ -793,7 +790,7 @@ const DashboardMod = () => {
                           header={headerWithTooltip(
                             "Total Positions",
                             "Count of pages where the game is found on this casino",
-                            "url_count"
+                            "url_count",
                           )}
                           sortable
                           body={(rowData) =>
@@ -912,7 +909,7 @@ const DashboardMod = () => {
                           header={headerWithTooltip(
                             "LOD",
                             "Date when the game was last observed on the casino",
-                            "last_observed_date"
+                            "last_observed_date",
                           )}
                           sortable
                           body={(rowData) => {
@@ -921,7 +918,7 @@ const DashboardMod = () => {
                             }
 
                             return dayjs(rowData.last_observed_date).format(
-                              "MMM D, YYYY"
+                              "MMM D, YYYY",
                             );
                           }}
                           style={{ minWidth: "7rem" }}
