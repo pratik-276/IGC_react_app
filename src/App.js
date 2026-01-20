@@ -23,6 +23,7 @@ import DashboardMod from "./views/ui/DashboardMod";
 import CompetitorDashboardMod from "./views/ui/CompetitorDashboardMod";
 import GameDetailsMod from "./views/ui/GameDetailsMod";
 import CompassDetails from "./views/ui/CompassDetails";
+import GameDetailsNew from "./views/ui/countryDashboard/GameDetailsNew";
 import RawDataDashboard from "./views/ui/RawDataDashboard";
 import GameRank from "./views/ui/GameRank";
 import GameRankL2 from "./views/ui/GameRankL2";
@@ -58,6 +59,9 @@ import CLAUDE20 from "./views/blogs/claude_20";
 import AnalyticsPage from "./views/ui/AnalyticsPage";
 import RequestedCasinos from "./views/ui/RequestedCasinos";
 import BullsharkReportPage from "./views/ui/BullsharkReportPage";
+import CountryDashboard1 from "./views/ui/countryDashboard/country";
+import OperatorDashboard1 from "./views/ui/countryDashboard/operator";
+import GameDashboard1 from "./views/ui/countryDashboard/game";
 
 const App = () => {
   return (
@@ -146,6 +150,42 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <DashboardMod />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="country-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <CountryDashboard1 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="operator-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <OperatorDashboard1 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="game-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <GameDashboard1 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="page-position-details"
+                    element={
+                      <ProtectedRoute>
+                        <GameDetailsNew />
                       </ProtectedRoute>
                     }
                   />

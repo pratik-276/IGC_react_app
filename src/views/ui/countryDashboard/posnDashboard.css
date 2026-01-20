@@ -1,0 +1,13 @@
+.p-breadcrumb {
+    border: none !important;
+    padding: 0 !important;
+}
+
+.p-menuitem-link {
+    text-decoration: none !important;
+}
+
+.p-breadcrumb-list {
+    margin-bottom: 0 !important;
+    padding-left: 0 !important;
+}
