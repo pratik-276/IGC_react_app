@@ -16,7 +16,13 @@ import { Skeleton } from "primereact/skeleton";
 import { Spin } from "antd";
 
 import { MdInfoOutline } from "react-icons/md";
-import { FaGem, FaLock, FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import {
+  FaGem,
+  FaLock,
+  FaCaretUp,
+  FaCaretDown,
+  FaFilter,
+} from "react-icons/fa6";
 
 import dayjs from "dayjs";
 import Papa from "papaparse";
@@ -29,14 +35,19 @@ import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import VerticalBarChart from "../../charts/PositionDashbaordPage/VerticalBarChart";
 
+import { useOutletContext } from "react-router-dom";
+
 import "primereact/resources/themes/saga-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeflex/primeflex.css";
 import "primeicons/primeicons.css";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+import PageHeader from "../../component/PageHeader";
 
-const DashboardMod = () => {
+const DashboardModTest = () => {
+  const { toggleChat, isChatOpen } = useOutletContext();
+
   const user_id = localStorage.getItem("user_id");
   const user_company = localStorage.getItem("user_company");
   const navigate = useNavigate();
@@ -44,9 +55,6 @@ const DashboardMod = () => {
   const [selectedRows, setSelectedRows] = useState(null);
   const [loader, setLoader] = useState(false);
   const [providerLatestDetails, setProviderLatestDetails] = useState([]);
-
-  const [casinoWiseCountData, setCasinoWiseCountData] = useState([]);
-  const [gameWiseCountData, setGameWiseCountData] = useState([]);
 
   const [gamesList, setGamesList] = useState([]);
   const [casinosList, setCasinosList] = useState([]);
@@ -83,6 +91,8 @@ const DashboardMod = () => {
   const [hasMore, setHasMore] = useState(true);
   const [tableData, setTableData] = useState([]);
   const [tableLoading, setTableLoading] = useState(false);
+
+  const [showFilter, setShowFilter] = useState(false);
 
   useEffect(() => {
     const wrapper = tableWrapperRef.current?.querySelector(
@@ -228,26 +238,6 @@ const DashboardMod = () => {
     getCasinosProviders();
     getGamesProviders();
   }, []);
-
-  // const overviewDashboard = async () => {
-  //   try {
-  //     const detailsRes = await GameData.provider_latest_details({
-  //       game_provider: user_company,
-  //     });
-
-  //     if (detailsRes?.success === true) {
-  //       setProviderLatestDetails(detailsRes?.data || []);
-  //       setCasinoWiseCountData(detailsRes?.extra_data?.casino_wise_count || []);
-  //       setGameWiseCountData(detailsRes?.extra_data?.game_wise_count || []);
-  //     } else {
-  //       console.log("Failed to fetch latest details");
-  //     }
-  //   } catch (err) {
-  //     console.log(err);
-  //   } finally {
-  //     setLoader(false);
-  //   }
-  // };
 
   const getSummaryProviders = async () => {
     try {
@@ -490,7 +480,7 @@ const DashboardMod = () => {
     <>
       <div>
         <div>
-          <div className="d-flex align-items-center justify-content-between">
+          {/* <div className="d-flex align-items-center justify-content-between">
             <div>
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
                 Positions Dashboard
@@ -500,41 +490,117 @@ const DashboardMod = () => {
               </span>
             </div>
 
-            <div className="d-flex gap-2 w-100 justify-content-end">
-              <MultiSelect
-                options={countryList}
-                optionLabel="country_name"
-                optionValue="country_name"
-                filter
-                placeholder="Select Country"
-                loading={countryLoader}
-                value={selectedCountry}
-                onChange={(e) => setSelectedCountry(e.value)}
-                className="w-12rem"
-              />
-              <MultiSelect
-                options={casinosList}
-                optionLabel="casino_name"
-                optionValue="operator_id"
-                filter
-                placeholder="Select Casinos"
-                loading={casinosLoader}
-                value={selectedCasinos}
-                onChange={(e) => setSelectedCasinos(e.value)}
-                className="w-12rem"
-              />
-              <MultiSelect
-                options={gamesList}
-                optionLabel="game_name"
-                optionValue="game_id"
-                filter
-                placeholder="Select Games"
-                loading={gamesLoader}
-                value={selectedGames}
-                onChange={(e) => setSelectedGames(e.value)}
-                className="w-12rem"
-              />
+            <div className="d-flex align-items-center justify-content-between">
+              {isPlanExpired ? (
+                <>
+                  <span
+                    className="text-muted"
+                    id="download-disabled"
+                    style={{
+                      cursor: "not-allowed",
+                      textDecoration: "underline dotted",
+                    }}
+                  >
+                    Download Report
+                  </span>
+                  <Tooltip
+                    target="#download-disabled"
+                    content="Upgrade your plan to download the report"
+                    position="top"
+                  />
+                </>
+              ) : (
+                <div className="d-flex align-items-center gap-1 mb-2">
+                  <IconField iconPosition="left">
+                    <InputIcon className="pi pi-search"> </InputIcon>
+                    <InputText
+                      placeholder="Search..."
+                      className="w-12rem"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                    />
+                  </IconField>
+                  <Button
+                    onClick={() => setShowFilter(!showFilter)}
+                    className="d-flex align-items-center gap-1"
+                    style={{ backgroundColor: "#392f6c", border: "none" }}
+                  >
+                    <FaFilter /> <span>Filters</span>
+                  </Button>
+
+                  <Button
+                    icon="pi pi-download"
+                    tooltip="Download Report"
+                    tooltipOptions={{ position: "top" }}
+                    rounded
+                    onClick={() => exportCSV()}
+                    style={{ backgroundColor: "#392f6c", border: "none" }}
+                  />
+
+                  <Button
+                    icon="pi pi-comments"
+                    label={isChatOpen ? "Close" : "Chat"}
+                    onClick={toggleChat}
+                    style={{ backgroundColor: "#392f6c", border: "none" }}
+                  />
+                </div>
+              )}
             </div>
+          </div> */}
+
+          <PageHeader
+            title="Positions Dashboard"
+            subtitle="Track latest positions of all your games across all casinos"
+            searchValue={searchTerm}
+            onSearchChange={setSearchTerm}
+            onDownload={exportCSV}
+            onToggleFilter={() => setShowFilter((v) => !v)}
+            onToggleChat={toggleChat}
+            isPlanExpired={isPlanExpired}
+            features={{
+              search: true,
+              filters: true,
+              download: true,
+              chat: true,
+            }}
+          />
+        </div>
+
+        <div className={`filter-wrapper ${showFilter ? "open" : "closed"}`}>
+          <div className="d-flex gap-2 mt-2 w-100 align-items-center justify-content-between">
+            <MultiSelect
+              options={countryList}
+              optionLabel="country_name"
+              optionValue="country_name"
+              filter
+              placeholder="Select Country"
+              loading={countryLoader}
+              value={selectedCountry}
+              onChange={(e) => setSelectedCountry(e.value)}
+              className="w-100"
+            />
+            <MultiSelect
+              options={casinosList}
+              optionLabel="casino_name"
+              optionValue="operator_id"
+              filter
+              placeholder="Select Casinos"
+              loading={casinosLoader}
+              value={selectedCasinos}
+              onChange={(e) => setSelectedCasinos(e.value)}
+              className="w-100"
+            />
+            <MultiSelect
+              options={gamesList}
+              optionLabel="game_name"
+              optionValue="game_id"
+              filter
+              placeholder="Select Games"
+              loading={gamesLoader}
+              value={selectedGames}
+              onChange={(e) => setSelectedGames(e.value)}
+              className="w-100"
+            />
           </div>
         </div>
 
@@ -553,186 +619,40 @@ const DashboardMod = () => {
           <>
             {providerLatestDetails ? (
               <>
-                <div className="border border-secondary p-3 rounded-3 mt-3">
-                  <div>
-                    <h5 className="font-semibold pl-2">Summary</h5>
-                    <div className="flex gap-2 mt-2">
-                      <InfoCard
-                        header="Game Count"
-                        tooltip="Shows total count of unique games found across all casinos"
-                        tooltipTarget="game_count"
-                        value={summaryGameCount}
-                        // value={providerSummary.game_count}
-                        // value={
-                        //   new Set(filteredData.map((item) => item.game_name))
-                        //     .size
-                        // }
-                      />
+                <div>
+                  <div className="flex gap-2 mt-3">
+                    <InfoCard
+                      header="Game Count"
+                      tooltip="Shows total count of unique games found across all casinos"
+                      tooltipTarget="game_count"
+                      value={summaryGameCount}
+                    />
 
-                      <InfoCard
-                        header="Casino Count"
-                        tooltip="Shows total count of unique casinos hosting your games"
-                        tooltipTarget="casino_count"
-                        value={summaryCasinoCount}
-                        // value={providerSummary.casino_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}`
-                        //     )
-                        //   ).size
-                        // }
-                      />
+                    <InfoCard
+                      header="Casino Count"
+                      tooltip="Shows total count of unique casinos hosting your games"
+                      tooltipTarget="casino_count"
+                      value={summaryCasinoCount}
+                    />
 
-                      <InfoCard
-                        header="Total Positions"
-                        tooltip="Shows total count of unique game positions across all casinos"
-                        tooltipTarget="combination_count"
-                        value={summaryTotalPositions}
-                        // value={providerSummary.combination_count}
-                        // value={
-                        //   new Set(
-                        //     filteredData.map(
-                        //       (item) =>
-                        //         `${item.casino_name}|${item.country_name}|${item.game_name}`
-                        //     )
-                        //   ).size
-                        // }
-                      />
-                    </div>
+                    <InfoCard
+                      header="Total Positions"
+                      tooltip="Shows total count of unique game positions across all casinos"
+                      tooltipTarget="combination_count"
+                      value={summaryTotalPositions}
+                    />
                   </div>
                 </div>
 
-                {/* <div className="border border-secondary p-3 rounded-3 mt-3">
-                  <div className="row">
-                    <div className="col-md-6">
-                      <h5 className="font-semibold pl-2">Casino wise Count</h5>
-                      <VerticalBarChart
-                        data={casinoWiseCountData}
-                        loading={loader}
-                        xKey="casino_name_mod"
-                        yKey="game_count"
-                        xLabel="Game Count"
-                        barColor="#9405eb"
-                        highlightKey="casino_name_mod"
-                        // highlightValues={
-                        //   selectedCasinos?.map((x) => x.name) || []
-                        // }
-                        onBarClick={(entry) => handleCasinoBarClick(entry)}
-                      />
-                    </div>
-                    <div className="col-md-6">
-                      <h5 className="font-semibold pl-2">Game wise Count</h5>
-                      <VerticalBarChart
-                        data={gameWiseCountData}
-                        loading={loader}
-                        xKey="game_name"
-                        yKey="casino_count"
-                        xLabel="Casino Count"
-                        barColor="#6E00B3"
-                        highlightKey="game_name"
-                        // highlightValues={
-                        //   selectedGames?.map((x) => x.name) || []
-                        // }
-                        onBarClick={(entry) => handleGameBarClick(entry)}
-                      />
-                    </div>
-                  </div>
-                </div> */}
-
-                <div className="border border-secondary p-3 rounded-3 mt-3">
+                <div className="mt-3">
                   {/* Tracker Details Table */}
 
-                  <div className="d-flex align-items-center justify-content-between">
-                    <h5 className="font-semibold pl-2">Latest Details</h5>
-                    {isPlanExpired ? (
-                      <>
-                        <span
-                          className="text-muted"
-                          id="download-disabled"
-                          style={{
-                            cursor: "not-allowed",
-                            textDecoration: "underline dotted",
-                          }}
-                        >
-                          Download Report
-                        </span>
-                        <Tooltip
-                          target="#download-disabled"
-                          content="Upgrade your plan to download the report"
-                          position="top"
-                        />
-                      </>
-                    ) : (
-                      <div className="d-flex align-items-center gap-1 mb-2">
-                        <IconField iconPosition="left">
-                          <InputIcon className="pi pi-search"> </InputIcon>
-                          <InputText
-                            placeholder="Search..."
-                            className="w-12rem"
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                          />
-                        </IconField>
-                        <Button
-                          icon="pi pi-download"
-                          tooltip="Download Report"
-                          tooltipOptions={{ position: "top" }}
-                          rounded
-                          onClick={() => exportCSV()}
-                          style={{ backgroundColor: "#392f6c", border: "none" }}
-                        />
-                        {/* <span
-                          className="text-primary cursor-pointer"
-                          onClick={() => exportCSV(filteredData)}
-                        >
-                          Download Report
-                        </span> */}
-                      </div>
-                    )}
-                  </div>
-
                   <div>
-                    {/* <DataTable
-                      ref={dt}
-                      // value={filteredData}
-                      value={
-                        isPlanExpired ? filteredData.slice(0, 3) : filteredData
-                      }
-                      selection={selectedRows}
-                      onSelectionChange={(e) => setSelectedRows(e.value)}
-                      dataKey="comb_id"
-                      removableSort
-                      paginator={!isPlanExpired}
-                      rows={10}
-                      rowsPerPageOptions={[5, 10, 25]}
-                      paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                      currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                      size="small"
-                      className="table-bordered p-component p-datatable custom-table small"
-                      scrollable
-                      sortIcon={sortIconTemplate}
-                      sortField="last_observed_date"
-                      sortOrder={-1}
-                      onRowClick={(e) => {
-                        const rowData = e.data;
-                        navigate("/position-details", {
-                          state: {
-                            operator_site_id: rowData.operator_site_id,
-                            game_name: rowData.game_name,
-                            casino_name: rowData.casino_name,
-                            country_name: rowData.country_name,
-                            state_name: rowData.state,
-                            site_url: rowData.site_url,
-                          },
-                        });
-                      }}
-                    > */}
                     <div ref={tableWrapperRef}>
                       <DataTable
                         value={tableData}
                         dataKey="comb_id"
+                        size="small"
                         lazy
                         scrollable
                         scrollHeight="600px"
@@ -767,7 +687,7 @@ const DashboardMod = () => {
                               ? skeletonBody()
                               : rowData.game_name
                           }
-                          style={{ minWidth: "8rem" }}
+                          // style={{ minWidth: "8rem" }}
                         ></Column>
 
                         <Column
@@ -815,110 +735,6 @@ const DashboardMod = () => {
                           }
                         ></Column>
 
-                        {/*  <Column
-                          frozen
-                          field="comb_occurence_count"
-                          header={headerWithTooltip(
-                            "Occurences",
-                            "Count of occurences of the game on this casino",
-                            "comb_occurence_count"
-                          )}
-                          sortable
-                        ></Column>
-
-                        <Column
-                          field="section_name"
-                          header={headerWithTooltip(
-                            "Best Secn",
-                            "Best section within casino where game was found",
-                            "section_name"
-                          )}
-                          sortable
-                          style={{ minWidth: "10rem" }}
-                        ></Column>
-
-                        <Column
-                          field="section_position"
-                          header={headerWithTooltip(
-                            "Best Sec Pos",
-                            "Position of the best section within casino page",
-                            "section_position"
-                          )}
-                          sortable
-                          style={{ minWidth: "8rem" }}
-                        ></Column>
-
-                        <Column
-                          field="sectional_game_position"
-                          header={headerWithTooltip(
-                            "Best Game Pos",
-                            "Best position of game within the section",
-                            "sectional_game_position"
-                          )}
-                          sortable
-                          style={{ minWidth: "9rem" }}
-                        ></Column>
-
-                        <Column
-                          field="overall_position"
-                          header={headerWithTooltip(
-                            "Overall Pos",
-                            "Overall position of the game on the casino page",
-                            "overall_position"
-                          )}
-                          sortable
-                          style={{ minWidth: "10rem" }}
-                        ></Column>
-
-                        <Column
-                          field="growth"
-                          header={headerWithTooltip(
-                            "Growth",
-                            "Change in overall position of the game on casino page since last scan",
-                            "growth"
-                          )}
-                          sortable
-                          body={changeTemplate}
-                        ></Column>
-
-                        <Column
-                          field="site_url"
-                          header={headerWithTooltip(
-                            "Site URL",
-                            "URL for the casino page",
-                            "site_url"
-                          )}
-                          body={(rowData) => (
-                            <a
-                              href={rowData.site_url}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              style={{
-                                display: "inline-block",
-                                maxWidth: "200px",
-                                color: "#0066cc",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                              }}
-                              title={rowData.site_url}
-                            >
-                              {rowData.site_url}
-                            </a>
-                          )}
-                        ></Column>
-
-                        <Column
-                          field="frequency"
-                          header={headerWithTooltip(
-                            "Site Freq",
-                            "Frequency at which the site is scanned",
-                            "frequency"
-                          )}
-                          sortable
-                          style={{ minWidth: "10rem" }}
-                        ></Column> */}
-
                         <Column
                           field="last_observed_date"
                           header={headerWithTooltip(
@@ -936,32 +752,8 @@ const DashboardMod = () => {
                               "MMM D, YYYY",
                             );
                           }}
-                          style={{ minWidth: "7rem" }}
+                          // style={{ minWidth: "7rem" }}
                         />
-
-                        {/* <Column
-                          field="evidance"
-                          header={headerWithTooltip(
-                            "Evidence",
-                            "Evidence",
-                            "evidance"
-                          )}
-                          body={evidanceTemplate}
-                          style={{ minWidth: "13rem" }}
-                        ></Column>
-
-                        <Column
-                          frozen
-                          alignFrozen="right"
-                          field="details"
-                          header={headerWithTooltip(
-                            "Details",
-                            "Check historical movement of the game",
-                            "details"
-                          )}
-                          className="text-center"
-                          body={actionBodyTemplate}
-                        ></Column> */}
                       </DataTable>
                     </div>
 
@@ -1030,4 +822,4 @@ const DashboardMod = () => {
   );
 };
 
-export default DashboardMod;
+export default DashboardModTest;

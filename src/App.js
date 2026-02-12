@@ -62,6 +62,7 @@ import BullsharkReportPage from "./views/ui/BullsharkReportPage";
 import CountryDashboard1 from "./views/ui/countryDashboard/country";
 import OperatorDashboard1 from "./views/ui/countryDashboard/operator";
 import GameDashboard1 from "./views/ui/countryDashboard/game";
+import DashboardModTest from "./views/ui/DashboardMod_Test";
 
 const App = () => {
   return (
@@ -150,6 +151,15 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <DashboardMod />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="dashboard-test"
+                    element={
+                      <ProtectedRoute>
+                        <DashboardModTest />
                       </ProtectedRoute>
                     }
                   />

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CompetitorData from "../../services/Competitor";
 import GameRankData from "../../services/GameRank";
 
@@ -8,9 +8,6 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
-import { FloatLabel } from "primereact/floatlabel";
-import { Slider } from "primereact/slider";
-import { InputSwitch } from "primereact/inputswitch";
 import { ButtonGroup } from "primereact/buttongroup";
 
 import { Spin } from "antd";
@@ -32,6 +29,7 @@ import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
+import PageHeader from "../../component/PageHeader";
 
 const DEFAULT_GAME_IMAGE = "https://placehold.co/60?text=No+Image";
 const providerColors = [
@@ -75,6 +73,7 @@ const CompetitorDashboardMod = () => {
 
   const DATE_WINDOW_SIZE = 6; // change to 5 if you want
   const [dateStartIndex, setDateStartIndex] = useState(0);
+  const [showFilter, setShowFilter] = useState(false);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -334,7 +333,7 @@ const CompetitorDashboardMod = () => {
 
     // Step 3: Convert to array and sort alphabetically by section_title
     const sortedTableData = Object.values(sectionMap).sort((a, b) =>
-      a.section_title.localeCompare(b.section_title)
+      a.section_title.localeCompare(b.section_title),
     );
 
     setTableData(sortedTableData);
@@ -399,8 +398,8 @@ const CompetitorDashboardMod = () => {
           typeof row[pos] === "string"
             ? row[pos]
             : row[pos]
-            ? row[pos]["text"]
-            : "";
+              ? row[pos]["text"]
+              : "";
       });
 
       return formattedRow;
@@ -421,7 +420,7 @@ const CompetitorDashboardMod = () => {
     <>
       <div className="compass">
         <div className="compass-data">
-          <div className="d-flex flex-column gap-3 justify-content-between">
+          {/* <div className="d-flex flex-column gap-3 justify-content-between">
             <div className="pb-3">
               <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
                 Casino View Dashboard
@@ -546,6 +545,112 @@ const CompetitorDashboardMod = () => {
                 </div>
               </div>
             </div>
+          </div> */}
+
+          <PageHeader
+            title="Casino View Dashboard"
+            subtitle="View game positions for a casino"
+            onClick={() => exportCSV(tableData)}
+            onToggleFilter={() => setShowFilter((v) => !v)}
+            isPlanExpired={isPlanExpired}
+            features={{
+              search: false,
+              filters: true,
+              download: true,
+              chat: false,
+            }}
+          />
+          <div className={`filter-wrapper ${showFilter ? "open" : "closed"}`}>
+            <div className="d-flex gap-2 mt-2 w-100 align-items-center justify-content-between">
+              <Dropdown
+                optionLabel="label"
+                optionValue="value"
+                filter
+                placeholder="Select Country"
+                loading={regionLoading}
+                value={selectedRegion}
+                onChange={(e) => {
+                  setSelectedRegion(e.value);
+                  setSelectedOperator(null);
+                  setProviderData([]);
+                  setProvidersName([]);
+                }}
+                options={regions}
+                className="w-100"
+                inputId="region"
+              />
+
+              <Dropdown
+                optionLabel="operator_name"
+                optionValue="operator_id"
+                filter
+                placeholder="Select Casino"
+                disabled={!selectedRegion}
+                loading={operatorDataLoader}
+                value={selectedOperator}
+                onChange={(e) => {
+                  setSelectedOperator(e.value);
+                }}
+                options={operators}
+                itemTemplate={(option) => (
+                  <div title={option.operator_name}>{option.operator_name}</div>
+                )}
+                className="w-100"
+                inputId="operator"
+              />
+
+              <MultiSelect
+                optionLabel="provider_name"
+                optionValue="provider_id"
+                value={providersName}
+                onChange={(e) => {
+                  if (e.value.length <= 5) {
+                    setProvidersName(e.value);
+                  } else {
+                    toast.error("You can select up to 5 providers only.");
+                  }
+                }}
+                options={providerData}
+                loading={providerDataLoader}
+                placeholder="Select Providers (up to 5)"
+                filter
+                disabled={!selectedOperator}
+                maxSelectedLabels={1}
+                className="w-100"
+                inputId="providers"
+              />
+
+              <div className="d-flex align-items-start gap-2">
+                <Button
+                  type="button"
+                  label="Apply"
+                  loading={loader}
+                  icon="pi pi-filter"
+                  disabled={!selectedOperator}
+                  onClick={() => {
+                    getCompitatorData(null);
+                  }}
+                  className="btn-filter flex-1 h-100"
+                  style={{ minWidth: "100px" }}
+                />
+
+                <Button
+                  type="button"
+                  label="Reset"
+                  icon="pi pi-refresh"
+                  disabled={!selectedOperator}
+                  onClick={() => {
+                    setSelectedOperator(null);
+                    setProvidersName([]);
+                    setData([]);
+                    setTableData([]);
+                    setUniquePositions([]);
+                  }}
+                  className="btn-filter flex-1 h-100"
+                  style={{ minWidth: "100px" }}
+                />
+              </div>
+            </div>
           </div>
         </div>
 
@@ -563,87 +668,13 @@ const CompetitorDashboardMod = () => {
             </div>
           ) : (
             <>
-              <div className="border border-secondary p-3 rounded-3 mt-3">
-                <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-0">
-                    Latest Details{" "}
-                    {data
-                      ? "(Scan Date: " +
-                        new Date(data[0].created_date).toLocaleDateString(
-                          "en-US",
-                          options
-                        ) +
-                        ")"
-                      : ""}
-                  </h5>
-
-                  {isPlanExpired ? (
-                    <>
-                      <span
-                        className="text-muted"
-                        id="download-disabled"
-                        style={{
-                          cursor: "not-allowed",
-                          textDecoration: "underline dotted",
-                        }}
-                      >
-                        Download Report
-                      </span>
-                      <Tooltip
-                        target="#download-disabled"
-                        content="Upgrade your plan to download the report"
-                        position="top"
-                        className="custom-tooltip"
-                      />
-                    </>
-                  ) : (
-                    <div className="d-flex align-items-center gap-2">
-                      {/* <div className="d-flex align-items-center gap-2">
-                        <span style={{ fontSize: "14px" }}>Show Images</span>
-                        <InputSwitch
-                          checked={showImage}
-                          onChange={(e) => setShowImage(e.value)}
-                        />
-                      </div> */}
-
-                      {/* <div className="flex align-items-center gap-1">
-                        <label htmlFor="zoomSlider">Zoom</label>
-                        <Slider
-                          id="zoomSlider"
-                          value={zoom}
-                          onChange={(e) => setZoom(e.value)}
-                          step={0.1}
-                          min={0.5}
-                          max={2}
-                          style={{ width: "200px" }}
-                        />
-                        <span>{(zoom * 100).toFixed(0)}%</span>
-                      </div> */}
-
-                      <Button
-                        icon="pi pi-download"
-                        tooltip="Download Report"
-                        tooltipOptions={{ position: "top" }}
-                        rounded
-                        onClick={() => exportCSV(tableData)}
-                        className="btn-filter flex-1 h-100 px-4"
-                      />
-
-                      {/* <span
-                        className="text-primary cursor-pointer"
-                        onClick={() => exportCSV(tableData)}
-                      >
-                        Download Report
-                      </span> */}
-                    </div>
-                  )}
-                </div>
+              <div className="mt-3">
                 <div className="d-flex align-items-center justify-content-between mb-3">
                   {providersName.length > 0 && (
                     <div className="mt-3 d-flex gap-4 flex-wrap">
                       {providersName.map((provId) => {
                         const provider = providerData.find(
-                          (p) => p.provider_id === provId
+                          (p) => p.provider_id === provId,
                         );
                         return (
                           <div
@@ -728,7 +759,7 @@ const CompetitorDashboardMod = () => {
                         {dateList
                           .slice(
                             dateStartIndex,
-                            dateStartIndex + DATE_WINDOW_SIZE
+                            dateStartIndex + DATE_WINDOW_SIZE,
                           )
                           .map((item) => (
                             <Button
@@ -761,8 +792,8 @@ const CompetitorDashboardMod = () => {
                           setDateStartIndex((prev) =>
                             Math.min(
                               prev + 1,
-                              dateList.length - DATE_WINDOW_SIZE
-                            )
+                              dateList.length - DATE_WINDOW_SIZE,
+                            ),
                           )
                         }
                       />
@@ -779,7 +810,7 @@ const CompetitorDashboardMod = () => {
                       disabled={zoom <= 0.5}
                       onClick={() =>
                         setZoom((prev) =>
-                          Math.max(0.5, +(prev - 0.1).toFixed(2))
+                          Math.max(0.5, +(prev - 0.1).toFixed(2)),
                         )
                       }
                     />
@@ -822,7 +853,7 @@ const CompetitorDashboardMod = () => {
                       header={headerWithTooltip(
                         "Section Title",
                         "Name of Section Title",
-                        "section_title"
+                        "section_title",
                       )}
                       field="section_title"
                       sortable

@@ -21,9 +21,29 @@ import call from "../../services/Call";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import GameRankAPI from "../../services/GameRank";
+import ReusableLazyTable from "../../component/ReusableLazyTable";
 
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+
+const columns = [
+  { field: "provider_rank", header: "Rank", sortable: true },
+  { field: "game_provider", header: "Provider", sortable: true },
+  { field: "unique_games", header: "Unique Games", sortable: true },
+  { field: "unique_casinos", header: "Casinos", sortable: true },
+  {
+    field: "market_share",
+    header: "Market Share",
+    sortable: true,
+    // body: marketshareTemplate,
+  },
+  {
+    field: "change",
+    header: "Change",
+    sortable: true,
+    // body: changeTemplate,
+  },
+];
 
 const GameProvideMarketshare = () => {
   const navigate = useNavigate();
@@ -331,6 +351,67 @@ const GameProvideMarketshare = () => {
     return icon;
   };
 
+  const fetchNextPage = async (reset = false) => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+
+    loadingRef.current = true;
+    setLoading(true);
+
+    // skeletons
+    setTableData((prev) => [
+      ...prev,
+      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        __skeleton: true,
+        __id: `sk-${pageRef.current}-${i}`,
+      })),
+    ]);
+
+    const res = await call({
+      path: "get_provider_marketshare_mod",
+      method: "POST",
+      data: {
+        region: selectedRegion,
+        market: selectedMarket,
+        search_term: searchRef.current,
+        month: "",
+        limit: PAGE_SIZE,
+        page: pageRef.current,
+        sort_by: sortFieldRef.current,
+        order: sortOrderRef.current,
+      },
+    });
+
+    const rows = res?.data?.data || [];
+    const pagination = res?.pagination;
+
+    setTableData((prev) => {
+      const clean = prev.filter((r) => !r.__skeleton);
+      return reset ? rows : [...clean, ...rows];
+    });
+
+    if (pagination) {
+      hasMoreRef.current = pagination.current_page < pagination.total_pages;
+      pageRef.current = pagination.current_page + 1;
+    }
+
+    loadingRef.current = false;
+    setLoading(false);
+  };
+
+  const resetTable = () => {
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+    loadingRef.current = false;
+    setTableData([]);
+    fetchNextPage(true);
+  };
+
+  const handleSort = (field, order) => {
+    sortFieldRef.current = field;
+    sortOrderRef.current = order;
+    resetTable();
+  };
+
   return (
     <>
       <div className={`content ${isPlanExpired ? "show" : ""}`}>
@@ -464,30 +545,14 @@ const GameProvideMarketshare = () => {
                 {updatedOn}
               </div>
             </div>
-            <div ref={tableWrapperRef}>
+            {/* <div ref={tableWrapperRef}>
               <DataTable
                 value={tableData}
-                // filters={filters}
-                // removableSort
-                // paginator
-                // rows={10}
-                // rowsPerPageOptions={[10, 25, 50]}
-                // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                // size="small"
-                // className="table-bordered p-component p-datatable custom-table small"
-                // scrollable
-                // sortIcon={sortIconTemplate}
-                // sortField="market_share"
-                // sortOrder={0}
-                // globalFilterFields={["game_provider"]}
-
                 scrollable
                 scrollHeight="600px"
                 onSort={(e) => {
                   sortFieldRef.current = e.sortField;
                   sortOrderRef.current = e.sortOrder === 1 ? "asc" : "desc";
-
                   pageRef.current = 1;
                   hasMoreRef.current = true;
                   setTableData([]);
@@ -616,19 +681,25 @@ const GameProvideMarketshare = () => {
                   )}
                   body={changeTemplate}
                 ></Column>
-
-                {/* <Column
-                    field="details"
-                    header={headerWithTooltip(
-                      "Details",
-                      "Check details",
-                      "details"
-                    )}
-                    className="text-center"
-                    body={actionBodyTemplate}
-                  ></Column> */}
               </DataTable>
-            </div>
+            </div> */}
+
+            <ReusableLazyTable
+              data={tableData}
+              loading={loading}
+              hasMore={hasMoreRef.current}
+              columns={columns}
+              scrollHeight="600px"
+              onLazyLoad={() => fetchNextPage()}
+              onSort={handleSort}
+              sortField={sortFieldRef.current}
+              sortOrder={sortOrderRef.current}
+              onRowClick={(e) => {
+                navigate("/game-provider-marketshare-details", {
+                  state: { provider_details: e.data },
+                });
+              }}
+            />
           </div>
         </div>
       </div>
