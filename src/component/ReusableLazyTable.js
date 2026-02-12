@@ -2,6 +2,7 @@ import { useEffect, useRef } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Skeleton } from "primereact/skeleton";
+import { sortIconTemplate } from "./tableTemplates";
 
 export default function ReusableLazyTable({
   data,
@@ -41,6 +42,7 @@ export default function ReusableLazyTable({
         value={data}
         scrollable
         scrollHeight={scrollHeight}
+        sortIcon={sortIconTemplate}
         sortField={sortField}
         sortOrder={sortOrder === "asc" ? 1 : -1}
         onSort={(e) =>
