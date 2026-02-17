@@ -82,9 +82,9 @@
     align-items: center;
     justify-content: flex-start;
     height: 120px;
-    /* ensures all rows same height */
-    padding: 4px;
+    padding: 2px;
     text-align: center;
+    gap: 2px;
 }
 
 /* Fixed image area */
@@ -119,4 +119,8 @@
 
     min-height: 28px;
     /* forces 2-line space even if 1 word */
+}
+
+.p-datatable .p-datatable-tbody>tr>td {
+    padding: 3px 3px !important;
 }

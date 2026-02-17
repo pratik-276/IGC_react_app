@@ -425,7 +425,7 @@ const CompetitorDashboardMod = () => {
   };
 
   const sectionTemplate = (rowData) => {
-    return <div style={{ fontWeight: 600 }}>{rowData.label}</div>;
+    return <div style={{ fontWeight: 500 }}>{rowData.label}</div>;
   };
 
   const openGameModal = (cell) => {
@@ -469,133 +469,6 @@ const CompetitorDashboardMod = () => {
     <>
       <div className="compass">
         <div className="compass-data">
-          {/* <div className="d-flex flex-column gap-3 justify-content-between">
-            <div className="pb-3">
-              <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Casino View Dashboard
-              </h4>
-              <span className="text-black" style={{ fontSize: "1rem" }}>
-                View game positions for a casino
-              </span>
-            </div>
-
-            <div className="d-flex flex-column gap-4">
-              <div className="row g-3">
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="label"
-                      optionValue="value"
-                      filter
-                      placeholder="Select Country"
-                      loading={regionLoading}
-                      value={selectedRegion}
-                      onChange={(e) => {
-                        setSelectedRegion(e.value);
-                        setSelectedOperator(null);
-                        setProviderData([]);
-                        setProvidersName([]);
-                      }}
-                      options={regions}
-                      className="w-100"
-                      inputId="region"
-                    />
-                    <label className="fs-6" htmlFor="region">
-                      Country
-                    </label>
-                  </FloatLabel>
-                </div>
-
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="operator_name"
-                      optionValue="operator_id"
-                      filter
-                      placeholder="Select Casino"
-                      disabled={!selectedRegion}
-                      loading={operatorDataLoader}
-                      value={selectedOperator}
-                      onChange={(e) => {
-                        setSelectedOperator(e.value);
-                      }}
-                      options={operators}
-                      itemTemplate={(option) => (
-                        <div title={option.operator_name}>
-                          {option.operator_name}
-                        </div>
-                      )}
-                      className="w-100"
-                      inputId="operator"
-                    />
-                    <label className="fs-6" htmlFor="operator">
-                      Casino
-                    </label>
-                  </FloatLabel>
-                </div>
-
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <MultiSelect
-                      optionLabel="provider_name"
-                      optionValue="provider_id"
-                      value={providersName}
-                      onChange={(e) => {
-                        if (e.value.length <= 5) {
-                          setProvidersName(e.value);
-                        } else {
-                          toast.error("You can select up to 5 providers only.");
-                        }
-                      }}
-                      options={providerData}
-                      loading={providerDataLoader}
-                      placeholder="Select Providers"
-                      filter
-                      disabled={!selectedOperator}
-                      maxSelectedLabels={1}
-                      className="w-100"
-                      inputId="providers"
-                    />
-                    <label className="fs-6" htmlFor="providers">
-                      Providers (Select up to 5)
-                    </label>
-                  </FloatLabel>
-                </div>
-
-                <div className="col-md-3 d-flex align-items-start gap-3">
-                  <Button
-                    type="button"
-                    label="Apply"
-                    loading={loader}
-                    icon="pi pi-filter"
-                    disabled={!selectedOperator}
-                    onClick={() => {
-                      getCompitatorData(null);
-                    }}
-                    className="btn-filter flex-1 h-100"
-                    style={{ minWidth: "100px" }}
-                  />
-
-                  <Button
-                    type="button"
-                    label="Reset"
-                    icon="pi pi-refresh"
-                    disabled={!selectedOperator}
-                    onClick={() => {
-                      setSelectedOperator(null);
-                      setProvidersName([]);
-                      setData([]);
-                      setTableData([]);
-                      setUniquePositions([]);
-                    }}
-                    className="btn-filter flex-1 h-100"
-                    style={{ minWidth: "100px" }}
-                  />
-                </div>
-              </div>
-            </div>
-          </div> */}
-
           <PageHeader
             title="Casino View Dashboard"
             subtitle="View game positions for a casino"
@@ -796,6 +669,7 @@ const CompetitorDashboardMod = () => {
                         borderColor: "#fff",
                         color: "#fff",
                       }}
+                      className="btn-filter"
                     />
 
                     <Button
@@ -813,64 +687,10 @@ const CompetitorDashboardMod = () => {
                         borderColor: "#fff",
                         color: "#fff",
                       }}
+                      className="btn-filter"
                     />
                   </ButtonGroup>
                 </div>
-
-                <DataTable
-                  value={rows}
-                  scrollable
-                  scrollHeight="flex"
-                  className="p-datatable-gridlines"
-                >
-                  {/* First Column — Section */}
-                  <Column
-                    field="label"
-                    header="Section"
-                    body={sectionTemplate}
-                    frozen
-                    style={{ minWidth: "180px" }}
-                  />
-
-                  {/* Dynamic Matrix Columns */}
-                  {columns.map((col) => (
-                    <Column
-                      key={col.id}
-                      header={col.label}
-                      body={(rowData) => gameCellTemplate(rowData, col.id)}
-                      style={{ minWidth: "120px", textAlign: "center" }}
-                    />
-                  ))}
-                </DataTable>
-
-                <Dialog
-                  header="Game Details"
-                  visible={visible}
-                  style={{ width: "400px" }}
-                  onHide={() => setVisible(false)}
-                >
-                  {selectedGame && (
-                    <div style={{ textAlign: "center" }}>
-                      <img
-                        src={selectedGame.stored_alias_url || "no-image.jpg"}
-                        alt={selectedGame.game_name}
-                        style={{
-                          width: "100%",
-                          borderRadius: "8px",
-                          marginBottom: "12px",
-                        }}
-                        className="shadow-4"
-                      />
-
-                      <h3 style={{ margin: 0 }} className="fw-semibold">
-                        {selectedGame.game_name}
-                      </h3>
-                      <p style={{ margin: 0, color: "#666" }}>
-                        Provider : {selectedGame.provider_name}
-                      </p>
-                    </div>
-                  )}
-                </Dialog>
 
                 <div
                   style={{
@@ -880,6 +700,36 @@ const CompetitorDashboardMod = () => {
                   }}
                 >
                   <DataTable
+                    value={rows}
+                    scrollable
+                    scrollHeight="flex"
+                    sortIcon={sortIconTemplate}
+                    size="small"
+                    className="p-datatable-gridlines"
+                  >
+                    <Column
+                      field="label"
+                      header={headerWithTooltip(
+                        "Section Title",
+                        "Name of Section Title",
+                        "section_title",
+                      )}
+                      body={sectionTemplate}
+                      frozen
+                      sortable
+                      style={{ minWidth: "180px" }}
+                    />
+
+                    {columns.map((col) => (
+                      <Column
+                        key={col.id}
+                        header={col.label}
+                        body={(rowData) => gameCellTemplate(rowData, col.id)}
+                        style={{ minWidth: "120px", textAlign: "center" }}
+                      />
+                    ))}
+                  </DataTable>
+                  {/* <DataTable
                     value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                     scrollable
                     sortIcon={sortIconTemplate}
@@ -940,7 +790,6 @@ const CompetitorDashboardMod = () => {
                                   "transparent",
                               }}
                             >
-                              {/* SHOW IMAGE WHEN TOGGLE IS ON */}
                               {showImage && (
                                 <img
                                   src={cell.image}
@@ -954,7 +803,6 @@ const CompetitorDashboardMod = () => {
                                 />
                               )}
 
-                              {/* Text (always visible) */}
                               <span
                                 style={{
                                   backgroundColor:
@@ -972,8 +820,37 @@ const CompetitorDashboardMod = () => {
                         }}
                       />
                     ))}
-                  </DataTable>
+                  </DataTable> */}
                 </div>
+
+                <Dialog
+                  header="Game Details"
+                  visible={visible}
+                  style={{ width: "400px" }}
+                  onHide={() => setVisible(false)}
+                >
+                  {selectedGame && (
+                    <div style={{ textAlign: "center" }}>
+                      <img
+                        src={selectedGame.stored_alias_url || "no-image.jpg"}
+                        alt={selectedGame.game_name}
+                        style={{
+                          width: "100%",
+                          borderRadius: "8px",
+                          marginBottom: "12px",
+                        }}
+                        className="shadow-6"
+                      />
+
+                      <h3 style={{ margin: 0 }} className="fw-semibold mb-1">
+                        {selectedGame.game_name}
+                      </h3>
+                      <p style={{ margin: 0, color: "#666" }}>
+                        Provider : {selectedGame.provider_name}
+                      </p>
+                    </div>
+                  )}
+                </Dialog>
 
                 {isPlanExpired && (
                   <div
