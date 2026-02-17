@@ -20,7 +20,10 @@ import "primeicons/primeicons.css";
 import "../DashboardMod.css";
 import "../AccessBlur.css";
 import "./posnDashboard.css";
-import { gameTrendTemplate } from "../../../component/tableTemplates";
+import {
+  countryBodyTemplate,
+  gameTrendTemplate,
+} from "../../../component/tableTemplates";
 
 const CountryDashboard1 = () => {
   const user_company = localStorage.getItem("user_company");
@@ -308,6 +311,7 @@ const CountryDashboard1 = () => {
     {
       field: "country_name",
       header: headerWithTooltip("Country", "Name of country", "country_name"),
+      body: countryBodyTemplate,
       sortable: true,
     },
 

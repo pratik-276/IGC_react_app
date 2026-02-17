@@ -1,5 +1,6 @@
 import { Chart } from "primereact/chart";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
+import { CountryCodes } from "./CountryCode";
 
 const sortIconTemplate = (options) => {
   let icon = options.sorted ? (
@@ -84,6 +85,40 @@ export const gameTrendTemplate = (rowData) => {
         options={chartOptions}
         style={{ width: "100%", height: "100%" }}
       />
+    </div>
+  );
+};
+
+const countryBodyTemplate = (rowData) => {
+  const matchedCountry = CountryCodes.find(
+    (c) => c.name.toLowerCase() === rowData.country_name?.toLowerCase(),
+  );
+
+  const countryCode = matchedCountry?.code?.toLowerCase();
+  console.log(
+    "Matched country code for",
+    rowData.country_name,
+    "is",
+    countryCode,
+  );
+
+  return (
+    <div className="flex align-items-center gap-2">
+      {countryCode && (
+        <img
+          alt={rowData.country_name}
+          src={`https://flagcdn.com/w40/${countryCode}.png`}
+          style={{
+            width: "24px",
+            height: "18px",
+            objectFit: "cover",
+            borderRadius: "2px",
+            boxShadow: "0 0 0 1px rgba(0,0,0,0.06)",
+          }}
+        />
+      )}
+
+      <span>{rowData.country_name}</span>
     </div>
   );
 };
@@ -191,4 +226,9 @@ function mapToRange(value, oldMin, oldMax) {
   return mappedValue.toFixed(0);
 }
 
-export { marketshareTemplate, changeTemplate, sortIconTemplate };
+export {
+  countryBodyTemplate,
+  marketshareTemplate,
+  changeTemplate,
+  sortIconTemplate,
+};
