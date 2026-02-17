@@ -58,6 +58,7 @@ export default function ReusableLazyTable({
             field={col.field}
             header={col.header}
             sortable={col.sortable}
+            style={col.style}
             body={(row) =>
               row.__skeleton ? (
                 <Skeleton width="80%" height="1rem" />

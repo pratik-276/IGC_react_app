@@ -347,6 +347,7 @@ const CountryDashboard1 = () => {
               "Trend of game count in this country over last few months",
               "game_count_trend",
             ),
+            style: { width: "160px" },
             body: gameTrendTemplate,
             sortable: false,
           },

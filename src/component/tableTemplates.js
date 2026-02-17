@@ -15,7 +15,7 @@ const sortIconTemplate = (options) => {
   return icon;
 };
 
-export const gameTrendTemplate = (rowData) => {
+const gameTrendTemplate = (rowData) => {
   const trend = rowData.game_count_trend;
 
   if (!trend || !trend.values) return <span>-</span>;
@@ -36,7 +36,9 @@ export const gameTrendTemplate = (rowData) => {
   };
 
   const chartOptions = {
+    responsive: true,
     maintainAspectRatio: false,
+    layout: { padding: 0 },
     plugins: {
       legend: { display: false },
       tooltip: {
@@ -44,15 +46,6 @@ export const gameTrendTemplate = (rowData) => {
         displayColors: false,
         intersect: false,
         mode: "index",
-        backgroundColor: "#111827",
-        borderColor: "#6366F1",
-        borderWidth: 1,
-        padding: 8,
-        cornerRadius: 6,
-        titleColor: "#9CA3AF",
-        bodyColor: "#F9FAFB",
-        titleFont: { size: 10, weight: "500" },
-        bodyFont: { size: 12, weight: "600" },
         callbacks: {
           title: () => null,
           label: (item) => `${item.label} : ${item.raw}`,
@@ -72,18 +65,19 @@ export const gameTrendTemplate = (rowData) => {
   return (
     <div
       style={{
-        width: "100px",
-        height: "30px",
+        width: "100%",
+        height: "40px",
         overflow: "hidden",
         display: "flex",
         alignItems: "center",
+        padding: "0 4px",
       }}
     >
       <Chart
         type="line"
         data={chartData}
         options={chartOptions}
-        style={{ width: "100px", height: "100%" }}
+        style={{ width: "160px", height: "30px" }}
       />
     </div>
   );
@@ -96,7 +90,7 @@ const countryBodyTemplate = (rowData) => {
 
   const countryCode = matchedCountry?.code?.toLowerCase();
   return (
-    <div className="flex align-items-center gap-2">
+    <div className="flex align-items-center gap-2 ">
       {countryCode ? (
         <img
           alt={rowData.country_name}
@@ -107,6 +101,7 @@ const countryBodyTemplate = (rowData) => {
             objectFit: "cover",
             borderRadius: "2px",
             boxShadow: "0 0 0 1px rgba(0,0,0,0.06)",
+            marginLeft: "6px",
           }}
         />
       ) : (
@@ -157,7 +152,6 @@ const marketshareTemplate = (row) => {
           width: "40px",
           textAlign: "right",
           fontSize: "12px",
-          fontVariantNumeric: "tabular-nums", // optional but perfect alignment
         }}
       >
         {parseFloat(row.market_share).toFixed(2)}%
@@ -250,6 +244,7 @@ function mapToRange(value, oldMin, oldMax) {
 
 export {
   countryBodyTemplate,
+  gameTrendTemplate,
   marketshareTemplate,
   changeTemplate,
   sortIconTemplate,
