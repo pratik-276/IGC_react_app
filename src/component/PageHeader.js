@@ -37,7 +37,7 @@ const PageHeader = ({
   };
 
   return (
-    <div className="d-flex align-items-center justify-content-between mb-3">
+    <div className="d-flex align-items-center justify-content-between mb-2">
       {/* LEFT SECTION */}
       <div className="d-flex flex-column justify-content-center">
         <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
@@ -92,18 +92,19 @@ const PageHeader = ({
             {/* FILTERS */}
             {features.filters && (
               <Button
+                icon="pi pi-filter"
+                className="btn-filter"
+                label="Filters"
                 onClick={onToggleFilter}
-                className="d-flex align-items-center gap-1"
                 style={{ backgroundColor: "#392f6c", border: "none" }}
-              >
-                <FaFilter /> <span>Filters</span>
-              </Button>
+              />
             )}
 
             {/* DOWNLOAD */}
             {features.download && (
               <Button
                 icon="pi pi-download"
+                className="btn-filter h-100"
                 tooltip="Download Report"
                 tooltipOptions={{ position: "top" }}
                 rounded
@@ -116,6 +117,7 @@ const PageHeader = ({
             {features.chat && (
               <Button
                 icon="pi pi-comments"
+                className="btn-filter"
                 label="Insights"
                 onClick={onToggleChat}
                 style={{ backgroundColor: "#392f6c", border: "none" }}

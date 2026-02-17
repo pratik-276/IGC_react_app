@@ -9,6 +9,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
 import { ButtonGroup } from "primereact/buttongroup";
+import { Dialog } from "primereact/dialog";
 
 import { Spin } from "antd";
 
@@ -71,9 +72,14 @@ const CompetitorDashboardMod = () => {
   const [tableData, setTableData] = useState([]);
   const [showImage, setShowImage] = useState(true);
 
-  const DATE_WINDOW_SIZE = 6; // change to 5 if you want
+  const DATE_WINDOW_SIZE = 6;
   const [dateStartIndex, setDateStartIndex] = useState(0);
   const [showFilter, setShowFilter] = useState(false);
+
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -186,6 +192,14 @@ const CompetitorDashboardMod = () => {
       ...(providersName?.length ? { provider_name: providersName } : {}),
       ...(date ? { date_selected: date } : {}),
     };
+
+    CompetitorData.get_casino_data_2(payload).then((res) => {
+      if (res?.success === true) {
+        console.log("getCompitatorData rows : ", res.data.rows);
+        setColumns(res?.data.columns || []);
+        setRows(res?.data.rows || []);
+      }
+    });
 
     CompetitorData.get_casino_data(payload)
       .then((res) => {
@@ -385,6 +399,41 @@ const CompetitorDashboardMod = () => {
     return icon;
   };
 
+  const gameCellTemplate = (rowData, columnId) => {
+    const cell = rowData.cells?.[columnId];
+
+    if (!cell) return null;
+
+    return (
+      <div className="matrix-cell" onClick={() => openGameModal(cell)}>
+        <div className="matrix-img-wrapper">
+          <img
+            src={cell.stored_alias_url || "no-image.jpg"}
+            alt={cell.game_name}
+            className="matrix-img shadow-4"
+          />
+        </div>
+
+        <div
+          className="matrix-text"
+          title={`${cell.game_name} (${cell.provider_name})`}
+        >
+          {cell.game_name} ({cell.provider_name})
+        </div>
+      </div>
+    );
+  };
+
+  const sectionTemplate = (rowData) => {
+    return <div style={{ fontWeight: 600 }}>{rowData.label}</div>;
+  };
+
+  const openGameModal = (cell) => {
+    console.log("Selected Game Cell:", cell);
+    setSelectedGame(cell);
+    setVisible(true);
+  };
+
   const exportCSV = (data) => {
     if (!data || data.length === 0) return;
 
@@ -561,7 +610,7 @@ const CompetitorDashboardMod = () => {
             }}
           />
           <div className={`filter-wrapper ${showFilter ? "open" : "closed"}`}>
-            <div className="d-flex gap-2 mt-2 w-100 align-items-center justify-content-between">
+            <div className="d-flex gap-2 w-100 align-items-center justify-content-between mb-3">
               <Dropdown
                 optionLabel="label"
                 optionValue="value"
@@ -625,7 +674,7 @@ const CompetitorDashboardMod = () => {
                   type="button"
                   label="Apply"
                   loading={loader}
-                  icon="pi pi-filter"
+                  icon="pi pi-check"
                   disabled={!selectedOperator}
                   onClick={() => {
                     getCompitatorData(null);
@@ -668,86 +717,15 @@ const CompetitorDashboardMod = () => {
             </div>
           ) : (
             <>
-              <div className="mt-3">
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                  {providersName.length > 0 && (
-                    <div className="mt-3 d-flex gap-4 flex-wrap">
-                      {providersName.map((provId) => {
-                        const provider = providerData.find(
-                          (p) => p.provider_id === provId,
-                        );
-                        return (
-                          <div
-                            key={provId}
-                            className="d-flex align-items-center gap-2"
-                          >
-                            <div
-                              style={{
-                                width: "18px",
-                                height: "18px",
-                                borderRadius: "4px",
-                                backgroundColor: providerColorMap[provId],
-                                border: "1px solid #999",
-                              }}
-                            />
-                            <span>{provider?.provider_name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* {selectedSiteDetails && (
-                  <div className="d-flex justify-content-between pl-2 mb-2">
-                    <div>
-                      <strong>Site URL : </strong>
-                      <a href={selectedSiteDetails.label}>
-                        {selectedSiteDetails.label}
-                      </a>
-                    </div>
-                    <div>
-                      <strong>Period : </strong>
-                      {selectedSiteDetails.latest_date
-                        ? new Date(
-                            selectedSiteDetails.latest_date
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "N/A"}
-                    </div>
-                  </div>
-                )} */}
-
-                {/* {dateList?.length > 0 && (
-                  <div className="d-flex flex-wrap gap-2 mb-3">
-                    {dateList.map((item) => (
-                      <Button
-                        key={item.dates}
-                        label={item.dates}
-                        size="small"
-                        outlined={selectedDate !== item.dates}
-                        severity={
-                          selectedDate === item.dates ? "primary" : "secondary"
-                        }
-                        onClick={() => {
-                          setSelectedDate(item.dates);
-                          getCompitatorData(item.dates);
-                        }}
-                      />
-                    ))}
-                  </div>
-                )} */}
+              <div>
                 <div className="d-flex w-100 justify-content-center align-items-center gap-2 mb-3">
                   {dateList?.length > 0 && (
                     <div className="d-flex align-items-center gap-2">
                       {/* PREV BUTTON */}
                       <Button
                         icon="pi pi-chevron-left"
-                        rounded
                         text
+                        style={{ color: "#392f6c" }}
                         disabled={dateStartIndex === 0}
                         onClick={() =>
                           setDateStartIndex((prev) => Math.max(prev - 1, 0))
@@ -783,8 +761,8 @@ const CompetitorDashboardMod = () => {
                       {/* NEXT BUTTON */}
                       <Button
                         icon="pi pi-chevron-right"
-                        rounded
                         text
+                        style={{ color: "#392f6c" }}
                         disabled={
                           dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
                         }
@@ -813,6 +791,11 @@ const CompetitorDashboardMod = () => {
                           Math.max(0.5, +(prev - 0.1).toFixed(2)),
                         )
                       }
+                      style={{
+                        backgroundColor: "#392f6c",
+                        borderColor: "#fff",
+                        color: "#fff",
+                      }}
                     />
 
                     <Button
@@ -825,9 +808,69 @@ const CompetitorDashboardMod = () => {
                       onClick={() =>
                         setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
                       }
+                      style={{
+                        backgroundColor: "#392f6c",
+                        borderColor: "#fff",
+                        color: "#fff",
+                      }}
                     />
                   </ButtonGroup>
                 </div>
+
+                <DataTable
+                  value={rows}
+                  scrollable
+                  scrollHeight="flex"
+                  className="p-datatable-gridlines"
+                >
+                  {/* First Column — Section */}
+                  <Column
+                    field="label"
+                    header="Section"
+                    body={sectionTemplate}
+                    frozen
+                    style={{ minWidth: "180px" }}
+                  />
+
+                  {/* Dynamic Matrix Columns */}
+                  {columns.map((col) => (
+                    <Column
+                      key={col.id}
+                      header={col.label}
+                      body={(rowData) => gameCellTemplate(rowData, col.id)}
+                      style={{ minWidth: "120px", textAlign: "center" }}
+                    />
+                  ))}
+                </DataTable>
+
+                <Dialog
+                  header="Game Details"
+                  visible={visible}
+                  style={{ width: "400px" }}
+                  onHide={() => setVisible(false)}
+                >
+                  {selectedGame && (
+                    <div style={{ textAlign: "center" }}>
+                      <img
+                        src={selectedGame.stored_alias_url || "no-image.jpg"}
+                        alt={selectedGame.game_name}
+                        style={{
+                          width: "100%",
+                          borderRadius: "8px",
+                          marginBottom: "12px",
+                        }}
+                        className="shadow-4"
+                      />
+
+                      <h3 style={{ margin: 0 }} className="fw-semibold">
+                        {selectedGame.game_name}
+                      </h3>
+                      <p style={{ margin: 0, color: "#666" }}>
+                        Provider : {selectedGame.provider_name}
+                      </p>
+                    </div>
+                  )}
+                </Dialog>
 
                 <div
                   style={{
@@ -839,11 +882,6 @@ const CompetitorDashboardMod = () => {
                   <DataTable
                     value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                     scrollable
-                    // paginator={!isPlanExpired}
-                    // rows={25}
-                    // rowsPerPageOptions={[10, 25, 50]}
-                    // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                     sortIcon={sortIconTemplate}
                     size="small"
                     className="table-bordered p-component p-datatable custom-competitor-table small fixed-row-height"
@@ -866,17 +904,6 @@ const CompetitorDashboardMod = () => {
                       }}
                     />
 
-                    {/* {uniquePositions.map((pos) => (
-                    <Column
-                      key={pos}
-                      field={pos}
-                      header={headerWithoutTooltip(pos)}
-                      style={{
-                        minWidth: "120px",
-                        whiteSpace: "normal",
-                      }}
-                    />
-                  ))} */}
                     {uniquePositions.map((pos) => (
                       <Column
                         key={pos}
@@ -897,23 +924,7 @@ const CompetitorDashboardMod = () => {
                           }
 
                           return (
-                            // <>
-                            //   <span
-                            //     style={{
-                            //       backgroundColor: cell.highlight
-                            //         ? "#ffeeba"
-                            //         : "transparent",
-
-                            //       padding: "2px 6px",
-                            //       borderRadius: "4px",
-                            //       display: "inline-block",
-                            //     }}
-                            //   >
-                            //     {cell.text}
-                            //   </span>
-                            // </>
                             <div
-                              //className="d-flex flex-column justify-content-center align-items-center"
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -923,8 +934,7 @@ const CompetitorDashboardMod = () => {
                                 width: "100%",
                                 textAlign: "center",
                                 height: "181px",
-                                //position: "absolute",
-                                //inset: 0,
+
                                 backgroundColor:
                                   providerColorMap[cell.provider_id] ||
                                   "transparent",

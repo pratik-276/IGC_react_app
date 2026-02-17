@@ -72,7 +72,7 @@ export const gameTrendTemplate = (rowData) => {
   return (
     <div
       style={{
-        width: "100%",
+        width: "100px",
         height: "30px",
         overflow: "hidden",
         display: "flex",
@@ -83,7 +83,7 @@ export const gameTrendTemplate = (rowData) => {
         type="line"
         data={chartData}
         options={chartOptions}
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100px", height: "100%" }}
       />
     </div>
   );

@@ -75,3 +75,48 @@
 .date-carousel {
     transition: transform 0.3s ease;
 }
+
+.matrix-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    height: 120px;
+    /* ensures all rows same height */
+    padding: 4px;
+    text-align: center;
+}
+
+/* Fixed image area */
+.matrix-img-wrapper {
+    height: 70px;
+    /* SAME HEIGHT FOR ALL IMAGES */
+    width: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.matrix-img {
+    max-height: 70px;
+    max-width: 70px;
+    object-fit: contain;
+    border-radius: 6px;
+}
+
+/* Text exactly 2 lines */
+.matrix-text {
+    margin-top: 4px;
+    font-size: 12px;
+    line-height: 1.2;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    /* LIMIT TO 2 LINES */
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    min-height: 28px;
+    /* forces 2-line space even if 1 word */
+}
