@@ -144,8 +144,22 @@ const marketshareTemplate = (row) => {
   }
 
   return (
-    <div style={{ display: "flex", flexDirection: "row", gap: 4 }}>
-      <div style={{ fontSize: "12px", flex: 0.3 }}>
+    <div
+      style={{
+        display: "flex",
+        alignItems: "center",
+        gap: 6,
+        paddingRight: "4px",
+      }}
+    >
+      <div
+        style={{
+          width: "40px",
+          textAlign: "right",
+          fontSize: "12px",
+          fontVariantNumeric: "tabular-nums", // optional but perfect alignment
+        }}
+      >
         {parseFloat(row.market_share).toFixed(2)}%
       </div>
       <div style={{ flex: 1 }} className="progress">
@@ -173,11 +187,12 @@ const changeTemplate = (row) => {
       {change < 0 ? (
         <span
           style={{
+            width: "65px",
             display: "inline-block",
             fontSize: "0.875em",
             borderRadius: "0.25em",
             fontWeight: "bold",
-            textAlign: "center",
+            textAlign: "right",
             color: "#dc3545",
           }}
         >
@@ -189,11 +204,12 @@ const changeTemplate = (row) => {
       {change == 0 ? (
         <span
           style={{
+            width: "65px",
             display: "inline-block",
             fontSize: "0.875em",
             borderRadius: "0.25em",
             fontWeight: "bold",
-            textAlign: "center",
+            textAlign: "right",
             color: "#dc9b00",
           }}
         >
@@ -205,11 +221,12 @@ const changeTemplate = (row) => {
       {change > 0 ? (
         <span
           style={{
+            width: "65px",
             display: "inline-block",
             fontSize: "0.875em",
             borderRadius: "0.25em",
             fontWeight: "bold",
-            textAlign: "center",
+            textAlign: "right",
             color: "#28a745",
           }}
         >
