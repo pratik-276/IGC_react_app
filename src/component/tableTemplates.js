@@ -1,3 +1,4 @@
+import { Chart } from "primereact/chart";
 import { FaCaretUp, FaCaretDown } from "react-icons/fa6";
 
 const sortIconTemplate = (options) => {
@@ -11,6 +12,80 @@ const sortIconTemplate = (options) => {
     <i className="pi pi-sort" style={{ fontSize: "14px" }} />
   );
   return icon;
+};
+
+export const gameTrendTemplate = (rowData) => {
+  const trend = rowData.game_count_trend;
+
+  if (!trend || !trend.values) return <span>-</span>;
+
+  const chartData = {
+    labels: trend.labels,
+    datasets: [
+      {
+        data: trend.values,
+        fill: false,
+        borderColor: "#6366F1",
+        tension: 0.4,
+        pointRadius: 0,
+        pointHoverRadius: 4,
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const chartOptions = {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        enabled: true,
+        displayColors: false,
+        intersect: false,
+        mode: "index",
+        backgroundColor: "#111827",
+        borderColor: "#6366F1",
+        borderWidth: 1,
+        padding: 8,
+        cornerRadius: 6,
+        titleColor: "#9CA3AF",
+        bodyColor: "#F9FAFB",
+        titleFont: { size: 10, weight: "500" },
+        bodyFont: { size: 12, weight: "600" },
+        callbacks: {
+          title: () => null,
+          label: (item) => `${item.label} : ${item.raw}`,
+        },
+      },
+    },
+    scales: {
+      x: { display: false },
+      y: { display: false },
+    },
+    interaction: {
+      intersect: false,
+      mode: "index",
+    },
+  };
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "30px",
+        overflow: "hidden",
+        display: "flex",
+        alignItems: "center",
+      }}
+    >
+      <Chart
+        type="line"
+        data={chartData}
+        options={chartOptions}
+        style={{ width: "100%", height: "100%" }}
+      />
+    </div>
+  );
 };
 
 const marketshareTemplate = (row) => {

@@ -6,6 +6,7 @@ import { IconField } from "primereact/iconfield";
 import { InputIcon } from "primereact/inputicon";
 import { InputText } from "primereact/inputtext";
 import { FaFilter } from "react-icons/fa6";
+import { useNavigate } from "react-router-dom";
 
 const PageHeader = ({
   title,
@@ -28,10 +29,17 @@ const PageHeader = ({
     chat: true,
   },
 }) => {
+  const navigate = useNavigate();
+
+  const home = {
+    icon: "pi pi-home",
+    command: () => navigate("/"),
+  };
+
   return (
-    <div className="d-flex align-items-center justify-content-between">
+    <div className="d-flex align-items-center justify-content-between mb-3">
       {/* LEFT SECTION */}
-      <div>
+      <div className="d-flex flex-column justify-content-center">
         <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
           {title}
         </h4>
@@ -39,7 +47,7 @@ const PageHeader = ({
         {/* Breadcrumb OR Subtitle */}
         {breadcrumb ? (
           <div className="mt-1">
-            <BreadCrumb model={breadcrumb} />
+            <BreadCrumb model={breadcrumb} home={home} />
           </div>
         ) : subtitle ? (
           <span>{subtitle}</span>
@@ -47,7 +55,7 @@ const PageHeader = ({
       </div>
 
       {/* RIGHT SECTION */}
-      <div className="d-flex align-items-center justify-content-between">
+      <div className="d-flex align-items-center gap-2">
         {isPlanExpired && features.download ? (
           <>
             <span

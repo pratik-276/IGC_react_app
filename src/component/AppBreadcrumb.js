@@ -5,11 +5,13 @@ const breadcrumbNameMap = {
   dashboard: "Dashboard",
   "game-provider-marketshare": "Provider Marketshare",
   "game-provider-marketshare-details": "Provider Details",
-  reports: "Reports",
-  settings: "Settings",
+  "country-dashboard": "Countries",
+  "operator-dashboard": "Operators",
+  "game-dashboard": "Games",
+  "page-position-details": "Game Details",
 };
 
-export default function AppBreadcrumb() {
+export default function AppBreadcrumb({ customLabels = {} }) {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -19,6 +21,7 @@ export default function AppBreadcrumb() {
     const routeTo = "/" + pathnames.slice(0, index + 1).join("/");
 
     const label =
+      customLabels[segment] ||
       breadcrumbNameMap[segment] ||
       segment.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase());
 
