@@ -66,7 +66,7 @@ const GameDashboard1 = () => {
     items = [
       { label: "Countries", command: () => navigate("/country-dashboard") },
       { label: country_name_from_state },
-      { label: "Operators", command: () => navigate("/operator-dashboard") },
+      { label: "Operators", command: () => navigate(-1) },
       { label: operator_name_from_state },
       { label: "Games" },
     ];
@@ -76,7 +76,7 @@ const GameDashboard1 = () => {
     items = [
       { label: "Operators", command: () => navigate("/operator-dashboard") },
       { label: operator_name_from_state },
-      { label: "Countries", command: () => navigate("/country-dashboard") },
+      { label: "Countries", command: () => navigate(-1) },
       { label: country_name_from_state },
       { label: "Games" },
     ];

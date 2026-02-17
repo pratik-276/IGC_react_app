@@ -76,7 +76,7 @@ const OperatorDashboard1 = () => {
     items = [
       { label: "Games", command: () => navigate("/game-dashboard") },
       { label: game_name_from_state },
-      { label: "Countries", command: () => navigate("/country-dashboard") },
+      { label: "Countries", command: () => navigate(-1) },
       { label: country_name_from_state },
       { label: "Operators" },
     ];
