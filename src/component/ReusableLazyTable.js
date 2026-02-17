@@ -41,6 +41,7 @@ export default function ReusableLazyTable({
       <DataTable
         value={data}
         scrollable
+        size="small"
         scrollHeight={scrollHeight}
         sortIcon={sortIconTemplate}
         sortField={sortField}
