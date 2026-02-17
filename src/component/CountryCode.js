@@ -335,6 +335,11 @@ export const CountryCodes = [
     code: "EE",
   },
   {
+    name: "Eswatini",
+    dial_code: "+268",
+    code: "SZ",
+  },
+  {
     name: "Ethiopia",
     dial_code: "+251",
     code: "ET",
@@ -1070,7 +1075,7 @@ export const CountryCodes = [
     code: "TJ",
   },
   {
-    name: "Tanzania, United Republic of Tanzania",
+    name: "Tanzania",
     dial_code: "+255",
     code: "TZ",
   },

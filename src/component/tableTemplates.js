@@ -95,19 +95,24 @@ const countryBodyTemplate = (rowData) => {
   );
 
   const countryCode = matchedCountry?.code?.toLowerCase();
-  console.log(
-    "Matched country code for",
-    rowData.country_name,
-    "is",
-    countryCode,
-  );
-
   return (
     <div className="flex align-items-center gap-2">
-      {countryCode && (
+      {countryCode ? (
         <img
           alt={rowData.country_name}
           src={`https://flagcdn.com/w40/${countryCode}.png`}
+          style={{
+            width: "24px",
+            height: "18px",
+            objectFit: "cover",
+            borderRadius: "2px",
+            boxShadow: "0 0 0 1px rgba(0,0,0,0.06)",
+          }}
+        />
+      ) : (
+        <img
+          alt={rowData.country_name}
+          src="flag_placeholder.png"
           style={{
             width: "24px",
             height: "18px",
