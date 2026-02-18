@@ -3,6 +3,7 @@ import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Skeleton } from "primereact/skeleton";
 import { sortIconTemplate } from "./tableTemplates";
+import "./ReusableLazyTable.css";
 
 export default function ReusableLazyTable({
   data,
@@ -63,7 +64,9 @@ export default function ReusableLazyTable({
           onSort?.(e.sortField, e.sortOrder === 1 ? "asc" : "desc")
         }
         onRowClick={onRowClick}
-        className="table-bordered p-datatable custom-table small "
+        className={`table-bordered p-datatable custom-table small ${
+          onRowClick ? "row-clickable" : ""
+        }`}
       >
         {columns.map((col) => (
           <Column
