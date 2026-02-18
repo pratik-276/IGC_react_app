@@ -172,6 +172,7 @@ const CompetitorDashboardMod = () => {
       if (response?.success === true) {
         console.log("getCasinoDates response : ", response);
         setDateList(response?.data || []);
+        setSelectedDate(response?.data?.[0]?.dates);
       } else {
         console.log("Failed to fetch dates list");
       }
@@ -600,6 +601,9 @@ const CompetitorDashboardMod = () => {
                         text
                         style={{ color: "#392f6c" }}
                         disabled={dateStartIndex === 0}
+                        style={{
+                          color: "#392f6c"
+                        }}
                         onClick={() =>
                           setDateStartIndex((prev) => Math.max(prev - 1, 0))
                         }
@@ -615,7 +619,7 @@ const CompetitorDashboardMod = () => {
                           .map((item) => (
                             <Button
                               key={item.dates}
-                              label={item.dates}
+                              label={new Date(item.dates).toLocaleDateString("en-US", options)}
                               size="small"
                               outlined={selectedDate !== item.dates}
                               severity={
@@ -623,6 +627,11 @@ const CompetitorDashboardMod = () => {
                                   ? "primary"
                                   : "secondary"
                               }
+                              style={{
+                                borderColor: "#392f6c",
+                                color: selectedDate === item.dates ? "#fff" : "#000",
+                                backgroundColor: selectedDate === item.dates ? "#392f6c" : "transparent"
+                              }}
                               onClick={() => {
                                 setSelectedDate(item.dates);
                                 getCompitatorData(item.dates);
@@ -639,6 +648,9 @@ const CompetitorDashboardMod = () => {
                         disabled={
                           dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
                         }
+                        style={{
+                          color: "#392f6c"
+                        }}
                         onClick={() =>
                           setDateStartIndex((prev) =>
                             Math.min(
@@ -658,6 +670,10 @@ const CompetitorDashboardMod = () => {
                       tooltipOptions={{ position: "top" }}
                       rounded
                       outlined
+                      style={{
+                        borderColor: "#392f6c",
+                        color: "#392f6c"
+                      }}
                       disabled={zoom <= 0.5}
                       onClick={() =>
                         setZoom((prev) =>
@@ -678,6 +694,10 @@ const CompetitorDashboardMod = () => {
                       tooltipOptions={{ position: "top" }}
                       rounded
                       outlined
+                      style={{
+                        borderColor: "#392f6c",
+                        color: "#392f6c"
+                      }}
                       disabled={zoom >= 2}
                       onClick={() =>
                         setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
@@ -751,6 +771,7 @@ const CompetitorDashboardMod = () => {
                       style={{
                         minWidth: "200px",
                         whiteSpace: "normal",
+                        paddingLeft: "10px",
                       }}
                     />
 
