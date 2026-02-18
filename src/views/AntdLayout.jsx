@@ -5,11 +5,10 @@ import { Layout, Menu, Dropdown, Avatar } from "antd";
 import {
     MenuFoldOutlined,
     MenuUnfoldOutlined,
-    DashboardOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
-import { FaChartBar, FaChartLine, FaChartPie, FaCompassDrafting, FaHouse, FaRegStar, FaRegUser, FaBoltLightning, FaMapLocationDot } from "react-icons/fa6";
+import { FaChartLine, FaChartPie, FaHouse, FaRegStar, FaRegUser, FaBoltLightning, FaMapLocationDot } from "react-icons/fa6";
 import { FaCompass } from "react-icons/fa6";
 import { GiPositionMarker, GiCardPickup } from "react-icons/gi";
 import { FaRankingStar } from "react-icons/fa6";
@@ -20,11 +19,16 @@ import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
 import { IoMdHelp } from "react-icons/io";
 import toast from "react-hot-toast";
+import { setIn } from "formik";
 
 const { Header, Sider, Content } = Layout;
 
 const AppLayout = () => {
     const [collapsed, setCollapsed] = useState(false);
+    const [chatOpen, setChatOpen] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [input, setInput] = useState("");
+
     const navigate = useNavigate();
     const location = useLocation();
     const [profile, setProfile] = useState({});
@@ -236,6 +240,35 @@ const AppLayout = () => {
         }
     };
 
+    const handleKeyDown = (e) => {
+        if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            handleSend();
+        }
+    };
+
+    const handleSend = async () => {
+        if (!input.trim()) return;
+
+        setLoading(true);
+        try {
+            // const response = await profileService.Profile({
+            //     user_id: parseInt(user_id),
+            // });
+
+            // if (response?.success) {
+            //     setProfile(response?.data);
+            // }
+            console.log("User input:", input);
+        } catch (err) {
+            console.error(err);
+            toast.error("An error occurred. Please try again.");
+        } finally {
+            setLoading(false);
+            setInput("");
+        }
+    };
+
     useEffect(() => {
         // const name = localStorage.getItem("user_name") || "User";
         // const email = localStorage.getItem("user_email") || "";
@@ -260,7 +293,11 @@ const AppLayout = () => {
 
     return (
 
-        <Layout style={{ marginLeft: collapsed ? 80 : 250, transition: "margin-left 0.2s" }}>
+        <Layout style={{
+            marginLeft: collapsed ? 80 : 250,
+            marginRight: chatOpen ? 360 : 0,
+            transition: "margin-left 0.2s"
+        }}>
             <Sider
                 trigger={null}
                 collapsible
@@ -290,6 +327,155 @@ const AppLayout = () => {
                 />
             </Sider>
 
+            {chatOpen && (
+                <Sider
+                    width={360}
+                    theme="light"
+                    style={{
+                        position: "fixed",
+                        right: 0,
+                        top: 0,
+                        bottom: 0,
+                        zIndex: 1100,
+                        borderLeft: "1px solid #e5e5e5",
+                        background: "#eeeeee",
+                    }}
+                >
+                    <div
+                        style={{
+                            padding: 12,
+                            height: "100%",
+                            display: "flex",
+                            flexDirection: "column",
+                        }}
+                    >
+                        <div className="bol" style={{ fontSize: "20px", fontWeight: 600, marginBottom: 12, color: "#392f6c" }}>
+                            AI Insights
+                        </div>
+
+                        <div
+                            style={{
+                                flex: 1,
+                                overflowY: "auto",
+                                paddingRight: 6,
+                                marginBottom: 12,
+                            }}
+                        >
+
+                            {/* Chat messages */}
+                            <div
+                                style={{
+                                    flex: 1,
+                                    overflowY: "auto",
+                                    height: "calc(100% - 80px)",
+                                    paddingRight: 6,
+                                }}
+                            >
+                                {/* AI Message */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "flex-start",
+                                        marginBottom: 12,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            maxWidth: "80%",
+                                            background: "#ffffffcc",
+                                            padding: "10px 14px",
+                                            borderRadius: "12px 12px 12px 4px",
+                                            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                                            color: "#2f2f2f",
+                                            fontSize: "14px",
+                                        }}
+                                    >
+                                        👋 Hi Akshay! How can I help you?
+                                    </div>
+                                </div>
+
+                                {/* User Message */}
+                                <div
+                                    style={{
+                                        display: "flex",
+                                        justifyContent: "flex-end",
+                                        marginBottom: 12,
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            maxWidth: "80%",
+                                            padding: "10px 14px",
+                                            borderRadius: "12px 12px 4px 12px",
+                                            background: "linear-gradient(135deg, #7F7BFF, #9A8CFF, #B59CFF)",
+                                            color: "#ffffff",
+                                            fontWeight: 500,
+                                            fontSize: "14px",
+                                            boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
+                                        }}
+                                    >
+                                        Show me insights for today’s game positions.
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        {loading && (
+                            <div style={{ marginBottom: 10 }}>
+                                <div
+                                    style={{
+                                        fontSize: "12px",
+                                        fontWeight: 500,
+                                        color: "#392f6c",
+                                        marginBottom: 6,
+                                    }}
+                                >
+                                    Analyzing data…
+                                </div>
+
+                                <div
+                                    style={{
+                                        height: 6,
+                                        width: "100%",
+                                        borderRadius: 999,
+                                        background: "#ddd",
+                                        overflow: "hidden",
+                                        position: "relative",
+                                    }}
+                                >
+                                    <div
+                                        style={{
+                                            height: "100%",
+                                            width: "40%",
+                                            borderRadius: 999,
+                                            background: "linear-gradient(135deg, #7F7BFF, #9A8CFF, #B59CFF)",
+                                            animation: "chat-loading 1.2s ease-in-out infinite",
+                                        }}
+                                    />
+                                </div>
+                            </div>
+                        )}
+
+                        <div style={{ marginTop: 12 }}>
+                            <textarea
+                                value={input}
+                                onChange={(e) => setInput(e.target.value)}
+                                onKeyDown={handleKeyDown}
+                                placeholder="Ask whatever you want..."
+                                style={{
+                                    width: "100%",
+                                    padding: "8px 10px",
+                                    borderRadius: 6,
+                                    border: "1px solid #392f6c",
+                                }}
+                            />
+                        </div>
+                    </div>
+                </Sider>
+            )}
+
+
             <Layout style={{ background: "#f0f2f5", minHeight: "100vh" }}>
                 <Header className="custom-header">
                     <div className="header-toggle-icon">
@@ -315,7 +501,19 @@ const AppLayout = () => {
                 </Header>
 
                 <Content style={{ margin: "16px", padding: 24, background: "#fff" }}>
-                    <Outlet />
+                    {/* <Outlet /> */}
+                    <Outlet context={{
+                        toggleChat: () => {
+                            setChatOpen(prev => {
+                                const next = !prev;
+                                if (next) setCollapsed(true);
+                                return next;
+                            });
+                        },
+                        closeChat: () => setChatOpen(false),
+                        isChatOpen: chatOpen,
+                    }} />
+
                 </Content>
             </Layout>
         </Layout>

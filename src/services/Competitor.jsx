@@ -45,6 +45,15 @@ const get_casino_data = async (data) => {
     return d;
 };
 
+const get_casino_data_2 = async (data) => {
+    let d = await Call({
+        path: "get_casino_data_2",
+        method: "post",
+        data,
+    });
+    return d;
+};
+
 const get_casino_dates = async (data) => {
     let d = await Call({
         path: "get_casino_dates",
@@ -60,6 +69,7 @@ const exportObject = {
     get_games_by_site,
     get_providers_by_site,
     get_casino_data,
+    get_casino_data_2,
     get_casino_dates,
 };
 

@@ -21,16 +21,23 @@ import call from "../../services/Call";
 import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import GameRankAPI from "../../services/GameRank";
+import ReusableLazyTable from "../../component/ReusableLazyTable";
+import headerWithTooltip from "../../component/tableHeaders";
 
 import "./DashboardMod.css";
 import "./AccessBlur.css";
+import {
+  changeTemplate,
+  marketshareTemplate,
+} from "../../component/tableTemplates";
+import AppBreadcrumb from "../../component/AppBreadcrumb";
 
 const GameProvideMarketshare = () => {
   const navigate = useNavigate();
 
   const PAGE_SIZE = 20;
 
-  const tableWrapperRef = useRef(null);
+  // const tableWrapperRef = useRef(null);
 
   const pageRef = useRef(1);
   const loadingRef = useRef(false);
@@ -53,7 +60,6 @@ const GameProvideMarketshare = () => {
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
-  // const isPlanExpired = state?.plan === "trial";
   const { showContactSalesConfirmation } = useContactSales();
 
   useEffect(() => {
@@ -81,26 +87,26 @@ const GameProvideMarketshare = () => {
     );
   }, [tableData]);
 
-  useEffect(() => {
-    const wrapper = tableWrapperRef.current?.querySelector(
-      ".p-datatable-wrapper",
-    );
+  // useEffect(() => {
+  //   const wrapper = tableWrapperRef.current?.querySelector(
+  //     ".p-datatable-wrapper",
+  //   );
 
-    if (!wrapper) return;
+  //   if (!wrapper) return;
 
-    const handleScroll = (e) => {
-      if (loadingRef.current) return;
+  //   const handleScroll = (e) => {
+  //     if (loadingRef.current) return;
 
-      const { scrollTop, scrollHeight, clientHeight } = e.target;
+  //     const { scrollTop, scrollHeight, clientHeight } = e.target;
 
-      if (scrollTop + clientHeight >= scrollHeight - 50) {
-        fetchMarketshareData();
-      }
-    };
+  //     if (scrollTop + clientHeight >= scrollHeight - 50) {
+  //       fetchMarketshareData();
+  //     }
+  //   };
 
-    wrapper.addEventListener("scroll", handleScroll);
-    return () => wrapper.removeEventListener("scroll", handleScroll);
-  }, []);
+  //   wrapper.addEventListener("scroll", handleScroll);
+  //   return () => wrapper.removeEventListener("scroll", handleScroll);
+  // }, []);
 
   async function getMarkets() {
     GameRankAPI.get_markets().then((res) => {
@@ -203,133 +209,125 @@ const GameProvideMarketshare = () => {
     }
   };
 
-  const changeTemplate = (row) => {
-    let change = 0;
-    if (row != null) {
-      change = parseFloat(row?.change).toFixed(2);
+  const fetchNextPage = async (reset = false) => {
+    if (loadingRef.current || !hasMoreRef.current) return;
+
+    loadingRef.current = true;
+    setLoading(true);
+
+    // skeletons
+    setTableData((prev) => [
+      ...prev,
+      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
+        __skeleton: true,
+        __id: `sk-${pageRef.current}-${i}`,
+      })),
+    ]);
+
+    const res = await call({
+      path: "get_provider_marketshare_mod",
+      method: "POST",
+      data: {
+        region: selectedRegion,
+        market: selectedMarket,
+        search_term: searchRef.current,
+        month: "",
+        limit: PAGE_SIZE,
+        page: pageRef.current,
+        sort_by: sortFieldRef.current,
+        order: sortOrderRef.current,
+      },
+    });
+
+    const rows = res?.data?.data || [];
+    const pagination = res?.pagination;
+
+    setTableData((prev) => {
+      const clean = prev.filter((r) => !r.__skeleton);
+      return reset ? rows : [...clean, ...rows];
+    });
+
+    if (pagination) {
+      hasMoreRef.current = pagination.current_page < pagination.total_pages;
+      pageRef.current = pagination.current_page + 1;
     }
 
-    return (
-      <h6 className="font-normal text-secondary">
-        {change < 0 ? (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: "0.875em",
-              borderRadius: "0.25em",
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#dc3545",
-            }}
-          >
-            {change}% <FaCaretDown />
-          </span>
-        ) : (
-          ""
-        )}
-        {change == 0 ? (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: "0.875em",
-              borderRadius: "0.25em",
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#dc9b00",
-            }}
-          >
-            {change}%
-          </span>
-        ) : (
-          ""
-        )}
-        {change > 0 ? (
-          <span
-            style={{
-              display: "inline-block",
-              fontSize: "0.875em",
-              borderRadius: "0.25em",
-              fontWeight: "bold",
-              textAlign: "center",
-              color: "#28a745",
-            }}
-          >
-            {change}% <FaCaretUp />
-          </span>
-        ) : (
-          ""
-        )}
-      </h6>
-    );
+    loadingRef.current = false;
+    setLoading(false);
   };
 
-  const marketshareTemplate = (row) => {
-    const share = mapToRange(row.normalized_share, 0, 100); // use normalized_share for graph
-    let bg = "bg-info";
-
-    if (parseFloat(row.normalized_share) < 3.0) {
-      bg = "bg-danger";
-    } else if (
-      parseFloat(row.normalized_share) >= 3.0 &&
-      parseFloat(row.normalized_share) < 6.0
-    ) {
-      bg = "bg-warning";
-    } else if (parseFloat(row.normalized_share) >= 6.0) {
-      bg = "bg-success";
-    }
-
-    return (
-      <div style={{ display: "flex", flexDirection: "row", gap: 4 }}>
-        <div style={{ fontSize: "12px", flex: 0.3 }}>
-          {parseFloat(row.market_share).toFixed(2)}%
-        </div>
-        <div style={{ flex: 1 }} className="progress">
-          <div
-            className={`progress-bar ${bg}`}
-            role="progressbar"
-            style={{ width: `${share}%` }}
-            aria-valuenow={share}
-            aria-valuemin="0"
-            aria-valuemax="100"
-          ></div>
-        </div>
-      </div>
-    );
+  const resetTable = () => {
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+    loadingRef.current = false;
+    setTableData([]);
+    fetchNextPage(true);
   };
 
-  const headerWithTooltip = (headerText, tooltipText, id) => (
-    <div
-      className="d-flex align-items-center justify-content-between"
-      style={{ width: "100%" }}
-    >
-      <div className="d-flex align-items-center m-1">
-        <h5 style={{ margin: 0 }}>{headerText}</h5>
-        <Tooltip
-          target={`.info-icon-${id}`}
-          content={tooltipText}
-          position="top"
-          className="custom-tooltip"
-        />
-        <MdInfoOutline
-          className={`info-icon-${id} ms-2`}
-          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
-        />
-      </div>
-    </div>
-  );
-
-  const sortIconTemplate = (options) => {
-    let icon = options.sorted ? (
-      options.sortOrder < 0 ? (
-        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
-      ) : (
-        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
-      )
-    ) : (
-      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
-    );
-    return icon;
+  const handleSort = (field, order) => {
+    sortFieldRef.current = field;
+    sortOrderRef.current = order;
+    resetTable();
   };
+
+  const columns = [
+    {
+      field: "provider_rank",
+      header: headerWithTooltip(
+        "Rank",
+        "Rank of the game provider in the market",
+        "rank",
+      ),
+      sortable: true,
+    },
+    {
+      field: "game_provider",
+      header: headerWithTooltip(
+        "Game Provider",
+        "Name of the game provider",
+        "game_provider",
+      ),
+      sortable: true,
+    },
+    {
+      field: "unique_games",
+      header: headerWithTooltip(
+        "Unique Games",
+        "Number of unique games provided by the provider",
+        "unique_games",
+      ),
+      sortable: true,
+    },
+    {
+      field: "unique_casinos",
+      header: headerWithTooltip(
+        "Unique Casinos",
+        "Number of unique casinos using the provider",
+        "unique_casinos",
+      ),
+      sortable: true,
+    },
+    {
+      field: "market_share",
+      header: headerWithTooltip(
+        "Market Share",
+        "Market share of the provider in the selected region",
+        "market_share",
+      ),
+      sortable: true,
+      body: marketshareTemplate,
+    },
+    {
+      field: "change",
+      header: headerWithTooltip(
+        "Change (MoM)",
+        "Change in market share",
+        "change",
+      ),
+      sortable: true,
+      body: changeTemplate,
+    },
+  ];
 
   return (
     <>
@@ -374,9 +372,10 @@ const GameProvideMarketshare = () => {
                   >
                     Provider Marketshare
                   </h4>
-                  <span className="text-black" style={{ fontSize: "1rem" }}>
+                  {/* <span className="text-black" style={{ fontSize: "1rem" }}>
                     Understand provider dominance across global casinos
-                  </span>
+                  </span> */}
+                  <AppBreadcrumb />
                 </div>
 
                 <div className="d-flex flex-wrap gap-2">
@@ -452,8 +451,8 @@ const GameProvideMarketshare = () => {
             </div>
           </div>
 
-          <div className="border border-secondary p-3 rounded-3 mt-3">
-            <h5 className="font-semibold pl-2">Latest Details</h5>
+          <div className="mt-3">
+            {/* <h5 className="font-semibold pl-2">Latest Details</h5>
             <div className="d-flex justify-content-between pl-2 mb-2">
               <div>
                 <strong>Total Casinos : </strong>
@@ -463,31 +462,15 @@ const GameProvideMarketshare = () => {
                 <strong>Period : </strong>
                 {updatedOn}
               </div>
-            </div>
-            <div ref={tableWrapperRef}>
+            </div> */}
+            {/* <div ref={tableWrapperRef}>
               <DataTable
                 value={tableData}
-                // filters={filters}
-                // removableSort
-                // paginator
-                // rows={10}
-                // rowsPerPageOptions={[10, 25, 50]}
-                // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
-                // size="small"
-                // className="table-bordered p-component p-datatable custom-table small"
-                // scrollable
-                // sortIcon={sortIconTemplate}
-                // sortField="market_share"
-                // sortOrder={0}
-                // globalFilterFields={["game_provider"]}
-
                 scrollable
                 scrollHeight="600px"
                 onSort={(e) => {
                   sortFieldRef.current = e.sortField;
                   sortOrderRef.current = e.sortOrder === 1 ? "asc" : "desc";
-
                   pageRef.current = 1;
                   hasMoreRef.current = true;
                   setTableData([]);
@@ -616,33 +599,30 @@ const GameProvideMarketshare = () => {
                   )}
                   body={changeTemplate}
                 ></Column>
-
-                {/* <Column
-                    field="details"
-                    header={headerWithTooltip(
-                      "Details",
-                      "Check details",
-                      "details"
-                    )}
-                    className="text-center"
-                    body={actionBodyTemplate}
-                  ></Column> */}
               </DataTable>
-            </div>
+            </div> */}
+
+            <ReusableLazyTable
+              data={tableData}
+              loading={loading}
+              hasMore={hasMoreRef.current}
+              columns={columns}
+              scrollHeight="600px"
+              onLazyLoad={() => fetchNextPage()}
+              onSort={handleSort}
+              sortField={sortFieldRef.current}
+              sortOrder={sortOrderRef.current}
+              onRowClick={(e) => {
+                navigate("/game-provider-marketshare-details", {
+                  state: { provider_details: e.data },
+                });
+              }}
+            />
           </div>
         </div>
       </div>
     </>
   );
 };
-
-function mapToRange(value, oldMin, oldMax) {
-  if (value < oldMin || value > oldMax) {
-    throw new Error("Value out of range");
-  }
-
-  const mappedValue = ((value - oldMin) / (oldMax - oldMin)) * 100;
-  return mappedValue.toFixed(0);
-}
 
 export default GameProvideMarketshare;

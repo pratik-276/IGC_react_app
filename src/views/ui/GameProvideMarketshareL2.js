@@ -20,6 +20,7 @@ import { useContactSales } from "../../context/confirmationContext";
 import "./DashboardMod.css";
 import "./AccessBlur.css";
 import { MdArrowBackIos } from "react-icons/md";
+import AppBreadcrumb from "../../component/AppBreadcrumb";
 
 const GameProvideMarketshareL2 = () => {
   const location = useLocation();
@@ -103,7 +104,7 @@ const GameProvideMarketshareL2 = () => {
 
   async function GetProvidersList(
     region_name = null,
-    initialProviderId = null
+    initialProviderId = null,
   ) {
     setProviderLoading(true);
 
@@ -154,7 +155,7 @@ const GameProvideMarketshareL2 = () => {
       .then((res) => {
         if (res?.success === true) {
           setData(
-            Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : {}
+            Array.isArray(res.data) && res.data.length > 0 ? res.data[0] : {},
           );
         }
       })
@@ -248,9 +249,10 @@ const GameProvideMarketshareL2 = () => {
                     >
                       Provider Details
                     </h4>
-                    <span className="text-black" style={{ fontSize: "1rem" }}>
+                    {/* <span className="text-black" style={{ fontSize: "1rem" }}>
                       Details of the game provider in the selected region
-                    </span>
+                    </span> */}
+                    <AppBreadcrumb />
                   </div>
                 </div>
 

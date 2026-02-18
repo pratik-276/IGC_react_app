@@ -127,3 +127,17 @@
     font-weight: bold;
     white-space: nowrap;
 }
+
+@keyframes chat-loading {
+    0% {
+        transform: translateX(-100%);
+    }
+
+    50% {
+        transform: translateX(60%);
+    }
+
+    100% {
+        transform: translateX(180%);
+    }
+}

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import CompetitorData from "../../services/Competitor";
 import GameRankData from "../../services/GameRank";
 
@@ -8,10 +8,8 @@ import { Button } from "primereact/button";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Tooltip } from "primereact/tooltip";
-import { FloatLabel } from "primereact/floatlabel";
-import { Slider } from "primereact/slider";
-import { InputSwitch } from "primereact/inputswitch";
 import { ButtonGroup } from "primereact/buttongroup";
+import { Dialog } from "primereact/dialog";
 
 import { Spin } from "antd";
 
@@ -32,6 +30,7 @@ import { ProfileSystem } from "../../context/ProfileContext";
 import { useContactSales } from "../../context/confirmationContext";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
+import PageHeader from "../../component/PageHeader";
 
 const DEFAULT_GAME_IMAGE = "https://placehold.co/60?text=No+Image";
 const providerColors = [
@@ -73,8 +72,14 @@ const CompetitorDashboardMod = () => {
   const [tableData, setTableData] = useState([]);
   const [showImage, setShowImage] = useState(true);
 
-  const DATE_WINDOW_SIZE = 6; // change to 5 if you want
+  const DATE_WINDOW_SIZE = 6;
   const [dateStartIndex, setDateStartIndex] = useState(0);
+  const [showFilter, setShowFilter] = useState(false);
+
+  const [rows, setRows] = useState([]);
+  const [columns, setColumns] = useState([]);
+  const [selectedGame, setSelectedGame] = useState(null);
+  const [visible, setVisible] = useState(false);
 
   const { state } = useContext(ProfileSystem);
   const isPlanExpired = state?.plan === "trial_expired";
@@ -188,6 +193,14 @@ const CompetitorDashboardMod = () => {
       ...(providersName?.length ? { provider_name: providersName } : {}),
       ...(date ? { date_selected: date } : {}),
     };
+
+    CompetitorData.get_casino_data_2(payload).then((res) => {
+      if (res?.success === true) {
+        console.log("getCompitatorData rows : ", res.data.rows);
+        setColumns(res?.data.columns || []);
+        setRows(res?.data.rows || []);
+      }
+    });
 
     CompetitorData.get_casino_data(payload)
       .then((res) => {
@@ -335,7 +348,7 @@ const CompetitorDashboardMod = () => {
 
     // Step 3: Convert to array and sort alphabetically by section_title
     const sortedTableData = Object.values(sectionMap).sort((a, b) =>
-      a.section_title.localeCompare(b.section_title)
+      a.section_title.localeCompare(b.section_title),
     );
 
     setTableData(sortedTableData);
@@ -387,6 +400,41 @@ const CompetitorDashboardMod = () => {
     return icon;
   };
 
+  const gameCellTemplate = (rowData, columnId) => {
+    const cell = rowData.cells?.[columnId];
+
+    if (!cell) return null;
+
+    return (
+      <div className="matrix-cell" onClick={() => openGameModal(cell)}>
+        <div className="matrix-img-wrapper">
+          <img
+            src={cell.stored_alias_url || "no-image.jpg"}
+            alt={cell.game_name}
+            className="matrix-img shadow-4"
+          />
+        </div>
+
+        <div
+          className="matrix-text"
+          title={`${cell.game_name} (${cell.provider_name})`}
+        >
+          {cell.game_name} ({cell.provider_name})
+        </div>
+      </div>
+    );
+  };
+
+  const sectionTemplate = (rowData) => {
+    return <div style={{ fontWeight: 500 }}>{rowData.label}</div>;
+  };
+
+  const openGameModal = (cell) => {
+    console.log("Selected Game Cell:", cell);
+    setSelectedGame(cell);
+    setVisible(true);
+  };
+
   const exportCSV = (data) => {
     if (!data || data.length === 0) return;
 
@@ -422,129 +470,108 @@ const CompetitorDashboardMod = () => {
     <>
       <div className="compass">
         <div className="compass-data">
-          <div className="d-flex flex-column gap-3 justify-content-between">
-            <div className="pb-3">
-              <h4 className="m-md-0 font-semibold" style={{ color: "#392f6c" }}>
-                Casino View Dashboard
-              </h4>
-              <span className="text-black" style={{ fontSize: "1rem" }}>
-                View game positions for a casino
-              </span>
-            </div>
+          <PageHeader
+            title="Casino View Dashboard"
+            subtitle="View game positions for a casino"
+            onClick={() => exportCSV(tableData)}
+            onToggleFilter={() => setShowFilter((v) => !v)}
+            isPlanExpired={isPlanExpired}
+            features={{
+              search: false,
+              filters: true,
+              download: true,
+              chat: false,
+            }}
+          />
+          <div className={`filter-wrapper ${showFilter ? "open" : "closed"}`}>
+            <div className="d-flex gap-2 w-100 align-items-center justify-content-between mb-3">
+              <Dropdown
+                optionLabel="label"
+                optionValue="value"
+                filter
+                placeholder="Select Country"
+                loading={regionLoading}
+                value={selectedRegion}
+                onChange={(e) => {
+                  setSelectedRegion(e.value);
+                  setSelectedOperator(null);
+                  setProviderData([]);
+                  setProvidersName([]);
+                }}
+                options={regions}
+                className="w-100"
+                inputId="region"
+              />
 
-            <div className="d-flex flex-column gap-4">
-              <div className="row g-3">
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="label"
-                      optionValue="value"
-                      filter
-                      placeholder="Select Country"
-                      loading={regionLoading}
-                      value={selectedRegion}
-                      onChange={(e) => {
-                        setSelectedRegion(e.value);
-                        setSelectedOperator(null);
-                        setProviderData([]);
-                        setProvidersName([]);
-                      }}
-                      options={regions}
-                      className="w-100"
-                      inputId="region"
-                    />
-                    <label className="fs-6" htmlFor="region">
-                      Country
-                    </label>
-                  </FloatLabel>
-                </div>
+              <Dropdown
+                optionLabel="operator_name"
+                optionValue="operator_id"
+                filter
+                placeholder="Select Casino"
+                disabled={!selectedRegion}
+                loading={operatorDataLoader}
+                value={selectedOperator}
+                onChange={(e) => {
+                  setSelectedOperator(e.value);
+                }}
+                options={operators}
+                itemTemplate={(option) => (
+                  <div title={option.operator_name}>{option.operator_name}</div>
+                )}
+                className="w-100"
+                inputId="operator"
+              />
 
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <Dropdown
-                      optionLabel="operator_name"
-                      optionValue="operator_id"
-                      filter
-                      placeholder="Select Casino"
-                      disabled={!selectedRegion}
-                      loading={operatorDataLoader}
-                      value={selectedOperator}
-                      onChange={(e) => {
-                        setSelectedOperator(e.value);
-                      }}
-                      options={operators}
-                      itemTemplate={(option) => (
-                        <div title={option.operator_name}>
-                          {option.operator_name}
-                        </div>
-                      )}
-                      className="w-100"
-                      inputId="operator"
-                    />
-                    <label className="fs-6" htmlFor="operator">
-                      Casino
-                    </label>
-                  </FloatLabel>
-                </div>
+              <MultiSelect
+                optionLabel="provider_name"
+                optionValue="provider_id"
+                value={providersName}
+                onChange={(e) => {
+                  if (e.value.length <= 5) {
+                    setProvidersName(e.value);
+                  } else {
+                    toast.error("You can select up to 5 providers only.");
+                  }
+                }}
+                options={providerData}
+                loading={providerDataLoader}
+                placeholder="Select Providers (up to 5)"
+                filter
+                disabled={!selectedOperator}
+                maxSelectedLabels={1}
+                className="w-100"
+                inputId="providers"
+              />
 
-                <div className="col-md-3">
-                  <FloatLabel>
-                    <MultiSelect
-                      optionLabel="provider_name"
-                      optionValue="provider_id"
-                      value={providersName}
-                      onChange={(e) => {
-                        if (e.value.length <= 5) {
-                          setProvidersName(e.value);
-                        } else {
-                          toast.error("You can select up to 5 providers only.");
-                        }
-                      }}
-                      options={providerData}
-                      loading={providerDataLoader}
-                      placeholder="Select Providers"
-                      filter
-                      disabled={!selectedOperator}
-                      maxSelectedLabels={1}
-                      className="w-100"
-                      inputId="providers"
-                    />
-                    <label className="fs-6" htmlFor="providers">
-                      Providers (Select up to 5)
-                    </label>
-                  </FloatLabel>
-                </div>
+              <div className="d-flex align-items-start gap-2">
+                <Button
+                  type="button"
+                  label="Apply"
+                  loading={loader}
+                  icon="pi pi-check"
+                  disabled={!selectedOperator}
+                  onClick={() => {
+                    getCompitatorData(null);
+                  }}
+                  className="btn-filter flex-1 h-100"
+                  style={{ minWidth: "100px" }}
+                />
 
-                <div className="col-md-3 d-flex align-items-start gap-3">
-                  <Button
-                    type="button"
-                    label="Apply"
-                    loading={loader}
-                    icon="pi pi-filter"
-                    disabled={!selectedOperator}
-                    onClick={() => {
-                      getCompitatorData(dateList[0].dates);
-                    }}
-                    className="btn-filter flex-1 h-100"
-                    style={{ minWidth: "100px" }}
-                  />
-
-                  <Button
-                    type="button"
-                    label="Reset"
-                    icon="pi pi-refresh"
-                    disabled={!selectedOperator}
-                    onClick={() => {
-                      setSelectedOperator(null);
-                      setProvidersName([]);
-                      setData([]);
-                      setTableData([]);
-                      setUniquePositions([]);
-                    }}
-                    className="btn-filter flex-1 h-100"
-                    style={{ minWidth: "100px" }}
-                  />
-                </div>
+                <Button
+                  type="button"
+                  label="Reset"
+                  icon="pi pi-refresh"
+                  disabled={!selectedOperator}
+                  onClick={() => {
+                    setSelectedOperator(null);
+                    setProvidersName([]);
+                    setData([]);
+                    setTableData([]);
+                    setUniquePositions([]);
+                  }}
+                  className="btn-filter flex-1 h-100"
+                  style={{ minWidth: "100px" }}
+                />
               </div>
             </div>
           </div>
@@ -564,160 +591,15 @@ const CompetitorDashboardMod = () => {
             </div>
           ) : (
             <>
-              <div className="border border-secondary p-3 rounded-3 mt-3">
-                <div className="d-flex align-items-center justify-content-between">
-                  <h5 className="font-semibold pl-0">
-                    Latest Details{" "}
-                    {data
-                      ? "(Scan Date: " +
-                      new Date(data[0].created_date).toLocaleDateString(
-                        "en-US",
-                        options
-                      ) +
-                      ")"
-                      : ""}
-                  </h5>
-
-                  {isPlanExpired ? (
-                    <>
-                      <span
-                        className="text-muted"
-                        id="download-disabled"
-                        style={{
-                          cursor: "not-allowed",
-                          textDecoration: "underline dotted",
-                        }}
-                      >
-                        Download Report
-                      </span>
-                      <Tooltip
-                        target="#download-disabled"
-                        content="Upgrade your plan to download the report"
-                        position="top"
-                        className="custom-tooltip"
-                      />
-                    </>
-                  ) : (
-                    <div className="d-flex align-items-center gap-2">
-                      {/* <div className="d-flex align-items-center gap-2">
-                        <span style={{ fontSize: "14px" }}>Show Images</span>
-                        <InputSwitch
-                          checked={showImage}
-                          onChange={(e) => setShowImage(e.value)}
-                        />
-                      </div> */}
-
-                      {/* <div className="flex align-items-center gap-1">
-                        <label htmlFor="zoomSlider">Zoom</label>
-                        <Slider
-                          id="zoomSlider"
-                          value={zoom}
-                          onChange={(e) => setZoom(e.value)}
-                          step={0.1}
-                          min={0.5}
-                          max={2}
-                          style={{ width: "200px" }}
-                        />
-                        <span>{(zoom * 100).toFixed(0)}%</span>
-                      </div> */}
-
-                      <Button
-                        icon="pi pi-download"
-                        tooltip="Download Report"
-                        tooltipOptions={{ position: "top" }}
-                        rounded
-                        onClick={() => exportCSV(tableData)}
-                        className="btn-filter flex-1 h-100 px-4"
-                      />
-
-                      {/* <span
-                        className="text-primary cursor-pointer"
-                        onClick={() => exportCSV(tableData)}
-                      >
-                        Download Report
-                      </span> */}
-                    </div>
-                  )}
-                </div>
-                <div className="d-flex align-items-center justify-content-between mb-3">
-                  {providersName.length > 0 && (
-                    <div className="mt-3 d-flex gap-4 flex-wrap">
-                      {providersName.map((provId) => {
-                        const provider = providerData.find(
-                          (p) => p.provider_id === provId
-                        );
-                        return (
-                          <div
-                            key={provId}
-                            className="d-flex align-items-center gap-2"
-                          >
-                            <div
-                              style={{
-                                width: "18px",
-                                height: "18px",
-                                borderRadius: "4px",
-                                backgroundColor: providerColorMap[provId],
-                                border: "1px solid #999",
-                              }}
-                            />
-                            <span>{provider?.provider_name}</span>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  )}
-                </div>
-
-                {/* {selectedSiteDetails && (
-                  <div className="d-flex justify-content-between pl-2 mb-2">
-                    <div>
-                      <strong>Site URL : </strong>
-                      <a href={selectedSiteDetails.label}>
-                        {selectedSiteDetails.label}
-                      </a>
-                    </div>
-                    <div>
-                      <strong>Period : </strong>
-                      {selectedSiteDetails.latest_date
-                        ? new Date(
-                            selectedSiteDetails.latest_date
-                          ).toLocaleDateString("en-US", {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "N/A"}
-                    </div>
-                  </div>
-                )} */}
-
-                {/* {dateList?.length > 0 && (
-                  <div className="d-flex flex-wrap gap-2 mb-3">
-                    {dateList.map((item) => (
-                      <Button
-                        key={item.dates}
-                        label={item.dates}
-                        size="small"
-                        outlined={selectedDate !== item.dates}
-                        severity={
-                          selectedDate === item.dates ? "primary" : "secondary"
-                        }
-                        onClick={() => {
-                          setSelectedDate(item.dates);
-                          getCompitatorData(item.dates);
-                        }}
-                      />
-                    ))}
-                  </div>
-                )} */}
+              <div>
                 <div className="d-flex w-100 justify-content-center align-items-center gap-2 mb-3">
                   {dateList?.length > 0 && (
                     <div className="d-flex align-items-center gap-2">
                       {/* PREV BUTTON */}
                       <Button
                         icon="pi pi-chevron-left"
-                        rounded
                         text
+                        style={{ color: "#392f6c" }}
                         disabled={dateStartIndex === 0}
                         style={{
                           color: "#392f6c"
@@ -732,7 +614,7 @@ const CompetitorDashboardMod = () => {
                         {dateList
                           .slice(
                             dateStartIndex,
-                            dateStartIndex + DATE_WINDOW_SIZE
+                            dateStartIndex + DATE_WINDOW_SIZE,
                           )
                           .map((item) => (
                             <Button
@@ -761,8 +643,8 @@ const CompetitorDashboardMod = () => {
                       {/* NEXT BUTTON */}
                       <Button
                         icon="pi pi-chevron-right"
-                        rounded
                         text
+                        style={{ color: "#392f6c" }}
                         disabled={
                           dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
                         }
@@ -773,8 +655,8 @@ const CompetitorDashboardMod = () => {
                           setDateStartIndex((prev) =>
                             Math.min(
                               prev + 1,
-                              dateList.length - DATE_WINDOW_SIZE
-                            )
+                              dateList.length - DATE_WINDOW_SIZE,
+                            ),
                           )
                         }
                       />
@@ -795,9 +677,15 @@ const CompetitorDashboardMod = () => {
                       disabled={zoom <= 0.5}
                       onClick={() =>
                         setZoom((prev) =>
-                          Math.max(0.5, +(prev - 0.1).toFixed(2))
+                          Math.max(0.5, +(prev - 0.1).toFixed(2)),
                         )
                       }
+                      style={{
+                        backgroundColor: "#392f6c",
+                        borderColor: "#fff",
+                        color: "#fff",
+                      }}
+                      className="btn-filter"
                     />
 
                     <Button
@@ -814,6 +702,12 @@ const CompetitorDashboardMod = () => {
                       onClick={() =>
                         setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
                       }
+                      style={{
+                        backgroundColor: "#392f6c",
+                        borderColor: "#fff",
+                        color: "#fff",
+                      }}
+                      className="btn-filter"
                     />
                   </ButtonGroup>
                 </div>
@@ -826,13 +720,38 @@ const CompetitorDashboardMod = () => {
                   }}
                 >
                   <DataTable
+                    value={rows}
+                    scrollable
+                    scrollHeight="flex"
+                    sortIcon={sortIconTemplate}
+                    size="small"
+                    className="p-datatable-gridlines"
+                  >
+                    <Column
+                      field="label"
+                      header={headerWithTooltip(
+                        "Section Title",
+                        "Name of Section Title",
+                        "section_title",
+                      )}
+                      body={sectionTemplate}
+                      frozen
+                      sortable
+                      style={{ minWidth: "180px" }}
+                    />
+
+                    {columns.map((col) => (
+                      <Column
+                        key={col.id}
+                        header={col.label}
+                        body={(rowData) => gameCellTemplate(rowData, col.id)}
+                        style={{ minWidth: "120px", textAlign: "center" }}
+                      />
+                    ))}
+                  </DataTable>
+                  {/* <DataTable
                     value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                     scrollable
-                    // paginator={!isPlanExpired}
-                    // rows={25}
-                    // rowsPerPageOptions={[10, 25, 50]}
-                    // paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-                    // currentPageReportTemplate="Showing {first} to {last} of {totalRecords} records"
                     sortIcon={sortIconTemplate}
                     size="small"
                     className="table-bordered p-component p-datatable custom-competitor-table small fixed-row-height"
@@ -842,7 +761,7 @@ const CompetitorDashboardMod = () => {
                       header={headerWithTooltip(
                         "Section Title",
                         "Name of Section Title",
-                        "section_title"
+                        "section_title",
                       )}
                       field="section_title"
                       sortable
@@ -856,17 +775,6 @@ const CompetitorDashboardMod = () => {
                       }}
                     />
 
-                    {/* {uniquePositions.map((pos) => (
-                    <Column
-                      key={pos}
-                      field={pos}
-                      header={headerWithoutTooltip(pos)}
-                      style={{
-                        minWidth: "120px",
-                        whiteSpace: "normal",
-                      }}
-                    />
-                  ))} */}
                     {uniquePositions.map((pos) => (
                       <Column
                         key={pos}
@@ -887,23 +795,7 @@ const CompetitorDashboardMod = () => {
                           }
 
                           return (
-                            // <>
-                            //   <span
-                            //     style={{
-                            //       backgroundColor: cell.highlight
-                            //         ? "#ffeeba"
-                            //         : "transparent",
-
-                            //       padding: "2px 6px",
-                            //       borderRadius: "4px",
-                            //       display: "inline-block",
-                            //     }}
-                            //   >
-                            //     {cell.text}
-                            //   </span>
-                            // </>
                             <div
-                              //className="d-flex flex-column justify-content-center align-items-center"
                               style={{
                                 display: "flex",
                                 flexDirection: "column",
@@ -913,14 +805,12 @@ const CompetitorDashboardMod = () => {
                                 width: "100%",
                                 textAlign: "center",
                                 height: "181px",
-                                //position: "absolute",
-                                //inset: 0,
+
                                 backgroundColor:
                                   providerColorMap[cell.provider_id] ||
                                   "transparent",
                               }}
                             >
-                              {/* SHOW IMAGE WHEN TOGGLE IS ON */}
                               {showImage && (
                                 <img
                                   src={cell.image}
@@ -934,7 +824,6 @@ const CompetitorDashboardMod = () => {
                                 />
                               )}
 
-                              {/* Text (always visible) */}
                               <span
                                 style={{
                                   backgroundColor:
@@ -952,8 +841,37 @@ const CompetitorDashboardMod = () => {
                         }}
                       />
                     ))}
-                  </DataTable>
+                  </DataTable> */}
                 </div>
+
+                <Dialog
+                  header="Game Details"
+                  visible={visible}
+                  style={{ width: "400px" }}
+                  onHide={() => setVisible(false)}
+                >
+                  {selectedGame && (
+                    <div style={{ textAlign: "center" }}>
+                      <img
+                        src={selectedGame.stored_alias_url || "no-image.jpg"}
+                        alt={selectedGame.game_name}
+                        style={{
+                          width: "100%",
+                          borderRadius: "8px",
+                          marginBottom: "12px",
+                        }}
+                        className="shadow-6"
+                      />
+
+                      <h3 style={{ margin: 0 }} className="fw-semibold mb-1">
+                        {selectedGame.game_name}
+                      </h3>
+                      <p style={{ margin: 0, color: "#666" }}>
+                        Provider : {selectedGame.provider_name}
+                      </p>
+                    </div>
+                  )}
+                </Dialog>
 
                 {isPlanExpired && (
                   <div
