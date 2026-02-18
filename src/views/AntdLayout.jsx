@@ -60,7 +60,7 @@ const AppLayout = () => {
                 {
                     key: "/casino-view",
                     icon: <MdDashboard />,
-                    label: "View Casino Data",
+                    label: "View Operator Data",
                 },
             ],
         },
@@ -144,7 +144,7 @@ const AppLayout = () => {
                 {
                     key: "/casino-view",
                     icon: <MdDashboard />,
-                    label: "View Casino Data",
+                    label: "View Operator Data",
                 },
             ],
         },
