@@ -17,8 +17,9 @@ export default function ReusableLazyTable({
   onRowClick,
 }) {
   const wrapperRef = useRef(null);
+  const lazyRef = useRef(onLazyLoad);
+  lazyRef.current = onLazyLoad;
 
-  /* Scroll Check */
   useEffect(() => {
     const wrapper = wrapperRef.current?.querySelector(".p-datatable-wrapper");
     if (!wrapper) return;
@@ -28,20 +29,32 @@ export default function ReusableLazyTable({
 
       const { scrollTop, scrollHeight, clientHeight } = e.target;
       if (scrollTop + clientHeight >= scrollHeight - 50) {
-        onLazyLoad?.();
+        lazyRef.current?.();
       }
     };
 
     wrapper.addEventListener("scroll", handleScroll);
     return () => wrapper.removeEventListener("scroll", handleScroll);
-  }, [hasMore, loading, onLazyLoad]);
+  }, [hasMore, loading]);
+
+  useEffect(() => {
+    if (!hasMore || loading) return;
+
+    const wrapper = wrapperRef.current?.querySelector(".p-datatable-wrapper");
+    if (!wrapper) return;
+
+    const hasScroll = wrapper.scrollHeight > wrapper.clientHeight;
+
+    if (!hasScroll) {
+      onLazyLoad?.();
+    }
+  }, [data, hasMore, loading]);
 
   return (
     <div ref={wrapperRef}>
       <DataTable
         value={data}
         scrollable
-        size="small"
         scrollHeight={scrollHeight}
         sortIcon={sortIconTemplate}
         sortField={sortField}
@@ -50,7 +63,7 @@ export default function ReusableLazyTable({
           onSort?.(e.sortField, e.sortOrder === 1 ? "asc" : "desc")
         }
         onRowClick={onRowClick}
-        className="table-bordered p-datatable custom-table small"
+        className="table-bordered p-datatable custom-table small "
       >
         {columns.map((col) => (
           <Column

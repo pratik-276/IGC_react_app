@@ -19,6 +19,7 @@ import "primeicons/primeicons.css";
 import "../DashboardMod.css";
 import "../AccessBlur.css";
 import "./posnDashboard.css";
+import { textTemplate } from "../../../component/tableTemplates";
 
 const GameDashboard1 = () => {
   const user_company = localStorage.getItem("user_company");
@@ -232,92 +233,29 @@ const GameDashboard1 = () => {
     }
   };
 
-  const fetchNextPage = async (reset = false) => {
-    if (loadingRef.current || !hasMoreRef.current) return;
-
-    loadingRef.current = true;
-    setLoading(true);
-
-    // skeletons
-    setTableData((prev) => [
-      ...prev,
-      ...Array.from({ length: PAGE_SIZE }, (_, i) => ({
-        __skeleton: true,
-        __id: `sk-${pageRef.current}-${i}`,
-      })),
-    ]);
-
-    let res;
-    if (redirectFrom === "country") {
-      res = await PositionDashboard.provider_game_dashboard_1({
-        game_provider: user_company,
-        country_name: country_name_from_state,
-        state: state_name_from_state,
-        operator_id: operator_id_from_state,
-        limit: PAGE_SIZE,
-        page: pageRef.current,
-        search: searchRef.current,
-        sort_by: sortFieldRef.current,
-        order: sortOrderRef.current,
-      });
-    } else if (redirectFrom === "operator") {
-      res = await PositionDashboard.provider_game_dashboard_2({
-        game_provider: user_company,
-        country_name: country_name_from_state,
-        state: state_name_from_state,
-        operator_id: operator_id_from_state,
-        limit: PAGE_SIZE,
-        page: pageRef.current,
-        search: searchRef.current,
-        sort_by: sortFieldRef.current,
-        order: sortOrderRef.current,
-      });
-    } else if (redirectFrom === "game") {
-      res = await PositionDashboard.provider_game_dashboard_3({
-        game_provider: user_company,
-        limit: PAGE_SIZE,
-        page: pageRef.current,
-        search: searchRef.current,
-        sort_by: sortFieldRef.current,
-        order: sortOrderRef.current,
-      });
-    }
-
-    const rows = res?.data?.data || [];
-    const pagination = res?.pagination;
-
-    setTableData((prev) => {
-      const clean = prev.filter((r) => !r.__skeleton);
-      return reset ? rows : [...clean, ...rows];
-    });
-
-    if (pagination) {
-      hasMoreRef.current = pagination.current_page < pagination.total_pages;
-      pageRef.current = pagination.current_page + 1;
-    }
-
-    loadingRef.current = false;
-    setLoading(false);
-  };
-
   const resetTable = () => {
     pageRef.current = 1;
     hasMoreRef.current = true;
-    loadingRef.current = false;
+
     setTableData([]);
-    fetchNextPage(true);
+    fetchTableData({ reset: true });
   };
 
   const handleSort = (field, order) => {
     sortFieldRef.current = field;
     sortOrderRef.current = order;
-    resetTable();
+
+    pageRef.current = 1;
+    hasMoreRef.current = true;
+
+    fetchTableData({ reset: true });
   };
 
   const columns = [
     {
       field: "game_name",
       header: headerWithTooltip("Game", "Name of Game", "game_name"),
+      body: textTemplate("game_name"),
       sortable: true,
     },
 
@@ -329,10 +267,8 @@ const GameDashboard1 = () => {
               "Country Count",
               "Number of countries where the game is found",
               "country_count",
-              "Country Count",
-              "Number of countries where the game is found",
-              "country_count",
             ),
+            body: textTemplate("country_count"),
             sortable: true,
           },
         ]
@@ -347,6 +283,7 @@ const GameDashboard1 = () => {
               "Number of operators where the game is found",
               "casino_count",
             ),
+            body: textTemplate("casino_count"),
             sortable: true,
           },
         ]
@@ -359,6 +296,7 @@ const GameDashboard1 = () => {
         "Overall count of positions where the game is found across all casinos in this country",
         "game_positions_count",
       ),
+      body: textTemplate("game_positions_count"),
       sortable: true,
     },
 
@@ -371,6 +309,7 @@ const GameDashboard1 = () => {
               "Date when the game was last observed on the operator",
               "last_observed_date",
             ),
+            body: textTemplate("last_observed_date"),
             sortable: true,
           },
         ]
@@ -444,7 +383,7 @@ const GameDashboard1 = () => {
         }}
       />
 
-      {tableData.length > 0 ? (
+      {loading || tableData.length > 0 ? (
         <>
           <div className="mb-3">
             <div>
@@ -490,7 +429,7 @@ const GameDashboard1 = () => {
             hasMore={hasMoreRef.current}
             columns={columns}
             scrollHeight="600px"
-            onLazyLoad={() => fetchNextPage()}
+            onLazyLoad={() => fetchTableData()}
             onSort={handleSort}
             sortField={sortFieldRef.current}
             sortOrder={sortOrderRef.current}
