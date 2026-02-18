@@ -90,7 +90,7 @@ const countryBodyTemplate = (rowData) => {
 
   const countryCode = matchedCountry?.code?.toLowerCase();
   return (
-    <div className="flex align-items-center gap-2 ">
+    <div className="flex align-items-center gap-2 ps-2">
       {countryCode ? (
         <img
           alt={rowData.country_name}
@@ -101,7 +101,6 @@ const countryBodyTemplate = (rowData) => {
             objectFit: "cover",
             borderRadius: "2px",
             boxShadow: "0 0 0 1px rgba(0,0,0,0.06)",
-            marginLeft: "6px",
           }}
         />
       ) : (
@@ -233,6 +232,29 @@ const changeTemplate = (row) => {
   );
 };
 
+const textTemplate =
+  (field, align = "left") =>
+  (rowData) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            align === "right"
+              ? "flex-end"
+              : align === "center"
+                ? "center"
+                : "flex-start",
+          width: "100%",
+          paddingLeft: "14px",
+        }}
+      >
+        {rowData[field] ?? "-"}
+      </div>
+    );
+  };
+
 function mapToRange(value, oldMin, oldMax) {
   if (value < oldMin || value > oldMax) {
     throw new Error("Value out of range");
@@ -247,5 +269,6 @@ export {
   gameTrendTemplate,
   marketshareTemplate,
   changeTemplate,
+  textTemplate,
   sortIconTemplate,
 };

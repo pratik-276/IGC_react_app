@@ -530,6 +530,11 @@ export const CountryCodes = [
     code: "IT",
   },
   {
+    name: "Ivory Coast",
+    dial_code: "+255",
+    code: "CI",
+  },
+  {
     name: "Jamaica",
     dial_code: "+1876",
     code: "JM",
