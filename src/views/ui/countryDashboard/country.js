@@ -258,43 +258,43 @@ const CountryDashboard1 = () => {
 
     ...(redirectFrom === "country" || redirectFrom === "game"
       ? [
-          {
-            field: "casino_count",
-            header: headerWithTooltip(
-              "Operator Count",
-              "Overall count of casinos in this country",
-              "casino_count",
-            ),
-            body: textTemplate("casino_count"),
-            sortable: true,
-          },
-        ]
+        {
+          field: "casino_count",
+          header: headerWithTooltip(
+            "Operator Count",
+            "Overall count of casinos in this country",
+            "casino_count",
+          ),
+          body: textTemplate("casino_count"),
+          sortable: true,
+        },
+      ]
       : []),
 
     ...(redirectFrom === "country" || redirectFrom === "operator"
       ? [
-          {
-            field: "game_count",
-            header: headerWithTooltip(
-              "Game Count",
-              "Overall count of games in this country",
-              "game_count",
-            ),
-            body: textTemplate("game_count"),
-            sortable: true,
-          },
-          {
-            field: "game_count_trend",
-            header: headerWithTooltip(
-              "Game Count Trend",
-              "Trend of game count in this country over last few months",
-              "game_count_trend",
-            ),
-            style: { width: "160px" },
-            body: gameTrendTemplate,
-            sortable: false,
-          },
-        ]
+        {
+          field: "game_count",
+          header: headerWithTooltip(
+            "Game Count",
+            "Overall count of games in this country",
+            "game_count",
+          ),
+          body: textTemplate("game_count"),
+          sortable: true,
+        },
+        {
+          field: "game_count_trend",
+          header: headerWithTooltip(
+            "Game Count Trend",
+            "Trend of game count in this country over last few months",
+            "game_count_trend",
+          ),
+          style: { width: "160px" },
+          body: gameTrendTemplate,
+          sortable: false,
+        },
+      ]
       : []),
 
     {

@@ -874,7 +874,7 @@ const CompetitorDashboardMod = () => {
               className="d-flex justify-content-center"
               style={{ marginTop: "15%" }}
             >
-              <h4>No competitor configured</h4>
+              <h4>No data in selected casinos</h4>
             </div>
           </>
         )}
