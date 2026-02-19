@@ -31,6 +31,11 @@ import { useContactSales } from "../../context/confirmationContext";
 import toast from "react-hot-toast";
 import { useLocation } from "react-router-dom";
 import PageHeader from "../../component/PageHeader";
+import {
+  sectionTemplate,
+  sortIconTemplate,
+} from "../../component/tableTemplates";
+import headerWithTooltip from "../../component/tableHeaders";
 
 const DEFAULT_GAME_IMAGE = "https://placehold.co/60?text=No+Image";
 const providerColors = [
@@ -74,7 +79,7 @@ const CompetitorDashboardMod = () => {
 
   const DATE_WINDOW_SIZE = 6;
   const [dateStartIndex, setDateStartIndex] = useState(0);
-  const [showFilter, setShowFilter] = useState(false);
+  const [showFilter, setShowFilter] = useState(true);
 
   const [rows, setRows] = useState([]);
   const [columns, setColumns] = useState([]);
@@ -355,58 +360,27 @@ const CompetitorDashboardMod = () => {
     console.log("sortedTableData", sortedTableData);
   }, [data]);
 
-  const headerWithTooltip = (headerText, tooltipText, id) => (
-    <div
-      className="d-flex align-items-center justify-content-between"
-      style={{ width: "100%" }}
-    >
-      <div className="d-flex align-items-center m-1">
-        <h5 style={{ margin: 0 }}>{headerText}</h5>
-        <Tooltip
-          target={`.info-icon-${id}`}
-          content={tooltipText}
-          position="top"
-          className="custom-tooltip"
-        />
-        <MdInfoOutline
-          className={`info-icon-${id} ms-2`}
-          style={{ fontSize: "16px", cursor: "pointer", flexShrink: 0 }}
-        />
-      </div>
-    </div>
-  );
-
-  const headerWithoutTooltip = (headerText) => (
-    <div
-      className="d-flex align-items-center justify-content-center"
-      style={{ width: "100%" }}
-    >
-      <div className="d-flex align-items-center m-1">
-        <h5 style={{ margin: 0 }}>{headerText}</h5>
-      </div>
-    </div>
-  );
-
-  const sortIconTemplate = (options) => {
-    let icon = options.sorted ? (
-      options.sortOrder < 0 ? (
-        <i className="pi pi-sort-up" style={{ fontSize: "14px" }} />
-      ) : (
-        <i className="pi pi-sort-down" style={{ fontSize: "14px" }} />
-      )
-    ) : (
-      <i className="pi pi-sort" style={{ fontSize: "14px" }} />
-    );
-    return icon;
-  };
-
   const gameCellTemplate = (rowData, columnId) => {
     const cell = rowData.cells?.[columnId];
 
     if (!cell) return null;
 
+    const bgColor = providerColorMap[cell.provider_id] || "transparent";
+
     return (
-      <div className="matrix-cell" onClick={() => openGameModal(cell)}>
+      <div
+        className="matrix-cell"
+        onClick={() => openGameModal(cell)}
+        style={{
+          backgroundColor: bgColor,
+          borderRadius: "6px",
+          padding: "6px",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+        }}
+      >
         <div className="matrix-img-wrapper">
           <img
             src={cell.stored_alias_url || "no-image.jpg"}
@@ -423,10 +397,6 @@ const CompetitorDashboardMod = () => {
         </div>
       </div>
     );
-  };
-
-  const sectionTemplate = (rowData) => {
-    return <div style={{ fontWeight: 500 }}>{rowData.label}</div>;
   };
 
   const openGameModal = (cell) => {
@@ -483,6 +453,7 @@ const CompetitorDashboardMod = () => {
               chat: false,
             }}
           />
+
           <div className={`filter-wrapper ${showFilter ? "open" : "closed"}`}>
             <div className="d-flex gap-2 w-100 align-items-center justify-content-between mb-3">
               <Dropdown
@@ -591,165 +562,159 @@ const CompetitorDashboardMod = () => {
             </div>
           ) : (
             <>
-              <div>
-                <div className="d-flex w-100 justify-content-center align-items-center gap-2 mb-3">
-                  {dateList?.length > 0 && (
-                    <div className="d-flex align-items-center gap-2">
-                      {/* PREV BUTTON */}
-                      <Button
-                        icon="pi pi-chevron-left"
-                        text
-                        style={{ color: "#392f6c" }}
-                        disabled={dateStartIndex === 0}
-                        style={{
-                          color: "#392f6c"
-                        }}
-                        onClick={() =>
-                          setDateStartIndex((prev) => Math.max(prev - 1, 0))
-                        }
-                      />
-
-                      {/* DATE BUTTONS */}
-                      <div className="d-flex gap-2 overflow-hidden date-carousel">
-                        {dateList
-                          .slice(
-                            dateStartIndex,
-                            dateStartIndex + DATE_WINDOW_SIZE,
-                          )
-                          .map((item) => (
-                            <Button
-                              key={item.dates}
-                              label={new Date(item.dates).toLocaleDateString("en-US", options)}
-                              size="small"
-                              outlined={selectedDate !== item.dates}
-                              severity={
-                                selectedDate === item.dates
-                                  ? "primary"
-                                  : "secondary"
-                              }
-                              style={{
-                                borderColor: "#392f6c",
-                                color: selectedDate === item.dates ? "#fff" : "#000",
-                                backgroundColor: selectedDate === item.dates ? "#392f6c" : "transparent"
-                              }}
-                              onClick={() => {
-                                setSelectedDate(item.dates);
-                                getCompitatorData(item.dates);
-                              }}
-                            />
-                          ))}
-                      </div>
-
-                      {/* NEXT BUTTON */}
-                      <Button
-                        icon="pi pi-chevron-right"
-                        text
-                        style={{ color: "#392f6c" }}
-                        disabled={
-                          dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
-                        }
-                        style={{
-                          color: "#392f6c"
-                        }}
-                        onClick={() =>
-                          setDateStartIndex((prev) =>
-                            Math.min(
-                              prev + 1,
-                              dateList.length - DATE_WINDOW_SIZE,
-                            ),
-                          )
-                        }
-                      />
-                    </div>
-                  )}
-
-                  <ButtonGroup className="d-flex align-items-center">
+              <div className="d-flex w-100 justify-content-center align-items-center gap-2 mb-3">
+                {dateList?.length > 0 && (
+                  <div className="d-flex align-items-center gap-2">
+                    {/* PREV BUTTON */}
                     <Button
-                      icon="pi pi-search-minus"
-                      tooltip="Zoom Out"
-                      tooltipOptions={{ position: "top" }}
-                      rounded
-                      outlined
-                      style={{
-                        borderColor: "#392f6c",
-                        color: "#392f6c"
-                      }}
-                      disabled={zoom <= 0.5}
+                      icon="pi pi-chevron-left"
+                      text
+                      style={{ color: "#392f6c" }}
+                      disabled={dateStartIndex === 0}
                       onClick={() =>
-                        setZoom((prev) =>
-                          Math.max(0.5, +(prev - 0.1).toFixed(2)),
+                        setDateStartIndex((prev) => Math.max(prev - 1, 0))
+                      }
+                    />
+
+                    {/* DATE BUTTONS */}
+                    <div className="d-flex gap-2 overflow-hidden date-carousel">
+                      {dateList
+                        .slice(
+                          dateStartIndex,
+                          dateStartIndex + DATE_WINDOW_SIZE,
+                        )
+                        .map((item) => (
+                          <Button
+                            key={item.dates}
+                            label={new Date(item.dates).toLocaleDateString(
+                              "en-US",
+                              options,
+                            )}
+                            size="small"
+                            outlined={selectedDate !== item.dates}
+                            severity={
+                              selectedDate === item.dates
+                                ? "primary"
+                                : "secondary"
+                            }
+                            style={{
+                              borderColor: "#392f6c",
+                              color:
+                                selectedDate === item.dates ? "#fff" : "#000",
+                              backgroundColor:
+                                selectedDate === item.dates
+                                  ? "#392f6c"
+                                  : "transparent",
+                            }}
+                            onClick={() => {
+                              setSelectedDate(item.dates);
+                              getCompitatorData(item.dates);
+                            }}
+                          />
+                        ))}
+                    </div>
+
+                    {/* NEXT BUTTON */}
+                    <Button
+                      icon="pi pi-chevron-right"
+                      text
+                      style={{ color: "#392f6c" }}
+                      disabled={
+                        dateStartIndex + DATE_WINDOW_SIZE >= dateList.length
+                      }
+                      onClick={() =>
+                        setDateStartIndex((prev) =>
+                          Math.min(
+                            prev + 1,
+                            dateList.length - DATE_WINDOW_SIZE,
+                          ),
                         )
                       }
-                      style={{
-                        backgroundColor: "#392f6c",
-                        borderColor: "#fff",
-                        color: "#fff",
-                      }}
-                      className="btn-filter"
                     />
+                  </div>
+                )}
 
-                    <Button
-                      icon="pi pi-search-plus"
-                      tooltip="Zoom In"
-                      tooltipOptions={{ position: "top" }}
-                      rounded
-                      outlined
-                      style={{
-                        borderColor: "#392f6c",
-                        color: "#392f6c"
-                      }}
-                      disabled={zoom >= 2}
-                      onClick={() =>
-                        setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
-                      }
-                      style={{
-                        backgroundColor: "#392f6c",
-                        borderColor: "#fff",
-                        color: "#fff",
-                      }}
-                      className="btn-filter"
-                    />
-                  </ButtonGroup>
-                </div>
+                <ButtonGroup className="d-flex align-items-center">
+                  <Button
+                    icon="pi pi-search-minus"
+                    tooltip="Zoom Out"
+                    tooltipOptions={{ position: "top" }}
+                    rounded
+                    outlined
+                    style={{
+                      borderColor: "#392f6c",
+                      color: "#392f6c",
+                      backgroundColor: "#392f6c",
+                      borderColor: "#fff",
+                      color: "#fff",
+                    }}
+                    disabled={zoom <= 0.5}
+                    onClick={() =>
+                      setZoom((prev) => Math.max(0.5, +(prev - 0.1).toFixed(2)))
+                    }
+                    className="btn-filter"
+                  />
 
-                <div
-                  style={{
-                    transform: `scale(${zoom})`,
-                    transformOrigin: "top left",
-                    width: `${100 / zoom}%`,
-                  }}
+                  <Button
+                    icon="pi pi-search-plus"
+                    tooltip="Zoom In"
+                    tooltipOptions={{ position: "top" }}
+                    rounded
+                    outlined
+                    style={{
+                      borderColor: "#392f6c",
+                      color: "#392f6c",
+                      backgroundColor: "#392f6c",
+                      borderColor: "#fff",
+                      color: "#fff",
+                    }}
+                    disabled={zoom >= 2}
+                    onClick={() =>
+                      setZoom((prev) => Math.min(2, +(prev + 0.1).toFixed(2)))
+                    }
+                    className="btn-filter"
+                  />
+                </ButtonGroup>
+              </div>
+
+              <div
+                style={{
+                  transform: `scale(${zoom})`,
+                  transformOrigin: "top left",
+                  width: `${100 / zoom}%`,
+                }}
+              >
+                <DataTable
+                  value={rows}
+                  scrollable
+                  scrollHeight="flex"
+                  sortIcon={sortIconTemplate}
+                  size="small"
+                  className="p-datatable-gridlines"
                 >
-                  <DataTable
-                    value={rows}
-                    scrollable
-                    scrollHeight="flex"
-                    sortIcon={sortIconTemplate}
-                    size="small"
-                    className="p-datatable-gridlines"
-                  >
-                    <Column
-                      field="label"
-                      header={headerWithTooltip(
-                        "Section Title",
-                        "Name of Section Title",
-                        "section_title",
-                      )}
-                      body={sectionTemplate}
-                      frozen
-                      sortable
-                      style={{ minWidth: "180px" }}
-                    />
+                  <Column
+                    field="label"
+                    header={headerWithTooltip(
+                      "Section Title",
+                      "Name of Section Title",
+                      "section_title",
+                    )}
+                    body={sectionTemplate}
+                    frozen
+                    sortable
+                    style={{ minWidth: "180px" }}
+                  />
 
-                    {columns.map((col) => (
-                      <Column
-                        key={col.id}
-                        header={col.label}
-                        body={(rowData) => gameCellTemplate(rowData, col.id)}
-                        style={{ minWidth: "120px", textAlign: "center" }}
-                      />
-                    ))}
-                  </DataTable>
-                  {/* <DataTable
+                  {columns.map((col) => (
+                    <Column
+                      key={col.id}
+                      header={col.label}
+                      body={(rowData) => gameCellTemplate(rowData, col.id)}
+                      style={{ minWidth: "120px", textAlign: "center" }}
+                    />
+                  ))}
+                </DataTable>
+                {/* <DataTable
                     value={isPlanExpired ? tableData.slice(0, 3) : tableData}
                     scrollable
                     sortIcon={sortIconTemplate}
@@ -842,66 +807,65 @@ const CompetitorDashboardMod = () => {
                       />
                     ))}
                   </DataTable> */}
-                </div>
+              </div>
 
-                <Dialog
-                  header="Game Details"
-                  visible={visible}
-                  style={{ width: "400px" }}
-                  onHide={() => setVisible(false)}
-                >
-                  {selectedGame && (
-                    <div style={{ textAlign: "center" }}>
-                      <img
-                        src={selectedGame.stored_alias_url || "no-image.jpg"}
-                        alt={selectedGame.game_name}
-                        style={{
-                          width: "100%",
-                          borderRadius: "8px",
-                          marginBottom: "12px",
-                        }}
-                        className="shadow-6"
-                      />
-
-                      <h3 style={{ margin: 0 }} className="fw-semibold mb-1">
-                        {selectedGame.game_name}
-                      </h3>
-                      <p style={{ margin: 0, color: "#666" }}>
-                        Provider : {selectedGame.provider_name}
-                      </p>
-                    </div>
-                  )}
-                </Dialog>
-
-                {isPlanExpired && (
-                  <div
-                    className="d-flex flex-column align-items-center justify-content-center py-4"
-                    style={{
-                      background: "#f8f8f8",
-                      borderRadius: "8px",
-                      border: "1px solid #ccc",
-                      marginTop: "1rem",
-                    }}
-                  >
-                    <FaLock
+              <Dialog
+                header="Game Details"
+                visible={visible}
+                style={{ width: "300px" }}
+                onHide={() => setVisible(false)}
+              >
+                {selectedGame && (
+                  <div style={{ textAlign: "center" }}>
+                    <img
+                      src={selectedGame.stored_alias_url || "no-image.jpg"}
+                      alt={selectedGame.game_name}
                       style={{
-                        fontSize: "2rem",
-                        marginBottom: "0.5rem",
-                        color: "#392f6c",
+                        width: "100%",
+                        borderRadius: "8px",
+                        marginBottom: "12px",
                       }}
+                      className="shadow-6"
                     />
-                    <p className="fw-bold m-1">
-                      To access the complete data, please upgrade your plan.
+
+                    <h3 style={{ margin: 0 }} className="fw-semibold mb-1">
+                      {selectedGame.game_name}
+                    </h3>
+                    <p style={{ margin: 0, color: "#666" }}>
+                      Provider : {selectedGame.provider_name}
                     </p>
-                    <Button
-                      className="btn-upgrade"
-                      onClick={showContactSalesConfirmation}
-                    >
-                      <FaGem /> <span>Upgrade Plan</span>
-                    </Button>
                   </div>
                 )}
-              </div>
+              </Dialog>
+
+              {isPlanExpired && (
+                <div
+                  className="d-flex flex-column align-items-center justify-content-center py-4"
+                  style={{
+                    background: "#f8f8f8",
+                    borderRadius: "8px",
+                    border: "1px solid #ccc",
+                    marginTop: "1rem",
+                  }}
+                >
+                  <FaLock
+                    style={{
+                      fontSize: "2rem",
+                      marginBottom: "0.5rem",
+                      color: "#392f6c",
+                    }}
+                  />
+                  <p className="fw-bold m-1">
+                    To access the complete data, please upgrade your plan.
+                  </p>
+                  <Button
+                    className="btn-upgrade"
+                    onClick={showContactSalesConfirmation}
+                  >
+                    <FaGem /> <span>Upgrade Plan</span>
+                  </Button>
+                </div>
+              )}
             </>
           )
         ) : (
