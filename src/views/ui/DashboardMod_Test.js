@@ -687,7 +687,7 @@ const DashboardModTest = () => {
                               ? skeletonBody()
                               : rowData.game_name
                           }
-                          // style={{ minWidth: "8rem" }}
+                        // style={{ minWidth: "8rem" }}
                         ></Column>
 
                         <Column
@@ -752,7 +752,7 @@ const DashboardModTest = () => {
                               "MMM D, YYYY",
                             );
                           }}
-                          // style={{ minWidth: "7rem" }}
+                        // style={{ minWidth: "7rem" }}
                         />
                       </DataTable>
                     </div>

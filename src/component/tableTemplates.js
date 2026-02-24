@@ -234,26 +234,50 @@ const changeTemplate = (row) => {
 
 const textTemplate =
   (field, align = "left") =>
-  (rowData) => {
-    return (
-      <div
-        style={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent:
-            align === "right"
-              ? "flex-end"
-              : align === "center"
-                ? "center"
-                : "flex-start",
-          width: "100%",
-          paddingLeft: "14px",
-        }}
-      >
-        {rowData[field] ?? "-"}
-      </div>
-    );
-  };
+    (rowData) => {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent:
+              align === "right"
+                ? "flex-end"
+                : align === "center"
+                  ? "center"
+                  : "flex-start",
+            width: "100%",
+            paddingLeft: "14px",
+          }}
+        >
+          {rowData[field] ?? "-"}
+        </div>
+      );
+    };
+
+
+const percentageTextTemplate =
+  (field, align = "left") =>
+    (rowData) => {
+      return (
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent:
+              align === "right"
+                ? "flex-end"
+                : align === "center"
+                  ? "center"
+                  : "flex-start",
+            width: "100%",
+            paddingLeft: "14px",
+          }}
+        >
+          {rowData[field] ?? "-"}{"%"}
+        </div>
+      );
+    };
 
 function mapToRange(value, oldMin, oldMax) {
   if (value < oldMin || value > oldMax) {
@@ -271,4 +295,5 @@ export {
   changeTemplate,
   textTemplate,
   sortIconTemplate,
+  percentageTextTemplate,
 };

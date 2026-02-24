@@ -14,6 +14,8 @@ import { GiPositionMarker, GiCardPickup } from "react-icons/gi";
 import { FaRankingStar } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
 import { MdCasino } from "react-icons/md";
+import { MdIntegrationInstructions } from "react-icons/md";
+import { TbDeviceGamepad } from "react-icons/tb";
 import { FaSignOutAlt } from "react-icons/fa";
 import profileService from "../services/Profile";
 import { ProfileSystem } from "../context/ProfileContext";
@@ -179,6 +181,28 @@ const AppLayout = () => {
                     icon: <FaChartPie />,
                     label: "Marketshare",
                 },
+            ],
+        },
+        {
+            key: "marketpenetration",
+            label: "Market Penetration",
+            icon: <MdIntegrationInstructions />,
+            children: [
+                {
+                    key: "/market-penetration-provider",
+                    icon: <TbDeviceGamepad />,
+                    label: "Provider",
+                },
+                {
+                    key: "/market-penetration-operator",
+                    icon: <TbDeviceGamepad />,
+                    label: "Operator",
+                },
+                // {
+                //     key: "/game-provider-marketshare",
+                //     icon: <FaChartPie />,
+                //     label: "Marketshare",
+                // },
             ],
         },
         // {

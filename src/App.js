@@ -63,6 +63,10 @@ import CountryDashboard1 from "./views/ui/countryDashboard/country";
 import OperatorDashboard1 from "./views/ui/countryDashboard/operator";
 import GameDashboard1 from "./views/ui/countryDashboard/game";
 import DashboardModTest from "./views/ui/DashboardMod_Test";
+import MarketPenetrationProviderDashboard from "./views/ui/marketPenetration/provider";
+import MarketPenetrationProviderDashboardL2 from "./views/ui/marketPenetration/providerL2";
+import MarketPenetrationOperatorDashboard from "./views/ui/marketPenetration/operator";
+import MarketPenetrationOperatorDashboardL2 from "./views/ui/marketPenetration/operatorL2";
 
 const App = () => {
   return (
@@ -142,6 +146,43 @@ const App = () => {
                     element={
                       <ProtectedRoute>
                         <GameDetailsMod />
+                      </ProtectedRoute>
+                    }
+                  />
+
+
+                  <Route
+                    path="market-penetration-provider"
+                    element={
+                      <ProtectedRoute>
+                        <MarketPenetrationProviderDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="market-penetration-provider-details"
+                    element={
+                      <ProtectedRoute>
+                        <MarketPenetrationProviderDashboardL2 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="market-penetration-operator"
+                    element={
+                      <ProtectedRoute>
+                        <MarketPenetrationOperatorDashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="market-penetration-operator-details"
+                    element={
+                      <ProtectedRoute>
+                        <MarketPenetrationOperatorDashboardL2 />
                       </ProtectedRoute>
                     }
                   />
