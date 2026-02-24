@@ -43,6 +43,8 @@ const MarketPenetrationOperatorDashboardL2 = () => {
         visible_providers,
         stateSelectedCountries,
         stateSelectedLicenses,
+        stateCountries,
+        stateLicenses,
     } = location.state || {};
     //const isPlanExpired = state?.plan === "trial";
 
@@ -198,6 +200,44 @@ const MarketPenetrationOperatorDashboardL2 = () => {
                     chat: false,
                 }}
             />
+
+            <div className={`filter-wrapper ${((stateCountries && stateCountries.length > 0) || (stateLicenses && stateLicenses.length > 0)) ? "open" : "closed"}`}>
+                <div className="d-flex gap-2 mt-2 w-100 align-items-center justify-content-between">
+                    <MultiSelect
+                        options={stateCountries ? stateCountries : []}
+                        optionLabel="geography"
+                        optionValue="geography"
+                        filter
+                        placeholder="Country"
+                        //loading={countryLoader}
+                        value={selectedCountries}
+                        //onChange={(e) => setSelectedCountries(e.value)}
+                        className="w-100"
+                    />
+                    <MultiSelect
+                        options={stateLicenses ? stateLicenses : []}
+                        optionLabel="license_label"
+                        optionValue="license"
+                        filter
+                        placeholder="License"
+                        //loading={licensesLoader}
+                        value={selectedLicenses}
+                        //onChange={(e) => setSelectedLicenses(e.value)}
+                        className="w-100"
+                    />
+                    {/* <MultiSelect
+                                                options={casinosList}
+                                                optionLabel="operator_name"
+                                                optionValue="operator_name"
+                                                filter
+                                                placeholder="Operator"
+                                                loading={casinosLoader}
+                                                value={selectedCasinos}
+                                                onChange={(e) => setSelectedCasinos(e.value)}
+                                                className="w-100"
+                                            /> */}
+                </div>
+            </div>
 
             {loading || tableData.length > 0 ? (
                 <>

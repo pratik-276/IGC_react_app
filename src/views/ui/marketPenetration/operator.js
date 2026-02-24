@@ -396,6 +396,8 @@ const MarketPenetrationOperatorDashboard = () => {
                                     visible_providers: rowData.visible_providers,
                                     stateSelectedCountries: selectedCountries,
                                     stateSelectedLicenses: selectedLicenses,
+                                    stateCountries: countryList,
+                                    stateLicenses: licensesList,
                                 },
                             });
                         }}
