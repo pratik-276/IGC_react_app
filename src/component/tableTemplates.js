@@ -232,6 +232,21 @@ const changeTemplate = (row) => {
   );
 };
 
+const sectionTemplate = (rowData) => {
+  return (
+    <div
+      style={{
+        fontWeight: 500,
+        width: "100%",
+        paddingLeft: "14px",
+        paddingRight: "8px",
+      }}
+    >
+      {rowData.label}
+    </div>
+  );
+};
+
 const textTemplate =
   (field, align = "left") =>
     (rowData) => {
@@ -290,6 +305,7 @@ function mapToRange(value, oldMin, oldMax) {
 
 export {
   countryBodyTemplate,
+  sectionTemplate,
   gameTrendTemplate,
   marketshareTemplate,
   changeTemplate,

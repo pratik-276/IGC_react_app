@@ -1,4 +1,4 @@
-import { useContext, useState, useEffect } from "react";
+import { useContext, useState, useEffect, useRef } from "react";
 import user1 from "../assets/images/users/user4.jpg";
 import logo from "../assets/images/logos/logo.png";
 import { Layout, Menu, Dropdown, Avatar } from "antd";
@@ -22,21 +22,28 @@ import { ProfileSystem } from "../context/ProfileContext";
 import { IoMdHelp } from "react-icons/io";
 import toast from "react-hot-toast";
 import { setIn } from "formik";
+import call from "../services/Call";
 
 const { Header, Sider, Content } = Layout;
 
 const AppLayout = () => {
-    const [collapsed, setCollapsed] = useState(false);
-    const [chatOpen, setChatOpen] = useState(false);
-    const [loading, setLoading] = useState(true);
-    const [input, setInput] = useState("");
-
     const navigate = useNavigate();
     const location = useLocation();
+    const chatEndRef = useRef(null);
+    const inputRef = useRef(null);
+
     const [profile, setProfile] = useState({});
+
+    const [collapsed, setCollapsed] = useState(false);
+    const [chatOpen, setChatOpen] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [input, setInput] = useState("");
+    const [messages, setMessages] = useState([]);
+    const [chatId, setChatId] = useState(null);
 
     const user_id = localStorage.getItem("user_id");
     const user_company_category = localStorage.getItem("user_company_category");
+    const provider_id = localStorage.getItem("provider_id");
 
     const { dispatch } = useContext(ProfileSystem);
 
@@ -264,6 +271,16 @@ const AppLayout = () => {
         }
     };
 
+    useEffect(() => {
+        chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
+    useEffect(() => {
+        if (chatOpen) {
+            inputRef.current?.focus();
+        }
+    }, [chatOpen]);
+
     const handleKeyDown = (e) => {
         if (e.key === "Enter" && !e.shiftKey) {
             e.preventDefault();
@@ -272,18 +289,38 @@ const AppLayout = () => {
     };
 
     const handleSend = async () => {
-        if (!input.trim()) return;
+        if (!input.trim() || loading) return;
 
+        const userMessage = {
+            role: "user",
+            content: input,
+        };
+
+        // optimistic UI
+        setMessages(prev => [...prev, userMessage]);
         setLoading(true);
         try {
-            // const response = await profileService.Profile({
-            //     user_id: parseInt(user_id),
-            // });
+            const res = await call({
+                path: "post_chatbot_with_data",
+                method: "POST",
+                data: {
+                    user_id: user_id,
+                    provider_id: provider_id,
+                    dashboard: 'position_dashboard',
+                    current_prompt: input,
+                    chat_id: chatId,
+                },
+            });
 
-            // if (response?.success) {
-            //     setProfile(response?.data);
-            // }
-            console.log("User input:", input);
+            if (res?.success) {
+                setChatId(res.data.chat_id);
+
+                // backend returns full history
+                setMessages(res.data.history || []);
+            } else {
+                toast.error("Failed to get response");
+            }
+
         } catch (err) {
             console.error(err);
             toast.error("An error occurred. Please try again.");
@@ -381,21 +418,11 @@ const AppLayout = () => {
                             style={{
                                 flex: 1,
                                 overflowY: "auto",
+                                height: "calc(100% - 80px)",
                                 paddingRight: 6,
-                                marginBottom: 12,
                             }}
                         >
-
-                            {/* Chat messages */}
-                            <div
-                                style={{
-                                    flex: 1,
-                                    overflowY: "auto",
-                                    height: "calc(100% - 80px)",
-                                    paddingRight: 6,
-                                }}
-                            >
-                                {/* AI Message */}
+                            {messages.length === 0 && (
                                 <div
                                     style={{
                                         display: "flex",
@@ -417,12 +444,15 @@ const AppLayout = () => {
                                         👋 Hi Akshay! How can I help you?
                                     </div>
                                 </div>
+                            )}
 
-                                {/* User Message */}
+                            {messages.map((msg, index) => (
                                 <div
+                                    key={index}
                                     style={{
                                         display: "flex",
-                                        justifyContent: "flex-end",
+                                        justifyContent:
+                                            msg.role === "user" ? "flex-end" : "flex-start",
                                         marginBottom: 12,
                                     }}
                                 >
@@ -430,20 +460,28 @@ const AppLayout = () => {
                                         style={{
                                             maxWidth: "80%",
                                             padding: "10px 14px",
-                                            borderRadius: "12px 12px 4px 12px",
-                                            background: "linear-gradient(135deg, #7F7BFF, #9A8CFF, #B59CFF)",
-                                            color: "#ffffff",
+                                            borderRadius:
+                                                msg.role === "user"
+                                                    ? "12px 12px 4px 12px"
+                                                    : "12px 12px 12px 4px",
+                                            background:
+                                                msg.role === "user"
+                                                    ? "linear-gradient(135deg, #7F7BFF, #9A8CFF, #B59CFF)"
+                                                    : "#ffffffcc",
+                                            color: msg.role === "user" ? "#fff" : "#2f2f2f",
                                             fontWeight: 500,
                                             fontSize: "14px",
                                             boxShadow: "0 2px 6px rgba(0,0,0,0.05)",
                                         }}
                                     >
-                                        Show me insights for today’s game positions.
+                                        {msg.content}
                                     </div>
                                 </div>
-                            </div>
-
+                            ))}
+                            <div ref={chatEndRef} />
                         </div>
+
+
 
                         {loading && (
                             <div style={{ marginBottom: 10 }}>
@@ -483,6 +521,7 @@ const AppLayout = () => {
 
                         <div style={{ marginTop: 12 }}>
                             <textarea
+                                ref={inputRef}
                                 value={input}
                                 onChange={(e) => setInput(e.target.value)}
                                 onKeyDown={handleKeyDown}
