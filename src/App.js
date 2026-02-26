@@ -67,6 +67,9 @@ import MarketPenetrationProviderDashboard from "./views/ui/marketPenetration/pro
 import MarketPenetrationProviderDashboardL2 from "./views/ui/marketPenetration/providerL2";
 import MarketPenetrationOperatorDashboard from "./views/ui/marketPenetration/operator";
 import MarketPenetrationOperatorDashboardL2 from "./views/ui/marketPenetration/operatorL2";
+import NewProviderL1 from "./views/ui/newProvider/l1";
+import NewProviderL2 from "./views/ui/newProvider/l2";
+import NewProviderL3 from "./views/ui/newProvider/l3";
 
 const App = () => {
   return (
@@ -159,12 +162,36 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-
                   <Route
                     path="market-penetration-provider-details"
                     element={
                       <ProtectedRoute>
                         <MarketPenetrationProviderDashboardL2 />
+                      </ProtectedRoute>
+                    }
+                  />
+
+                  <Route
+                    path="new-providers"
+                    element={
+                      <ProtectedRoute>
+                        <NewProviderL1 />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="new-providers/operators"
+                    element={
+                      <ProtectedRoute>
+                        <NewProviderL2 />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="new-providers/operators/games"
+                    element={
+                      <ProtectedRoute>
+                        <NewProviderL3 />
                       </ProtectedRoute>
                     }
                   />

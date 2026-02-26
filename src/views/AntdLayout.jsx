@@ -212,6 +212,11 @@ const AppLayout = () => {
                 // },
             ],
         },
+        {
+            key: "/new-providers",
+            icon: <FaCompass />,
+            label: "New Providers",
+        },
         // {
         //     key: "analytics",
         //     label: "Analytics",

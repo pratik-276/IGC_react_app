@@ -38,6 +38,7 @@ const MarketPenetrationOperatorDashboardL2 = () => {
     const isPlanExpired = state?.plan === "trial_expired";
     const {
         operator_name,
+        country,
         integrated_providers,
         coverage,
         visible_providers,
@@ -114,7 +115,8 @@ const MarketPenetrationOperatorDashboardL2 = () => {
                 search: searchTerm,
                 sort_by: sortFieldRef.current,
                 order: sortOrderRef.current,
-                operator_name: operator_name
+                operator_name: operator_name,
+                country: country
             });
 
             if (res?.success) {

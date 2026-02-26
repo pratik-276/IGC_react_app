@@ -28,8 +28,9 @@ import {
     percentageTextTemplate
 } from "../../../component/tableTemplates";
 import MarketPenetration from "../../../services/MarketPenetration";
+import NewProvider from "../../../services/NewProvider";
 
-const MarketPenetrationProviderDashboardL2 = () => {
+const NewProviderL3 = () => {
     const user_company = localStorage.getItem("user_company");
     const navigate = useNavigate();
     const location = useLocation();
@@ -38,15 +39,8 @@ const MarketPenetrationProviderDashboardL2 = () => {
     const isPlanExpired = state?.plan === "trial_expired";
     const {
         provider_name,
-        total_operators,
-        coverage,
-        active_operators,
-        stateSelectedCountries,
-        stateSelectedLicenses,
-        stateSelectedCasinos,
-        stateCountries,
-        stateLicenses,
-        stateCasinos,
+        operator_name,
+        country,
     } = location.state || {};
     //const isPlanExpired = state?.plan === "trial";
 
@@ -58,20 +52,15 @@ const MarketPenetrationProviderDashboardL2 = () => {
 
     const searchRef = useRef("");
 
-    const sortFieldRef = useRef("visible_games_percentage");
+    const sortFieldRef = useRef("game_release_date");
     const sortOrderRef = useRef("desc");
 
     const [loading, setLoading] = useState(false);
 
-    const [showFilter, setShowFilter] = useState(false);
     const [searchTerm, setSearchTerm] = useState("");
     const [tableData, setTableData] = useState([]);
 
-    const [selectedLicenses, setSelectedLicenses] = useState(stateSelectedLicenses);
-    const [selectedCasinos, setSelectedCasinos] = useState(stateSelectedCasinos);
-    const [selectedCountries, setSelectedCountries] = useState(stateSelectedCountries);
-
-    let items = [{ label: "Providers", command: () => navigate("/market-penetration-provider") }, { label: provider_name }];
+    let items = [{ label: "Providers", command: () => navigate("/new-providers") }, { label: provider_name }, { label: "Operators", command: () => navigate("/new-providers/operators") }, { label: operator_name + "(" + country + ")" }, { label: "Games" }];
 
 
     useEffect(() => {
@@ -107,16 +96,15 @@ const MarketPenetrationProviderDashboardL2 = () => {
 
         try {
             let res;
-            res = await MarketPenetration.market_penetration_provider_operator_details({
-                "countries": selectedCountries ? selectedCountries : [],
-                "licenses": selectedLicenses ? selectedLicenses : [],
-                "operators": selectedCasinos ? selectedCasinos : [],
+            res = await NewProvider.new_provider_l3({
                 limit: PAGE_SIZE,
                 page: pageRef.current,
                 search: searchTerm,
                 sort_by: sortFieldRef.current,
                 order: sortOrderRef.current,
-                provider_name: provider_name
+                provider_name: provider_name,
+                operator_name: operator_name,
+                country: country
             });
 
             if (res?.success) {
@@ -158,15 +146,15 @@ const MarketPenetrationProviderDashboardL2 = () => {
 
     const columns = [
         {
-            field: "operator_name",
-            header: headerWithTooltip("Operator", "Name of operator", "operator_name"),
-            body: textTemplate("operator_name"),
+            field: "game_name",
+            header: headerWithTooltip("Game", "Name of game", "game_name"),
+            body: textTemplate("game_name"),
             sortable: true,
         },
         {
-            field: "country",
-            header: headerWithTooltip("Country", "Country name", "country"),
-            body: textTemplate("country"),
+            field: "provider_name",
+            header: headerWithTooltip("provider", "provider name", "provider_name"),
+            body: textTemplate("provider_name"),
             sortable: true,
         },
 
@@ -182,32 +170,21 @@ const MarketPenetrationProviderDashboardL2 = () => {
         // },
 
         {
-            field: "visible_games",
+            field: "game_release_date",
             header: headerWithTooltip(
-                "Visible Games",
-                "Overall count of games visible in lobby",
-                "visible_games",
+                "Game Release Date",
+                "Worldwide release date of the game",
+                "game_release_date",
             ),
-            body: textTemplate("visible_games"),
+            body: textTemplate("game_release_date"),
             sortable: true,
-        },
-
-        {
-            field: "visible_games_percentage",
-            header: headerWithTooltip(
-                "Visible Games %",
-                "Percentage of games visible in lobby out of total games from provider",
-                "visible_games_percentage",
-            ),
-            body: percentageTextTemplate("visible_games_percentage"),
-            sortable: true,
-        },
+        }
     ];
 
     return (
         <>
             <PageHeader
-                title="Provider Market Penetration"
+                title="Newly Launched Providers"
                 breadcrumb={items}
                 searchValue={searchTerm}
                 onSearchChange={setSearchTerm}
@@ -220,44 +197,6 @@ const MarketPenetrationProviderDashboardL2 = () => {
                 }}
             />
 
-            <div className={`filter-wrapper ${((stateSelectedCountries && stateSelectedCountries.length > 0) || (stateSelectedLicenses && stateSelectedLicenses.length > 0)) ? "open" : "closed"}`}>
-                <div className="d-flex gap-2 mt-2 w-100 align-items-center justify-content-between">
-                    <MultiSelect
-                        options={stateCountries ? stateCountries : []}
-                        optionLabel="geography"
-                        optionValue="geography"
-                        filter
-                        placeholder="Country"
-                        //loading={countryLoader}
-                        value={selectedCountries}
-                        //onChange={(e) => setSelectedCountries(e.value)}
-                        className="w-100"
-                    />
-                    <MultiSelect
-                        options={stateLicenses ? stateLicenses : []}
-                        optionLabel="license_label"
-                        optionValue="license"
-                        filter
-                        placeholder="License"
-                        //loading={licensesLoader}
-                        value={selectedLicenses}
-                        //onChange={(e) => setSelectedLicenses(e.value)}
-                        className="w-100"
-                    />
-                    {/* <MultiSelect
-                                    options={casinosList}
-                                    optionLabel="operator_name"
-                                    optionValue="operator_name"
-                                    filter
-                                    placeholder="Operator"
-                                    loading={casinosLoader}
-                                    value={selectedCasinos}
-                                    onChange={(e) => setSelectedCasinos(e.value)}
-                                    className="w-100"
-                                /> */}
-                </div>
-            </div>
-
 
             {loading || tableData.length > 0 ? (
                 <>
@@ -267,24 +206,22 @@ const MarketPenetrationProviderDashboardL2 = () => {
                             {/* <h5 className="font-semibold pl-2">Summary</h5> */}
                             <div className="flex gap-2 mt-2">
                                 <InfoCard
-                                    header="Integrated Operators"
-                                    tooltip="Shows total count of operators where provider is integrated"
-                                    tooltipTarget="total_operators"
-                                    value={total_operators}
+                                    header="Provider"
+                                    tooltip="Shows selected provider"
+                                    tooltipTarget="provider_name"
+                                    value={provider_name}
                                 />
-
                                 <InfoCard
-                                    header="Visible Operators"
-                                    tooltip="Shows total count of unique operators where games are visible in lobby"
-                                    tooltipTarget="active_operators"
-                                    value={active_operators}
+                                    header="Operators"
+                                    tooltip="selected operator"
+                                    tooltipTarget="operator_name"
+                                    value={operator_name}
                                 />
-
                                 <InfoCard
-                                    header="Coverage"
-                                    tooltip="Shows coverage of provider across casinos"
-                                    tooltipTarget="coverage"
-                                    value={coverage + "%"}
+                                    header="Country"
+                                    tooltip="Shows selected country"
+                                    tooltipTarget="country"
+                                    value={country}
                                 />
                             </div>
                         </div>
@@ -302,7 +239,6 @@ const MarketPenetrationProviderDashboardL2 = () => {
                         sortOrder={sortOrderRef.current}
                         onRowClick={(e) => {
                             const rowData = e.data;
-                            console.log(rowData);
                         }}
                     />
                 </>
@@ -320,4 +256,4 @@ const MarketPenetrationProviderDashboardL2 = () => {
     );
 };
 
-export default MarketPenetrationProviderDashboardL2;
+export default NewProviderL3;

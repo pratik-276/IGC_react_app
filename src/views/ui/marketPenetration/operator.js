@@ -391,6 +391,7 @@ const MarketPenetrationOperatorDashboard = () => {
                             navigate("/market-penetration-operator-details", {
                                 state: {
                                     operator_name: rowData.operator_name,
+                                    country: rowData.country,
                                     integrated_providers: rowData.integrated_providers,
                                     coverage: rowData.coverage,
                                     visible_providers: rowData.visible_providers,
