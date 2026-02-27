@@ -122,18 +122,63 @@ const countryBodyTemplate = (rowData) => {
   );
 };
 
-const marketshareTemplate = (row) => {
-  const share = mapToRange(row.normalized_share, 0, 100); // use normalized_share for graph
-  let bg = "bg-info";
+// const marketshareTemplate = (row) => {
+//   const share = mapToRange(row.normalized_share, 0, 100);
+//   let bg = "bg-info";
 
-  if (parseFloat(row.normalized_share) < 3.0) {
+//   if (parseFloat(row.normalized_share) < 3.0) {
+//     bg = "bg-danger";
+//   } else if (
+//     parseFloat(row.normalized_share) >= 3.0 &&
+//     parseFloat(row.normalized_share) < 6.0
+//   ) {
+//     bg = "bg-warning";
+//   } else if (parseFloat(row.normalized_share) >= 6.0) {
+//     bg = "bg-success";
+//   }
+
+//   return (
+//     <div
+//       style={{
+//         display: "flex",
+//         alignItems: "center",
+//         gap: 6,
+//         paddingRight: "4px",
+//       }}
+//     >
+//       <div
+//         style={{
+//           width: "40px",
+//           textAlign: "right",
+//           fontSize: "12px",
+//         }}
+//       >
+//         {parseFloat(row.market_share).toFixed(2)}%
+//       </div>
+//       <div style={{ flex: 1 }} className="progress">
+//         <div
+//           className={`progress-bar ${bg}`}
+//           role="progressbar"
+//           style={{ width: `${share}%` }}
+//           aria-valuenow={share}
+//           aria-valuemin="0"
+//           aria-valuemax="100"
+//         ></div>
+//       </div>
+//     </div>
+//   );
+// };
+
+const progressBarTemplate = (row, displayValueField, fillValueField) => {
+  const displayValue = parseFloat(row[displayValueField] ?? 0);
+  const fillValue = parseFloat(row[fillValueField] ?? 0);
+
+  let bg = "bg-info";
+  if (fillValue < 30) {
     bg = "bg-danger";
-  } else if (
-    parseFloat(row.normalized_share) >= 3.0 &&
-    parseFloat(row.normalized_share) < 6.0
-  ) {
+  } else if (fillValue >= 30 && fillValue <= 60) {
     bg = "bg-warning";
-  } else if (parseFloat(row.normalized_share) >= 6.0) {
+  } else if (fillValue > 60) {
     bg = "bg-success";
   }
 
@@ -153,17 +198,17 @@ const marketshareTemplate = (row) => {
           fontSize: "12px",
         }}
       >
-        {parseFloat(row.market_share).toFixed(2)}%
+        {displayValue.toFixed(2)}%
       </div>
       <div style={{ flex: 1 }} className="progress">
         <div
           className={`progress-bar ${bg}`}
           role="progressbar"
-          style={{ width: `${share}%` }}
-          aria-valuenow={share}
+          style={{ width: `${fillValue}%` }}
+          aria-valuenow={fillValue}
           aria-valuemin="0"
           aria-valuemax="100"
-        ></div>
+        />
       </div>
     </div>
   );
@@ -232,6 +277,32 @@ const changeTemplate = (row) => {
   );
 };
 
+const horizontalFillTemplate = (row, field) => {
+  const value = parseFloat(row[field] ?? 0);
+
+  return (
+    <div
+      style={{
+        width: "100%",
+        height: "24px",
+        backgroundColor: "#ffffff",
+        border: "1px solid #e0e0e0",
+        borderRadius: "4px",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          width: `${value}%`,
+          height: "100%",
+          backgroundColor: "#392f6c",
+          transition: "width 0.3s ease",
+        }}
+      />
+    </div>
+  );
+};
+
 const sectionTemplate = (rowData) => {
   return (
     <div
@@ -249,50 +320,50 @@ const sectionTemplate = (rowData) => {
 
 const textTemplate =
   (field, align = "left") =>
-    (rowData) => {
-      return (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent:
-              align === "right"
-                ? "flex-end"
-                : align === "center"
-                  ? "center"
-                  : "flex-start",
-            width: "100%",
-            paddingLeft: "14px",
-          }}
-        >
-          {rowData[field] ?? "-"}
-        </div>
-      );
-    };
-
+  (rowData) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            align === "right"
+              ? "flex-end"
+              : align === "center"
+                ? "center"
+                : "flex-start",
+          width: "100%",
+          paddingLeft: "14px",
+        }}
+      >
+        {rowData[field] ?? "-"}
+      </div>
+    );
+  };
 
 const percentageTextTemplate =
   (field, align = "left") =>
-    (rowData) => {
-      return (
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent:
-              align === "right"
-                ? "flex-end"
-                : align === "center"
-                  ? "center"
-                  : "flex-start",
-            width: "100%",
-            paddingLeft: "14px",
-          }}
-        >
-          {rowData[field] ?? "-"}{"%"}
-        </div>
-      );
-    };
+  (rowData) => {
+    return (
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent:
+            align === "right"
+              ? "flex-end"
+              : align === "center"
+                ? "center"
+                : "flex-start",
+          width: "100%",
+          paddingLeft: "14px",
+        }}
+      >
+        {rowData[field] ?? "-"}
+        {"%"}
+      </div>
+    );
+  };
 
 function mapToRange(value, oldMin, oldMax) {
   if (value < oldMin || value > oldMax) {
@@ -307,7 +378,9 @@ export {
   countryBodyTemplate,
   sectionTemplate,
   gameTrendTemplate,
-  marketshareTemplate,
+  // marketshareTemplate,
+  progressBarTemplate,
+  horizontalFillTemplate,
   changeTemplate,
   textTemplate,
   sortIconTemplate,

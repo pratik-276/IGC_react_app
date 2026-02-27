@@ -28,7 +28,9 @@ import "./DashboardMod.css";
 import "./AccessBlur.css";
 import {
   changeTemplate,
+  horizontalFillTemplate,
   marketshareTemplate,
+  progressBarTemplate,
 } from "../../component/tableTemplates";
 import AppBreadcrumb from "../../component/AppBreadcrumb";
 
@@ -315,7 +317,18 @@ const GameProvideMarketshare = () => {
         "market_share",
       ),
       sortable: true,
-      body: marketshareTemplate,
+      body: (row) =>
+        progressBarTemplate(row, "market_share", "normalized_share"),
+    },
+    {
+      field: "market_share",
+      header: headerWithTooltip(
+        "Market Share",
+        "Market share of the provider in the selected region",
+        "market_share",
+      ),
+      sortable: true,
+      body: (row) => horizontalFillTemplate(row, "normalized_share"),
     },
     {
       field: "change",
