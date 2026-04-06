@@ -8,12 +8,12 @@ import {
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import "./AntdLayout.css";
-import { FaChartLine, FaChartPie, FaHouse, FaRegStar, FaRegUser, FaBoltLightning, FaMapLocationDot } from "react-icons/fa6";
+import { FaChartLine, FaChartPie, FaHouse, FaRegStar, FaRegUser, FaBoltLightning, FaMapLocationDot} from "react-icons/fa6";
 import { FaCompass } from "react-icons/fa6";
 import { GiPositionMarker, GiCardPickup } from "react-icons/gi";
 import { FaRankingStar } from "react-icons/fa6";
 import { MdDashboard } from "react-icons/md";
-import { MdCasino } from "react-icons/md";
+import { MdCasino,MdQueryStats } from "react-icons/md";
 import { MdIntegrationInstructions } from "react-icons/md";
 import { TbDeviceGamepad } from "react-icons/tb";
 import { FaSignOutAlt } from "react-icons/fa";
@@ -160,6 +160,11 @@ const AppLayout = () => {
                     label: "View Operator Data",
                 },
             ],
+        },
+        {
+            key: "/game-launch-analysis-dashboard",
+            icon: <MdQueryStats   />,
+            label: "Game Launch Analysis",
         },
         {
             key: "request",

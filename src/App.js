@@ -70,6 +70,7 @@ import MarketPenetrationOperatorDashboardL2 from "./views/ui/marketPenetration/o
 import NewProviderL1 from "./views/ui/newProvider/l1";
 import NewProviderL2 from "./views/ui/newProvider/l2";
 import NewProviderL3 from "./views/ui/newProvider/l3";
+import GameLaunchAnalysisPage from "./views/ui/analysisDashboard/GameLaunchAnalysisPage";
 
 const App = () => {
   return (
@@ -366,7 +367,14 @@ const App = () => {
                       </ProtectedRoute>
                     }
                   />
-
+                  <Route
+                    path="game-launch-analysis-dashboard"
+                    element={
+                      <ProtectedRoute>
+                        <GameLaunchAnalysisPage />
+                      </ProtectedRoute>
+                    }
+                  />
                   {/*
                   <Route
                     path="/game-tracking"
