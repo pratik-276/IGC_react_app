@@ -1121,13 +1121,11 @@ input[type="checkbox"] {
     border-color: #2e2557 !important;
 }
 
-/* 3. Specifically target the "Select All" checkbox in the search header */
 .p-multiselect-header .p-checkbox .p-checkbox-box.p-highlight {
     background: #392f6c !important;
     border-color: #392f6c !important;
 }
 
-/* 4. Remove the blue "glow" (focus ring) when clicking */
 .p-checkbox:not(.p-checkbox-disabled) .p-checkbox-box.p-focus {
     box-shadow: 0 0 0 0.2rem rgba(57, 47, 108, 0.25) !important;
     border-color: #392f6c !important;
