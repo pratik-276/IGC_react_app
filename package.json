@@ -23,7 +23,6 @@
     "chartjs-plugin-annotation": "^3.0.1",
     "d3": "^7.9.0",
     "date-fns": "^4.1.0",
-    "echarts": "^6.0.0",
     "firebase": "^10.11.1",
     "formik": "^2.4.6",
     "i": "^0.3.7",

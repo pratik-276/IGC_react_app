@@ -1,185 +1,380 @@
-import { useState, useEffect } from "react";
+import React, { useState } from "react";
 import PageHeader from "../../../component/PageHeader";
-import { MultiSelect } from "primereact/multiselect";
-import GameData from "../../../services/GameTracker";
-import GameRankData from "../../../services/GameRank";
+import {
+  Paper,
+  Typography,
+  Select,
+  MenuItem,
+  Card,
+  CardContent,
+  Chip,
+} from "@mui/material";
+import {
+  AreaChart, Area,
+  BarChart, Bar,
 
+  XAxis, YAxis, Tooltip,
+  CartesianGrid, ResponsiveContainer,
+  Label, Legend, ReferenceLine,
+} from "recharts";
+import { GAME_DATA, GAME_NAMES, getGameStats } from "./gameData";
+
+// ── Design tokens ──────────────────────────────────────────────────────────────
+const C = {
+  primary: "#3f51b5",
+  secondary: "#7986cb",
+  accent: "#1a237e",
+  pct: "#0097a7",
+  newG: "#e91e63",
+  popular: "#ff9800",
+  slots: "#29b6f6",
+  live: "#fdd835",
+  other: "#90a4ae",
+  provider: "#3f51b5",
+  game: "#7986cb",
+  grid: "#ececec",
+  cardBg: "#ffffff",
+  pageBg: "#f4f6fb",
+  border: "#e3e6f0",
+  text: "#1a237e",
+  muted: "#7b7fa8",
+};
+
+// ── Custom Tooltip ─────────────────────────────────────────────────────────────
+const CustomTooltip = ({ active, payload, label, pct }) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div style={{
+      background: "#fff",
+      border: `1.5px solid ${C.border}`,
+      borderRadius: 10,
+      padding: "10px 16px",
+      boxShadow: "0 8px 32px rgba(63,81,181,0.13)",
+      minWidth: 160,
+    }}>
+      <p style={{ margin: "0 0 7px", fontWeight: 700, color: C.text, fontSize: 11.5 }}>{label}</p>
+      {payload.map((p, i) => (
+        <div key={i} style={{ display: "flex", justifyContent: "space-between", gap: 16, margin: "3px 0" }}>
+          <span style={{ color: p.color || p.fill, fontSize: 11.5 }}>{p.name}</span>
+          <strong style={{ color: "#222", fontSize: 11.5 }}>
+            {pct ? `${p.value}%` : p.value.toLocaleString()}
+          </strong>
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// ── Stat Card ─────────────────────────────────────────────────────────────────
+const StatCard = ({ label, value, sub, color }) => (
+  <div style={{
+    background: C.cardBg,
+    border: `1.5px solid ${C.border}`,
+    borderRadius: 14,
+    padding: "14px 20px",
+    borderLeft: `4px solid ${color}`,
+    flex: 1,
+    minWidth: 140,
+  }}>
+    <p style={{ margin: 0, fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: "0.09em" }}>{label}</p>
+    <p style={{ margin: "6px 0 2px", fontSize: 24, fontWeight: 800, color, lineHeight: 1 }}>{value}</p>
+    {sub && <p style={{ margin: 0, fontSize: 10.5, color: C.muted }}>{sub}</p>}
+  </div>
+);
+
+// ── Chart Card Wrapper ─────────────────────────────────────────────────────────
+const ChartCard = ({ title, subtitle, badge, children, style = {} }) => (
+  <Card
+    elevation={0}
+    sx={{
+      background: C.cardBg,
+      border: `1.5px solid ${C.border}`,
+      borderRadius: "16px !important",
+      boxShadow: "0 4px 24px rgba(63,81,181,0.07)",
+      ...style,
+    }}
+  >
+    <CardContent sx={{ p: "22px 24px 16px !important" }}>
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: 16 }}>
+        <div>
+          <Typography variant="subtitle1" fontWeight={700} style={{ color: C.text, fontSize: 13.5 }}>
+            {title}
+          </Typography>
+          {subtitle && (
+            <Typography variant="body2" style={{ color: C.muted, fontSize: 11.5, marginTop: 2 }}>
+              {subtitle}
+            </Typography>
+          )}
+        </div>
+        {badge && (
+          <Chip
+            label={badge}
+            size="small"
+            sx={{
+              background: "rgba(63,81,181,0.08)",
+              color: C.primary,
+              fontWeight: 600,
+              fontSize: 10.5,
+              height: 22,
+              border: `1px solid rgba(63,81,181,0.18)`,
+            }}
+          />
+        )}
+      </div>
+      {children}
+    </CardContent>
+  </Card>
+);
+
+// ── Legend Row ─────────────────────────────────────────────────────────────────
+const LegendRow = ({ items }) => (
+  <div style={{ display: "flex", flexWrap: "wrap", gap: 14, marginBottom: 12 }}>
+    {items.map(([lbl, col]) => (
+      <div key={lbl} style={{ display: "flex", alignItems: "center", gap: 5, fontSize: 11, color: C.muted }}>
+        <div style={{ width: 9, height: 9, borderRadius: 2, background: col }} />
+        <span>{lbl}</span>
+      </div>
+    ))}
+  </div>
+);
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// Main Component
+// ═══════════════════════════════════════════════════════════════════════════════
 const GameLaunchAnalysisPage = () => {
-  const user_company = localStorage.getItem("user_company");
+  const [game, setGame] = useState(GAME_NAMES[0]);
+  const d = GAME_DATA[game];
+  const { peakPresence, peakWeek, peakPct, latestRow, maxProvider, avgAvailPct } = getGameStats(game);
 
-  const [showFilter, setShowFilter] = useState(true);
-
-  const [gamesList, setGamesList] = useState([]);
-  const [casinosList, setCasinosList] = useState([]);
-  const [countryList, setCountryList] = useState([]);
-  const [regions, setRegions] = useState([]);
-
-
-  const [gamesLoader, setGamesLoader] = useState(false);
-  const [casinosLoader, setCasinosLoader] = useState(false);
-  const [countryLoader, setCountryLoader] = useState(false);
-  const [regionLoader, setRegionLoader] = useState(false);
-
-  const [selectedGames, setSelectedGames] = useState([]);
-  const [selectedCasinos, setSelectedCasinos] = useState([]);
-  const [selectedCountry, setSelectedCountry] = useState([]);
-  const [selectedRegion, setSelectedRegion] = useState(null);
-
-  const breadcrumb = [{ label: "Analysis" }];
-
-  const fetchRegions = async () => {
-    setRegionLoader(true);
-    try {
-      const res = await GameRankData.get_regions();
-      if (res?.success === true) {
-        const cleaned = res.data
-          .filter((r) => r !== null && typeof r === "string")
-          .map((r) => ({ label: r, value: r }));
-        setRegions(cleaned);
-      } else {
-        console.error("Failed to fetch regions");
-      }
-    } catch (err) {
-      console.error("fetchRegions error:", err);
-    } finally {
-      setRegionLoader(false);
-    }
+  const sharedAxisProps = {
+    tick: { fill: C.muted, fontSize: 10.5 },
+    axisLine: false,
+    tickLine: false,
   };
 
-  const fetchCountries = async () => {
-    setCountryLoader(true);
-    try {
-      const res = await GameData.get_countries_provider_dashboard({
-        game_provider: user_company,
-      });
-      if (res?.success === true) {
-        setCountryList(res.data ?? []);
-      } else {
-        console.error("Failed to fetch countries");
-      }
-    } catch (err) {
-      console.error("fetchCountries error:", err);
-    } finally {
-      setCountryLoader(false);
-    }
+  const sharedGridProps = {
+    strokeDasharray: "3 3",
+    stroke: C.grid,
+    vertical: false,
   };
-
-  const fetchCasinos = async () => {
-    setCasinosLoader(true);
-    try {
-      const res = await GameData.get_casinos_provider_dashboard({
-        game_provider: user_company,
-      });
-      if (res?.success === true) {
-        setCasinosList(res.data ?? []);
-      } else {
-        console.error("Failed to fetch casinos");
-      }
-    } catch (err) {
-      console.error("fetchCasinos error:", err);
-    } finally {
-      setCasinosLoader(false);
-    }
-  };
-
-  const fetchGames = async () => {
-    setGamesLoader(true);
-    try {
-      const res = await GameData.get_games_provider_dashboard({
-        game_provider: user_company,
-      });
-      if (res?.success === true) {
-        setGamesList(res.data ?? []);
-      } else {
-        console.error("Failed to fetch games");
-      }
-    } catch (err) {
-      console.error("fetchGames error:", err);
-    } finally {
-      setGamesLoader(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchRegions();
-    fetchCountries();
-    fetchCasinos();
-    fetchGames();
-  }, []);
 
   return (
-    <div className="game-launch-analysis-page">
-      <div className="game-launch-analysis-page__content">
-
+    <Paper
+      elevation={0}
+      sx={{ p: 3, minHeight: "100vh", backgroundColor: C.pageBg, borderRadius: 0 }}
+    >
+      {/* ── HEADER ───────────────────────────────────────────────────────────── */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
         <PageHeader
           title="Game Launch Analysis"
-          subtitle="Performance insights for casino game positioning"
-          breadcrumb={breadcrumb}
-          onToggleFilter={() => setShowFilter((prev) => !prev)}
-          features={{
-            search: false,
-            filters: true,
-            download: true,
-            chat: false,
-          }}
+          // subtitle="Performance insights for casino game positioning"
+          features={{ search: false, filters: false, download: false, chat: false }}
         />
-
-        {showFilter && (
-          <div className="game-launch-analysis-page__filter-bar">
-
-            <MultiSelect
-              options={regions}
-              optionLabel="label"
-              optionValue="value"
-              filter
-              placeholder="Select Region"
-              loading={regionLoader}
-              value={selectedRegion}
-              onChange={(e) => setSelectedRegion(e.value)}
-              className="game-launch-analysis-page__filter-select"
-            />
-
-            <MultiSelect
-              options={countryList}
-              optionLabel="country_name"
-              optionValue="country_name"
-              filter
-              placeholder="Select Country"
-              loading={countryLoader}
-              value={selectedCountry}
-              onChange={(e) => setSelectedCountry(e.value)}
-              className="game-launch-analysis-page__filter-select"
-            />
-
-            <MultiSelect
-              options={casinosList}
-              optionLabel="casino_name"
-              optionValue="operator_id"
-              filter
-              placeholder="Select Casinos"
-              loading={casinosLoader}
-              value={selectedCasinos}
-              onChange={(e) => setSelectedCasinos(e.value)}
-              className="game-launch-analysis-page__filter-select"
-            />
-
-            <MultiSelect
-              options={gamesList}
-              optionLabel="game_name"
-              optionValue="game_id"
-              filter
-              placeholder="Select Games"
-              loading={gamesLoader}
-              value={selectedGames}
-              onChange={(e) => setSelectedGames(e.value)}
-              className="game-launch-analysis-page__filter-select"
-            />
-
-          </div>
-        )}
-
+        <Select
+          size="small"
+          value={game}
+          onChange={(e) => setGame(e.target.value)}
+          sx={{
+            minWidth: 220,
+            background: "#fff",
+            borderRadius: "10px",
+            fontSize: 13.5,
+            ".MuiOutlinedInput-notchedOutline": { borderColor: C.border },
+          }}
+        >
+          {GAME_NAMES.map((g) => (
+            <MenuItem key={g} value={g}>{g}</MenuItem>
+          ))}
+        </Select>
       </div>
-    </div>
+
+      {/* ── STAT PILLS ───────────────────────────────────────────────────────── */}
+      {/* <div style={{ display: "flex", gap: 12, flexWrap: "wrap", marginBottom: 24 }}>
+        <StatCard label="Peak Game Presence" value={peakPresence} sub={`at W${peakWeek}`} color={C.primary} />
+        <StatCard label="Peak Availability" value={`${peakPct}%`} sub="highest single week" color={C.pct} />
+        <StatCard label="Avg Availability" value={`${avgAvailPct}%`} sub="across all weeks" color={C.secondary} />
+        <StatCard label="Max Provider Reach" value={maxProvider} sub="operators in network" color={C.accent} />
+      </div> */}
+
+      {/* ── ROW 1: CHART 1 + CHART 2 ─────────────────────────────────────────── */}
+      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+
+        {/* CHART 1 — Provider Availability */}
+        <ChartCard
+          title="Provider Availability"
+          subtitle="Total providers carrying this game per week"
+          badge="Market Presence"
+        >
+          <ResponsiveContainer width="100%" height={260}>
+            <AreaChart data={d.weekly} margin={{ top: 10, right: 16, left: 0, bottom: 28 }}>
+              <defs>
+                <linearGradient id="gPrimary" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={C.primary} stopOpacity={0.18} />
+                  <stop offset="95%" stopColor={C.primary} stopOpacity={0.01} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid {...sharedGridProps} />
+              <XAxis dataKey="label" {...sharedAxisProps}>
+                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
+              </XAxis>
+              <YAxis {...sharedAxisProps} width={38}>
+                <Label value="Provider's Presence" angle={-90} position="insideLeft" style={{ fill: C.muted, fontSize: 10, textAnchor: "middle" }} />
+              </YAxis>
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="providerPresence"
+                name="Provider Presence"
+                stroke={C.primary}
+                strokeWidth={2.5}
+                fill="url(#gPrimary)"
+                dot={{ r: 3.5, fill: C.primary, strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: C.primary }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
+
+        {/* CHART 2 — Game Availability */}
+        <ChartCard
+          title="Game Availability"
+          subtitle="Number of operators with this game live per week"
+          badge="Raw Count"
+        >
+          <ResponsiveContainer width="100%" height={260}>
+            <AreaChart data={d.weekly} margin={{ top: 10, right: 16, left: 0, bottom: 28 }}>
+              <defs>
+                <linearGradient id="gSecondary" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={C.secondary} stopOpacity={0.22} />
+                  <stop offset="95%" stopColor={C.secondary} stopOpacity={0.01} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid {...sharedGridProps} />
+              <XAxis dataKey="label" {...sharedAxisProps}>
+                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
+              </XAxis>
+              <YAxis {...sharedAxisProps} width={38}>
+                <Label value="Game's Presence" angle={-90} position="insideLeft" style={{ fill: C.muted, fontSize: 10, textAnchor: "middle" }} />
+              </YAxis>
+              <Tooltip content={<CustomTooltip />} />
+              <Area
+                type="monotone"
+                dataKey="gamePresence"
+                name="Game Presence"
+                stroke={C.secondary}
+                strokeWidth={2.5}
+                fill="url(#gSecondary)"
+                dot={{ r: 3.5, fill: C.secondary, strokeWidth: 0 }}
+                activeDot={{ r: 6, fill: C.secondary }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      {/* ── CHART 3 — Market Penetration % (full width) ───────────────────────── */}
+      <div style={{ marginBottom: 20 }}>
+        <ChartCard
+          title="Market Penetration Rate"
+          subtitle="% of provider's casino base carrying this game each week"
+          badge="Efficiency"
+        >
+          <ResponsiveContainer width="100%" height={220}>
+            <AreaChart data={d.weekly} margin={{ top: 10, right: 16, left: 0, bottom: 28 }}>
+              <defs>
+                <linearGradient id="gPct" x1="0" y1="0" x2="0" y2="1">
+                  <stop offset="5%" stopColor={C.pct} stopOpacity={0.2} />
+                  <stop offset="95%" stopColor={C.pct} stopOpacity={0.01} />
+                </linearGradient>
+              </defs>
+              <CartesianGrid {...sharedGridProps} />
+              <XAxis dataKey="label" {...sharedAxisProps}>
+                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
+              </XAxis>
+              <YAxis {...sharedAxisProps} domain={[0, 100]} tickFormatter={v => `${v}%`} width={42}>
+                <Label value="Game Availability %" angle={-90} position="insideLeft" style={{ fill: C.muted, fontSize: 10, textAnchor: "middle" }} />
+              </YAxis>
+              <Tooltip content={<CustomTooltip pct />} />
+              <ReferenceLine
+                y={20}
+                stroke="rgba(0,151,167,0.4)"
+                strokeDasharray="6 3"
+                label={{ value: "20% benchmark", fill: C.pct, fontSize: 9.5, position: "insideTopRight" }}
+              />
+              <Area
+                type="step"
+                dataKey="gameAvailPct"
+                name="Availability %"
+                stroke={C.pct}
+                strokeWidth={2.5}
+                fill="url(#gPct)"
+                dot={{ r: 3.5, fill: C.pct, strokeWidth: 0 }}
+                activeDot={{ r: 6 }}
+              />
+            </AreaChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      {/* ── CHART 4 — Total Casinos Across Sections (Stacked BarChart) ───────── */}
+      <div style={{ marginBottom: 20 }}>
+        <ChartCard
+          title="Total Casinos Across Sections"
+          subtitle="Absolute casino counts per placement section over time"
+          badge="Section Totals"
+        >
+          <LegendRow items={[
+            ["New Games", C.newG],
+            ["Popular", C.popular],
+            ["Slots", C.slots],
+            ["Live Casino", C.live],
+            ["Other", C.other],
+          ]} />
+          <ResponsiveContainer width="100%" height={230}>
+            <BarChart data={d.sectionMapping} margin={{ top: 4, right: 16, left: 0, bottom: 28 }} barSize={28} barCategoryGap="35%">
+              <CartesianGrid {...sharedGridProps} />
+              <XAxis dataKey="label" {...sharedAxisProps}>
+                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
+              </XAxis>
+              <YAxis {...sharedAxisProps} tickFormatter={v => `${v}`} width={38} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="newGames" name="New Games" stackId="s" fill={C.newG} />
+              <Bar dataKey="popular" name="Popular" stackId="s" fill={C.popular} />
+              <Bar dataKey="slots" name="Slots" stackId="s" fill={C.slots} />
+              <Bar dataKey="liveCasino" name="Live Casino" stackId="s" fill={C.live} />
+              <Bar dataKey="other" name="Other" stackId="s" fill={C.other} radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+      {/* ── CHART 5 — Provider vs Game Presence (Grouped BarChart) ──────────── */}
+      <div style={{ marginBottom: 20 }}>
+        <ChartCard
+          title="Provider vs Game Presence"
+          subtitle="Game adoption vs provider's total distribution footprint per week"
+          badge="Comparative"
+        >
+          <LegendRow items={[
+            ["Provider Presence", C.provider],
+            ["Game Presence", C.game],
+          ]} />
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={d.weekly} margin={{ top: 4, right: 16, left: 0, bottom: 28 }} barSize={14} barCategoryGap="28%">
+              <CartesianGrid {...sharedGridProps} />
+              <XAxis dataKey="label" {...sharedAxisProps}>
+                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
+              </XAxis>
+              <YAxis {...sharedAxisProps} width={38} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="providerPresence" name="Provider Presence" fill={C.provider} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="gamePresence" name="Game Presence" fill={C.game} radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </ChartCard>
+      </div>
+
+    </Paper>
   );
 };
 
