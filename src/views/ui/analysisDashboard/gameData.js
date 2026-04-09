@@ -1,12 +1,3 @@
-// ═══════════════════════════════════════════════════════════════════════════════
-// gameData.js — Single source of truth for all game launch analysis data
-//
-// Operator availability uses a 3-state system:
-//   1    = ✓  green  — game is LIVE / found on operator
-//   0    = ●  red    — game NOT found on operator
-//   null = —  yellow — operator not yet searched / no data
-// ═══════════════════════════════════════════════════════════════════════════════
-
 export const GAME_DATA = {
   "Bullride Loot": {
     provider: "Bullshark Games",
@@ -53,26 +44,26 @@ export const GAME_DATA = {
     // 3-state: 1=found(✓ green), 0=not found(● red), null=not searched(— yellow)
     operatorWeeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     operatorMatrix: [
-      { operator: "7games",     geography: "Brazil",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "7games",     geography: "Brazil",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, 1, null, null] },
       { operator: "Alf casino", geography: "Albania",      availability: [null, null, null, null, null, null, null, null, null, 1,    1,    null, 1,    null, null, null] },
       { operator: "Alf casino", geography: "Croatia",      availability: [null, null, null, null, null, null, null, null, 1,    null, null, 1,    null, null, null, null] },
-      { operator: "Alf casino", geography: "Finland",      availability: [null, null, null, null, null, null, null, null, null, null, 1,    null, null, null, null, null] },
-      { operator: "Alf casino", geography: "Germany",      availability: [null, null, null, null, null, null, null, null, 1,    1,    1,    null, 1,    null, null, null] },
-      { operator: "Alf casino", geography: "India",        availability: [null, null, null, null, null, null, null, null, null, null, null, 1,    1,    null, null, null] },
-      { operator: "Alf casino", geography: "Kenya",        availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null] },
-      { operator: "Alf casino", geography: "Uganda",       availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    null] },
+      { operator: "Alf casino", geography: "Finland",      availability: [null, null, null, 0, null, null, null, null, null, null, 1,    null, null, null, null, null] },
+      { operator: "Alf casino", geography: "Germany",      availability: [null, null, null, null, null, null, null, null, 1,    1,    1,    null, 1,    1, null, null] },
+      { operator: "Alf casino", geography: "India",        availability: [0, null, null, null, null, null, null, null, null, null, null, 1,    1,    null, null, null] },
+      { operator: "Alf casino", geography: "Kenya",        availability: [null, null, null, null, null, null, 0, null, null, null, null, null, null, null, null, null] },
+      { operator: "Alf casino", geography: "Uganda",       availability: [null, null, null, 0, null, null, null, 1, null, null, null, null, null, null, 1,    null] },
       { operator: "Aquawin",    geography: "Hungary",      availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    1   ] },
-      { operator: "Arcanebet",  geography: "N. Macedonia", availability: [null, null, null, null, null, null, null, null, null, 1,    null, 1,    null, null, null, null] },
+      { operator: "Arcanebet",  geography: "N. Macedonia", availability: [null, null, null, 0, null, null, null, null, null, 1,    null, 1,    null, null, null, null] },
       { operator: "Betfair",    geography: "Spain",        availability: [null, null, null, null, null, null, null, 1,    1,    null, null, null, null, null, null, null] },
-      { operator: "Betpanda",   geography: "Canada",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
-      { operator: "Bitkingz",   geography: "Norway",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Betpanda",   geography: "Canada",       availability: [1, null, 1,    null, null, null, 0, null, null, null, 1, null, null, null, null, null] },
+      { operator: "Bitkingz",   geography: "Norway",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, 0, null, null, null, null] },
       { operator: "Bitstarz",   geography: "Canada",       availability: [null, null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null] },
       { operator: "Bitstarz",   geography: "Mexico",       availability: [null, 1,    1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
-      { operator: "Boaboa",     geography: "India",        availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
-      { operator: "Buran",      geography: "India",        availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
-      { operator: "Bwin",       geography: "Ireland",      availability: [null, null, null, null, null, null, 1,    null, null, null, null, null, null, null, null, null] },
-      { operator: "Cadoola",    geography: "Albania",      availability: [null, null, null, null, null, null, null, null, null, 1,    1,    null, null, null, 1,    null] },
-      { operator: "Cadoola",    geography: "Croatia",      availability: [null, null, null, null, null, null, null, null, 1,    null, null, null, null, null, 1,    null] },
+      { operator: "Boaboa",     geography: "India",        availability: [1, null, 1,    null, null, null, null, null, null, null, null, null, 0, null, null, null] },
+      { operator: "Buran",      geography: "India",        availability: [null, null, 1,    null, 1, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Bwin",       geography: "Ireland",      availability: [null, null, null, null, null, 1, 1,    null, null, null, null, null, null, null, null, null] },
+      { operator: "Cadoola",    geography: "Albania",      availability: [null, null, null, null, null, null, null, null, 1, 1,    1,    null, null, null, 1,    null] },
+      { operator: "Cadoola",    geography: "Croatia",      availability: [1, null, null, null, null, 1, null, null, 1,    null, null, null, null, null, 1,    null] },
       { operator: "Cadoola",    geography: "Ethiopia",     availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    null] },
     ],
   },
