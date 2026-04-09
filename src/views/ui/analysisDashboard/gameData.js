@@ -1,12 +1,10 @@
 // ═══════════════════════════════════════════════════════════════════════════════
 // gameData.js — Single source of truth for all game launch analysis data
-// Sourced directly from PDF pages 1–4 (weekly Power BI report)
 //
-// Structure per game:
-//   weekly[]        → 3 KPI series per week (providerPresence, gamePresence, gameAvailPct)
-//   sectionMapping[]→ % share per casino section per week (stacked bar data)
-//   operatorWeeks[] → week index labels for operator matrix columns
-//   operatorMatrix[]→ per-operator availability per week (1 = live ✓, 0 = not live ●)
+// Operator availability uses a 3-state system:
+//   1    = ✓  green  — game is LIVE / found on operator
+//   0    = ●  red    — game NOT found on operator
+//   null = —  yellow — operator not yet searched / no data
 // ═══════════════════════════════════════════════════════════════════════════════
 
 export const GAME_DATA = {
@@ -14,7 +12,6 @@ export const GAME_DATA = {
     provider: "Bullshark Games",
     launchDate: "2026-01-15",
 
-    // Page 1 visual — weeks 0–15
     weekly: [
       { week: 0,  label: "W0",  providerPresence: 95,  gamePresence: 12, gameAvailPct: 12.6 },
       { week: 1,  label: "W1",  providerPresence: 108, gamePresence: 28, gameAvailPct: 25.9 },
@@ -34,7 +31,6 @@ export const GAME_DATA = {
       { week: 15, label: "W15", providerPresence: 108, gamePresence: 47, gameAvailPct: 43.5 },
     ],
 
-    // Page 1 stacked bar — 16 colour segments, 5 section categories
     sectionMapping: [
       { label: "W0",  newGames: 30, popular: 25, slots: 20, liveCasino: 10, other: 15 },
       { label: "W1",  newGames: 28, popular: 26, slots: 22, liveCasino: 12, other: 12 },
@@ -54,35 +50,34 @@ export const GAME_DATA = {
       { label: "W15", newGames:  5, popular: 25, slots: 28, liveCasino: 22, other: 20 },
     ],
 
-    // Page 1 operator matrix — 21 operators × 16 weeks
-    // 1 = ✓ game live on that operator, 0 = ● not available
+    // 3-state: 1=found(✓ green), 0=not found(● red), null=not searched(— yellow)
     operatorWeeks: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15],
     operatorMatrix: [
-      { operator: "7games",     geography: "Brazil",       availability: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Alf casino", geography: "Albania",      availability: [0,0,0,0,0,0,0,0,0,1,1,0,1,0,0,0] },
-      { operator: "Alf casino", geography: "Croatia",      availability: [0,0,0,0,0,0,0,0,1,0,0,1,0,0,0,0] },
-      { operator: "Alf casino", geography: "Finland",      availability: [0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0] },
-      { operator: "Alf casino", geography: "Germany",      availability: [0,0,0,0,0,0,0,0,1,1,1,0,1,0,0,0] },
-      { operator: "Alf casino", geography: "India",        availability: [0,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0] },
-      { operator: "Alf casino", geography: "Kenya",        availability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Alf casino", geography: "Uganda",       availability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0] },
-      { operator: "Aquawin",    geography: "Hungary",      availability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1] },
-      { operator: "Arcanebet",  geography: "N. Macedonia", availability: [0,0,0,0,0,0,0,0,0,1,0,1,0,0,0,0] },
-      { operator: "Betfair",    geography: "Spain",        availability: [0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0] },
-      { operator: "Betpanda",   geography: "Canada",       availability: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Bitkingz",   geography: "Norway",       availability: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Bitstarz",   geography: "Canada",       availability: [0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Bitstarz",   geography: "Mexico",       availability: [0,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Boaboa",     geography: "India",        availability: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Buran",      geography: "India",        availability: [0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0] },
-      { operator: "Bwin",       geography: "Ireland",      availability: [0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0] },
-      { operator: "Cadoola",    geography: "Albania",      availability: [0,0,0,0,0,0,0,0,0,1,1,0,0,0,1,0] },
-      { operator: "Cadoola",    geography: "Croatia",      availability: [0,0,0,0,0,0,0,0,1,0,0,0,0,0,1,0] },
-      { operator: "Cadoola",    geography: "Ethiopia",     availability: [0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0] },
+      { operator: "7games",     geography: "Brazil",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Alf casino", geography: "Albania",      availability: [null, null, null, null, null, null, null, null, null, 1,    1,    null, 1,    null, null, null] },
+      { operator: "Alf casino", geography: "Croatia",      availability: [null, null, null, null, null, null, null, null, 1,    null, null, 1,    null, null, null, null] },
+      { operator: "Alf casino", geography: "Finland",      availability: [null, null, null, null, null, null, null, null, null, null, 1,    null, null, null, null, null] },
+      { operator: "Alf casino", geography: "Germany",      availability: [null, null, null, null, null, null, null, null, 1,    1,    1,    null, 1,    null, null, null] },
+      { operator: "Alf casino", geography: "India",        availability: [null, null, null, null, null, null, null, null, null, null, null, 1,    1,    null, null, null] },
+      { operator: "Alf casino", geography: "Kenya",        availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Alf casino", geography: "Uganda",       availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    null] },
+      { operator: "Aquawin",    geography: "Hungary",      availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    1   ] },
+      { operator: "Arcanebet",  geography: "N. Macedonia", availability: [null, null, null, null, null, null, null, null, null, 1,    null, 1,    null, null, null, null] },
+      { operator: "Betfair",    geography: "Spain",        availability: [null, null, null, null, null, null, null, 1,    1,    null, null, null, null, null, null, null] },
+      { operator: "Betpanda",   geography: "Canada",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Bitkingz",   geography: "Norway",       availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Bitstarz",   geography: "Canada",       availability: [null, null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Bitstarz",   geography: "Mexico",       availability: [null, 1,    1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Boaboa",     geography: "India",        availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Buran",      geography: "India",        availability: [null, null, 1,    null, null, null, null, null, null, null, null, null, null, null, null, null] },
+      { operator: "Bwin",       geography: "Ireland",      availability: [null, null, null, null, null, null, 1,    null, null, null, null, null, null, null, null, null] },
+      { operator: "Cadoola",    geography: "Albania",      availability: [null, null, null, null, null, null, null, null, null, 1,    1,    null, null, null, 1,    null] },
+      { operator: "Cadoola",    geography: "Croatia",      availability: [null, null, null, null, null, null, null, null, 1,    null, null, null, null, null, 1,    null] },
+      { operator: "Cadoola",    geography: "Ethiopia",     availability: [null, null, null, null, null, null, null, null, null, null, null, null, null, null, 1,    null] },
     ],
   },
 
-  // ─── Joker's Bar — exact data from PDF page 2 ─────────────────────────────
+  // ─── Joker's Bar ─────────────────────────────────────────────────────────────
   "Joker's Bar": {
     provider: "1X2gaming",
     launchDate: "2026-02-11",
@@ -109,17 +104,35 @@ export const GAME_DATA = {
       { label: "W7", newGames:  8, popular: 20, slots: 35, liveCasino: 24, other: 13 },
     ],
 
+    // Sourced from image: weeks 0–6 visible (partial week 7 cut off)
+    // 3-state: 1=found(✓ green), 0=not found(● red), null=not searched(— yellow)
     operatorWeeks: [0, 1, 2, 3, 4, 5, 6, 7],
     operatorMatrix: [
-      { operator: "Betsson",    geography: "Sweden",  availability: [0,1,1,1,1,1,1,1] },
-      { operator: "LeoVegas",   geography: "Finland", availability: [0,0,1,1,1,1,1,1] },
-      { operator: "Unibet",     geography: "Belgium", availability: [0,1,0,1,1,0,1,0] },
-      { operator: "888 Casino", geography: "Spain",   availability: [0,0,1,1,1,1,0,1] },
-      { operator: "Mr Green",   geography: "Norway",  availability: [1,1,1,0,1,1,0,0] },
+      { operator: "10bet",    geography: "Ireland",      availability: [null, null, 1,    1,    1,    1,    1,    null] },
+      { operator: "10bet",    geography: "Mexico",       availability: [0,    1,    1,    1,    null, 1,    1,    null] },
+      { operator: "10bet",    geography: "South Africa", availability: [0,    null, 1,    1,    1,    1,    null, null] },
+      { operator: "10cric",   geography: "India",        availability: [0,    1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1bet100",  geography: "Germany",      availability: [0,    null, null, 1,    null, null, null, null] },
+      { operator: "1red",     geography: "Argentina",    availability: [null, 1,    null, 1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Bolivia",      availability: [null, null, 1,    1,    1,    1,    null, null] },
+      { operator: "1red",     geography: "Colombia",     availability: [null, 1,    1,    1,    1,    1,    null, null] },
+      { operator: "1red",     geography: "Finland",      availability: [null, null, null, null, null, null, 1,    null] },
+      { operator: "1red",     geography: "Germany",      availability: [1,    1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Japan",        availability: [0,    1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Netherlands",  availability: [0,    1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Peru",         availability: [null, 1,    1,    1,    1,    1,    null, null] },
+      { operator: "1red",     geography: "Poland",       availability: [null, 1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Portugal",     availability: [null, 1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Slovenia",     availability: [null, 1,    1,    1,    1,    1,    1,    null] },
+      { operator: "1red",     geography: "Sweden",       availability: [null, 1,    1,    1,    null, 1,    1,    null] },
+      { operator: "1red",     geography: "Venezuela",    availability: [null, 1,    1,    1,    1,    1,    null, null] },
+      { operator: "1win",     geography: "Albania",      availability: [null, null, null, 1,    null, null, null, null] },
+      { operator: "1win",     geography: "Chile",        availability: [null, null, null, 1,    null, 1,    null, null] },
+      { operator: "1win",     geography: "Guatemala",    availability: [null, null, null, 1,    null, null, null, null] },
     ],
   },
 
-  // ─── Lord of Thunder — exact data from PDF page 2 ─────────────────────────
+  // ─── Lord of Thunder ─────────────────────────────────────────────────────────
   "Lord of Thunder": {
     provider: "3 Oaks",
     launchDate: "2026-02-05",
@@ -150,15 +163,15 @@ export const GAME_DATA = {
 
     operatorWeeks: [0, 1, 2, 3, 4, 5, 6, 7, 8],
     operatorMatrix: [
-      { operator: "Betway",    geography: "South Africa", availability: [0,1,1,0,1,1,1,1,1] },
-      { operator: "22bet",     geography: "Nigeria",      availability: [0,0,1,0,1,1,1,0,0] },
-      { operator: "Parimatch", geography: "Ukraine",      availability: [0,1,0,1,1,1,0,1,0] },
-      { operator: "Melbet",    geography: "Kenya",        availability: [0,0,0,0,1,1,1,1,1] },
-      { operator: "1xBet",     geography: "Ghana",        availability: [0,0,1,1,1,0,1,0,0] },
+      { operator: "Betway",    geography: "South Africa", availability: [null, 1,    1,    null, 1,    1,    1,    1,    1   ] },
+      { operator: "22bet",     geography: "Nigeria",      availability: [null, null, 1,    null, 1,    1,    1,    null, null] },
+      { operator: "Parimatch", geography: "Ukraine",      availability: [null, 1,    null, 1,    1,    1,    null, 1,    null] },
+      { operator: "Melbet",    geography: "Kenya",        availability: [null, null, null, null, 1,    1,    1,    1,    1   ] },
+      { operator: "1xBet",     geography: "Ghana",        availability: [null, null, 1,    1,    1,    null, 1,    null, null] },
     ],
   },
 
-  // ─── Gems of Love Hold & Win — exact data from PDF page 2 ─────────────────
+  // ─── Gems of Love Hold & Win ─────────────────────────────────────────────────
   "Gems of Love Hold & Win": {
     provider: "1spin4win",
     launchDate: "2026-02-05",
@@ -187,25 +200,25 @@ export const GAME_DATA = {
 
     operatorWeeks: [0, 1, 2, 3, 4, 5, 6, 7],
     operatorMatrix: [
-      { operator: "Casumo",   geography: "Finland", availability: [0,1,1,0,0,0,0,0] },
-      { operator: "Mr Green", geography: "Sweden",  availability: [0,1,1,1,0,0,0,0] },
-      { operator: "PlayOJO",  geography: "Canada",  availability: [1,1,0,0,0,0,0,0] },
-      { operator: "Rizk",     geography: "Germany", availability: [0,1,1,0,0,0,0,0] },
-      { operator: "Wildz",    geography: "Austria", availability: [0,0,1,0,0,0,0,0] },
+      { operator: "Casumo",   geography: "Finland", availability: [null, 1,    1,    null, null, null, null, null] },
+      { operator: "Mr Green", geography: "Sweden",  availability: [null, 1,    1,    1,    null, null, null, null] },
+      { operator: "PlayOJO",  geography: "Canada",  availability: [1,    1,    null, null, null, null, null, null] },
+      { operator: "Rizk",     geography: "Germany", availability: [null, 1,    1,    null, null, null, null, null] },
+      { operator: "Wildz",    geography: "Austria", availability: [null, null, 1,    null, null, null, null, null] },
     ],
   },
 };
 
-// Derived helpers — imported alongside GAME_DATA where needed
+// ─── Derived helpers ──────────────────────────────────────────────────────────
 export const GAME_NAMES = Object.keys(GAME_DATA);
 
 export const getGameStats = (gameName) => {
   const d = GAME_DATA[gameName];
-  const peakPresence    = Math.max(...d.weekly.map(r => r.gamePresence));
-  const peakWeek        = d.weekly.find(r => r.gamePresence === peakPresence)?.week;
-  const peakPct         = Math.max(...d.weekly.map(r => r.gameAvailPct));
-  const latestRow       = d.weekly[d.weekly.length - 1];
-  const maxProvider     = Math.max(...d.weekly.map(r => r.providerPresence));
-  const avgAvailPct     = (d.weekly.reduce((s, r) => s + r.gameAvailPct, 0) / d.weekly.length).toFixed(1);
+  const peakPresence = Math.max(...d.weekly.map(r => r.gamePresence));
+  const peakWeek     = d.weekly.find(r => r.gamePresence === peakPresence)?.week;
+  const peakPct      = Math.max(...d.weekly.map(r => r.gameAvailPct));
+  const latestRow    = d.weekly[d.weekly.length - 1];
+  const maxProvider  = Math.max(...d.weekly.map(r => r.providerPresence));
+  const avgAvailPct  = (d.weekly.reduce((s, r) => s + r.gameAvailPct, 0) / d.weekly.length).toFixed(1);
   return { peakPresence, peakWeek, peakPct: peakPct.toFixed(1), latestRow, maxProvider, avgAvailPct };
 };

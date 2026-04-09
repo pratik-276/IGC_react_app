@@ -15,7 +15,7 @@ import {
 
   XAxis, YAxis, Tooltip,
   CartesianGrid, ResponsiveContainer,
-  Label, Legend, ReferenceLine,
+  Label,
 } from "recharts";
 import { GAME_DATA, GAME_NAMES, getGameStats } from "./gameData";
 
@@ -64,23 +64,6 @@ const CustomTooltip = ({ active, payload, label, pct }) => {
     </div>
   );
 };
-
-// ── Stat Card ─────────────────────────────────────────────────────────────────
-const StatCard = ({ label, value, sub, color }) => (
-  <div style={{
-    background: C.cardBg,
-    border: `1.5px solid ${C.border}`,
-    borderRadius: 14,
-    padding: "14px 20px",
-    borderLeft: `4px solid ${color}`,
-    flex: 1,
-    minWidth: 140,
-  }}>
-    <p style={{ margin: 0, fontSize: 10, color: C.muted, textTransform: "uppercase", letterSpacing: "0.09em" }}>{label}</p>
-    <p style={{ margin: "6px 0 2px", fontSize: 24, fontWeight: 800, color, lineHeight: 1 }}>{value}</p>
-    {sub && <p style={{ margin: 0, fontSize: 10.5, color: C.muted }}>{sub}</p>}
-  </div>
-);
 
 // ── Chart Card Wrapper ─────────────────────────────────────────────────────────
 const ChartCard = ({ title, subtitle, badge, children, style = {} }) => (
@@ -161,7 +144,7 @@ const GameLaunchAnalysisPage = () => {
   return (
     <Paper
       elevation={0}
-      sx={{ p: 3, minHeight: "100vh", backgroundColor: C.pageBg, borderRadius: 0 }}
+      sx={{ p: 3, minHeight: "100vh", borderRadius: 0 }}
     >
       {/* ── HEADER ───────────────────────────────────────────────────────────── */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12, marginBottom: 24 }}>
@@ -196,8 +179,8 @@ const GameLaunchAnalysisPage = () => {
         <StatCard label="Max Provider Reach" value={maxProvider} sub="operators in network" color={C.accent} />
       </div> */}
 
-      {/* ── ROW 1: CHART 1 + CHART 2 ─────────────────────────────────────────── */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 20, marginBottom: 20 }}>
+      {/* ── CHART 1  ─────────────────────────────────────────── */}
+      <div style={{ marginBottom: 20 }}>
 
         {/* CHART 1 — Provider Availability */}
         <ChartCard
@@ -234,89 +217,36 @@ const GameLaunchAnalysisPage = () => {
             </AreaChart>
           </ResponsiveContainer>
         </ChartCard>
-
-        {/* CHART 2 — Game Availability */}
-        <ChartCard
-          title="Game Availability"
-          subtitle="Number of operators with this game live per week"
-          badge="Raw Count"
-        >
-          <ResponsiveContainer width="100%" height={260}>
-            <AreaChart data={d.weekly} margin={{ top: 10, right: 16, left: 0, bottom: 28 }}>
-              <defs>
-                <linearGradient id="gSecondary" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={C.secondary} stopOpacity={0.22} />
-                  <stop offset="95%" stopColor={C.secondary} stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
-              <CartesianGrid {...sharedGridProps} />
-              <XAxis dataKey="label" {...sharedAxisProps}>
-                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
-              </XAxis>
-              <YAxis {...sharedAxisProps} width={38}>
-                <Label value="Game's Presence" angle={-90} position="insideLeft" style={{ fill: C.muted, fontSize: 10, textAnchor: "middle" }} />
-              </YAxis>
-              <Tooltip content={<CustomTooltip />} />
-              <Area
-                type="monotone"
-                dataKey="gamePresence"
-                name="Game Presence"
-                stroke={C.secondary}
-                strokeWidth={2.5}
-                fill="url(#gSecondary)"
-                dot={{ r: 3.5, fill: C.secondary, strokeWidth: 0 }}
-                activeDot={{ r: 6, fill: C.secondary }}
-              />
-            </AreaChart>
-          </ResponsiveContainer>
-        </ChartCard>
       </div>
 
-      {/* ── CHART 3 — Market Penetration % (full width) ───────────────────────── */}
+      {/* CHART 2 — Game Availability */}
       <div style={{ marginBottom: 20 }}>
         <ChartCard
-          title="Market Penetration Rate"
-          subtitle="% of provider's casino base carrying this game each week"
-          badge="Efficiency"
+          title="Game Availability"
+          subtitle="Game adoption vs provider's total distribution footprint per week"
+          badge="Comparative"
         >
-          <ResponsiveContainer width="100%" height={220}>
-            <AreaChart data={d.weekly} margin={{ top: 10, right: 16, left: 0, bottom: 28 }}>
-              <defs>
-                <linearGradient id="gPct" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="5%" stopColor={C.pct} stopOpacity={0.2} />
-                  <stop offset="95%" stopColor={C.pct} stopOpacity={0.01} />
-                </linearGradient>
-              </defs>
+          <LegendRow items={[
+            ["Provider Presence", C.provider],
+            ["Game Presence", C.game],
+          ]} />
+          <ResponsiveContainer width="100%" height={240}>
+            <BarChart data={d.weekly} margin={{ top: 4, right: 16, left: 0, bottom: 28 }} barSize={14} barCategoryGap="28%">
               <CartesianGrid {...sharedGridProps} />
               <XAxis dataKey="label" {...sharedAxisProps}>
                 <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
               </XAxis>
-              <YAxis {...sharedAxisProps} domain={[0, 100]} tickFormatter={v => `${v}%`} width={42}>
-                <Label value="Game Availability %" angle={-90} position="insideLeft" style={{ fill: C.muted, fontSize: 10, textAnchor: "middle" }} />
-              </YAxis>
-              <Tooltip content={<CustomTooltip pct />} />
-              <ReferenceLine
-                y={20}
-                stroke="rgba(0,151,167,0.4)"
-                strokeDasharray="6 3"
-                label={{ value: "20% benchmark", fill: C.pct, fontSize: 9.5, position: "insideTopRight" }}
-              />
-              <Area
-                type="step"
-                dataKey="gameAvailPct"
-                name="Availability %"
-                stroke={C.pct}
-                strokeWidth={2.5}
-                fill="url(#gPct)"
-                dot={{ r: 3.5, fill: C.pct, strokeWidth: 0 }}
-                activeDot={{ r: 6 }}
-              />
-            </AreaChart>
+              <YAxis {...sharedAxisProps} width={38} />
+              <Tooltip content={<CustomTooltip />} />
+              <Bar dataKey="providerPresence" name="Provider Presence" fill={C.provider} radius={[3, 3, 0, 0]} />
+              <Bar dataKey="gamePresence" name="Game Presence" fill={C.game} radius={[3, 3, 0, 0]} />
+            </BarChart>
           </ResponsiveContainer>
         </ChartCard>
       </div>
 
-      {/* ── CHART 4 — Total Casinos Across Sections (Stacked BarChart) ───────── */}
+
+      {/* ── CHART 3 — Total Casinos Across Sections (Stacked BarChart) ───────── */}
       <div style={{ marginBottom: 20 }}>
         <ChartCard
           title="Total Casinos Across Sections"
@@ -347,33 +277,97 @@ const GameLaunchAnalysisPage = () => {
           </ResponsiveContainer>
         </ChartCard>
       </div>
+      {/* OPERATOR MATRIX TABLE — per-operator weekly availability */}
+      <ChartCard
+        title="Game's Availability on Operators"
+        subtitle="Per-operator weekly availability from launch week"
+        badge="Operator View"
+      >
+        <div style={{
+          overflowX: "auto",
+          maxHeight: 340,
+          overflowY: "auto",
+          borderRadius: 8,
+          border: `1px solid ${C.border}`,
+        }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: 11.5, minWidth: 520 }}>
+            <thead>
+              <tr style={{ position: "sticky", top: 0, zIndex: 2, background: "#26215C" }}>
+                <th style={{ textAlign: "left", padding: "9px 14px", color: "#CECBF6", fontWeight: 500, fontSize: 11, letterSpacing: "0.04em", whiteSpace: "nowrap" }}>
+                  Operator
+                </th>
+                <th style={{ textAlign: "left", padding: "9px 14px", color: "#CECBF6", fontWeight: 500, fontSize: 11, whiteSpace: "nowrap" }}>
+                  Geography
+                </th>
+                {d.operatorWeeks.map(w => (
+                  <th key={w} style={{ textAlign: "center", padding: "9px 6px", color: "#CECBF6", fontWeight: 500, fontSize: 11, minWidth: 34, whiteSpace: "nowrap" }}>
+                    {w}
+                  </th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {d.operatorMatrix.map((row, i) => (
+                <tr
+                  key={i}
+                  style={{
+                    borderTop: `1px solid ${C.border}`,
+                    background: i % 2 === 0 ? "#ffffff" : "#f7f8fd",
+                  }}
+                >
+                  <td style={{ padding: "7px 14px", color: "#534AB7", fontWeight: 600, fontSize: 11.5, whiteSpace: "nowrap" }}>
+                    {row.operator}
+                  </td>
+                  <td style={{ padding: "7px 14px", color: C.muted, fontSize: 11.5, whiteSpace: "nowrap" }}>
+                    {row.geography}
+                  </td>
+                  {row.availability.map((v, j) => (
+                    <td key={j} style={{ textAlign: "center", padding: "6px 4px" }}>
+                      {v === 1 ? (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", justifyContent: "center",
+                          width: 20, height: 20, borderRadius: "50%",
+                          background: "#C0DD97", color: "#27500A",
+                          fontSize: 11, fontWeight: 600,
+                        }}>✓</span>
+                      ) : v === 0 ? (
+                        <span style={{
+                          display: "inline-flex", alignItems: "center", justifyContent: "center",
+                          width: 20, height: 20, borderRadius: "50%",
+                          background: "#FAECE7", color: "#993C1D",
+                          fontSize: 13,
+                        }}>●</span>
+                      ) : (
+                        <span style={{
+                          display: "inline-block",
+                          width: 14, height: 2, borderRadius: 1,
+                          background: "#EF9F27", verticalAlign: "middle",
+                        }} />
+                      )}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
 
-      {/* ── CHART 5 — Provider vs Game Presence (Grouped BarChart) ──────────── */}
-      <div style={{ marginBottom: 20 }}>
-        <ChartCard
-          title="Provider vs Game Presence"
-          subtitle="Game adoption vs provider's total distribution footprint per week"
-          badge="Comparative"
-        >
-          <LegendRow items={[
-            ["Provider Presence", C.provider],
-            ["Game Presence", C.game],
-          ]} />
-          <ResponsiveContainer width="100%" height={240}>
-            <BarChart data={d.weekly} margin={{ top: 4, right: 16, left: 0, bottom: 28 }} barSize={14} barCategoryGap="28%">
-              <CartesianGrid {...sharedGridProps} />
-              <XAxis dataKey="label" {...sharedAxisProps}>
-                <Label value="Weeks Since Launch" offset={-18} position="insideBottom" style={{ fill: C.muted, fontSize: 10 }} />
-              </XAxis>
-              <YAxis {...sharedAxisProps} width={38} />
-              <Tooltip content={<CustomTooltip />} />
-              <Bar dataKey="providerPresence" name="Provider Presence" fill={C.provider} radius={[3, 3, 0, 0]} />
-              <Bar dataKey="gamePresence" name="Game Presence" fill={C.game} radius={[3, 3, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </ChartCard>
-      </div>
-
+        {/* Legend */}
+        <div style={{ marginTop: 12, display: "flex", gap: 18, fontSize: 11, color: C.muted, flexWrap: "wrap" }}>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "#C0DD97", color: "#27500A", fontSize: 10, fontWeight: 600 }}>✓</span>
+            Found / live
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", width: 16, height: 16, borderRadius: "50%", background: "#FAECE7", color: "#993C1D", fontSize: 12 }}>●</span>
+            Not found
+          </span>
+          <span style={{ display: "flex", alignItems: "center", gap: 5 }}>
+            <span style={{ display: "inline-block", width: 14, height: 2, borderRadius: 1, background: "#EF9F27" }} />
+            Not searched
+          </span>
+        </div>
+      </ChartCard>
     </Paper>
   );
 };
