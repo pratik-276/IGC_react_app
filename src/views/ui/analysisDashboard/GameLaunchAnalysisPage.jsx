@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import { useTheme } from "@mui/material/styles";
 import PageHeader from "../../../component/PageHeader";
 import {
-  Box, Card, CardContent, Chip, FormControl,
+  Box, Card, CardContent, FormControl,
   MenuItem, Paper, Select, Stack, Typography,
 } from "@mui/material";
 import {
@@ -74,7 +73,7 @@ const CustomTooltip = ({ active, payload, label }) => {
 };
 
 // ─── Chart card ──────────────────────────────────────────────────────────────
-const ChartCard = ({ title, subtitle, badge, children }) => (
+const ChartCard = ({ title, subtitle, children }) => (
   <Card variant="outlined" sx={{ mb: 2.5, borderColor: B.divider }}>
     <CardContent sx={{ p: "20px 22px 16px !important" }}>
       <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
@@ -86,20 +85,7 @@ const ChartCard = ({ title, subtitle, badge, children }) => (
             <Typography variant="caption" color="text.secondary">{subtitle}</Typography>
           )}
         </Box>
-        {badge && (
-          <Chip
-            label={badge}
-            size="small"
-            variant="outlined"
-            sx={{
-              height: 22,
-              fontSize: 10.5,
-              color: B.brand,
-              borderColor: B.brandMid,
-              bgcolor: B.brandPale,
-            }}
-          />
-        )}
+
       </Stack>
       {children}
     </CardContent>
@@ -188,7 +174,7 @@ const GameLaunchAnalysisPage = () => {
       )}
 
       {/* Chart 1 — Provider Availability */}
-      <ChartCard title="Provider Availability" subtitle="Total providers carrying this game per week" badge="Market Presence">
+      <ChartCard title="Provider Availability" subtitle="Total providers carrying this game per week">
         <ResponsiveContainer width="100%" height={250}>
           <AreaChart data={d.weekly} margin={{ top: 8, right: 12, left: 0, bottom: 28 }}>
             <defs>
@@ -215,7 +201,7 @@ const GameLaunchAnalysisPage = () => {
       </ChartCard>
 
       {/* Chart 2 — Game Availability */}
-      <ChartCard title="Game Availability" subtitle="Game adoption vs provider distribution footprint per week" badge="Comparative">
+      <ChartCard title="Game Availability" subtitle="Game adoption vs provider distribution footprint per week" >
         <LegendRow items={[["Provider Presence", B.brand], ["Game Presence", B.brandLight]]} />
         <ResponsiveContainer width="100%" height={230}>
           <BarChart data={d.weekly} margin={{ top: 4, right: 12, left: 0, bottom: 28 }} barSize={13} barCategoryGap="28%">
@@ -232,7 +218,7 @@ const GameLaunchAnalysisPage = () => {
       </ChartCard>
 
       {/* Chart 3 — Total Casinos Across Sections */}
-      <ChartCard title="Total Casinos Across Sections" subtitle="Absolute casino counts per placement section over time" badge="Section Totals">
+      <ChartCard title="Total Casinos Across Sections" subtitle="Absolute casino counts per placement section over time">
         <LegendRow items={Object.entries({
           "New Games": SECTION_COLORS.newGames,
           "Popular": SECTION_COLORS.popular,
@@ -258,7 +244,7 @@ const GameLaunchAnalysisPage = () => {
       </ChartCard>
 
       {/* Operator Matrix */}
-      <ChartCard title="Game's Availability on Operators" subtitle="Per-operator weekly availability from launch week" badge="Operator View">
+      <ChartCard title="Game's Availability on Operators" subtitle="Per-operator weekly availability from launch week" >
         <OperatorMatrix data={d.operatorMatrix} weeks={d.operatorWeeks} />
       </ChartCard>
 
