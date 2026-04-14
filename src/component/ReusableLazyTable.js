@@ -1,7 +1,8 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Skeleton } from "primereact/skeleton";
+import { FilterMatchMode } from "primereact/api";
 import { sortIconTemplate } from "./tableTemplates";
 import "./ReusableLazyTable.css";
 
@@ -51,10 +52,17 @@ export default function ReusableLazyTable({
     }
   }, [data, hasMore, loading]);
 
+  const [filters, setFilters] = useState({
+    operator: { value: null, matchMode: FilterMatchMode.EQUALS },
+    geography: { value: null, matchMode: FilterMatchMode.EQUALS }
+  });
   return (
     <div ref={wrapperRef}>
       <DataTable
         value={data}
+        filterDisplay="menu"
+        filters={filters}
+        onFilter={(e) => setFilters(e.filters)}
         scrollable
         scrollHeight={scrollHeight}
         sortIcon={sortIconTemplate}
@@ -64,26 +72,26 @@ export default function ReusableLazyTable({
           onSort?.(e.sortField, e.sortOrder === 1 ? "asc" : "desc")
         }
         onRowClick={onRowClick}
-        className={`table-bordered p-datatable custom-table small ${
-          onRowClick ? "row-clickable" : ""
-        }`}
+        className={`table-bordered p-datatable custom-table small ${onRowClick ? "row-clickable" : ""
+          }`}
       >
         {columns.map((col) => (
           <Column
-            key={col.field}
             field={col.field}
             header={col.header}
+            body={col.body}
             sortable={col.sortable}
+
+            filter={col.filter}
+            filterField={col.filterField}
+            filterMatchMode={col.filterMatchMode}
+            filterElement={col.filterElement}
+
+            showFilterMenu={col.showFilterMenu}
+            showFilterOperator={col.showFilterOperator}
+            showAddButton={col.showAddButton}
+
             style={col.style}
-            body={(row) =>
-              row.__skeleton ? (
-                <Skeleton width="80%" height="1rem" />
-              ) : col.body ? (
-                col.body(row)
-              ) : (
-                row[col.field]
-              )
-            }
           />
         ))}
       </DataTable>

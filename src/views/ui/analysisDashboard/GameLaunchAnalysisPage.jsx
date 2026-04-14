@@ -9,7 +9,7 @@ import {
   Label, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
 import { GAME_DATA, GAME_NAMES, PROVIDER_NAMES } from "./gameData";
-import OperatorMatrix from "./OperatorMatrix";
+import ReusableLazyTable from "../../../component/ReusableLazyTable";
 import { Dropdown } from "primereact/dropdown";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
@@ -158,6 +158,8 @@ const FilterDropdown = ({ label, value, options, onChange, placeholder }) => {
 const GameLaunchAnalysisPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [provider, setProvider] = useState(PROVIDER_NAMES[0]);
+  const [sortField, setSortField] = useState(null);
+  const [sortOrder, setSortOrder] = useState("asc");
   const firstGameOfProvider = GAME_NAMES.find(n => GAME_DATA[n].provider === PROVIDER_NAMES[0]);
   const [game, setGame] = useState(firstGameOfProvider);
 
@@ -165,22 +167,107 @@ const GameLaunchAnalysisPage = () => {
   const { axisProps, gridProps, labelStyle } = useChartProps();
 
   const providerOptions = PROVIDER_NAMES.map((p) => ({ label: p, value: p }));
-
   const gameOptions = GAME_NAMES
     .filter((n) => GAME_DATA[n].provider === provider)
     .map((g) => ({ label: g, value: g }));
 
-  // ── When provider changes → reset game to first of that provider ──────────
   const handleProviderChange = (val) => {
     setProvider(val);
     const firstGame = GAME_NAMES.find((n) => GAME_DATA[n].provider === val);
     setGame(firstGame);
   };
 
+  const operatorTableData = d.operatorMatrix.map((row) => {
+    const flatRow = { operator: row.operator, geography: row.geography };
+    d.operatorWeeks.forEach((week, i) => {
+      flatRow[`w${week}`] = row.availability[i];
+    });
+    return flatRow;
+  });
+
+const operatorOptions = [
+  ...new Set(operatorTableData.map((row) => row.operator))
+].map((op) => ({ label: op, value: op }));
+
+const geographyOptions = [
+  ...new Set(operatorTableData.map((row) => row.geography))
+].map((geo) => ({ label: geo, value: geo }));
+
+const createDropdownFilter = (optionsList, placeholder) => (options) => {
+  return (
+    <Dropdown
+      value={options.value}
+      options={optionsList}
+      onChange={(e) => options.filterApplyCallback(e.value)}
+      placeholder={placeholder}
+      showClear
+      style={{ minWidth: "180px" }}
+    />
+  );
+};
+
+const operatorFilterElement = createDropdownFilter(operatorOptions, "Select Operator");
+const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Geography");
+
+  const operatorColumns = [
+    {
+      field: "operator",
+      header: "Operator",
+
+      sortable: false,
+
+      filter: true,
+      filterField: "operator",
+      filterMatchMode: "equals",
+      filterElement: operatorFilterElement,
+
+      showFilterMenu: true,
+      showFilterOperator: false,
+      showAddButton: false,
+
+      style: { minWidth: "130px", fontWeight: 500 }
+    },
+
+    {
+      field: "geography",
+      header: "Geography",
+
+      sortable: false,
+
+      filter: true,
+      filterField: "geography",
+      filterMatchMode: "equals",
+      filterElement: geographyFilterElement,
+
+      showFilterMenu: true,
+      showFilterOperator: false,
+      showAddButton: false,
+
+      style: { minWidth: "110px" }
+    },
+
+    ...d.operatorWeeks.map((week) => ({
+      field: `w${week}`,
+      header: `w${week}`,
+      sortable: false,
+      style: { minWidth: "52px", textAlign: "center" },
+      body: (row) => {
+        const val = row[`w${week}`];
+        if (val === 1) return <span style={{ color: B.green }}>✓</span>;
+        if (val === 0) return <span style={{ color: B.red }}>✕</span>;
+        return <span style={{ color: B.amber }}>—</span>;
+      },
+    })),
+  ];
+
+  const handleSort = (field, order) => {
+    setSortField(field);
+    setSortOrder(order);
+  };
   return (
     <Paper
       elevation={0}
-      sx={{ p: 3, minHeight: "100vh", borderRadius: 0, position: "relative" }}
+      sx={{ minHeight: "100vh", position: "relative" }}
     >
       <PageHeader
         title="Game Launch Analysis"
@@ -289,8 +376,18 @@ const GameLaunchAnalysisPage = () => {
       </ChartCard>
 
       {/* Operator Matrix */}
-      <ChartCard title="Game's Availability on Operators" subtitle="Per-operator weekly availability from launch week" >
-        <OperatorMatrix data={d.operatorMatrix} weeks={d.operatorWeeks} />
+      <ChartCard
+        title="Game's Availability on Operators"
+        subtitle="Per-operator weekly availability from launch week"
+      >
+        <ReusableLazyTable
+         key={game} 
+          data={operatorTableData}
+          loading={false}
+          columns={operatorColumns}
+          scrollHeight="400px"
+          hasMore={false}
+        />
       </ChartCard>
 
     </Paper>
