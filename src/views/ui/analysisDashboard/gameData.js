@@ -202,7 +202,7 @@ export const GAME_DATA = {
 
 // ─── Derived helpers ──────────────────────────────────────────────────────────
 export const GAME_NAMES = Object.keys(GAME_DATA);
-
+export const PROVIDER_NAMES = [...new Set(Object.values(GAME_DATA).map(g => g.provider))];
 export const getGameStats = (gameName) => {
   const d = GAME_DATA[gameName];
   const peakPresence = Math.max(...d.weekly.map(r => r.gamePresence));

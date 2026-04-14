@@ -8,7 +8,7 @@ import {
   Area, AreaChart, Bar, BarChart, CartesianGrid,
   Label, ResponsiveContainer, Tooltip, XAxis, YAxis,
 } from "recharts";
-import { GAME_DATA, GAME_NAMES } from "./gameData";
+import { GAME_DATA, GAME_NAMES, PROVIDER_NAMES } from "./gameData";
 import OperatorMatrix from "./OperatorMatrix";
 import { Dropdown } from "primereact/dropdown";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
@@ -74,22 +74,20 @@ const CustomTooltip = ({ active, payload, label }) => {
 
 // ─── Chart card ──────────────────────────────────────────────────────────────
 const ChartCard = ({ title, subtitle, children }) => (
-  <Card variant="outlined" sx={{ mb: 2.5, borderColor: B.divider }}>
-    <CardContent sx={{ p: "20px 22px 16px !important" }}>
-      <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
-        <Box>
-          <Typography variant="subtitle2" fontWeight={500} sx={{ color: B.brand }}>
-            {title}
-          </Typography>
-          {subtitle && (
-            <Typography variant="caption" color="text.secondary">{subtitle}</Typography>
-          )}
-        </Box>
+  <Paper elevation={0} sx={{ mb: 2.5, p: "20px 22px 16px !important" }}>
+    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
+      <Box>
+        <Typography variant="subtitle2" fontWeight={500} sx={{ color: B.brand }}>
+          {title}
+        </Typography>
+        {subtitle && (
+          <Typography variant="caption" color="text.secondary">{subtitle}</Typography>
+        )}
+      </Box>
 
-      </Stack>
-      {children}
-    </CardContent>
-  </Card>
+    </Stack>
+    {children}
+  </Paper>
 );
 
 // ─── Legend row ──────────────────────────────────────────────────────────────
@@ -104,12 +102,80 @@ const LegendRow = ({ items }) => (
   </Stack>
 );
 
+// ─── Shared PrimeReact Dropdown styles ───────────────────────────────────────
+const dropdownPt = {
+  root: { style: { width: "220px", fontSize: "13.5px", borderRadius: "6px", border: `1px solid ${B.divider}` } },
+  input: { style: { fontSize: "13.5px", padding: "7px 12px", color: "#1a1a2e", fontFamily: "inherit" } },
+  trigger: { style: { color: B.brandMid } },
+  panel: { style: { fontSize: "13.5px", borderColor: B.divider, borderRadius: "6px", boxShadow: "0 4px 12px rgba(57,47,108,0.10)", fontFamily: "inherit" } },
+  item: { style: { fontSize: "13.5px", padding: "8px 14px", color: "#1a1a2e" } },
+};
+
+// ─── FilterDropdown using PrimeReact filter pattern ───────────────────────────
+const FilterDropdown = ({ label, value, options, onChange, placeholder }) => {
+
+  const selectedTemplate = (option, props) => {
+    if (option) {
+      return (
+        <div className="flex align-items-center">
+          <div>{option.label}</div>
+        </div>
+      );
+    }
+    return <span>{props.placeholder}</span>;
+  };
+
+  const optionTemplate = (option) => (
+    <div className="flex align-items-center">
+      <div>{option.label}</div>
+    </div>
+  );
+
+  return (
+    <Stack gap={0.5}>
+      <Typography variant="caption" sx={{ color: B.textMuted, fontWeight: 600, fontSize: 11, letterSpacing: 0.4, textTransform: "uppercase" }}>
+        {label}
+      </Typography>
+      <Dropdown
+        value={value}
+        onChange={(e) => onChange(e.value)}
+        options={options}
+        optionLabel="label"
+        optionValue="value"
+        placeholder={placeholder}
+        filter
+        filterDelay={400}
+        valueTemplate={selectedTemplate}
+        itemTemplate={optionTemplate}
+        className="w-full"
+        style={{ minWidth: "220px", fontSize: "13.5px" }}
+      />
+    </Stack>
+  );
+};
+
 // ═══════════════════════════════════════════════════════════════════════════════
 const GameLaunchAnalysisPage = () => {
-  const [game, setGame] = useState(GAME_NAMES[0]);
   const [showFilter, setShowFilter] = useState(false);
+  const [provider, setProvider] = useState(PROVIDER_NAMES[0]);
+  const firstGameOfProvider = GAME_NAMES.find(n => GAME_DATA[n].provider === PROVIDER_NAMES[0]);
+  const [game, setGame] = useState(firstGameOfProvider);
+
   const d = GAME_DATA[game];
   const { axisProps, gridProps, labelStyle } = useChartProps();
+
+  const providerOptions = PROVIDER_NAMES.map((p) => ({ label: p, value: p }));
+
+  const gameOptions = GAME_NAMES
+    .filter((n) => GAME_DATA[n].provider === provider)
+    .map((g) => ({ label: g, value: g }));
+
+  // ── When provider changes → reset game to first of that provider ──────────
+  const handleProviderChange = (val) => {
+    setProvider(val);
+    const firstGame = GAME_NAMES.find((n) => GAME_DATA[n].provider === val);
+    setGame(firstGame);
+  };
 
   return (
     <Paper
@@ -127,50 +193,29 @@ const GameLaunchAnalysisPage = () => {
         }}
       />
       {showFilter && (
-        <Stack
-          direction="row"
-          justifyContent="flex-end"
-          alignItems="center"
-          flexWrap="wrap"
-          gap={1.5}
-          mb={3}
-        >
-          <FormControl size="small">
-            <Select
-              value={game}
-              onChange={(e) => setGame(e.target.value)}
-              sx={{
-                minWidth: 220,
-                bgcolor: "#fff",
-                borderRadius: 2,
-                fontSize: 13.5,
+        <div className="d-flex gap-2 align-items-center justify-content-end mb-3">
+          <Dropdown
+            optionLabel="label"
+            optionValue="value"
+            filter
+            placeholder="Select Provider"
+            value={provider}
+            onChange={(e) => handleProviderChange(e.value)}
+            options={providerOptions}
+            style={{ width: "220px" }}
+          />
 
-                "& .MuiOutlinedInput-notchedOutline": {
-                  borderColor: B.divider,
-                },
-
-                "&:hover .MuiOutlinedInput-notchedOutline": {
-                  borderColor: B.brandMid,
-                },
-
-                "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-                  borderColor: B.brandMid,
-                  borderWidth: "2px",
-                },
-
-                "&.Mui-focused": {
-                  boxShadow: "none",
-                },
-              }}
-            >
-              {GAME_NAMES.map((g) => (
-                <MenuItem key={g} value={g} sx={{ fontSize: 13.5 }}>
-                  {g}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Stack>
+          <Dropdown
+            optionLabel="label"
+            optionValue="value"
+            filter
+            placeholder="Select Game"
+            value={game}
+            onChange={(e) => setGame(e.value)}
+            options={gameOptions}
+            style={{ width: "220px" }}
+          />
+        </div>
       )}
 
       {/* Chart 1 — Provider Availability */}
