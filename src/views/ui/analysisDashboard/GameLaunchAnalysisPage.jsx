@@ -1,8 +1,7 @@
 import React, { useState } from "react";
 import PageHeader from "../../../component/PageHeader";
 import {
-  Box, Card, CardContent, FormControl,
-  MenuItem, Paper, Select, Stack, Typography,
+  Box, Card, Paper, Stack, Typography,
 } from "@mui/material";
 import {
   Area, AreaChart, Bar, BarChart, CartesianGrid,
@@ -16,17 +15,17 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 const B = {
-  brand: "#392F6C",   // base purple
-  brandLight: "#5C4F9E",   // lighter tint for secondary/game bars
-  brandPale: "#EDE9F8",   // very light purple for hover / bg tints
-  brandMid: "#7B6BC0",   // mid purple for area fill / accents
-  amber: "#F9A825",   // not-searched dash
-  green: "#2E7D32",   // found tick text
-  greenBg: "#E8F5E9",   // found tick bg
-  red: "#B71C1C",   // not-found cross text
-  redBg: "#FDECEA",   // not-found cross bg
-  divider: "#E3E0F0",   // purple-tinted border
-  textMuted: "#7B6BC0",   // axis / caption text
+  brand: "#392F6C",   
+  brandLight: "#5C4F9E",   
+  brandPale: "#EDE9F8",   
+  brandMid: "#7B6BC0",  
+  amber: "#F9A825",  
+  green: "#2E7D32", 
+  greenBg: "#E8F5E9",  
+  red: "#B71C1C", 
+  redBg: "#FDECEA", 
+  divider: "#E3E0F0",  
+  textMuted: "#7B6BC0",   
 };
 
 const SECTION_COLORS = {
@@ -111,55 +110,10 @@ const dropdownPt = {
   item: { style: { fontSize: "13.5px", padding: "8px 14px", color: "#1a1a2e" } },
 };
 
-// ─── FilterDropdown using PrimeReact filter pattern ───────────────────────────
-const FilterDropdown = ({ label, value, options, onChange, placeholder }) => {
-
-  const selectedTemplate = (option, props) => {
-    if (option) {
-      return (
-        <div className="flex align-items-center">
-          <div>{option.label}</div>
-        </div>
-      );
-    }
-    return <span>{props.placeholder}</span>;
-  };
-
-  const optionTemplate = (option) => (
-    <div className="flex align-items-center">
-      <div>{option.label}</div>
-    </div>
-  );
-
-  return (
-    <Stack gap={0.5}>
-      <Typography variant="caption" sx={{ color: B.textMuted, fontWeight: 600, fontSize: 11, letterSpacing: 0.4, textTransform: "uppercase" }}>
-        {label}
-      </Typography>
-      <Dropdown
-        value={value}
-        onChange={(e) => onChange(e.value)}
-        options={options}
-        optionLabel="label"
-        optionValue="value"
-        placeholder={placeholder}
-        filter
-        filterDelay={400}
-        valueTemplate={selectedTemplate}
-        itemTemplate={optionTemplate}
-        className="w-full"
-        style={{ minWidth: "220px", fontSize: "13.5px" }}
-      />
-    </Stack>
-  );
-};
-
 // ═══════════════════════════════════════════════════════════════════════════════
 const GameLaunchAnalysisPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [provider, setProvider] = useState(PROVIDER_NAMES[0]);
-  const [sortField, setSortField] = useState(null);
-  const [sortOrder, setSortOrder] = useState("asc");
   const firstGameOfProvider = GAME_NAMES.find(n => GAME_DATA[n].provider === PROVIDER_NAMES[0]);
   const [game, setGame] = useState(firstGameOfProvider);
 
@@ -260,10 +214,6 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
     })),
   ];
 
-  const handleSort = (field, order) => {
-    setSortField(field);
-    setSortOrder(order);
-  };
   return (
     <Paper
       elevation={0}
