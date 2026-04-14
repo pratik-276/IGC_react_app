@@ -122,7 +122,7 @@ const GameLaunchAnalysisPage = () => {
         features={{
           search: false,
           filters: true,
-          download: true,
+          download: false,
           chat: false,
         }}
       />
