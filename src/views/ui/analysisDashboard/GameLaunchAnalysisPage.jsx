@@ -79,9 +79,9 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-// ─── Chart card ───────────────────────────────────────────────────────────────
+// ─── Chart card — no borders ──────────────────────────────────────────────────
 const ChartCard = ({ title, subtitle, children }) => (
-  <div className="border border-secondary p-3 rounded-3 mt-3">
+  <div style={{ padding: "12px 0 16px", marginTop: "16px" }}>
     <div className="d-flex align-items-center justify-content-between mb-2">
       <div>
         <h5 className="font-semibold mb-0" style={{ color: B.brand }}>{title}</h5>
@@ -146,14 +146,32 @@ const GameLaunchAnalysisPage = () => {
   ].map((op) => ({ label: op, value: op }));
 
   const geographyOptions = [
-    ...new Set(operatorTableData.map((row) => row.geography)),
+    ...new Set(
+      (operatorFilters.operator.length > 0
+        ? operatorTableData.filter((row) =>
+            operatorFilters.operator.includes(row.operator)
+          )
+        : operatorTableData
+      ).map((row) => row.geography)
+    ),
   ].map((geo) => ({ label: geo, value: geo }));
 
   const hasActiveFilters =
     operatorFilters.operator.length > 0 || operatorFilters.geography.length > 0;
 
   const handleFilterChange = (field, value) => {
-    setOperatorFilters((prev) => ({ ...prev, [field]: value }));
+    setOperatorFilters((prev) => {
+      const next = { ...prev, [field]: value };
+      if (field === "operator") {
+        const validGeos = new Set(
+          operatorTableData
+            .filter((row) => value.length === 0 || value.includes(row.operator))
+            .map((row) => row.geography)
+        );
+        next.geography = prev.geography.filter((g) => validGeos.has(g));
+      }
+      return next;
+    });
   };
 
   const handleClearAll = () => {
@@ -205,12 +223,9 @@ const GameLaunchAnalysisPage = () => {
           <h4 className="m-md-0 font-semibold" style={{ color: B.brand }}>
             Game Launch Analysis
           </h4>
-          <span style={{ fontSize: "13px", color: "#6c757d" }}>
-            Track game availability and operator reach since launch
-          </span>
         </div>
 
-        {/* Provider / Game selectors — always visible top-right */}
+        {/* Provider / Game selectors */}
         <div className="d-flex gap-2 align-items-center">
           <Dropdown
             optionLabel="label"
@@ -344,11 +359,11 @@ const GameLaunchAnalysisPage = () => {
                 fontSize: 13,
                 color: B.brand,
                 background: "none",
-                border: `1px solid ${B.divider}`,
-                borderRadius: 6,
-                padding: "6px 14px",
+                border: "none",
+                padding: "6px 4px",
                 cursor: "pointer",
                 whiteSpace: "nowrap",
+                textDecoration: "underline",
               }}
             >
               Clear filters
