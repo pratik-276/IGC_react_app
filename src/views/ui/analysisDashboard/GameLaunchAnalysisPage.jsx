@@ -10,22 +10,23 @@ import {
 import { GAME_DATA, GAME_NAMES, PROVIDER_NAMES } from "./gameData";
 import ReusableLazyTable from "../../../component/ReusableLazyTable";
 import { Dropdown } from "primereact/dropdown";
+import { MultiSelect } from "primereact/multiselect";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 const B = {
-  brand: "#392F6C",   
-  brandLight: "#5C4F9E",   
-  brandPale: "#EDE9F8",   
-  brandMid: "#7B6BC0",  
-  amber: "#F9A825",  
-  green: "#2E7D32", 
-  greenBg: "#E8F5E9",  
-  red: "#B71C1C", 
-  redBg: "#FDECEA", 
-  divider: "#E3E0F0",  
-  textMuted: "#7B6BC0",   
+  brand: "#392f6c",
+  brandLight: "#5C4F9E",
+  brandPale: "#EDE9F8",
+  brandMid: "#7B6BC0",
+  amber: "#F9A825",
+  green: "#2E7D32",
+  greenBg: "#E8F5E9",
+  red: "#B71C1C",
+  redBg: "#FDECEA",
+  divider: "#E3E0F0",
+  textMuted: "#7B6BC0",
 };
 
 const SECTION_COLORS = {
@@ -36,7 +37,14 @@ const SECTION_COLORS = {
   other: "#90A4AE",
 };
 
-// ─── Chart axis / grid props ─────────────────────────────────────────────────
+// ─── MultiSelect label helper ─────────────────────────────────────────────────
+const getSelectedLabel = (selectedArray) => {
+  if (!selectedArray || selectedArray.length <= 2) return "";
+  const firstTwo = selectedArray.slice(0, 2).join(", ");
+  return `${firstTwo}, ...`;
+};
+
+// ─── Chart axis / grid props ──────────────────────────────────────────────────
 const useChartProps = () => ({
   axisProps: {
     tick: { fill: B.textMuted, fontSize: 10.5 },
@@ -51,7 +59,7 @@ const useChartProps = () => ({
   labelStyle: { fill: B.textMuted, fontSize: 10 },
 });
 
-// ─── Tooltip ─────────────────────────────────────────────────────────────────
+// ─── Tooltip ──────────────────────────────────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -71,44 +79,32 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-// ─── Chart card ──────────────────────────────────────────────────────────────
+// ─── Chart card ───────────────────────────────────────────────────────────────
 const ChartCard = ({ title, subtitle, children }) => (
-  <Paper elevation={0} sx={{ mb: 2.5, p: "20px 22px 16px !important" }}>
-    <Stack direction="row" justifyContent="space-between" alignItems="flex-start" mb={2}>
-      <Box>
-        <Typography variant="subtitle2" fontWeight={500} sx={{ color: B.brand }}>
-          {title}
-        </Typography>
+  <div className="border border-secondary p-3 rounded-3 mt-3">
+    <div className="d-flex align-items-center justify-content-between mb-2">
+      <div>
+        <h5 className="font-semibold mb-0" style={{ color: B.brand }}>{title}</h5>
         {subtitle && (
-          <Typography variant="caption" color="text.secondary">{subtitle}</Typography>
+          <span style={{ fontSize: "12px", color: "#6c757d" }}>{subtitle}</span>
         )}
-      </Box>
-
-    </Stack>
+      </div>
+    </div>
     {children}
-  </Paper>
+  </div>
 );
 
-// ─── Legend row ──────────────────────────────────────────────────────────────
+// ─── Legend row ───────────────────────────────────────────────────────────────
 const LegendRow = ({ items }) => (
-  <Stack direction="row" flexWrap="wrap" gap={1.5} mb={1.5}>
+  <div className="d-flex flex-wrap gap-2 mb-2">
     {items.map(([label, color]) => (
-      <Stack key={label} direction="row" alignItems="center" gap={0.6}>
-        <Box sx={{ width: 9, height: 9, borderRadius: "2px", bgcolor: color }} />
-        <Typography variant="caption" sx={{ color: B.textMuted }}>{label}</Typography>
-      </Stack>
+      <div key={label} className="d-flex align-items-center gap-1">
+        <div style={{ width: 9, height: 9, borderRadius: 2, backgroundColor: color }} />
+        <span style={{ fontSize: "11px", color: B.textMuted }}>{label}</span>
+      </div>
     ))}
-  </Stack>
+  </div>
 );
-
-// ─── Shared PrimeReact Dropdown styles ───────────────────────────────────────
-const dropdownPt = {
-  root: { style: { width: "220px", fontSize: "13.5px", borderRadius: "6px", border: `1px solid ${B.divider}` } },
-  input: { style: { fontSize: "13.5px", padding: "7px 12px", color: "#1a1a2e", fontFamily: "inherit" } },
-  trigger: { style: { color: B.brandMid } },
-  panel: { style: { fontSize: "13.5px", borderColor: B.divider, borderRadius: "6px", boxShadow: "0 4px 12px rgba(57,47,108,0.10)", fontFamily: "inherit" } },
-  item: { style: { fontSize: "13.5px", padding: "8px 14px", color: "#1a1a2e" } },
-};
 
 // ═══════════════════════════════════════════════════════════════════════════════
 const GameLaunchAnalysisPage = () => {
@@ -116,6 +112,11 @@ const GameLaunchAnalysisPage = () => {
   const [provider, setProvider] = useState(PROVIDER_NAMES[0]);
   const firstGameOfProvider = GAME_NAMES.find(n => GAME_DATA[n].provider === PROVIDER_NAMES[0]);
   const [game, setGame] = useState(firstGameOfProvider);
+
+  const [operatorFilters, setOperatorFilters] = useState({
+    operator: [],
+    geography: [],
+  });
 
   const d = GAME_DATA[game];
   const { axisProps, gridProps, labelStyle } = useChartProps();
@@ -131,6 +132,7 @@ const GameLaunchAnalysisPage = () => {
     setGame(firstGame);
   };
 
+  // ─── Operator table data ──────────────────────────────────────────────────
   const operatorTableData = d.operatorMatrix.map((row) => {
     const flatRow = { operator: row.operator, geography: row.geography };
     d.operatorWeeks.forEach((week, i) => {
@@ -139,67 +141,48 @@ const GameLaunchAnalysisPage = () => {
     return flatRow;
   });
 
-const operatorOptions = [
-  ...new Set(operatorTableData.map((row) => row.operator))
-].map((op) => ({ label: op, value: op }));
+  const operatorOptions = [
+    ...new Set(operatorTableData.map((row) => row.operator)),
+  ].map((op) => ({ label: op, value: op }));
 
-const geographyOptions = [
-  ...new Set(operatorTableData.map((row) => row.geography))
-].map((geo) => ({ label: geo, value: geo }));
+  const geographyOptions = [
+    ...new Set(operatorTableData.map((row) => row.geography)),
+  ].map((geo) => ({ label: geo, value: geo }));
 
-const createDropdownFilter = (optionsList, placeholder) => (options) => {
-  return (
-    <Dropdown
-      value={options.value}
-      options={optionsList}
-      onChange={(e) => options.filterApplyCallback(e.value)}
-      placeholder={placeholder}
-      showClear
-      style={{ minWidth: "180px" }}
-    />
-  );
-};
+  const hasActiveFilters =
+    operatorFilters.operator.length > 0 || operatorFilters.geography.length > 0;
 
-const operatorFilterElement = createDropdownFilter(operatorOptions, "Select Operator");
-const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Geography");
+  const handleFilterChange = (field, value) => {
+    setOperatorFilters((prev) => ({ ...prev, [field]: value }));
+  };
+
+  const handleClearAll = () => {
+    setOperatorFilters({ operator: [], geography: [] });
+  };
+
+  const filteredOperatorTableData = operatorTableData.filter((row) => {
+    const opMatch =
+      operatorFilters.operator.length === 0 ||
+      operatorFilters.operator.includes(row.operator);
+    const geoMatch =
+      operatorFilters.geography.length === 0 ||
+      operatorFilters.geography.includes(row.geography);
+    return opMatch && geoMatch;
+  });
 
   const operatorColumns = [
     {
       field: "operator",
       header: "Operator",
-
       sortable: false,
-
-      filter: true,
-      filterField: "operator",
-      filterMatchMode: "equals",
-      filterElement: operatorFilterElement,
-
-      showFilterMenu: true,
-      showFilterOperator: false,
-      showAddButton: false,
-
-      style: { minWidth: "130px", fontWeight: 500 }
+      style: { minWidth: "130px", fontWeight: 500 },
     },
-
     {
       field: "geography",
       header: "Geography",
-
       sortable: false,
-
-      filter: true,
-      filterField: "geography",
-      filterMatchMode: "equals",
-      filterElement: geographyFilterElement,
-
-      showFilterMenu: true,
-      showFilterOperator: false,
-      showAddButton: false,
-
-      style: { minWidth: "110px" }
+      style: { minWidth: "110px" },
     },
-
     ...d.operatorWeeks.map((week) => ({
       field: `w${week}`,
       header: `w${week}`,
@@ -215,22 +198,20 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
   ];
 
   return (
-    <Paper
-      elevation={0}
-      sx={{ minHeight: "100vh", position: "relative" }}
-    >
-      <PageHeader
-        title="Game Launch Analysis"
-        onToggleFilter={() => setShowFilter((prev) => !prev)}
-        features={{
-          search: false,
-          filters: true,
-          download: false,
-          chat: false,
-        }}
-      />
-      {showFilter && (
-        <div className="d-flex gap-2 align-items-center justify-content-end mb-3">
+    <div>
+      {/* ── Page header ── */}
+      <div className="d-flex align-items-center justify-content-between">
+        <div>
+          <h4 className="m-md-0 font-semibold" style={{ color: B.brand }}>
+            Game Launch Analysis
+          </h4>
+          <span style={{ fontSize: "13px", color: "#6c757d" }}>
+            Track game availability and operator reach since launch
+          </span>
+        </div>
+
+        {/* Provider / Game selectors — always visible top-right */}
+        <div className="d-flex gap-2 align-items-center">
           <Dropdown
             optionLabel="label"
             optionValue="value"
@@ -239,9 +220,8 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
             value={provider}
             onChange={(e) => handleProviderChange(e.value)}
             options={providerOptions}
-            style={{ width: "220px" }}
+            className="w-12rem"
           />
-
           <Dropdown
             optionLabel="label"
             optionValue="value"
@@ -250,10 +230,10 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
             value={game}
             onChange={(e) => setGame(e.value)}
             options={gameOptions}
-            style={{ width: "220px" }}
+            className="w-12rem"
           />
         </div>
-      )}
+      </div>
 
       {/* Chart 1 — Provider Availability */}
       <ChartCard title="Provider Availability" subtitle="Total providers carrying this game per week">
@@ -283,7 +263,7 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
       </ChartCard>
 
       {/* Chart 2 — Game Availability */}
-      <ChartCard title="Game Availability" subtitle="Game adoption vs provider distribution footprint per week" >
+      <ChartCard title="Game Availability" subtitle="Game adoption vs provider distribution footprint per week">
         <LegendRow items={[["Provider Presence", B.brand], ["Game Presence", B.brandLight]]} />
         <ResponsiveContainer width="100%" height={230}>
           <BarChart data={d.weekly} margin={{ top: 4, right: 12, left: 0, bottom: 28 }} barSize={13} barCategoryGap="28%">
@@ -330,17 +310,62 @@ const geographyFilterElement = createDropdownFilter(geographyOptions, "Select Ge
         title="Game's Availability on Operators"
         subtitle="Per-operator weekly availability from launch week"
       >
+        {/* Filter bar */}
+        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
+          <div className="d-flex gap-2 flex-wrap align-items-center">
+            <MultiSelect
+              value={operatorFilters.operator}
+              options={operatorOptions}
+              onChange={(e) => handleFilterChange("operator", e.value ?? [])}
+              placeholder="Select Operators"
+              filter
+              maxSelectedLabels={2}
+              selectedItemsLabel={getSelectedLabel(operatorFilters.operator)}
+              display="comma"
+              className="w-12rem"
+            />
+            <MultiSelect
+              value={operatorFilters.geography}
+              options={geographyOptions}
+              onChange={(e) => handleFilterChange("geography", e.value ?? [])}
+              placeholder="Select Geographies"
+              filter
+              maxSelectedLabels={2}
+              selectedItemsLabel={getSelectedLabel(operatorFilters.geography)}
+              display="comma"
+              className="w-12rem"
+            />
+          </div>
+
+          {hasActiveFilters && (
+            <button
+              onClick={handleClearAll}
+              style={{
+                fontSize: 13,
+                color: B.brand,
+                background: "none",
+                border: `1px solid ${B.divider}`,
+                borderRadius: 6,
+                padding: "6px 14px",
+                cursor: "pointer",
+                whiteSpace: "nowrap",
+              }}
+            >
+              Clear filters
+            </button>
+          )}
+        </div>
+
         <ReusableLazyTable
-         key={game} 
-          data={operatorTableData}
+          key={game}
+          data={filteredOperatorTableData}
           loading={false}
           columns={operatorColumns}
           scrollHeight="400px"
           hasMore={false}
         />
       </ChartCard>
-
-    </Paper>
+    </div>
   );
 };
 
