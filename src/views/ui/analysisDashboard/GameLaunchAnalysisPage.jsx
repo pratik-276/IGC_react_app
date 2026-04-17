@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import PageHeader from "../../../component/PageHeader";
 import {
   Box, Card, Paper, Stack, Typography,
@@ -11,12 +11,13 @@ import { GAME_DATA, GAME_NAMES, PROVIDER_NAMES } from "./gameData";
 import ReusableLazyTable from "../../../component/ReusableLazyTable";
 import { Dropdown } from "primereact/dropdown";
 import { MultiSelect } from "primereact/multiselect";
+import { OverlayPanel } from "primereact/overlaypanel";
 import "primereact/resources/themes/lara-light-indigo/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
 const B = {
-  brand: "#392f6c",
+  brand: "#392F6C",
   brandLight: "#5C4F9E",
   brandPale: "#EDE9F8",
   brandMid: "#7B6BC0",
@@ -37,14 +38,6 @@ const SECTION_COLORS = {
   other: "#90A4AE",
 };
 
-// ─── MultiSelect label helper ─────────────────────────────────────────────────
-const getSelectedLabel = (selectedArray) => {
-  if (!selectedArray || selectedArray.length <= 2) return "";
-  const firstTwo = selectedArray.slice(0, 2).join(", ");
-  return `${firstTwo}, ...`;
-};
-
-// ─── Chart axis / grid props ──────────────────────────────────────────────────
 const useChartProps = () => ({
   axisProps: {
     tick: { fill: B.textMuted, fontSize: 10.5 },
@@ -59,7 +52,6 @@ const useChartProps = () => ({
   labelStyle: { fill: B.textMuted, fontSize: 10 },
 });
 
-// ─── Tooltip ──────────────────────────────────────────────────────────────────
 const CustomTooltip = ({ active, payload, label }) => {
   if (!active || !payload?.length) return null;
   return (
@@ -79,44 +71,58 @@ const CustomTooltip = ({ active, payload, label }) => {
   );
 };
 
-// ─── Chart card — no borders ──────────────────────────────────────────────────
-const ChartCard = ({ title, subtitle, children }) => (
-  <div style={{ padding: "12px 0 16px", marginTop: "16px" }}>
-    <div className="d-flex align-items-center justify-content-between mb-2">
-      <div>
-        <h5 className="font-semibold mb-0" style={{ color: B.brand }}>{title}</h5>
+const ChartCard = ({ title, subtitle, action, children }) => (
+  <Paper elevation={0} sx={{ mb: 2.5, p: "20px 22px 16px !important" }}>
+    <Stack
+      direction="row"
+      justifyContent="space-between"
+      alignItems="center"
+      mb={2}
+    >
+      <Box>
+        <Typography variant="subtitle2" fontWeight={500} sx={{ color: B.brand }}>
+          {title}
+        </Typography>
         {subtitle && (
-          <span style={{ fontSize: "12px", color: "#6c757d" }}>{subtitle}</span>
+          <Typography variant="caption" color="text.secondary">
+            {subtitle}
+          </Typography>
         )}
-      </div>
-    </div>
+      </Box>
+
+      {action && <Box>{action}</Box>}
+    </Stack>
+
     {children}
-  </div>
+  </Paper>
 );
 
-// ─── Legend row ───────────────────────────────────────────────────────────────
 const LegendRow = ({ items }) => (
-  <div className="d-flex flex-wrap gap-2 mb-2">
+  <Stack direction="row" flexWrap="wrap" gap={1.5} mb={1.5}>
     {items.map(([label, color]) => (
-      <div key={label} className="d-flex align-items-center gap-1">
-        <div style={{ width: 9, height: 9, borderRadius: 2, backgroundColor: color }} />
-        <span style={{ fontSize: "11px", color: B.textMuted }}>{label}</span>
-      </div>
+      <Stack key={label} direction="row" alignItems="center" gap={0.6}>
+        <Box sx={{ width: 9, height: 9, borderRadius: "2px", bgcolor: color }} />
+        <Typography variant="caption" sx={{ color: B.textMuted }}>{label}</Typography>
+      </Stack>
     ))}
-  </div>
+  </Stack>
 );
 
-// ═══════════════════════════════════════════════════════════════════════════════
 const GameLaunchAnalysisPage = () => {
   const [showFilter, setShowFilter] = useState(false);
   const [provider, setProvider] = useState(PROVIDER_NAMES[0]);
-  const firstGameOfProvider = GAME_NAMES.find(n => GAME_DATA[n].provider === PROVIDER_NAMES[0]);
+  const firstGameOfProvider = GAME_NAMES.find(
+    (n) => GAME_DATA[n].provider === PROVIDER_NAMES[0]
+  );
   const [game, setGame] = useState(firstGameOfProvider);
 
   const [operatorFilters, setOperatorFilters] = useState({
     operator: [],
     geography: [],
   });
+
+  const operatorOverlayRef = useRef(null);
+  const geographyOverlayRef = useRef(null);
 
   const d = GAME_DATA[game];
   const { axisProps, gridProps, labelStyle } = useChartProps();
@@ -132,7 +138,6 @@ const GameLaunchAnalysisPage = () => {
     setGame(firstGame);
   };
 
-  // ─── Operator table data ──────────────────────────────────────────────────
   const operatorTableData = d.operatorMatrix.map((row) => {
     const flatRow = { operator: row.operator, geography: row.geography };
     d.operatorWeeks.forEach((week, i) => {
@@ -142,31 +147,28 @@ const GameLaunchAnalysisPage = () => {
   });
 
   const operatorOptions = [
-    ...new Set(operatorTableData.map((row) => row.operator)),
+    ...new Set(operatorTableData.map((r) => r.operator)),
   ].map((op) => ({ label: op, value: op }));
 
   const geographyOptions = [
     ...new Set(
       (operatorFilters.operator.length > 0
-        ? operatorTableData.filter((row) =>
-            operatorFilters.operator.includes(row.operator)
-          )
+        ? operatorTableData.filter((r) =>
+          operatorFilters.operator.includes(r.operator)
+        )
         : operatorTableData
-      ).map((row) => row.geography)
+      ).map((r) => r.geography)
     ),
   ].map((geo) => ({ label: geo, value: geo }));
 
-  const hasActiveFilters =
-    operatorFilters.operator.length > 0 || operatorFilters.geography.length > 0;
-
   const handleFilterChange = (field, value) => {
     setOperatorFilters((prev) => {
-      const next = { ...prev, [field]: value };
+      const next = { ...prev, [field]: value ?? [] };
       if (field === "operator") {
         const validGeos = new Set(
           operatorTableData
-            .filter((row) => value.length === 0 || value.includes(row.operator))
-            .map((row) => row.geography)
+            .filter((r) => value.length === 0 || value.includes(r.operator))
+            .map((r) => r.geography)
         );
         next.geography = prev.geography.filter((g) => validGeos.has(g));
       }
@@ -179,32 +181,162 @@ const GameLaunchAnalysisPage = () => {
   };
 
   const filteredOperatorTableData = operatorTableData.filter((row) => {
-    const opMatch =
+    const opOk =
       operatorFilters.operator.length === 0 ||
       operatorFilters.operator.includes(row.operator);
-    const geoMatch =
+    const geoOk =
       operatorFilters.geography.length === 0 ||
       operatorFilters.geography.includes(row.geography);
-    return opMatch && geoMatch;
+    return opOk && geoOk;
   });
+
+  const hasActiveFilters =
+    operatorFilters.operator.length > 0 || operatorFilters.geography.length > 0;
+
+  const clearFiltersButton = (
+    <button
+      onClick={handleClearAll}
+      disabled={!hasActiveFilters}
+      style={{
+        fontSize: 12,
+        color: hasActiveFilters ? B.brand : "#BDC3C7",
+        background: "none",
+        border: `1px solid ${hasActiveFilters ? B.divider : "#ECECEC"}`,
+        borderRadius: "6px",
+        padding: "4px 12px",
+        cursor: hasActiveFilters ? "pointer" : "not-allowed",
+        display: "flex",
+        alignItems: "center",
+        gap: "6px",
+        transition: "color 0.15s, border-color 0.15s",
+      }}
+    >
+      <i
+        className="pi pi-filter-slash"
+        style={{
+          fontSize: "10px",
+          color: hasActiveFilters ? B.brand : "#BDC3C7",
+        }}
+      />
+      Clear all filters
+    </button>
+  );
+
+// Updated Helper: Added a placeholder fallback for better UX
+  const getSelectedLabel = (selectedArray, placeholder) => {
+    if (!selectedArray || selectedArray.length === 0) return placeholder;
+    if (selectedArray.length <= 2) return selectedArray.join(", ");
+    const firstTwo = selectedArray.slice(0, 2).join(", ");
+    return `${firstTwo} +${selectedArray.length - 2} more`;
+  };
 
   const operatorColumns = [
     {
       field: "operator",
-      header: "Operator",
-      sortable: false,
+      header: (
+        <>
+          <Stack direction="row" alignItems="center" gap={0.8}>
+            <Typography
+              variant="caption"
+              sx={{ fontWeight: 600, color: B.brand, letterSpacing: "0.5px" }}
+            >
+              OPERATOR
+            </Typography>
+            <i
+              className={`pi pi-filter${operatorFilters.operator.length > 0 ? "-fill" : ""}`}
+              style={{
+                fontSize: "0.78rem",
+                color: operatorFilters.operator.length > 0 ? B.brand : "#BDC3C7",
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                geographyOverlayRef.current?.hide();
+                operatorOverlayRef.current?.toggle(e);
+              }}
+            />
+          </Stack>
+
+          <OverlayPanel ref={operatorOverlayRef} dismissable style={{ width: "280px", padding: "12px" }}>
+            <Typography variant="caption" sx={{ fontWeight: 700, color: B.brand, mb: 1.5, display: 'block' }}>
+              Filter by Operator
+            </Typography>
+            
+            <MultiSelect
+              value={operatorFilters.operator}
+              options={operatorOptions}
+              onChange={(e) => handleFilterChange("operator", e.value ?? [])}
+              placeholder="Select operators..."
+              filter
+              // Changed: display="chip" removed for a cleaner look with custom label
+              selectedItemsLabel={getSelectedLabel(operatorFilters.operator, "Select operators...")}
+              maxSelectedLabels={0} // Forces the use of selectedItemsLabel immediately
+              style={{ width: "100%" }}
+              panelStyle={{ fontSize: "13px" }}
+            />
+          </OverlayPanel>
+        </>
+      ),
       style: { minWidth: "130px", fontWeight: 500 },
     },
+
     {
       field: "geography",
-      header: "Geography",
-      sortable: false,
+      header: (
+        <>
+          <Stack direction="row" alignItems="center" gap={0.8}>
+            <Typography
+              variant="caption"
+              sx={{ fontWeight: 600, color: B.brand, letterSpacing: "0.5px" }}
+            >
+              GEOGRAPHY
+            </Typography>
+            <i
+              className={`pi pi-filter${operatorFilters.geography.length > 0 ? "-fill" : ""}`}
+              style={{
+                fontSize: "0.78rem",
+                color: operatorFilters.geography.length > 0 ? B.brand : "#BDC3C7",
+                cursor: "pointer",
+              }}
+              onClick={(e) => {
+                operatorOverlayRef.current?.hide();
+                geographyOverlayRef.current?.toggle(e);
+              }}
+            />
+          </Stack>
+
+          <OverlayPanel ref={geographyOverlayRef} dismissable style={{ width: "280px", padding: "12px" }}>
+            <Typography variant="caption" sx={{ fontWeight: 700, color: B.brand, mb: 1, display: 'block' }}>
+              Filter by Geography
+            </Typography>
+
+            {/* {operatorFilters.operator.length > 0 && (
+              <Typography variant="caption" sx={{ color: B.textMuted, display: "block", mb: 1.5, fontSize: "11px", fontStyle: 'italic' }}>
+                Refined by {operatorFilters.operator.length} selected operator(s)
+              </Typography>
+            )} */}
+
+            <MultiSelect
+              value={operatorFilters.geography}
+              options={geographyOptions}
+              onChange={(e) => handleFilterChange("geography", e.value ?? [])}
+              placeholder="Select geographies..."
+              filter
+              // Fixed: Now correctly references geography filters
+              selectedItemsLabel={getSelectedLabel(operatorFilters.geography, "Select geographies...")}
+              maxSelectedLabels={0} 
+              style={{ width: "100%" }}
+              panelStyle={{ fontSize: "13px" }}
+            />
+          </OverlayPanel>
+        </>
+      ),
       style: { minWidth: "110px" },
     },
     ...d.operatorWeeks.map((week) => ({
       field: `w${week}`,
       header: `w${week}`,
       sortable: false,
+      showFilterMenu: false,
       style: { minWidth: "52px", textAlign: "center" },
       body: (row) => {
         const val = row[`w${week}`];
@@ -216,17 +348,20 @@ const GameLaunchAnalysisPage = () => {
   ];
 
   return (
-    <div>
-      {/* ── Page header ── */}
-      <div className="d-flex align-items-center justify-content-between">
-        <div>
-          <h4 className="m-md-0 font-semibold" style={{ color: B.brand }}>
-            Game Launch Analysis
-          </h4>
-        </div>
+    <Paper elevation={0} sx={{ minHeight: "100vh", position: "relative" }}>
+      <PageHeader
+        title="Game Launch Analysis"
+        onToggleFilter={() => setShowFilter((prev) => !prev)}
+        features={{
+          search: false,
+          filters: true,
+          download: false,
+          chat: false,
+        }}
+      />
 
-        {/* Provider / Game selectors */}
-        <div className="d-flex gap-2 align-items-center">
+      {showFilter && (
+        <div className="d-flex gap-2 align-items-center justify-content-end mb-3">
           <Dropdown
             optionLabel="label"
             optionValue="value"
@@ -235,7 +370,7 @@ const GameLaunchAnalysisPage = () => {
             value={provider}
             onChange={(e) => handleProviderChange(e.value)}
             options={providerOptions}
-            className="w-12rem"
+            style={{ width: "220px" }}
           />
           <Dropdown
             optionLabel="label"
@@ -245,13 +380,16 @@ const GameLaunchAnalysisPage = () => {
             value={game}
             onChange={(e) => setGame(e.value)}
             options={gameOptions}
-            className="w-12rem"
+            style={{ width: "220px" }}
           />
         </div>
-      </div>
+      )}
 
       {/* Chart 1 — Provider Availability */}
-      <ChartCard title="Provider Availability" subtitle="Total providers carrying this game per week">
+      <ChartCard
+        title="Provider Availability"
+        subtitle="Total providers carrying this game per week"
+      >
         <ResponsiveContainer width="100%" height={250}>
           <AreaChart data={d.weekly} margin={{ top: 8, right: 12, left: 0, bottom: 28 }}>
             <defs>
@@ -265,23 +403,46 @@ const GameLaunchAnalysisPage = () => {
               <Label value="Weeks since launch" offset={-18} position="insideBottom" style={labelStyle} />
             </XAxis>
             <YAxis {...axisProps} width={36}>
-              <Label value="Provider presence" angle={-90} position="insideLeft" style={{ ...labelStyle, textAnchor: "middle" }} />
+              <Label
+                value="Provider presence"
+                angle={-90}
+                position="insideLeft"
+                style={{ ...labelStyle, textAnchor: "middle" }}
+              />
             </YAxis>
             <Tooltip content={<CustomTooltip />} />
             <Area
-              type="monotone" dataKey="providerPresence" name="Provider Presence"
-              stroke={B.brand} strokeWidth={2.5} fill="url(#gBrand)"
-              dot={{ r: 3.5, fill: B.brand, strokeWidth: 0 }} activeDot={{ r: 6, fill: B.brand }}
+              type="monotone"
+              dataKey="providerPresence"
+              name="Provider Presence"
+              stroke={B.brand}
+              strokeWidth={2.5}
+              fill="url(#gBrand)"
+              dot={{ r: 3.5, fill: B.brand, strokeWidth: 0 }}
+              activeDot={{ r: 6, fill: B.brand }}
             />
           </AreaChart>
         </ResponsiveContainer>
       </ChartCard>
 
       {/* Chart 2 — Game Availability */}
-      <ChartCard title="Game Availability" subtitle="Game adoption vs provider distribution footprint per week">
-        <LegendRow items={[["Provider Presence", B.brand], ["Game Presence", B.brandLight]]} />
+      <ChartCard
+        title="Game Availability"
+        subtitle="Game adoption vs provider distribution footprint per week"
+      >
+        <LegendRow
+          items={[
+            ["Provider Presence", B.brand],
+            ["Game Presence", B.brandLight],
+          ]}
+        />
         <ResponsiveContainer width="100%" height={230}>
-          <BarChart data={d.weekly} margin={{ top: 4, right: 12, left: 0, bottom: 28 }} barSize={13} barCategoryGap="28%">
+          <BarChart
+            data={d.weekly}
+            margin={{ top: 4, right: 12, left: 0, bottom: 28 }}
+            barSize={13}
+            barCategoryGap="28%"
+          >
             <CartesianGrid {...gridProps} />
             <XAxis dataKey="label" {...axisProps}>
               <Label value="Weeks since launch" offset={-18} position="insideBottom" style={labelStyle} />
@@ -295,16 +456,26 @@ const GameLaunchAnalysisPage = () => {
       </ChartCard>
 
       {/* Chart 3 — Total Casinos Across Sections */}
-      <ChartCard title="Total Casinos Across Sections" subtitle="Absolute casino counts per placement section over time">
-        <LegendRow items={Object.entries({
-          "New Games": SECTION_COLORS.newGames,
-          "Popular": SECTION_COLORS.popular,
-          "Slots": SECTION_COLORS.slots,
-          "Live Casino": SECTION_COLORS.liveCasino,
-          "Other": SECTION_COLORS.other,
-        })} />
+      <ChartCard
+        title="Total Casinos Across Sections"
+        subtitle="Absolute casino counts per placement section over time"
+      >
+        <LegendRow
+          items={Object.entries({
+            "New Games": SECTION_COLORS.newGames,
+            Popular: SECTION_COLORS.popular,
+            Slots: SECTION_COLORS.slots,
+            "Live Casino": SECTION_COLORS.liveCasino,
+            Other: SECTION_COLORS.other,
+          })}
+        />
         <ResponsiveContainer width="100%" height={220}>
-          <BarChart data={d.sectionMapping} margin={{ top: 4, right: 12, left: 0, bottom: 28 }} barSize={26} barCategoryGap="35%">
+          <BarChart
+            data={d.sectionMapping}
+            margin={{ top: 4, right: 12, left: 0, bottom: 28 }}
+            barSize={26}
+            barCategoryGap="35%"
+          >
             <CartesianGrid {...gridProps} />
             <XAxis dataKey="label" {...axisProps}>
               <Label value="Weeks since launch" offset={-18} position="insideBottom" style={labelStyle} />
@@ -315,62 +486,22 @@ const GameLaunchAnalysisPage = () => {
             <Bar dataKey="popular" name="Popular" stackId="s" fill={SECTION_COLORS.popular} />
             <Bar dataKey="slots" name="Slots" stackId="s" fill={SECTION_COLORS.slots} />
             <Bar dataKey="liveCasino" name="Live Casino" stackId="s" fill={SECTION_COLORS.liveCasino} />
-            <Bar dataKey="other" name="Other" stackId="s" fill={SECTION_COLORS.other} radius={[3, 3, 0, 0]} />
+            <Bar
+              dataKey="other"
+              name="Other"
+              stackId="s"
+              fill={SECTION_COLORS.other}
+              radius={[3, 3, 0, 0]}
+            />
           </BarChart>
         </ResponsiveContainer>
       </ChartCard>
 
-      {/* Operator Matrix */}
       <ChartCard
         title="Game's Availability on Operators"
         subtitle="Per-operator weekly availability from launch week"
+        action={clearFiltersButton}
       >
-        {/* Filter bar */}
-        <div className="d-flex align-items-center justify-content-between flex-wrap gap-2 mb-3">
-          <div className="d-flex gap-2 flex-wrap align-items-center">
-            <MultiSelect
-              value={operatorFilters.operator}
-              options={operatorOptions}
-              onChange={(e) => handleFilterChange("operator", e.value ?? [])}
-              placeholder="Select Operators"
-              filter
-              maxSelectedLabels={2}
-              selectedItemsLabel={getSelectedLabel(operatorFilters.operator)}
-              display="comma"
-              className="w-12rem"
-            />
-            <MultiSelect
-              value={operatorFilters.geography}
-              options={geographyOptions}
-              onChange={(e) => handleFilterChange("geography", e.value ?? [])}
-              placeholder="Select Geographies"
-              filter
-              maxSelectedLabels={2}
-              selectedItemsLabel={getSelectedLabel(operatorFilters.geography)}
-              display="comma"
-              className="w-12rem"
-            />
-          </div>
-
-          {hasActiveFilters && (
-            <button
-              onClick={handleClearAll}
-              style={{
-                fontSize: 13,
-                color: B.brand,
-                background: "none",
-                border: "none",
-                padding: "6px 4px",
-                cursor: "pointer",
-                whiteSpace: "nowrap",
-                textDecoration: "underline",
-              }}
-            >
-              Clear filters
-            </button>
-          )}
-        </div>
-
         <ReusableLazyTable
           key={game}
           data={filteredOperatorTableData}
@@ -380,7 +511,7 @@ const GameLaunchAnalysisPage = () => {
           hasMore={false}
         />
       </ChartCard>
-    </div>
+    </Paper>
   );
 };
 
